@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="5dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_money"
+        android:layout_alignParentStart="true"
+        android:text="100.000 VNĐ"
+        android:textColor="@color/grey_light"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_number_money"
+        android:layout_width="wrap_content"
+        android:text="1"
+        android:layout_centerVertical="true"
+        android:textColor="@color/black"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:background="@drawable/bg_radius_grey"
+        android:textSize="@dimen/text_xlarge"
+        android:layout_alignParentEnd="true"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/iv_status"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_check_fail"
+        android:padding="10dp"
+        android:layout_toStartOf="@+id/tv_number_money"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

@@ -1,0 +1,203 @@
+<resources>
+    <!--<string name="app_name">Ecash Wallet</string>-->
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="str_menu_garage">Gara của tôi</string>
+    <string name="str_menu_wallet">Ví của tôi</string>
+    <string name="str_menu_trip_history">Lịch sử chuyến đi</string>
+    <string name="str_menu_black_list">Danh sách chặn</string>
+    <string name="str_menu_notification">Thông báo</string>
+    <string name="str_menu_support">Tôi cần hỗ trợ</string>
+    <string name="str_menu_choose_vehicle">Tạo xe</string>
+    <string name="str_version">Version</string>
+    <string name="msg_generic_error_message">Vui lòng thử lại sau giây lát.</string>
+    <string name="hint_user_name">Tài khoản</string>
+    <string name="password">Mật khẩu</string>
+    <string name="txt_sign_in">Đăng nhập</string>
+    <string name="str_logout">Đăng xuất</string>
+    <string name="ms_user_name_not_empty">Tên đăng nhập không được để trống.</string>
+    <string name="ms_password_not_empty">Mật khẩu không được để trống</string>
+    <string name="str_location_from">Điểm đi</string>
+    <string name="str_balance" />
+    <string name="str_location_to">Điểm đến</string>
+    <string name="str_departure_from">Ngày khởi hành</string>
+    <string name="str_departure">Chiều đi</string>
+    <string name="str_departure_return">Ngày về</string>
+    <string name="str_return">Chiều về</string>
+    <string name="str_passenger">Số lượng người đi</string>
+    <string name="str_adt">Người lớn</string>
+    <string name="str_chid">Trẻ em</string>
+    <string name="str_select_number_passenger">Số người cùng đi</string>
+    <string name="msg_select_number_passenger">Người lớn là từ 14 tuổi đến trẻ em cao trên 1m3</string>
+    <string name="str_ok">Đồng ý</string>
+    <string name="str_cancel">Huỷ bỏ</string>
+    <string name="str_close">Đóng</string>
+    <string name="str_done">Xong</string>
+    <string name="str_continute">Tiếp tục</string>
+
+    <string name="login_no_account">Bạn chưa có tài khoản?</string>
+    <string name="register_now">Đăng ký ngay!</string>
+    <string name="can_not_login">Không đăng nhập được?</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="re_pass">Nhập lại mật khẩu</string>
+    <string name="pass">Nhập mật khẩu</string>
+    <string name="input_name">Nhập họ và tên</string>
+    <string name="input_stk">Nhập tài khoản</string>
+    <string name="title_contact">Danh bạ</string>
+    <string name="title_history">Giao dịch</string>
+    <string name="title_wallet">Ví của tôi</string>
+    <string name="str_account_name">Tên tài khoản</string>
+    <string name="str_ecash_id">eCash ID</string>
+    <string name="str_account_balance">Số dư eCash</string>
+    <string name="str_use_qr_code">Sử dụng QR code</string>
+    <string name="str_account_balance_edong">Số dư eDong</string>
+    <string name="str_account_edong">Ví eDong</string>
+    <string name="str_cash_in">Nạp eCash</string>
+    <string name="str_cash_out">Rút eCash</string>
+    <string name="str_change_cash">Đổi eCash</string>
+    <string name="str_transfer">Chuyển khoản</string>
+    <string name="str_payment_service">Dịch vụ thanh toán</string>
+    <string name="str_electron_pay">Thanh toán EVN</string>
+    <string name="str_water_pay">Thanh toán nước</string>
+    <string name="str_shop_pay">Thanh toán siêu thị</string>
+    <string name="str_cable_pay">Thanh toán VTVcab</string>
+    <string name="str_help">Trợ giúp</string>
+    <string name="str_transfer_success">Giao dịch thành công</string>
+    <string name="str_chose_edong_account">Chọn tài khoản Edong</string>
+    <string name="str_active_account_success">Bạn đã kích hoạt tài khoản thành công</string>
+    <string name="str_mess_logout">Bạn có muốn thoát khỏi phiên làm việc này?</string>
+    <string name="str_balance_in_wallet">Số dư trong ví còn</string>
+    <string name="str_transfer_all_money">Vui lòng tất toán tài khoản trước khi huỷ ví</string>
+    <string name="str_cancel_account_success">Huỷ tài khoản thành công</string>
+    <string name="str_main_screen">Màn hình chính</string>
+
+    //chuyển khoản
+    <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
+    <string name="str_input_account_ecash">Nhập số tài khoản eCash</string>
+    <string name="str_input_money">Nhập số tiền</string>
+    <string name="str_input_content">Nhập nội dung</string>
+    <string name="str_input_cmnd">Nhập số chứng minh thư</string>
+    <string name="str_input_phone">Nhập số điện thoại</string>
+    <string name="str_account_receive">Tài khoản nhận</string>
+    <string name="str_input_name_or_phone">Nhập tên hoặc số điện thoại</string>
+    <string name="str_item_transfer_cash">%s - %s</string>
+    <string name="str_take_cash">Nhận eCash</string>
+    <string name="str_cash_take_success">Thành công</string>
+    <string name="str_cash_take_info">Thông tin giao dịch</string>
+    <string name="str_human_transfer">Người chuyển:</string>
+    <string name="str_phone_number_transfer">Số điện thoại: </string>
+    <string name="str_content_transfer">Nội dung: </string>
+    <string name="str_number_cash">Số lượng eCash</string>
+    <string name="str_transfer_cash">Chuyển eCash</string>
+
+    //change cash
+    <string name="str_cash_have_in_wallet">Cash có trong ví</string>
+    <string name="str_cash_change">Cash đổi</string>
+    <string name="str_cash_take">Cash nhận</string>
+
+    //rút eCash
+    <string name="str_withdraw_edong">Rút về ví eDong</string>
+    <string name="number_money">Số tiền</string>
+    <string name="str_number_recharge">Số tiền nạp</string>
+    <string name="str_number_out">Số tiền chuyển</string>
+    <string name="str_number_in">Số tiền rút</string>
+    <string name="str_phone_number">Số điện thoại</string>
+    <string name="str_email">Email</string>
+    <string name="str_cmnd">Số CMND</string>
+    <string name="str_address">Địa chỉ</string>
+    <string name="str_edit_info">Sửa thông tin</string>
+
+    //login
+    <string name="str_dialog_cancel">Hủy</string>
+    <string name="str_change_pass">Đổi mật khẩu</string>
+    <string name="str_cancel_account">Huỷ tài khoản</string>
+    <string name="str_logout_account">Thoát tài khoản</string>
+    <string name="str_register_finish">Hoàn tất</string>
+
+    <string name="str_dialog_notifi_title" translatable="false">Thông báo</string>
+    <string name="str_Ignore" translatable="false">Bỏ qua</string>
+    <string name="yes" translatable="false">Đồng ý</string>
+    <string name="str_confirm_out_app" translatable="false">Bạn có muốn thoát khỏi ứng dụng?</string>
+    <string name="str_dialog_not_login" translatable="false">Bạn chưa đăng nhập.Hãy đăng nhập để sử dụng chức năng này</string>
+    <string name="str_dialog_active_acc" translatable="false">Bạn vui lòng kích hoạt tài khoản để sử dụng chức năng này</string>
+
+    //err
+    <string name="error" translatable="false">Lỗi kết nối. Xin vui lòng thử lại sau</string>
+    <string name="err_socket_timeout" translatable="false">Kết nối thất bại. Xin vui lòng thử lại sau</string>
+    <string name="err_upload" translatable="false">Đã có lỗi xảy ra.Xin vui lòng thử lại</string>
+    <string name="str_send_otp_success">Gửi mã OTP thành công vui lòng chờ SMS để lấy OTP</string>
+    <string name="err_send_otp_active_account">Bạn vui lòng nhập mã OTP để kích hoạt tài khoản</string>
+    <string name="err_not_received">Bạn không nhận được?</string>
+    <string name="err_doing">Chức năng đang được phát triển?</string>
+    <string name="err_user_not_exit">Tài khoản không tồn tại</string>
+    <string name="err_not_input_username">bạn chưa nhập tài khoản</string>
+    <string name="err_not_input_number_username">bạn chưa nhập số tài khoản</string>
+    <string name="err_not_input_pass">bạn chưa nhập mật khẩu</string>
+    <string name="err_device_acc_exit">Thiết bị của bạn đã được đăng ký 1 tài khoản khác!</string>
+    <string name="err_otp_input_fail">OTP bạn nhập không đúng</string>
+    <string name="err_out_of_money_change">Hết mệnh giá cần đổi</string>
+    <string name="err_end_of_the_session">Phiện làm việc của bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
+    <string name="err_chose_money">bạn chưa chọn số tiền muốn chuyển</string>
+    <string name="err_get_public_key_organize">không lấy được publickey của tổ chức phát hành</string>
+    <string name="err_duplicate_wallet_id">Số ví chuyển phải khác số ví của bạn!</string>
+    <string name="err_dit_not_content">bạn chưa nhập nội dung</string>
+    <string name="err_dit_not_money_transfer">bạn chưa chọn số tiền muốn chuyển</string>
+    <string name="err_dit_not_get_key_transfer">không lấy được key của người nhận</string>
+    <string name="err_connect_socket_fail">kết nối socket không thành công. Bạn vui lòng kiểm tra kết nối!</string>
+    <string name="err_validate_user_name_fail">Tên đăng nhập không chưa ký tự đặc biệt hoặc khoảng trắng</string>
+    <string name="err_validate_name_fail">Họ và tên không chưa ký tự đặc biệt!</string>
+    <string name="err_validate_cmnd_fail">số chứng minh là số từ 9 đến 12 số!</string>
+    <string name="err_validate_phone_fail">Số điện thoại bạn vừa nhập không hợp lệ vui lòng nhập lại</string>
+    <string name="err_pass_duplicate_fail">2 mật khẩu phải giống nhau</string>
+    <string name="err_pass_bigger_six_char">Mật khẩu phải từ 6 đến 20 ký tự</string>
+    <string name="err_user_name_null">bạn chưa nhập tên tài khoản</string>
+    <string name="err_name_null">bạn chưa nhập họ tên</string>
+    <string name="err_cmnd_null">bạn chưa nhập chứng minh nhân dân</string>
+    <string name="err_phone_null">bạn chưa nhập số điện thoại</string>
+    <string name="err_old_pass_null">Bạn chưa nhập mật khẩu cũ</string>
+    <string name="err_new_pass_null">Bạn chưa nhập mật khẩu mới</string>
+    <string name="err_renew_pass_null">Bạn chưa nhập lại mật khẩu mới</string>
+    <string name="err_pass_null">bạn chưa nhập mật khẩu</string>
+    <string name="err_repass_null">bạn chưa nhập lại mật khẩu</string>
+    <string name="err_nmnd_is_exit">số CMND hoặc sdt đã tồn tại trên hệ thống</string>
+    <string name="err_user_is_exit">tên đăng nhập đã tồn tại trên hệ thống</string>
+    <string name="err_otp_fail">OTP bạn nhập không đúng</string>
+    <string name="err_wallet_is_exit">Thiết bị của bạn đã được đăng ký ví!</string>
+    <string name="err_store_image">Bộ nhớ không đủ để lưu ảnh</string>
+    <string name="err_pass_fail">Mật khẩu bạn nhập không đúng</string>
+    <string name="err_confirm_cancel_account">Bạn có chắc muốn huỷ tài khoản?</string>
+
+    //%s
+    <string name="str_number_scan_qr_code">Bạn đã quét thành công %s QR code</string>
+    <string name="str_total_money_transfer">+ %s</string>
+    <string name="str_money">Số lượng: %s</string>
+    <string name="str_total_money">%s VNĐ</string>
+    <string name="str_dialog_cash_in_success">bạn đã nạp thành công số tiền: %s từ tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_out_success">bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_to_cash_success">bạn đã chuyển thành công số tiền: %s sang tài khoản: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+
+    //money check
+    <string name="str_10000">10000</string>
+    <string name="str_20000">20000</string>
+    <string name="str_50000">50000</string>
+    <string name="str_100000">100000</string>
+    <string name="str_200000">200000</string>
+    <string name="str_500000">500000</string>
+
+    //key store
+    <string name="str_key_store_provider">AndroidKeyStore</string>
+
+    //change pass
+    <string name="str_input_old_pass">Nhập mật khẩu cũ</string>
+    <string name="str_input_new_pass">Nhập mật khẩu mới</string>
+    <string name="str_input_re_new_pass">Nhập lại mật khẩu mới</string>
+    <string name="str_change_pass_success">Bạn đã đổi mật khẩu thành công. Bạn vui lòng đăng nhập lại với mật khẩu mới</string>
+    
+    //qr code
+    <string name="str_scan_qr_code">Quét mã QR</string>
+    <string name="str_qr_code">Mã QR</string>
+    <string name="str_flash_on">Bật Flash</string>
+    <string name="str_image">Hình Ảnh</string>
+    <string name="str_scan_qr_note">Di chuyển camera để mã QR nằm trong khung</string>
+</resources>

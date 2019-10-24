@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_gray_rectangle_border"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/str_account_name"
+                    android:textColor="@color/grey_light" />
+
+                <TextView
+                    android:id="@+id/tv_account_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="10dp"
+                    android:textColor="@color/black" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/tv_account_name"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/white" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/str_ecash_id"
+                    android:textColor="@color/grey_light" />
+
+                <TextView
+                    android:id="@+id/tv_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="10dp"
+                    android:textColor="@color/black" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/tv_id"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/white" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/str_account_balance"
+                    android:textColor="@color/grey_light" />
+
+                <TextView
+                    android:id="@+id/tv_over_ecash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="10dp"
+                    android:textColor="@color/black" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/tv_over_ecash"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/white" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_drop_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:src="@drawable/ic_drop_down" />
+
+                <TextView
+                    android:id="@+id/tv_eDong_wallet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/iv_drop_down"
+                    android:paddingStart="10dp"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/str_account_edong"
+                    android:textColor="@color/grey_light" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/tv_eDong_wallet"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/white" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/str_account_balance_edong"
+                    android:textColor="@color/grey_light" />
+
+                <TextView
+                    android:id="@+id/tv_over_edong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="10dp"
+                    android:textColor="@color/black" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/tv_over_edong"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/gray_light" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textColor="@color/blue"
+            android:text="@string/transfer_to_cash"
+            android:paddingTop="10dp"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_header"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/edt_stk_cash"
+            android:layout_width="match_parent"
+            android:hint="@string/str_input_account_ecash"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/text_normal"
+            android:inputType="number"
+            android:background="@drawable/edittext_bottom_line"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/edt_money_cash"
+            android:layout_width="match_parent"
+            android:hint="@string/str_input_money"
+            android:padding="10dp"
+            android:inputType="number"
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/text_normal"
+            android:background="@drawable/edittext_bottom_line"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/edt_content"
+            android:layout_width="match_parent"
+            android:hint="@string/str_input_content"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/text_normal"
+            android:inputType="text"
+            android:background="@drawable/edittext_bottom_line"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ed_password"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/bg_border_rectangle_blue"
+            android:text="@string/confirm"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</ScrollView>

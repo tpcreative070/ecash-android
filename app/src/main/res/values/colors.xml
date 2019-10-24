@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="colorPrimary">#003c77</color>
+    <color name="colorPrimaryDark">#003c77</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="orange">#FF7302</color>
+    <color name="red">#ff0000</color>
+    <color name="yellow">#f4a42c</color>
+    <color name="white">#ffffff</color>
+    <color name="transparent_white">#4Dffffff</color>
+    <color name="black">#000000</color>
+    <color name="transparent_blue">#f2f6f9</color>
+    <color name="blue">#38bbe9</color>
+    <color name="transparent">#00FFFFFF</color>
+
+    <color name="green_darker">#006C3B</color>
+    <color name="green_light">#76ff03</color>
+    <color name="slide_background">#006c3b</color>
+    <color name="slide_button">#EF5222</color>
+    <color name="grey_background">#ffe9e9e9</color>
+    <color name="grey_light">#666666</color>
+    <color name="vato_pay_bg_color">#EF5222</color>
+    <color name="promotion_bg_color">#ff5484D5</color>
+    <color name="default_tag_bg_color">#dcdcdc</color>
+    <color name="cash_bg_color">#dedede</color>
+    <color name="grey">#9f9f9f</color>
+    <color name="pale_grey">#efeff4</color>
+    <color name="black_two">#111111</color>
+    <color name="pinkish_grey">#bbbbbb</color>
+    <color name="greyish_brown">#4f4f4f</color>
+    <color name="dark_blue_green">#00613d</color>
+    <color name="emperor">#505050</color>
+    <color name="silver">#bbbbbb</color>
+    <color name="gray_text_register">#b8c2ca</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="gray_light">#F0F0F0</color>
+    <color name="gray">#99A9B3</color>
+    <color name="white_1">#b7d6eb</color>
+
+    <color name="bg_search">#E1E7EC</color>
+    <color name="bg_item_transfer">#F2F6F9</color>
+</resources>

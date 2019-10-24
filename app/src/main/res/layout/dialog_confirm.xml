@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_border_gray"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:text="@string/str_dialog_notifi_title"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/text_header" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@id/tvTitle"
+        android:background="@color/gray_light" />
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTitle"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_large" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvContent"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/btnCancel"
+            style="@style/btn_cancel"
+            android:layout_marginEnd="10dp"
+            android:textSize="@dimen/text_large"
+            android:text="@string/str_Ignore" />
+
+        <Button
+            android:id="@+id/btnOk"
+            style="@style/btn_submit"
+            android:layout_marginStart="10dp"
+            android:textSize="@dimen/text_large"
+            android:text="@string/yes" />
+    </LinearLayout>
+
+</RelativeLayout>
