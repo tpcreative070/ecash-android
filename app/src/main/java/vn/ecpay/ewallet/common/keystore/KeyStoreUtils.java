@@ -20,7 +20,6 @@ public class KeyStoreUtils {
 
         SharedPreferences prefs = getSharedPreference(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
         editor.putString(Constant.INSTANCE_KS_ENCRYPT_PRIVATE, jsKSEncrypt);
         editor.apply();
     }
@@ -33,7 +32,6 @@ public class KeyStoreUtils {
 
         SharedPreferences prefs = getSharedPreference(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
         editor.putString(Constant.INSTANCE_KS_ENCRYPT_MASTER, jsKSEncrypt);
         editor.apply();
     }

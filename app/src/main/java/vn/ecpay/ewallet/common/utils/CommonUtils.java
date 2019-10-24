@@ -31,7 +31,7 @@ import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eccrypto.Test;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
-import vn.ecpay.ewallet.database.table.Cash;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
@@ -214,7 +214,7 @@ public class CommonUtils {
         }
     }
 
-    public static byte[] getDataSign(boolean flag, Cash cash) {
+    public static byte[] getDataSign(boolean flag, CashLogs cash) {
         return SHA256.hashSHA256(cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getSerialNo() + ";"
                 + cash.getDecisionNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"
                 + cash.getExpireDate() + (flag ? "" : ";" + cash.getCycle()));
@@ -229,7 +229,7 @@ public class CommonUtils {
         return CommonUtils.generateSignature(dataSign, Constant.STR_PRIVATE_KEY_CHANEL);
     }
 
-    public static boolean verifyCash(Cash cash, String decisionTrekp, String decisionAcckp) {
+    public static boolean verifyCash(CashLogs cash, String decisionTrekp, String decisionAcckp) {
         boolean treResult = true;
         boolean accResult = true;
 
@@ -303,7 +303,7 @@ public class CommonUtils {
         return name.matches(regex);
     }
 
-    public static String getAppenItemCash(Cash cash) {
+    public static String getAppenItemCash(CashLogs cash) {
         return (cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getDecisionNo() + ";"
                 + cash.getSerialNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"
                 + cash.getExpireDate() + ";" + cash.getCycle());
@@ -363,7 +363,7 @@ public class CommonUtils {
 
     }
 
-    public static QRCashTransfer getQrCashTransfer(Cash cash, ResponseCashMess responseMess, ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet, boolean status){
+    public static QRCashTransfer getQrCashTransfer(CashLogs cash, ResponseCashMess responseMess, ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet, boolean status){
         QRCashTransfer qrCashTransfer = new QRCashTransfer();
         qrCashTransfer.setParValue(cash.getParValue());
         qrCashTransfer.setSuccess(status);

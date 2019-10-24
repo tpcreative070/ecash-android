@@ -95,6 +95,8 @@
     <string name="str_cash_have_in_wallet">Cash có trong ví</string>
     <string name="str_cash_change">Cash đổi</string>
     <string name="str_cash_take">Cash nhận</string>
+    <string name="str_number_cash_transfer">Số cash muốn đổi</string>
+    <string name="str_number_cash_take">Số cash chuyển sang</string>
 
     //rút eCash
     <string name="str_withdraw_edong">Rút về ví eDong</string>
@@ -167,6 +169,9 @@
     <string name="err_store_image">Bộ nhớ không đủ để lưu ảnh</string>
     <string name="err_pass_fail">Mật khẩu bạn nhập không đúng</string>
     <string name="err_confirm_cancel_account">Bạn có chắc muốn huỷ tài khoản?</string>
+    <string name="err_chose_money_transfer">bạn chưa chọn số tiền muốn đổi</string>
+    <string name="err_chose_money_take">bạn chưa chọn số tiền muốn nhận</string>
+<!--    <string name="err_conflic_take_and ">bạn chưa chọn số tiền muốn nhận</string>-->
 
     //%s
     <string name="str_number_scan_qr_code">Bạn đã quét thành công %s QR code</string>
@@ -193,6 +198,8 @@
     <string name="str_input_new_pass">Nhập mật khẩu mới</string>
     <string name="str_input_re_new_pass">Nhập lại mật khẩu mới</string>
     <string name="str_change_pass_success">Bạn đã đổi mật khẩu thành công. Bạn vui lòng đăng nhập lại với mật khẩu mới</string>
+    <string name="str_apply">Áp dụng</string>
+    <string name="str_number_money_change">Số tiền đổi</string>
     
     //qr code
     <string name="str_scan_qr_code">Quét mã QR</string>

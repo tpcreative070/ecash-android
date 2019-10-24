@@ -36,7 +36,7 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.Cash;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.webSocket.genenSignature.ChangeSignature;
@@ -121,7 +121,7 @@ public class TestSocketActivity extends ECashBaseActivity {
 //            @Override
 //            public void run() {
 //                DecisionDatabase.getINSTANCE(getApplicationContext());
-//                List<Cash> transactionLogList = DecisionDatabase.getAllCash();
+//                List<CashLogs> transactionLogList = DecisionDatabase.getAllCash();
 //
 //
 //                WalletDatabase.getINSTANCE(getApplicationContext());
@@ -176,7 +176,7 @@ public class TestSocketActivity extends ECashBaseActivity {
     private void saveEcash() {
 
         WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-        List<Cash> cashList = WalletDatabase.getAllCash();
+        List<CashLogs> cashList = WalletDatabase.getAllCash();
 
 //        UserDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
 //        UserDatabase.getAllProfile();
@@ -199,7 +199,7 @@ public class TestSocketActivity extends ECashBaseActivity {
     }
 
     private void insertData() {
-        Cash mCash = new Cash();
+        CashLogs mCash = new CashLogs();
         mCash.setUserName("userName");
         mCash.setCountryCode("cash.getCountryCode()");
         mCash.setIssuerCode("cash.getIssuerCode()");
@@ -225,7 +225,7 @@ public class TestSocketActivity extends ECashBaseActivity {
             @Override
             public void run() {
                 WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-                List<Cash> cashList = WalletDatabase.getAllCash();
+                List<CashLogs> cashList = WalletDatabase.getAllCash();
                 Log.e("cash", String.valueOf(cashList.size()));
             }
         }, 3000);

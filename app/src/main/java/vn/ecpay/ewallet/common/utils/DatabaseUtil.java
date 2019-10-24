@@ -10,7 +10,7 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.Cash;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
@@ -80,12 +80,12 @@ public class DatabaseUtil {
     }
 
     //ma hoa mat xich dong tien
-    public static String getPreviousHashCash(Cash cash, Context context) {
+    public static String getPreviousHashCash(CashLogs cash, Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        List<Cash> cashList = WalletDatabase.getAllCash();
+        List<CashLogs> cashList = WalletDatabase.getAllCash();
         if (cashList.size() > 0) {
             //get cash max id
-            Cash cashMax = WalletDatabase.getCashByMaxID(WalletDatabase.getMaxIDCash());
+            CashLogs cashMax = WalletDatabase.getCashByMaxID(WalletDatabase.getMaxIDCash());
 
             //updatePreviousCash min id => new PreviousHash
             WalletDatabase.updatePreviousCashMin(getSignCash(cash), WalletDatabase.getMinIDCash());
@@ -113,21 +113,21 @@ public class DatabaseUtil {
         }
     }
 
-    public static boolean SaveCashToDB(Cash cash, Context context, String userName) {
+    public static boolean SaveCashToDB(CashLogs cash, Context context, String userName) {
         cash.setPreviousHash(getPreviousHashCash(cash, context));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertCashTask(cash, userName);
         return true;
     }
 
-    public static boolean SaveCashInvalidToDB(Cash cash, Context context, String userName) {
+    public static boolean SaveCashInvalidToDB(CashLogs cash, Context context, String userName) {
         cash.setPreviousHash(getPreviousHashCash(cash, context));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertCashInvalidTask(cash, userName);
         return true;
     }
 
-    public static String getSignCash(Cash cash) {
+    public static String getSignCash(CashLogs cash) {
         String cashSign = cash.getCountryCode() + cash.getIssuerCode() + cash.getDecisionNo()
                 + cash.getSerialNo() + cash.getParValue() + cash.getActiveDate() + cash.getExpireDate()
                 + cash.getCycle() + cash.getAccSign() + cash.getTreSign();
@@ -135,13 +135,13 @@ public class DatabaseUtil {
         return CommonUtils.generateSignature(dataSign, Constant.STR_PRIVATE_KEY_CHANEL);
     }
 
-    public static void updateDatabase(ArrayList<Cash> listCashSend, ResponseCashMess responseMess, Context context, String userName) {
+    public static void updateDatabase(ArrayList<CashLogs> listCashSend, ResponseCashMess responseMess, Context context, String userName) {
         //save trasaction log
         saveTransactionLog(responseMess, context);
         //save to cash log
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         for (int i = 0; i < listCashSend.size(); i++) {
-            Cash cash = listCashSend.get(i);
+            CashLogs cash = listCashSend.get(i);
             cash.setType(Constant.STR_CASH_OUT);
             WalletDatabase.insertCashTask(cash, userName);
         }

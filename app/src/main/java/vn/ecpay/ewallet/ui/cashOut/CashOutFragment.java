@@ -35,7 +35,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.Cash;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
@@ -136,7 +136,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     private String refId;
     private String publicKeyOrganization;
     private ResponseCashMess responseMess;
-    private ArrayList<Cash> listCashSend;
+    private ArrayList<CashLogs> listCashSend;
     private byte elementSplit = '$';
     @Inject
     CashOutPresenter cashOutPresenter;
@@ -400,40 +400,40 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         listCashSend = new ArrayList<>();
         if (sl10 > 0) {
-            List<Cash> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
+            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl10; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl20 > 0) {
-            List<Cash> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
+            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl20; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl50 > 0) {
-            List<Cash> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
+            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl50; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl100 > 0) {
-            List<Cash> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
+            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl100; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl200 > 0) {
-            List<Cash> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
+            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl200; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl500 > 0) {
-            List<Cash> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
+            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl500; i++) {
                 listCashSend.add(cashList.get(i));
             }
@@ -442,7 +442,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         if (listCashSend.size() > 0) {
             String[][] cashSendArray = new String[listCashSend.size()][3];
             for (int i = 0; i < listCashSend.size(); i++) {
-                Cash cash = listCashSend.get(i);
+                CashLogs cash = listCashSend.get(i);
                 String[] moneyItem = {getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
                 cashSendArray[i] = moneyItem;
             }
@@ -479,7 +479,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 + responseMess.getContent() + responseMess.getCashEnc();
     }
 
-    private String getAppenItemCash(Cash cash) {
+    private String getAppenItemCash(CashLogs cash) {
         return (cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getDecisionNo() + ";"
                 + cash.getSerialNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"
                 + cash.getExpireDate() + ";" + cash.getCycle());
@@ -509,7 +509,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         //save to cash log
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         for (int i = 0; i < listCashSend.size(); i++) {
-            Cash cash = listCashSend.get(i);
+            CashLogs cash = listCashSend.get(i);
             cash.setType(Constant.STR_CASH_OUT);
             WalletDatabase.insertCashTask(cash, accountInfo.getUsername());
         }

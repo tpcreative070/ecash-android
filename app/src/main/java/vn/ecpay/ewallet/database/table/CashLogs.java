@@ -5,8 +5,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "CASH")
-public class Cash {
+@Entity(tableName = "CASH_LOGS")
+public class CashLogs {
     @NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

@@ -9,6 +9,8 @@ import vn.ecpay.ewallet.ui.account.component.LoginComponent;
 import vn.ecpay.ewallet.ui.account.component.RegisterComponent;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.module.RegisterModule;
+import vn.ecpay.ewallet.ui.cashChange.component.CashChangeComponent;
+import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashIn.component.CashInComponent;
 import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashOut.component.CashOutComponent;
@@ -42,4 +44,6 @@ public interface ApplicationComponent {
     QRCodeComponent plus(QRCodeModule qrCodeModule);
 
     MyWalletComponent plus(MyWalletModule myWalletModule);
+
+    CashChangeComponent plus(CashChangeModule cashChangeModule);
 }

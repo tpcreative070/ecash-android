@@ -236,31 +236,6 @@ public class MainActivity extends ECashBaseActivity {
 
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void updateAccountLogin(EventDataChange event) {
-        tabHost.getTabWidget().getChildAt(4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ECashApplication.getAccountInfo() != null) {
-                    tabHost.setCurrentTab(4);
-                } else
-                    ECashApplication.get(MainActivity.this).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
-            }
-        });
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     protected void onDestroy() {
         Intent webSocketService = new Intent(MainActivity.this, WebSocketsService.class);
         stopService(webSocketService);

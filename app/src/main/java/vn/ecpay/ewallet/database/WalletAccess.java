@@ -9,7 +9,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import vn.ecpay.ewallet.database.table.Cash;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.CashInvalid;
 import vn.ecpay.ewallet.database.table.Contact;
 import vn.ecpay.ewallet.database.table.Decision;
@@ -37,40 +37,40 @@ public interface WalletAccess {
     @Query("SELECT * FROM DECISIONS_DIARY WHERE decisionNo LIKE :decisionNo")
     Decision getDecisionNo(String decisionNo);
 
-    //Cash------------------------------------------------------------------------------------------
+    //CashLogs------------------------------------------------------------------------------------------
     @Insert
-    void insertOnlySingleCash(Cash cash);
+    void insertOnlySingleCash(CashLogs cash);
 
     @Insert
-    void insertMultipleCash(List<Cash> cashList);
+    void insertMultipleCash(List<CashLogs> cashList);
 
-    @Query("SELECT * FROM CASH")
-    List<Cash> getAllCash();
+    @Query("SELECT * FROM CASH_LOGS")
+    List<CashLogs> getAllCash();
 
-    @Query("SELECT MAX(id) FROM CASH")
+    @Query("SELECT MAX(id) FROM CASH_LOGS")
     int getCashMaxID();
 
-    @Query("SELECT MIN(id) FROM CASH")
+    @Query("SELECT MIN(id) FROM CASH_LOGS")
     int getCashMinID();
 
-    @Query("UPDATE CASH SET previousHash=:mPreviousHash WHERE id = :minID")
+    @Query("UPDATE CASH_LOGS SET previousHash=:mPreviousHash WHERE id = :minID")
     void updatePreviousCash(String mPreviousHash, int minID);
 
-    @Query("SELECT * FROM CASH WHERE id=:maxID")
-    Cash getCashByMaxID(int maxID);
+    @Query("SELECT * FROM CASH_LOGS WHERE id=:maxID")
+    CashLogs getCashByMaxID(int maxID);
 
-    @Query("SELECT SUM(parValue) FROM CASH WHERE type LIKE :input")
+    @Query("SELECT SUM(parValue) FROM CASH_LOGS WHERE type LIKE :input")
     int getTotalCash(String input);
 
-    @Query("SELECT DISTINCT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH WHERE type LIKE :type AND serialNo IN (SELECT serialNo FROM CASH  GROUP BY serialNo HAVING COUNT(serialNo)%2) AND parValue =:money")
-    List<Cash> getListCashForMoney(String money, String type);
+    @Query("SELECT DISTINCT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type LIKE :type AND serialNo IN (SELECT serialNo FROM CASH_LOGS  GROUP BY serialNo HAVING COUNT(serialNo)%2) AND parValue =:money")
+    List<CashLogs> getListCashForMoney(String money, String type);
 
     //Cash_Invalid----------------------------------------------------------------------------------
     @Insert
     void insertOnlySingleCashInvalid(CashInvalid cash);
 
     @Query("SELECT * FROM CASH_INVALID")
-    List<Cash> getAllCashInvalid();
+    List<CashLogs> getAllCashInvalid();
 
     @Query("SELECT MAX(id) FROM CASH_INVALID")
     int getCashInvalidMaxID();
@@ -82,7 +82,7 @@ public interface WalletAccess {
     void updatePreviousCashInvalid(String mPreviousHash, int minID);
 
     @Query("SELECT * FROM CASH_INVALID WHERE id=:maxID")
-    Cash getCashInvalidByMaxID(int maxID);
+    CashLogs getCashInvalidByMaxID(int maxID);
 
     @Query("SELECT SUM(parValue) FROM CASH_INVALID WHERE type LIKE :input")
     int getTotalCashInvalid(String input);
@@ -116,21 +116,21 @@ public interface WalletAccess {
     @Insert
     void insertOnlySingleTransactionLog(TransactionLog transactionLog);
 
-    @Query("SELECT * FROM TRANSACTION_LOG")
+    @Query("SELECT * FROM TRANSACTION_LOGS")
     List<TransactionLog> getAllTransactionLog();
 
-    @Query("SELECT MAX(id) FROM TRANSACTION_LOG")
+    @Query("SELECT MAX(id) FROM TRANSACTION_LOGS")
     int getMaxIDTransactionLog();
 
-    @Query("SELECT MIN(id) FROM TRANSACTION_LOG")
+    @Query("SELECT MIN(id) FROM TRANSACTION_LOGS")
     int getMinIDTransactionLog();
 
-    @Query("SELECT * FROM TRANSACTION_LOG WHERE id=:maxID")
+    @Query("SELECT * FROM TRANSACTION_LOGS WHERE id=:maxID")
     TransactionLog getTransactionLogByMaxID(int maxID);
 
-    @Query("SELECT * FROM TRANSACTION_LOG WHERE transactionSignature Like :transactionSignature")
+    @Query("SELECT * FROM TRANSACTION_LOGS WHERE transactionSignature Like :transactionSignature")
     TransactionLog checkTransactionLogExit(String transactionSignature);
 
-    @Query("UPDATE CASH SET previousHash=:previousHash WHERE id = :minID")
+    @Query("UPDATE TRANSACTION_LOGS SET previousHash=:previousHash WHERE id = :minID")
     void updatePreviousTransactionLogMin(String previousHash, int minID);
 }

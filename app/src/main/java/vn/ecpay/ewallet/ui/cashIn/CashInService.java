@@ -26,7 +26,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.Cash;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.Decision;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cash.edongToEcash.EDongToECash;
@@ -86,7 +86,7 @@ public class CashInService extends Service {
         @Override
         protected String doInBackground(String[]... strings) {
             String[] object = strings[0];
-            Cash cash = new Cash();
+            CashLogs cash = new CashLogs();
             cash.setAccSign(object[1].replaceAll("\n", ""));
             cash.setTreSign(object[2].replaceAll("\n", ""));
 
@@ -112,7 +112,7 @@ public class CashInService extends Service {
         }
     }
 
-    private void getPublicKeyCashToCheck(Cash cash, String decisionNo) {
+    private void getPublicKeyCashToCheck(CashLogs cash, String decisionNo) {
         Log.e("getPublicKeyCashToCheck", "ahihi");
         Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -168,7 +168,7 @@ public class CashInService extends Service {
         WalletDatabase.insertDecisionTask(decision);
     }
 
-    private void checkVerifyCash(Cash cash, String decisionTrekp, String decisionAcckp) {
+    private void checkVerifyCash(CashLogs cash, String decisionTrekp, String decisionAcckp) {
         if (CommonUtils.verifyCash(cash, decisionTrekp, decisionAcckp)) {
             //xác thực đồng ecash ok => save cash
             DatabaseUtil.SaveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());

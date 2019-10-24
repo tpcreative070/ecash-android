@@ -17,22 +17,24 @@ import java.util.List;
 
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.database.table.Cash;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.CashInvalid;
 import vn.ecpay.ewallet.database.table.Contact;
 import vn.ecpay.ewallet.database.table.Decision;
 import vn.ecpay.ewallet.database.table.Profile;
 import vn.ecpay.ewallet.database.table.TransactionLog;
+import vn.ecpay.ewallet.database.table.TransactionTimeOut;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
 
 @Database(entities = {Contact.class,
-        Cash.class,
+        CashLogs.class,
         Decision.class,
         Profile.class,
         TransactionLog.class,
-        CashInvalid.class}, version = 1, exportSchema = false)
+        CashInvalid.class,
+        TransactionTimeOut.class}, version = 1, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -104,8 +106,8 @@ public abstract class WalletDatabase extends RoomDatabase {
 
 
     //cash------------------------------------------------------------------------------------------
-    public static void insertCashTask(Cash cash, String userName) {
-        Cash mCash = new Cash();
+    public static void insertCashTask(CashLogs cash, String userName) {
+        CashLogs mCash = new CashLogs();
         mCash.setUserName(userName);
         mCash.setCountryCode(cash.getCountryCode());
         mCash.setIssuerCode(cash.getIssuerCode());
@@ -123,7 +125,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         insertCashTask(mCash);
     }
 
-    private static void insertCashTask(final Cash cash) {
+    private static void insertCashTask(final CashLogs cash) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -133,7 +135,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static List<Cash> getAllCash() {
+    public static List<CashLogs> getAllCash() {
         try {
             return walletDatabase.daoAccess().getAllCash();
         } catch (Exception e) {
@@ -153,7 +155,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.daoAccess().updatePreviousCash(previousHash, minID);
     }
 
-    public static Cash getCashByMaxID(int maxID) {
+    public static CashLogs getCashByMaxID(int maxID) {
         return walletDatabase.daoAccess().getCashByMaxID(maxID);
     }
 
@@ -169,12 +171,12 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getListCashForMoney(money, type).size();
     }
 
-    public static List<Cash> getListCashForMoney(String money, String type) {
+    public static List<CashLogs> getListCashForMoney(String money, String type) {
         return walletDatabase.daoAccess().getListCashForMoney(money, type);
     }
 
     //Cash_Invalid----------------------------------------------------------------------------------
-    public static void insertCashInvalidTask(Cash cash, String userName) {
+    public static void insertCashInvalidTask(CashLogs cash, String userName) {
         CashInvalid mCash = new CashInvalid();
         mCash.setUserName(userName);
         mCash.setCountryCode(cash.getCountryCode());
