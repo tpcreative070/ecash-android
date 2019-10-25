@@ -1,5 +1,5 @@
 
-package vn.ecpay.ewallet.model.cash.ecashToEdong;
+package vn.ecpay.ewallet.model.ecashToEdong;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;

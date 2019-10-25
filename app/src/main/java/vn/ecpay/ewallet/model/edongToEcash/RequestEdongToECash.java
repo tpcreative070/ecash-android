@@ -1,59 +1,44 @@
 
-package vn.ecpay.ewallet.model.cash.ecashToEdong;
+package vn.ecpay.ewallet.model.edongToEcash;
 
+import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
+import vn.ecpay.ewallet.model.BaseObject;
+
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ECashToEDong {
+public class RequestEdongToECash extends BaseObject {
 
     @SerializedName("amount")
     private Long mAmount;
-    @SerializedName("auditNumber")
-    private String mAuditNumber;
-    @SerializedName("cashEnc")
-    private String mCashEnc;
     @SerializedName("channelCode")
     private String mChannelCode;
-    @SerializedName("channelId")
-    private Long mChannelId;
     @SerializedName("channelSignature")
     private String mChannelSignature;
-    @SerializedName("content")
-    private String mContent;
     @SerializedName("creditAccount")
     private String mCreditAccount;
-    @SerializedName("customerId")
-    private Long mCustomerId;
     @SerializedName("debitAccount")
     private String mDebitAccount;
     @SerializedName("functionCode")
     private String mFunctionCode;
-    @SerializedName("functionId")
-    private Long mFunctionId;
-    @SerializedName("glAccRefId")
-    private Long mGlAccRefId;
-    @SerializedName("id")
-    private String mId;
+    @SerializedName("quantities")
+    private List<Integer> mQuantities;
     @SerializedName("receiver")
-    private Long mReceiver;
+    private String mReceiver;
     @SerializedName("sender")
     private String mSender;
     @SerializedName("sessionId")
     private String mSessionId;
     @SerializedName("terminalId")
     private String mTerminalId;
-    @SerializedName("time")
-    private Long mTime;
     @SerializedName("token")
     private String mToken;
-    @SerializedName("transLockRefId")
-    private Long mTransLockRefId;
-    @SerializedName("type")
-    private String mType;
     @SerializedName("username")
     private String mUsername;
+    @SerializedName("values")
+    private List<Integer> mValues;
 
     public Long getAmount() {
         return mAmount;
@@ -61,22 +46,6 @@ public class ECashToEDong {
 
     public void setAmount(Long amount) {
         mAmount = amount;
-    }
-
-    public String getAuditNumber() {
-        return mAuditNumber;
-    }
-
-    public void setAuditNumber(String auditNumber) {
-        mAuditNumber = auditNumber;
-    }
-
-    public String getCashEnc() {
-        return mCashEnc;
-    }
-
-    public void setCashEnc(String cashEnc) {
-        mCashEnc = cashEnc;
     }
 
     public String getChannelCode() {
@@ -87,14 +56,6 @@ public class ECashToEDong {
         mChannelCode = channelCode;
     }
 
-    public Long getChannelId() {
-        return mChannelId;
-    }
-
-    public void setChannelId(Long channelId) {
-        mChannelId = channelId;
-    }
-
     public String getChannelSignature() {
         return mChannelSignature;
     }
@@ -103,28 +64,12 @@ public class ECashToEDong {
         mChannelSignature = channelSignature;
     }
 
-    public String getContent() {
-        return mContent;
-    }
-
-    public void setContent(String content) {
-        mContent = content;
-    }
-
     public String getCreditAccount() {
         return mCreditAccount;
     }
 
     public void setCreditAccount(String creditAccount) {
         mCreditAccount = creditAccount;
-    }
-
-    public Long getCustomerId() {
-        return mCustomerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        mCustomerId = customerId;
     }
 
     public String getDebitAccount() {
@@ -143,35 +88,19 @@ public class ECashToEDong {
         mFunctionCode = functionCode;
     }
 
-    public Long getFunctionId() {
-        return mFunctionId;
+    public List<Integer> getQuantities() {
+        return mQuantities;
     }
 
-    public void setFunctionId(Long functionId) {
-        mFunctionId = functionId;
+    public void setQuantities(List<Integer> quantities) {
+        mQuantities = quantities;
     }
 
-    public Long getGlAccRefId() {
-        return mGlAccRefId;
-    }
-
-    public void setGlAccRefId(Long glAccRefId) {
-        mGlAccRefId = glAccRefId;
-    }
-
-    public String getId() {
-        return mId;
-    }
-
-    public void setId(String id) {
-        mId = id;
-    }
-
-    public Long getReceiver() {
+    public String getReceiver() {
         return mReceiver;
     }
 
-    public void setReceiver(Long receiver) {
+    public void setReceiver(String receiver) {
         mReceiver = receiver;
     }
 
@@ -199,14 +128,6 @@ public class ECashToEDong {
         mTerminalId = terminalId;
     }
 
-    public Long getTime() {
-        return mTime;
-    }
-
-    public void setTime(Long time) {
-        mTime = time;
-    }
-
     public String getToken() {
         return mToken;
     }
@@ -215,28 +136,20 @@ public class ECashToEDong {
         mToken = token;
     }
 
-    public Long getTransLockRefId() {
-        return mTransLockRefId;
-    }
-
-    public void setTransLockRefId(Long transLockRefId) {
-        mTransLockRefId = transLockRefId;
-    }
-
-    public String getType() {
-        return mType;
-    }
-
-    public void setType(String type) {
-        mType = type;
-    }
-
     public String getUsername() {
         return mUsername;
     }
 
     public void setUsername(String username) {
         mUsername = username;
+    }
+
+    public List<Integer> getValues() {
+        return mValues;
+    }
+
+    public void setValues(List<Integer> values) {
+        mValues = values;
     }
 
 }

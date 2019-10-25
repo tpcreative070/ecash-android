@@ -332,7 +332,7 @@
                     android:textSize="@dimen/text_normal" />
 
                 <TextView
-                    android:id="@+id/tv_total_money_cash_take"
+                    android:id="@+id/tv_total_money_cash_change"
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:textColor="@color/blue"
@@ -356,7 +356,7 @@
                     android:textSize="@dimen/text_normal" />
 
                 <TextView
-                    android:id="@+id/tv_total_money_cash_transfer"
+                    android:id="@+id/tv_total_money_cash_take"
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:textColor="@color/blue"

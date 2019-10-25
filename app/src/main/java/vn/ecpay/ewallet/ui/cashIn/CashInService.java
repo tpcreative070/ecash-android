@@ -29,10 +29,10 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.Decision;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cash.edongToEcash.EDongToECash;
-import vn.ecpay.ewallet.model.cash.getPublicKeyCash.RequestGetPublicKeyCash;
-import vn.ecpay.ewallet.model.cash.getPublicKeyCash.ResponseDataGetPublicKeyCash;
-import vn.ecpay.ewallet.model.cash.getPublicKeyCash.ResponseGetPublicKeyCash;
+import vn.ecpay.ewallet.model.edongToEcash.EDongToECash;
+import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
+import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseDataGetPublicKeyCash;
+import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 
 public class CashInService extends Service {
     private int numberRequest = 0;

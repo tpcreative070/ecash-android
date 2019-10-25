@@ -19,9 +19,9 @@ import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cash.edongToEcash.EDongToECash;
-import vn.ecpay.ewallet.model.cash.edongToEcash.RequestEdongToECash;
-import vn.ecpay.ewallet.model.cash.edongToEcash.ResponseEdongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.EDongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.RequestEdongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.ResponseEdongToECash;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
 
 public class CashInPresenterImpl implements CashInPresenter {

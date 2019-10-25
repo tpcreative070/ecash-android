@@ -13,7 +13,7 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
 
 public class DatabaseUtil {
@@ -49,14 +49,14 @@ public class DatabaseUtil {
         transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog, context));
 
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertTransactionLogTask(transactionLog);
+        WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
     }
 
     public static void saveTransactionLog(TransactionLog transactionLog, Context context) {
         transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog, context));
 
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertTransactionLogTask(transactionLog);
+        WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
     }
 
     public static boolean isTransactionLogExit(ResponseCashMess responseMess, Context context) {

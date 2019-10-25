@@ -25,7 +25,7 @@ import vn.ecpay.ewallet.database.table.Profile;
 import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.database.table.TransactionTimeOut;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
 
 @Database(entities = {Contact.class,
@@ -302,7 +302,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         insertTransactionLogTask(mTransactionLog, Constant.STR_EMPTY);
     }
 
-    private static void insertTransactionLogTask(final TransactionLog transactionLog, String fake) {
+    public static void insertTransactionLogTask(final TransactionLog transactionLog, String fake) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {

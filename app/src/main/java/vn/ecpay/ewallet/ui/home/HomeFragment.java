@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,6 +44,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
@@ -113,6 +115,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+        List<TransactionLog> transactionLogList = WalletDatabase.getAllTransactionLog();
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new HomeModule(this)).inject(this);
         homePresenter.setView(this);
         homePresenter.onViewCreate();

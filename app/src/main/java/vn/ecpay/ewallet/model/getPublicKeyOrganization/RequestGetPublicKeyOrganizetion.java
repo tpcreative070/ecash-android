@@ -1,5 +1,5 @@
 
-package vn.ecpay.ewallet.model.cash.getPublicKeyCash;
+package vn.ecpay.ewallet.model.getPublicKeyOrganization;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
@@ -8,16 +8,16 @@ import vn.ecpay.ewallet.model.BaseObject;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class RequestGetPublicKeyCash extends BaseObject {
+public class RequestGetPublicKeyOrganizetion extends BaseObject {
 
     @SerializedName("channelCode")
     private String mChannelCode;
     @SerializedName("channelSignature")
     private String mChannelSignature;
-    @SerializedName("decisionCode")
-    private String mDecisionCode;
     @SerializedName("functionCode")
     private String mFunctionCode;
+    @SerializedName("issuerCode")
+    private String mIssuerCode;
     @SerializedName("sessionId")
     private String mSessionId;
     @SerializedName("terminalId")
@@ -43,20 +43,20 @@ public class RequestGetPublicKeyCash extends BaseObject {
         mChannelSignature = channelSignature;
     }
 
-    public String getDecisionCode() {
-        return mDecisionCode;
-    }
-
-    public void setDecisionCode(String decisionCode) {
-        mDecisionCode = decisionCode;
-    }
-
     public String getFunctionCode() {
         return mFunctionCode;
     }
 
     public void setFunctionCode(String functionCode) {
         mFunctionCode = functionCode;
+    }
+
+    public String getIssuerCode() {
+        return mIssuerCode;
+    }
+
+    public void setIssuerCode(String issuerCode) {
+        mIssuerCode = issuerCode;
     }
 
     public String getSessionId() {

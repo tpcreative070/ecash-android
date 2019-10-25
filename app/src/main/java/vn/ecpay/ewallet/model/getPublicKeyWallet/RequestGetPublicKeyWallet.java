@@ -1,5 +1,5 @@
 
-package vn.ecpay.ewallet.model.cash.getPublicKeyWallet;
+package vn.ecpay.ewallet.model.getPublicKeyWallet;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;

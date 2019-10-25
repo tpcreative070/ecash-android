@@ -47,12 +47,12 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cash.getPublicKeyCash.RequestGetPublicKeyCash;
-import vn.ecpay.ewallet.model.cash.getPublicKeyCash.ResponseDataGetPublicKeyCash;
-import vn.ecpay.ewallet.model.cash.getPublicKeyCash.ResponseGetPublicKeyCash;
-import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.RequestGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.ResponseGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
+import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseDataGetPublicKeyCash;
+import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
 

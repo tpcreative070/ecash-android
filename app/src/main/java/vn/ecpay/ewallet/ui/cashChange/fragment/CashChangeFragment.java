@@ -28,7 +28,6 @@ import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
-import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 
 public class CashChangeFragment extends ECashBaseFragment implements CashChangeView {
 
@@ -62,10 +61,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     TextView tv10;
     @BindView(R.id.tv_number_10)
     TextView tvNumber10;
-    @BindView(R.id.tv_total_money_cash_take)
-    TextView tvTotalMoneyCashTake;
-    @BindView(R.id.tv_total_money_cash_transfer)
-    TextView tvTotalMoneyCashTransfer;
     @BindView(R.id.btn_cash_change)
     Button btnCashChange;
     @BindView(R.id.btn_cash_take)
@@ -74,6 +69,10 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     Button btnConfirm;
     @BindView(R.id.layout_change)
     LinearLayout layoutChange;
+    @BindView(R.id.tv_total_money_cash_change)
+    TextView tvTotalMoneyCashChange;
+    @BindView(R.id.tv_total_money_cash_take)
+    TextView tvTotalMoneyCashTake;
     private AccountInfo accountInfo;
     private long balance;
     private int slDatabase500, slDatabase200, slDatabase100, slDatabase50, slDatabase20, slDatabase10;
@@ -97,7 +96,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashChangeModule(this)).inject(this);
         cashChangePresenter.setView(this);
         cashChangePresenter.onViewCreate();
-
         setData();
         getMoneyDatabase();
     }
@@ -147,11 +145,15 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         totalChange200 = sl200;
                         totalChange500 = sl500;
                         layoutChange.setVisibility(View.VISIBLE);
-                        updateTotalMoneyChangeAndtake();
+                        updateTotalMoneyChangeAndTake();
                     }
                 });
                 break;
             case R.id.btn_cash_take:
+                if (totalMoneyChange == 0) {
+                    ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_transfer));
+                    return;
+                }
                 DialogUtil.getInstance().showDialogChoseCash(false, getActivity(), accountInfo, getString(R.string.str_cash_take), new DialogUtil.OnResultChoseCash() {
                     @Override
                     public void OnListenerOk(int sl500, int sl200, int sl100, int sl50, int sl20, int sl10) {
@@ -162,7 +164,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         totalTake200 = sl200;
                         totalTake500 = sl500;
                         layoutChange.setVisibility(View.VISIBLE);
-                        updateTotalMoneyChangeAndtake();
+                        updateTotalMoneyChangeAndTake();
                     }
                 });
                 break;
@@ -172,27 +174,28 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         }
     }
 
-    private void updateTotalMoneyChangeAndtake() {
+    private void updateTotalMoneyChangeAndTake() {
         totalMoneyChange = totalChange500 * 500000 + totalChange200 * 200000 + totalChange100 * 100000 + totalChange50 * 50000 + totalChange20 * 20000 + totalChange10 * 10000;
-        tvTotalMoneyCashTransfer.setText(CommonUtils.formatPriceVND(totalMoneyChange));
+        tvTotalMoneyCashChange.setText(CommonUtils.formatPriceVND(totalMoneyChange));
 
         totalMoneyTake = totalTake500 * 500000 + totalTake200 * 200000 + totalTake100 * 100000 + totalTake50 * 50000 + totalTake20 * 20000 + totalTake10 * 10000;
-        tvTotalMoneyCashTake.setText(CommonUtils.formatPriceVND(totalMoneyChange));
+        tvTotalMoneyCashTake.setText(CommonUtils.formatPriceVND(totalMoneyTake));
     }
 
     private void validateData() {
         if (totalMoneyChange == 0) {
-            ((CashOutActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_transfer));
+            ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_transfer));
             return;
         }
         if (totalMoneyTake == 0) {
-            ((CashOutActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_take));
+            ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_take));
             return;
         }
         if (totalMoneyChange != totalMoneyTake) {
-            ((CashOutActivity) getActivity()).showDialogError(getResources().getString(R.string.err_get_public_key_organize));
+            ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_conflict_take_and_change));
             return;
         }
+        cashChangePresenter.requestChangeCash();
     }
 
     @Override

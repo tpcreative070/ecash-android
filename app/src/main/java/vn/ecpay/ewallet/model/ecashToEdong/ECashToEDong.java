@@ -1,14 +1,12 @@
 
-package vn.ecpay.ewallet.model.cash.edongToEcash;
+package vn.ecpay.ewallet.model.ecashToEdong;
 
-import java.io.Serializable;
-import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class EDongToECash implements Serializable {
+public class ECashToEDong {
 
     @SerializedName("amount")
     private Long mAmount;
@@ -22,6 +20,8 @@ public class EDongToECash implements Serializable {
     private Long mChannelId;
     @SerializedName("channelSignature")
     private String mChannelSignature;
+    @SerializedName("content")
+    private String mContent;
     @SerializedName("creditAccount")
     private String mCreditAccount;
     @SerializedName("customerId")
@@ -36,12 +36,8 @@ public class EDongToECash implements Serializable {
     private Long mGlAccRefId;
     @SerializedName("id")
     private String mId;
-    @SerializedName("quantities")
-    private List<Long> mQuantities;
     @SerializedName("receiver")
     private Long mReceiver;
-    @SerializedName("refId")
-    private Long mRefId;
     @SerializedName("sender")
     private String mSender;
     @SerializedName("sessionId")
@@ -58,8 +54,6 @@ public class EDongToECash implements Serializable {
     private String mType;
     @SerializedName("username")
     private String mUsername;
-    @SerializedName("values")
-    private List<Long> mValues;
 
     public Long getAmount() {
         return mAmount;
@@ -107,6 +101,14 @@ public class EDongToECash implements Serializable {
 
     public void setChannelSignature(String channelSignature) {
         mChannelSignature = channelSignature;
+    }
+
+    public String getContent() {
+        return mContent;
+    }
+
+    public void setContent(String content) {
+        mContent = content;
     }
 
     public String getCreditAccount() {
@@ -165,28 +167,12 @@ public class EDongToECash implements Serializable {
         mId = id;
     }
 
-    public List<Long> getQuantities() {
-        return mQuantities;
-    }
-
-    public void setQuantities(List<Long> quantities) {
-        mQuantities = quantities;
-    }
-
     public Long getReceiver() {
         return mReceiver;
     }
 
     public void setReceiver(Long receiver) {
         mReceiver = receiver;
-    }
-
-    public Long getRefId() {
-        return mRefId;
-    }
-
-    public void setRefId(Long refId) {
-        mRefId = refId;
     }
 
     public String getSender() {
@@ -251,14 +237,6 @@ public class EDongToECash implements Serializable {
 
     public void setUsername(String username) {
         mUsername = username;
-    }
-
-    public List<Long> getValues() {
-        return mValues;
-    }
-
-    public void setValues(List<Long> values) {
-        mValues = values;
     }
 
 }

@@ -19,10 +19,10 @@ import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cash.ecashToEdong.RequestEcashToEdong;
-import vn.ecpay.ewallet.model.cash.ecashToEdong.ResponseECashToEdong;
-import vn.ecpay.ewallet.model.cash.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
-import vn.ecpay.ewallet.model.cash.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
+import vn.ecpay.ewallet.model.ecashToEdong.RequestEcashToEdong;
+import vn.ecpay.ewallet.model.ecashToEdong.ResponseECashToEdong;
+import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
+import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
 
 public class CashOutPresenterImpl implements CashOutPresenter {

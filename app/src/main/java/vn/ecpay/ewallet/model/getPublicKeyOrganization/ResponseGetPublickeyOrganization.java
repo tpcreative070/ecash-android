@@ -1,17 +1,17 @@
 
-package vn.ecpay.ewallet.model.cash.edongToEcash;
+package vn.ecpay.ewallet.model.getPublicKeyOrganization;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ResponseEdongToECash {
+public class ResponseGetPublickeyOrganization {
 
     @SerializedName("responseCode")
     private String mResponseCode;
     @SerializedName("responseData")
-    private EDongToECash mResponseData;
+    private ResponseData mResponseData;
     @SerializedName("responseMessage")
     private String mResponseMessage;
 
@@ -23,11 +23,11 @@ public class ResponseEdongToECash {
         mResponseCode = responseCode;
     }
 
-    public EDongToECash getResponseData() {
+    public ResponseData getResponseData() {
         return mResponseData;
     }
 
-    public void setResponseData(EDongToECash responseData) {
+    public void setResponseData(ResponseData responseData) {
         mResponseData = responseData;
     }
 

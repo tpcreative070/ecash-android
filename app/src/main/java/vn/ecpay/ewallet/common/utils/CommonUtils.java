@@ -36,7 +36,7 @@ import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cash.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
 
 public class CommonUtils {

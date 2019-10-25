@@ -392,12 +392,12 @@ public class DialogUtil {
                 tvTitle.setText(pContext.getString(R.string.str_cash_change));
             } else {
                 tvTitle.setText(pContext.getString(R.string.str_cash_take));
-                tvTotal10.setVisibility(View.GONE);
-                tvTotal20.setVisibility(View.GONE);
-                tvTotal50.setVisibility(View.GONE);
-                tvTotal100.setVisibility(View.GONE);
-                tvTotal200.setVisibility(View.GONE);
-                tvTotal500.setVisibility(View.GONE);
+                tvSl10.setVisibility(View.GONE);
+                tvSl20.setVisibility(View.GONE);
+                tvSl50.setVisibility(View.GONE);
+                tvSl100.setVisibility(View.GONE);
+                tvSl200.setVisibility(View.GONE);
+                tvSl500.setVisibility(View.GONE);
             }
 
             ivDown10.setOnClickListener(v -> {
@@ -423,9 +423,13 @@ public class DialogUtil {
                 tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
             });
             ivUp10.setOnClickListener(v -> {
-                if (slDatabase10 > 0) {
+                if (isChange) {
+                    if (slDatabase10 > 0) {
+                        total10 = total10 + 1;
+                        slDatabase10 = slDatabase10 - 1;
+                    }
+                } else {
                     total10 = total10 + 1;
-                    slDatabase10 = slDatabase10 - 1;
                 }
                 totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
                 tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
@@ -468,9 +472,13 @@ public class DialogUtil {
                 tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
             });
             ivUp20.setOnClickListener(v -> {
-                if (slDatabase20 > 0) {
+                if (isChange) {
+                    if (slDatabase20 > 0) {
+                        total20 = total20 + 1;
+                        slDatabase20 = slDatabase20 - 1;
+                    }
+                } else {
                     total20 = total20 + 1;
-                    slDatabase20 = slDatabase20 - 1;
                 }
                 totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
                 tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
@@ -513,9 +521,13 @@ public class DialogUtil {
                 tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
             });
             ivUp50.setOnClickListener(v -> {
-                if (slDatabase50 > 0) {
+                if (isChange) {
+                    if (slDatabase50 > 0) {
+                        total50 = total50 + 1;
+                        slDatabase50 = slDatabase50 - 1;
+                    }
+                } else {
                     total50 = total50 + 1;
-                    slDatabase50 = slDatabase50 - 1;
                 }
                 totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
                 tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
@@ -558,9 +570,13 @@ public class DialogUtil {
                 tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
             });
             ivUp100.setOnClickListener(v -> {
-                if (slDatabase100 > 0) {
+                if (isChange) {
+                    if (slDatabase100 > 0) {
+                        total100 = total100 + 1;
+                        slDatabase100 = slDatabase100 - 1;
+                    }
+                } else {
                     total100 = total100 + 1;
-                    slDatabase100 = slDatabase100 - 1;
                 }
                 totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
                 tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
@@ -603,9 +619,13 @@ public class DialogUtil {
                 tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
             });
             ivUp200.setOnClickListener(v -> {
-                if (slDatabase200 > 0) {
+                if (isChange) {
+                    if (slDatabase200 > 0) {
+                        total200 = total200 + 1;
+                        slDatabase200 = slDatabase200 - 1;
+                    }
+                } else {
                     total200 = total200 + 1;
-                    slDatabase200 = slDatabase200 - 1;
                 }
                 totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
                 tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
@@ -648,9 +668,13 @@ public class DialogUtil {
                 tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
             });
             ivUp500.setOnClickListener(v -> {
-                if (total500 > 0) {
+                if (isChange) {
+                    if (total500 > 0) {
+                        total500 = total500 - 1;
+                        slDatabase500 = slDatabase500 + 1;
+                    }
+                } else {
                     total500 = total500 - 1;
-                    slDatabase500 = slDatabase500 + 1;
                 }
                 totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
                 tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
