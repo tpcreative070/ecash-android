@@ -34,6 +34,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cash.edongToEcash.EDongToECash;
@@ -361,8 +362,21 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     @Override
     public void transferMoneySuccess(EDongToECash eDongToECash, String id) {
+        saveTransactionLogs(eDongToECash);
         cashInPresenter.getEDongInfo(accountInfo);
         startService(eDongToECash, id);
+    }
+
+    private void saveTransactionLogs(EDongToECash eDongToECash) {
+        TransactionLog transactionLog = new TransactionLog();
+        transactionLog.setSenderAccountId(eDongToECash.getSender());
+        transactionLog.setReceiverAccountId(String.valueOf(eDongToECash.getReceiver()));
+        transactionLog.setType(eDongToECash.getType());
+        transactionLog.setTime(String.valueOf(eDongToECash.getTime()));
+        transactionLog.setCashEnc(eDongToECash.getCashEnc());
+        transactionLog.setTransactionSignature(eDongToECash.getId());
+        transactionLog.setRefId(String.valueOf(eDongToECash.getRefId()));
+        DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
     }
 
     private void startService(EDongToECash responseData, String transactionSignature) {

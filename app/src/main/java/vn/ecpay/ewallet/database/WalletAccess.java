@@ -116,21 +116,21 @@ public interface WalletAccess {
     @Insert
     void insertOnlySingleTransactionLog(TransactionLog transactionLog);
 
-    @Query("SELECT * FROM TRANSACTION_LOGS")
+    @Query("SELECT * FROM TRANSACTIONS_LOGS")
     List<TransactionLog> getAllTransactionLog();
 
-    @Query("SELECT MAX(id) FROM TRANSACTION_LOGS")
+    @Query("SELECT MAX(id) FROM TRANSACTIONS_LOGS")
     int getMaxIDTransactionLog();
 
-    @Query("SELECT MIN(id) FROM TRANSACTION_LOGS")
+    @Query("SELECT MIN(id) FROM TRANSACTIONS_LOGS")
     int getMinIDTransactionLog();
 
-    @Query("SELECT * FROM TRANSACTION_LOGS WHERE id=:maxID")
+    @Query("SELECT * FROM TRANSACTIONS_LOGS WHERE id=:maxID")
     TransactionLog getTransactionLogByMaxID(int maxID);
 
-    @Query("SELECT * FROM TRANSACTION_LOGS WHERE transactionSignature Like :transactionSignature")
+    @Query("SELECT * FROM TRANSACTIONS_LOGS WHERE transactionSignature Like :transactionSignature")
     TransactionLog checkTransactionLogExit(String transactionSignature);
 
-    @Query("UPDATE TRANSACTION_LOGS SET previousHash=:previousHash WHERE id = :minID")
+    @Query("UPDATE TRANSACTIONS_LOGS SET previousHash=:previousHash WHERE id = :minID")
     void updatePreviousTransactionLogMin(String previousHash, int minID);
 }

@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "TRANSACTION_LOGS")
+@Entity(tableName = "TRANSACTIONS_LOGS")
 public class TransactionLog {
     @NonNull
     @PrimaryKey(autoGenerate = true)

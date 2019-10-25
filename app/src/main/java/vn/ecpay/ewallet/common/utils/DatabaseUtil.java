@@ -52,6 +52,13 @@ public class DatabaseUtil {
         WalletDatabase.insertTransactionLogTask(transactionLog);
     }
 
+    public static void saveTransactionLog(TransactionLog transactionLog, Context context) {
+        transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog, context));
+
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.insertTransactionLogTask(transactionLog);
+    }
+
     public static boolean isTransactionLogExit(ResponseCashMess responseMess, Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         TransactionLog transactionLog = WalletDatabase.checkTransactionLogExit(responseMess.getId());
