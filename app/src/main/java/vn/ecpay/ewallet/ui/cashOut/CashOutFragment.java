@@ -497,16 +497,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     }
 
     private void updateDatabase() {
-        //save trasaction log
-        DatabaseUtil.saveTransactionLog(responseMess, getActivity());
-        //save to cash log
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        for (int i = 0; i < listCashSend.size(); i++) {
-            CashLogs cash = listCashSend.get(i);
-            cash.setType(Constant.STR_CASH_OUT);
-            cash.setTransactionSignature(responseMess.getId());
-            WalletDatabase.insertCashTask(cash, accountInfo.getUsername());
-        }
+        DatabaseUtil.updateDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
         dismissProgress();
         showDialogCashOutOk();
         EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));

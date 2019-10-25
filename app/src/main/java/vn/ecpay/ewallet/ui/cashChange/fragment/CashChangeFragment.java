@@ -292,23 +292,23 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 cashSendArray[i] = moneyItem;
             }
 
-//            encData = getEncrypData(cashSendArray, keyPublicReceiver);
-//            responseMess = new ResponseCashMess();
-//            responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
-//            responseMess.setReceiver(String.valueOf(accountInfo.getWalletId()));
-//            responseMess.setTime(CommonUtils.getCurrentTime());
-//            responseMess.setType(Constant.TYPE_SEND_MONEY);
-//            responseMess.setContent(Constant.STR_EMPTY);
-//            responseMess.setCashEnc(encData);
-//            responseMess.setCashEnc(encData);
-//            refId = getIdSender(responseMess);
-//            responseMess.setRefId(refId);
-//            if (refId.isEmpty() || encData.isEmpty()) {
-//                dismissProgress();
-//                ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
-//                return;
-//            }
-//            cashChangePresenter.requestChangeCash(listQuality, accountInfo, listValue);
+            encData = getEncrypData(cashSendArray, keyPublicReceiver);
+            responseMess = new ResponseCashMess();
+            responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
+            responseMess.setReceiver(String.valueOf(accountInfo.getWalletId()));
+            responseMess.setTime(CommonUtils.getCurrentTime());
+            responseMess.setType(Constant.TYPE_SEND_MONEY);
+            responseMess.setContent(Constant.STR_EMPTY);
+            responseMess.setCashEnc(encData);
+            responseMess.setCashEnc(encData);
+            refId = getIdSender(responseMess);
+            responseMess.setRefId(refId);
+            if (refId.isEmpty() || encData.isEmpty()) {
+                dismissProgress();
+                ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
+                return;
+            }
+            cashChangePresenter.requestChangeCash(listQuality, accountInfo, listValue);
         } else {
             dismissProgress();
         }
