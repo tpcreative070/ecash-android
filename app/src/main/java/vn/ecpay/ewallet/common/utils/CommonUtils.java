@@ -372,5 +372,4 @@ public class CommonUtils {
         qrCashTransfer.setContent(responseMess.getContent());
         return qrCashTransfer;
     }
-
 }

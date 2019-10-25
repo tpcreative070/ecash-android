@@ -115,8 +115,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<TransactionLog> transactionLogList = WalletDatabase.getAllTransactionLog();
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new HomeModule(this)).inject(this);
         homePresenter.setView(this);
         homePresenter.onViewCreate();

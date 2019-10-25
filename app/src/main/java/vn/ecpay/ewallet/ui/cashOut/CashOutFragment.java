@@ -146,7 +146,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         return R.layout.fragment_cash_out_pickup;
     }
 
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -443,7 +442,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             String[][] cashSendArray = new String[listCashSend.size()][3];
             for (int i = 0; i < listCashSend.size(); i++) {
                 CashLogs cash = listCashSend.get(i);
-                String[] moneyItem = {getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
+                String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
                 cashSendArray[i] = moneyItem;
             }
 
@@ -455,7 +454,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             responseMess.setType(Constant.TYPE_SEND_MONEY);
             responseMess.setContent(Constant.STR_EMPTY);
             responseMess.setCashEnc(encData);
-            responseMess.setCashEnc(encData);
+            responseMess.setId(CommonUtils.getIdSender(responseMess, getActivity()));
             refId = getIdSender(responseMess);
             responseMess.setRefId(refId);
             if (refId.isEmpty() || encData.isEmpty()) {
@@ -477,12 +476,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     private String getSignBodySender(ResponseCashMess responseMess) {
         return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
                 + responseMess.getContent() + responseMess.getCashEnc();
-    }
-
-    private String getAppenItemCash(CashLogs cash) {
-        return (cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getDecisionNo() + ";"
-                + cash.getSerialNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"
-                + cash.getExpireDate() + ";" + cash.getCycle());
     }
 
     private String getEncrypData(String[][] cashArray, String publicKyReceiver) {
@@ -511,6 +504,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         for (int i = 0; i < listCashSend.size(); i++) {
             CashLogs cash = listCashSend.get(i);
             cash.setType(Constant.STR_CASH_OUT);
+            cash.setTransactionSignature(responseMess.getId());
             WalletDatabase.insertCashTask(cash, accountInfo.getUsername());
         }
         dismissProgress();

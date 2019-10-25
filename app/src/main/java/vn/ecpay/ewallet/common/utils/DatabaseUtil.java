@@ -150,6 +150,7 @@ public class DatabaseUtil {
         for (int i = 0; i < listCashSend.size(); i++) {
             CashLogs cash = listCashSend.get(i);
             cash.setType(Constant.STR_CASH_OUT);
+            cash.setTransactionSignature(responseMess.getId());
             WalletDatabase.insertCashTask(cash, userName);
         }
     }

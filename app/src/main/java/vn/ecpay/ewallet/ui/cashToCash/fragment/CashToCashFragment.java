@@ -354,7 +354,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             return;
         }
 
-        if (publicKeyWalletReceiver.equals(Constant.STR_EMPTY)) {
+        if (null == publicKeyWalletReceiver) {
             ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_dit_not_get_key_transfer));
             return;
         }

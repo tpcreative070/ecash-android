@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "CONTACTS")
 public class Contact {
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     @ColumnInfo(name = "walletId")
     private Long walletId;
 
