@@ -27,6 +27,7 @@ import vn.ecpay.ewallet.database.table.TransactionTimeOut;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
+import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
 @Database(entities = {Contact.class,
         CashLogs.class,
@@ -334,5 +335,13 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static TransactionLog getTransactionLogByMaxID(int maxIDTransactionLog) {
         return walletDatabase.daoAccess().getTransactionLogByMaxID(maxIDTransactionLog);
+    }
+
+    public static List<TransactionsHistoryModel> getListTransactionHistory() {
+        return walletDatabase.daoAccess().getAllTransactionsHistory();
+    }
+
+    public static List<TransactionsHistoryModel> getListTransactionHistoryFilter(String filter) {
+        return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(filter);
     }
 }

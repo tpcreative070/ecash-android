@@ -91,6 +91,9 @@
     <string name="str_number_cash">Số lượng eCash</string>
     <string name="str_transfer_cash">Chuyển eCash</string>
 
+    //transaction logs
+    <string name="str_input_transaction_search">Nhập thông tin tìm kiếm</string>
+
     //change cash
     <string name="str_cash_have_in_wallet">Cash có trong ví</string>
     <string name="str_cash_change">Cash đổi</string>
