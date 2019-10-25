@@ -13,21 +13,16 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.common.base.CustomFragmentTabHost;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
-import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.contact.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
-import vn.ecpay.ewallet.ui.transferHistory.FragmentTransfer;
+import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
@@ -135,7 +130,7 @@ public class MainActivity extends ECashBaseActivity {
         historyTabViewHolder.nameView.setText(R.string.title_history);
         TabHost.TabSpec historyTabSpec = tabHost.newTabSpec(TAB_TAG_HISTORY);
         historyTabSpec.setIndicator(historyTabViewHolder.view);
-        tabHost.addTab(historyTabSpec, FragmentTransfer.class, new Bundle());
+        tabHost.addTab(historyTabSpec, FragmentTransactionHistory.class, new Bundle());
 
         walletTabViewHolder = new ViewHolder(inflater.inflate(R.layout.tab_indicator, null, false));
         walletTabViewHolder.imageView.setImageResource(R.drawable.ic_wallet);

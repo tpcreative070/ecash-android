@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.common.utils;
 public class Constant {
     public static final String DATABASE_NAME = "eWallet";
     public static final String CONTACT_TRANSFER = "CONTACT_TRANSFER";
+    public static final String TRANSACTIONS_HISTORY = "TRANSACTIONS_HISTORY";
     public static final String IS_SESSION_TIMEOUT = "IS_SESSION_TIMEOUT";
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
@@ -86,4 +87,8 @@ public class Constant {
     public static final String IS_QR_CODE  = "IS_QR_CODE";
     public static final String RESPONSE_CASH_MESS = "ResponseCashMess";
 
+    public static final String TYPE_SEND_EDONG_TO_ECASH = "NC";
+    public static final String TYPE_ECASH_EXCHANGE = "DC";
+    public static final int TRANSACTION_SUCESSS = 0;
+    public static final int TRANSACTION_FAIL = 1;
 }
