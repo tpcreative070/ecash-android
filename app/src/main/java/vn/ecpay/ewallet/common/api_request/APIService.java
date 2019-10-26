@@ -23,6 +23,8 @@ import vn.ecpay.ewallet.model.account.logout.RequestLogOut;
 import vn.ecpay.ewallet.model.account.logout.response.ResponseLogOut;
 import vn.ecpay.ewallet.model.account.register.RequestRegister;
 import vn.ecpay.ewallet.model.account.register.register_response.ResponseRegister;
+import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
+import vn.ecpay.ewallet.model.cashChange.response.ResponseCashChange;
 import vn.ecpay.ewallet.model.ecashToEdong.RequestEcashToEdong;
 import vn.ecpay.ewallet.model.ecashToEdong.ResponseECashToEdong;
 import vn.ecpay.ewallet.model.edongToEcash.RequestEdongToECash;
@@ -87,6 +89,9 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0010")
     Call<ResponseCancelAccount> cancelAccount(@Body RequestCancelAccount body);
+
+    @POST("ecgateway/execute/GWEC0011")
+    Call<ResponseCashChange> changeCash(@Body RequestECashChange body);
 
     @POST("UpdateChannel")
     Call<ResponseUpdateChanel> updateChannel(@Body RequestUpdateChanel body);

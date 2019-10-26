@@ -25,6 +25,7 @@ import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashChange.response.ResponseCashChangeData;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
@@ -91,7 +92,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @Inject
     CashChangePresenter cashChangePresenter;
     private String encData;
-    private ResponseCashMess responseMess;
 
     @Override
     protected int getLayoutResId() {
@@ -194,7 +194,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     }
 
     private void validateData() {
-        if (publicKeyOrganization.isEmpty()) {
+        if (null == publicKeyOrganization) {
             ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_get_public_key_organize));
             return;
         }
@@ -293,22 +293,19 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             }
 
             encData = getEncrypData(cashSendArray, keyPublicReceiver);
-            responseMess = new ResponseCashMess();
+            ResponseCashMess responseMess = new ResponseCashMess();
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
             responseMess.setReceiver(String.valueOf(accountInfo.getWalletId()));
             responseMess.setTime(CommonUtils.getCurrentTime());
             responseMess.setType(Constant.TYPE_SEND_MONEY);
             responseMess.setContent(Constant.STR_EMPTY);
             responseMess.setCashEnc(encData);
-            responseMess.setCashEnc(encData);
-            refId = getIdSender(responseMess);
-            responseMess.setRefId(refId);
-            if (refId.isEmpty() || encData.isEmpty()) {
+            if (encData.isEmpty()) {
                 dismissProgress();
                 ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
                 return;
             }
-            cashChangePresenter.requestChangeCash(listQuality, accountInfo, listValue);
+            cashChangePresenter.requestChangeCash(responseMess, listQuality, accountInfo, listValue);
         } else {
             dismissProgress();
         }
@@ -331,6 +328,11 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     @Override
     public void loadPublicKeyOrganizeSuccess(String issuerKpValue) {
-        this.publicKeyOrganization = publicKeyOrganization;
+        this.publicKeyOrganization = issuerKpValue;
+    }
+
+    @Override
+    public void changeCashSuccess(ResponseCashChangeData responseData) {
+
     }
 }

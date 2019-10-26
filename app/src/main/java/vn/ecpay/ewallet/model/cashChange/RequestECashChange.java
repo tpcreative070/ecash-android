@@ -7,9 +7,11 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
+import vn.ecpay.ewallet.model.BaseObject;
+
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class RequestECashChange {
+public class RequestECashChange extends BaseObject {
 
     @SerializedName("cashEnc")
     private String mCashEnc;
@@ -31,6 +33,8 @@ public class RequestECashChange {
     private String mUsername;
     @SerializedName("values")
     private List<Integer> mValues;
+    @SerializedName("channelSignature")
+    private String mChannelSignature;
 
     public String getCashEnc() {
         return mCashEnc;
@@ -112,4 +116,11 @@ public class RequestECashChange {
         mValues = values;
     }
 
+    public String getmChannelSignature() {
+        return mChannelSignature;
+    }
+
+    public void setChannelSignature(String mChannelSignature) {
+        this.mChannelSignature = mChannelSignature;
+    }
 }

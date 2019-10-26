@@ -11,7 +11,7 @@ public class ResponseCashChange {
     @SerializedName("responseCode")
     private String mResponseCode;
     @SerializedName("responseData")
-    private ResponseData mResponseData;
+    private ResponseCashChangeData mResponseData;
     @SerializedName("responseMessage")
     private String mResponseMessage;
 
@@ -23,11 +23,11 @@ public class ResponseCashChange {
         mResponseCode = responseCode;
     }
 
-    public ResponseData getResponseData() {
+    public ResponseCashChangeData getResponseData() {
         return mResponseData;
     }
 
-    public void setResponseData(ResponseData responseData) {
+    public void setResponseData(ResponseCashChangeData responseData) {
         mResponseData = responseData;
     }
 

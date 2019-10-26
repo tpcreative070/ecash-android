@@ -54,6 +54,7 @@ public class Constant {
     public static final String FUNCTION_GET_OTP = "GW000004";
     public static final String FUNCTION_CHANGE_PASSWORD = "GW000003";
     public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0010";
+    public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";
