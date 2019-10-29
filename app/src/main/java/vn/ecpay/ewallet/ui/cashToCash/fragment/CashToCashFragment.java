@@ -149,6 +149,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     private long totalMoney = 0;
     private ResponseDataGetPublicKeyWallet dataGetPublicKey;
     private ContactTransferModel transferModel;
+    private String currentTime;
 
     @Inject
     CashToCashPresenter cashToCashPresenter;
@@ -375,107 +376,13 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         switch (requestCode) {
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showLoading();
                     getListCashSend();
                 }
             }
             default:
                 break;
         }
-    }
-
-    private void getListCashSend() {
-        if (!isExternalStorageWritable()) {
-            dismissLoading();
-            ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_store_image));
-            return;
-        }
-        String jsonCash = getObjectJsonSend(total10, total20, total50, total100, total200, total500,
-                publicKeyWalletReceiver, edtStkCash.getText().toString(), edtContent.getText().toString());
-        List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
-        ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
-        if (stringList.size() > 0) {
-            for (int i = 0; i < stringList.size(); i++) {
-                QRCodeSender qrCodeSender = new QRCodeSender();
-                qrCodeSender.setCycle(i + 1);
-                qrCodeSender.setTotal(stringList.size());
-                qrCodeSender.setContent(stringList.get(i));
-                codeSenderArrayList.add(qrCodeSender);
-            }
-        }
-        if (codeSenderArrayList.size() > 0) {
-            DatabaseUtil.saveContact(getActivity(), dataGetPublicKey);
-            DatabaseUtil.updateDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
-            saveImageQRCode(codeSenderArrayList);
-        }
-    }
-
-    private boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private void saveImageQRCode(ArrayList<QRCodeSender> qrCodeSender) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPreExecute() {
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                for (int i = 0; i < qrCodeSender.size(); i++) {
-                    Gson gson = new Gson();
-                    Bitmap bitmap = generateQRCode(gson.toJson(qrCodeSender.get(i)));
-                    String root = Environment.getExternalStorageDirectory().toString();
-                    File mFolder = new File(root + "/qr_image");
-                    if (!mFolder.exists()) {
-                        mFolder.mkdir();
-                    }
-                    String imageName = walletId + "_" + CommonUtils.getAuditNumber() + "_" + i + ".jpg";
-                    File file = new File(mFolder, imageName);
-                    if (file.exists())
-                        file.delete();
-                    try {
-                        FileOutputStream out = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                        out.flush();
-                        out.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                dismissLoading();
-                showDialogSendOk();
-            }
-        }.execute();
-    }
-
-    private Bitmap generateQRCode(String value) {
-        int WIDTH = 400;
-        Writer writer = new QRCodeWriter();
-        BitMatrix bitMatrix = null;
-        try {
-            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
-            Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
-            for (int i = 0; i < 400; i++) {
-                for (int j = 0; j < 400; j++) {
-                    bitmap.setPixel(i, j, bitMatrix.get(i, j) ? Color.BLACK
-                            : Color.WHITE);
-                }
-            }
-            return bitmap;
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private ArrayList<CashLogs> listCashSend;
@@ -537,7 +444,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
             responseMess.setReceiver(walletReceiver);
             responseMess.setTime(CommonUtils.getCurrentTime());
-            responseMess.setType(Constant.TYPE_SEND_MONEY);
+            responseMess.setType(Constant.TYPE_ECASH_TO_ECASH);
             responseMess.setContent(contentSendMoney);
             responseMess.setCashEnc(encData);
             responseMess.setId(CommonUtils.getIdSender(responseMess, getActivity()));
@@ -545,6 +452,106 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             return gson.toJson(responseMess);
         }
         return Constant.STR_EMPTY;
+    }
+
+    private void getListCashSend() {
+        if (!isExternalStorageWritable()) {
+            dismissLoading();
+            ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_store_image));
+            return;
+        }
+        String jsonCash = getObjectJsonSend(total10, total20, total50, total100, total200, total500,
+                publicKeyWalletReceiver, edtStkCash.getText().toString(), edtContent.getText().toString());
+        List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
+        ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
+        if (stringList.size() > 0) {
+            for (int i = 0; i < stringList.size(); i++) {
+                QRCodeSender qrCodeSender = new QRCodeSender();
+                qrCodeSender.setCycle(i + 1);
+                qrCodeSender.setTotal(stringList.size());
+                qrCodeSender.setContent(stringList.get(i));
+                codeSenderArrayList.add(qrCodeSender);
+            }
+
+            if (codeSenderArrayList.size() > 0) {
+                currentTime = CommonUtils.getCurrentTime();
+                saveImageQRCode(codeSenderArrayList);
+            }
+        }
+    }
+
+    private boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void saveImageQRCode(ArrayList<QRCodeSender> qrCodeSender) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                for (int i = 0; i < qrCodeSender.size(); i++) {
+                    Gson gson = new Gson();
+                    Bitmap bitmap = generateQRCode(gson.toJson(qrCodeSender.get(i)));
+                    String root = Environment.getExternalStorageDirectory().toString();
+                    File mFolder = new File(root + "/qr_image");
+                    if (!mFolder.exists()) {
+                        mFolder.mkdir();
+                    }
+                    String imageName = walletId + "_" + currentTime + "_" + i + ".jpg";
+                    File file = new File(mFolder, imageName);
+                    if (file.exists())
+                        file.delete();
+                    try {
+                        FileOutputStream out = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                        out.flush();
+                        out.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                dismissLoading();
+                if (swQrCode.isChecked()) {
+                    DatabaseUtil.saveContact(getActivity(), dataGetPublicKey);
+                    DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
+                }
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
+                showDialogSendOk();
+            }
+        }.execute();
+    }
+
+    private Bitmap generateQRCode(String value) {
+        int WIDTH = 400;
+        Writer writer = new QRCodeWriter();
+        BitMatrix bitMatrix = null;
+        try {
+            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
+            Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+            for (int i = 0; i < 400; i++) {
+                for (int j = 0; j < 400; j++) {
+                    bitmap.setPixel(i, j, bitMatrix.get(i, j) ? Color.BLACK
+                            : Color.WHITE);
+                }
+            }
+            return bitmap;
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void startService() {
@@ -562,31 +569,6 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         if (getActivity() != null) {
             getActivity().startService(intent);
         }
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onDetach() {
-        EventBus.getDefault().unregister(this);
-        super.onDetach();
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
-            dismissLoading();
-            showDialogSendOk();
-        }
-
-        if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
-            ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_connect_socket_fail));
-        }
-        EventBus.getDefault().removeStickyEvent(event);
     }
 
     private void showDialogSendOk() {
@@ -648,5 +630,30 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             edtStkCash.setText(String.valueOf(transferModel.getWalletId()));
             publicKeyWalletReceiver = transferModel.getPublicKeyValue();
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().unregister(this);
+        super.onDetach();
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateData(EventDataChange event) {
+        if (event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+            dismissLoading();
+            showDialogSendOk();
+        }
+
+        if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
+            ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_connect_socket_fail));
+        }
+        EventBus.getDefault().removeStickyEvent(event);
     }
 }

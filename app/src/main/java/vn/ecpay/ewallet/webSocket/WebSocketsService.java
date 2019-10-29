@@ -87,17 +87,17 @@ public class WebSocketsService extends Service {
             extras = null;
         }
 
-        if (extras != null) {
+        if (null != extras) {
             String userName = ECashApplication.getAccountInfo().getUsername();
             accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
             isQRCode = extras.getBoolean(Constant.IS_QR_CODE);
-            if (isQRCode) {
+            if (isQRCode) {//cash to eCash by QR_code
                 qrCashTransferList = new ArrayList<>();
                 ResponseCashMess cashMess = (ResponseCashMess) extras.getSerializable(Constant.RESPONSE_CASH_MESS);
                 if (cashMess != null) {
                     getPublicKeyWallet(cashMess);
                 }
-            } else {
+            } else {//cash to cash by
                 int sl500 = extras.getInt(Constant.TOTAL_500);
                 int sl200 = extras.getInt(Constant.TOTAL_200);
                 int sl100 = extras.getInt(Constant.TOTAL_100);
@@ -189,14 +189,14 @@ public class WebSocketsService extends Service {
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
             responseMess.setReceiver(walletReceiver);
             responseMess.setTime(CommonUtils.getCurrentTime());
-            responseMess.setType(Constant.TYPE_SEND_MONEY);
+            responseMess.setType(Constant.TYPE_ECASH_TO_ECASH);
             responseMess.setContent(contentSendMoney);
             responseMess.setCashEnc(encData);
             responseMess.setId(CommonUtils.getIdSender(responseMess, getApplicationContext()));
             Gson gson = new Gson();
             String json = gson.toJson(responseMess);
             if (!json.isEmpty()) {
-                DatabaseUtil.updateDatabase(listCashSend, responseMess, getApplicationContext(), accountInfo.getUsername());
+                DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getApplicationContext(), accountInfo.getUsername());
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
             }
             return json;
@@ -468,15 +468,19 @@ public class WebSocketsService extends Service {
                 responseDataGetPublicKeyCash.getDecisionAcckp())) {
             //xác thực đồng ecash ok => save cash
             //put info to result
-            DatabaseUtil.SaveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());
-            qrCashTransferList.add(CommonUtils.getQrCashTransfer(cash, responseMess, responseGetPublicKeyWallet, true));
+            DatabaseUtil.saveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());
+            if (isQRCode) {
+                qrCashTransferList.add(CommonUtils.getQrCashTransfer(cash, responseMess, responseGetPublicKeyWallet, true));
+            }
 
             //next
             numberRequest = numberRequest + 1;
             checkArrayCash(responseMess);
         } else {
             //put info to result
-            qrCashTransferList.add(CommonUtils.getQrCashTransfer(cash, responseMess, responseGetPublicKeyWallet, false));
+            if (isQRCode) {
+                qrCashTransferList.add(CommonUtils.getQrCashTransfer(cash, responseMess, responseGetPublicKeyWallet, false));
+            }
             //lưu vào tien fake
             DatabaseUtil.SaveCashInvalidToDB(cash, getApplicationContext(), accountInfo.getUsername());
             //chạy thằng tiếp theo

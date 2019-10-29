@@ -19,9 +19,9 @@ import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.edongToEcash.EDongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.edongToEcash.RequestEdongToECash;
-import vn.ecpay.ewallet.model.edongToEcash.ResponseEdongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.response.ResponseEdongToECash;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
 
 public class CashInPresenterImpl implements CashInPresenter {
@@ -105,9 +105,8 @@ public class CashInPresenterImpl implements CashInPresenter {
                         application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (response.body().getResponseData() != null) {
-                                EDongToECash responseData = response.body().getResponseData();
-                                cashInView.transferMoneySuccess(responseData,
-                                        responseData.getId());
+                                CashInResponse responseData = response.body().getResponseData();
+                                cashInView.transferMoneySuccess(responseData);
                             }
                         } else if (response.body().getResponseCode().equals("4011")) {
                             cashInView.dismissLoading();

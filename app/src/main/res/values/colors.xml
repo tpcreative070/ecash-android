@@ -40,4 +40,6 @@
 
     <color name="bg_search">#E1E7EC</color>
     <color name="bg_item_transfer">#F2F6F9</color>
+
+    <color name="transparent_gray">#66000000</color>
 </resources>

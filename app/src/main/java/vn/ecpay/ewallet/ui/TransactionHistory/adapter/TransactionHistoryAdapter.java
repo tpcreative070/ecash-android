@@ -15,15 +15,17 @@ import java.util.List;
 
 import vn.ecpay.ewallet.R;
 
+import vn.ecpay.ewallet.common.utils.CommonUtils;
+import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_FAIL;
-import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCESSS;
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_EXCHANGE;
+import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_ECASH_TO_EDONG;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_MONEY;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_TO_ECASH;
 
 
 public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -32,11 +34,16 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
 
     List<TransactionsHistoryModel> mTransactionHistory;
     WeakReference<Context> mContextWeakReference;
+    private OnItemClickListener onItemClickListener;
 
-    public TransactionHistoryAdapter(List<TransactionsHistoryModel> mTransactionHistory, Context context) {
+    public interface OnItemClickListener {
+        void onItemClick(TransactionsHistoryModel transactionsHistoryModel);
+    }
 
+    public TransactionHistoryAdapter(List<TransactionsHistoryModel> mTransactionHistory, Context context, OnItemClickListener mOnItemClickListener) {
         this.mTransactionHistory = mTransactionHistory;
         this.mContextWeakReference = new WeakReference<>(context);
+        this.onItemClickListener = mOnItemClickListener;
     }
 
     @NonNull
@@ -46,9 +53,8 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         if (viewType == SECTION_VIEW) {
             return new TransactionHistoryAdapter.SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_header_title, parent, false));
         }
-        return new TransactionHistoryAdapter.ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_transactionhistory, parent, false), context);
+        return new TransactionHistoryAdapter.ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_transactionhistory, parent, false));
     }
-
 
     @Override
     public int getItemViewType(int position) {
@@ -66,7 +72,6 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
             return;
         }
         if (SECTION_VIEW == getItemViewType(position)) {
-
             TransactionHistoryAdapter.SectionHeaderViewHolder sectionHeaderViewHolder = (TransactionHistoryAdapter.SectionHeaderViewHolder) holder;
             TransactionsHistoryModel sectionItem = mTransactionHistory.get(position);
             sectionHeaderViewHolder.tvHeader.setText(sectionItem.getTransactionDate());
@@ -78,64 +83,75 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
                 transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
 
-        //itemViewHolder.tvTransactionStatus.setText(transactionsHistoryModel.getTransactionStatus());
-        if(Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_SUCESSS)
-        {
-            itemViewHolder.tvTransactionStatus.setText("Thành công");
-        }else if(Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_FAIL)
-        {
-            itemViewHolder.tvTransactionStatus.setText("Thất bại");
+        if (Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_SUCCESS) {
+            itemViewHolder.tvTransactionStatus.setText(context.getString(R.string.str_cash_take_success));
+        } else if (Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_FAIL) {
+            itemViewHolder.tvTransactionStatus.setText(context.getString(R.string.str_fail));
         }
-        itemViewHolder.tvTransactionAmount.setText(transactionsHistoryModel.getTransactionAmount());
-        //itemViewHolder.tvTransactionDate.setText(transactionsHistoryModel.getTransactionDate());
-        String strTransactionDateTime = transactionsHistoryModel.getTransactionDate();
-        String strYear = strTransactionDateTime.substring(0, 4);
-        String strMonth = strTransactionDateTime.substring(4, 6);
-        String strDay = strTransactionDateTime.substring(6, 8);
-        itemViewHolder.tvTransactionDate.setText(strDay+"/"+strMonth+"/"+strYear);
+        itemViewHolder.tvTransactionDate.setText(CommonUtils.getDateTransfer(context, transactionsHistoryModel.getTransactionDate()));
 
-        switch (transactionsHistoryModel.getTransactionType())
-        {
+        switch (transactionsHistoryModel.getTransactionType()) {
             case TYPE_SEND_ECASH_TO_EDONG:
-                itemViewHolder.tvTransactionType.setText("Rút Cash");
+                itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_cash_out));
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_cash_out_gray);
+                itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
+                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 break;
-            case TYPE_SEND_MONEY:
-                itemViewHolder.tvTransactionType.setText("Chuyển khoản");
-                itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+            case TYPE_ECASH_TO_ECASH:
+                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                    itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_transfer));
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+                    itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                } else {
+                    itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_transfer));
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+                    itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                }
                 break;
             case TYPE_SEND_EDONG_TO_ECASH:
-                itemViewHolder.tvTransactionType.setText("Nạp Cash");
+                itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_cash_in));
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_cash_in_gray);
+                itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
+                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 break;
-            case TYPE_ECASH_EXCHANGE:
-                itemViewHolder.tvTransactionType.setText("Đổi Cash");
+            case TYPE_CASH_EXCHANGE:
+                itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_cash_change));
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+                itemViewHolder.tvTransactionAmount.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())));
                 break;
 
         }
+
+        itemViewHolder.item_view.setOnClickListener(v -> {
+            if(onItemClickListener!=null){
+                onItemClickListener.onItemClick(transactionsHistoryModel);
+            }
+        });
     }
 
     @Override
-    public int getItemCount() {return mTransactionHistory.size();}
+    public int getItemCount() {
+        return mTransactionHistory.size();
+    }
 
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvFullName, tvTransactionType, tvTransactionStatus, tvTransactionAmount, tvTransactionDate;
-        public RelativeLayout viewBackground, viewForeground;
+        public RelativeLayout item_view;
         public CircleImageView ivTransactionIcon;
 
 
-        public ItemViewHolder(View itemView, final Context context) {
+        public ItemViewHolder(View itemView) {
             super(itemView);
             tvFullName = itemView.findViewById(R.id.tv_fullName);
             tvTransactionType = itemView.findViewById(R.id.tv_transactionType);
             tvTransactionStatus = itemView.findViewById(R.id.tv_transactionStatus);
             tvTransactionAmount = itemView.findViewById(R.id.tv_transactionAmount);
             tvTransactionDate = itemView.findViewById(R.id.tv_transactionDate);
-            viewBackground = itemView.findViewById(R.id.view_background);
-            viewForeground = itemView.findViewById(R.id.view_foreground);
+            item_view = itemView.findViewById(R.id.item_view);
             ivTransactionIcon = itemView.findViewById(R.id.iv_transactionIcon);
         }
     }

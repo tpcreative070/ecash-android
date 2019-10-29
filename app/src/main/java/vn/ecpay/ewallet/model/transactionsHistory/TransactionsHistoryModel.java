@@ -1,6 +1,8 @@
 package vn.ecpay.ewallet.model.transactionsHistory;
 
-public class TransactionsHistoryModel {
+import java.io.Serializable;
+
+public class TransactionsHistoryModel implements Serializable {
     public boolean isSection;
     private String senderName;
     private String senderAccountId;
@@ -11,23 +13,25 @@ public class TransactionsHistoryModel {
     private String transactionStatus;
     private String transactionAmount;
     private String transactionDate;
+    private String cashLogType;
+    private String receiverPhone;
+    private String transactionSignature;
+    private String cashEnc;
 
-    public TransactionsHistoryModel(String senderName,
-                                    String senderAccountId,
-                                    String receiverName,
-                                    String receiverAccountId,
-                                    String transactionType,
-                                    String transactionStatus,
-                                    String transactionAmount,
-                                    String transactionDate) {
-        this.senderAccountId = senderAccountId;
+    public TransactionsHistoryModel(String senderName, String senderAccountId, String receiverName, String receiverAccountId, String transactionType, String transactionContent, String transactionStatus, String transactionAmount, String transactionDate, String cashLogType, String receiverPhone, String transactionSignature, String cashEnc) {
         this.senderName = senderName;
-        this.receiverAccountId = receiverAccountId;
+        this.senderAccountId = senderAccountId;
         this.receiverName = receiverName;
+        this.receiverAccountId = receiverAccountId;
         this.transactionType = transactionType;
+        this.transactionContent = transactionContent;
         this.transactionStatus = transactionStatus;
         this.transactionAmount = transactionAmount;
         this.transactionDate = transactionDate;
+        this.cashLogType = cashLogType;
+        this.receiverPhone = receiverPhone;
+        this.transactionSignature = transactionSignature;
+        this.cashEnc = cashEnc;
     }
 
     public TransactionsHistoryModel(boolean isSection, String fullName) {
@@ -115,5 +119,37 @@ public class TransactionsHistoryModel {
 
     public void setTransactionDate(String transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    public String getCashLogType() {
+        return cashLogType;
+    }
+
+    public void setCashLogType(String cashLogType) {
+        this.cashLogType = cashLogType;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getTransactionSignature() {
+        return transactionSignature;
+    }
+
+    public void setTransactionSignature(String transactionSignature) {
+        this.transactionSignature = transactionSignature;
+    }
+
+    public String getCashEnc() {
+        return cashEnc;
+    }
+
+    public void setCashEnc(String cashEnc) {
+        this.cashEnc = cashEnc;
     }
 }

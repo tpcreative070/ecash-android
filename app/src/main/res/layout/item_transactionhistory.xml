@@ -1,57 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:id="@+id/item_view"
+    android:background="@color/white">
 
     <RelativeLayout
-        android:id="@+id/view_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="1dp"
-        android:background="@color/blue">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:paddingRight="10dp"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/delete_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_transfer_sub" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:textSize="@dimen/text_small"
-                android:layout_marginTop="5dp"
-                android:text="@string/str_transfer"
-                android:textColor="@color/white" />
-        </LinearLayout>
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/view_foreground"
+        android:id="@+id/layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
-        android:background="@color/bg_item_transfer"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <LinearLayout
             android:id="@+id/layout_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/iv_transactionIcon"
             android:orientation="vertical">
@@ -60,37 +24,44 @@
                 android:id="@+id/tv_fullName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="nguyen quang vinh"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_large" />
+                android:textSize="@dimen/text_normal" />
 
             <TextView
                 android:id="@+id/tv_transactionType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/grey_light"
-                android:textSize="@dimen/text_small" />
+                android:paddingTop="3dp"
+                android:text="chuyển khoản"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_large"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_transactionStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/grey_light"
+                android:paddingTop="3dp"
+                android:text="Thành công"
+                android:textColor="@color/blue"
                 android:textSize="@dimen/text_small" />
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/layout_content1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_transactionAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="20.000 vnđ"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_large" />
 
@@ -98,17 +69,25 @@
                 android:id="@+id/tv_transactionDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="3/4/2019"
                 android:textColor="@color/grey_light"
                 android:textSize="@dimen/text_small" />
         </LinearLayout>
-
 
         <vn.ecpay.fragmentcommon.ui.widget.CircleImageView
             android:id="@+id/iv_transactionIcon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:src="@drawable/avatar" />
     </RelativeLayout>
 
-</FrameLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@+id/layout_header"
+        android:background="@color/gray_light" />
+
+</RelativeLayout>

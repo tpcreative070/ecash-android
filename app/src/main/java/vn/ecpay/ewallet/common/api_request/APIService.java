@@ -24,21 +24,20 @@ import vn.ecpay.ewallet.model.account.logout.response.ResponseLogOut;
 import vn.ecpay.ewallet.model.account.register.RequestRegister;
 import vn.ecpay.ewallet.model.account.register.register_response.ResponseRegister;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
-import vn.ecpay.ewallet.model.cashChange.response.ResponseCashChange;
+import vn.ecpay.ewallet.model.chanel.RequestUpdateChanel;
+import vn.ecpay.ewallet.model.chanel.response.ResponseUpdateChanel;
+import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
+import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
 import vn.ecpay.ewallet.model.ecashToEdong.RequestEcashToEdong;
 import vn.ecpay.ewallet.model.ecashToEdong.ResponseECashToEdong;
 import vn.ecpay.ewallet.model.edongToEcash.RequestEdongToECash;
-import vn.ecpay.ewallet.model.edongToEcash.ResponseEdongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.response.ResponseEdongToECash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.chanel.RequestUpdateChanel;
-import vn.ecpay.ewallet.model.chanel.response.ResponseUpdateChanel;
-import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
-import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
 
 public interface APIService {
 
@@ -91,7 +90,7 @@ public interface APIService {
     Call<ResponseCancelAccount> cancelAccount(@Body RequestCancelAccount body);
 
     @POST("ecgateway/execute/GWEC0011")
-    Call<ResponseCashChange> changeCash(@Body RequestECashChange body);
+    Call<ResponseEdongToECash> changeCash(@Body RequestECashChange body);
 
     @POST("UpdateChannel")
     Call<ResponseUpdateChanel> updateChannel(@Body RequestUpdateChanel body);

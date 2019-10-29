@@ -1,17 +1,17 @@
 
-package vn.ecpay.ewallet.model.cashChange.response;
+package vn.ecpay.ewallet.model.edongToEcash.response;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ResponseCashChange {
+public class ResponseEdongToECash {
 
     @SerializedName("responseCode")
     private String mResponseCode;
     @SerializedName("responseData")
-    private ResponseCashChangeData mResponseData;
+    private CashInResponse mResponseData;
     @SerializedName("responseMessage")
     private String mResponseMessage;
 
@@ -23,11 +23,11 @@ public class ResponseCashChange {
         mResponseCode = responseCode;
     }
 
-    public ResponseCashChangeData getResponseData() {
+    public CashInResponse getResponseData() {
         return mResponseData;
     }
 
-    public void setResponseData(ResponseCashChangeData responseData) {
+    public void setResponseData(CashInResponse responseData) {
         mResponseData = responseData;
     }
 

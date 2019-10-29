@@ -29,15 +29,14 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.Decision;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.edongToEcash.EDongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseDataGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 
 public class CashInService extends Service {
     private int numberRequest = 0;
-    private String transactionSignature;
-    private EDongToECash eDongToECashResponse;
+    private CashInResponse eDongToECashResponse;
     private String[][] deCryptECash;
     private AccountInfo accountInfo;
 
@@ -53,10 +52,14 @@ public class CashInService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            transactionSignature = extras.getString(Constant.TRANSACTION_SIGNATURE);
-            eDongToECashResponse = (EDongToECash) extras.getSerializable(Constant.EDONG_TO_ECASH);
+        Bundle extras;
+        try {
+            extras = intent.getExtras();
+        } catch (NullPointerException e) {
+            extras = null;
+        }
+        if (null != extras) {
+            eDongToECashResponse = (CashInResponse) extras.getSerializable(Constant.EDONG_TO_ECASH);
             accountInfo = (AccountInfo) extras.getSerializable(Constant.ACCOUNT_INFO);
             if (eDongToECashResponse != null) {
                 deCryptECash = CommonUtils.decrypEcash(eDongToECashResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
@@ -67,7 +70,7 @@ public class CashInService extends Service {
     }
 
     private void checkArrayCash() {
-        if (deCryptECash != null) {
+        if (null != deCryptECash) {
             if (deCryptECash.length > 0) {
                 if (numberRequest == deCryptECash.length) {
                     EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
@@ -100,7 +103,7 @@ public class CashInService extends Service {
             cash.setExpireDate(item[6]);
             cash.setCycle(Integer.valueOf(item[7]));
             cash.setType(Constant.STR_CASH_IN);
-            cash.setTransactionSignature(transactionSignature);
+            cash.setTransactionSignature(eDongToECashResponse.getId());
             WalletDatabase.getINSTANCE(getApplicationContext(), ECashApplication.masterKey);
             Decision decision = WalletDatabase.getDecisionNo(item[2]);
             if (decision != null) {
@@ -171,7 +174,7 @@ public class CashInService extends Service {
     private void checkVerifyCash(CashLogs cash, String decisionTrekp, String decisionAcckp) {
         if (CommonUtils.verifyCash(cash, decisionTrekp, decisionAcckp)) {
             //xác thực đồng ecash ok => save cash
-            DatabaseUtil.SaveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());
+            DatabaseUtil.saveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());
             numberRequest = numberRequest + 1;
             checkArrayCash();
         } else {

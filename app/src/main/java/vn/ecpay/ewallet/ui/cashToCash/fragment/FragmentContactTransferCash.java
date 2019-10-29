@@ -162,7 +162,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Re
         ((CashToCashActivity) getActivity()).updateTitle(getString(R.string.str_account_receive));
     }
 
-    @OnClick(R.id.iv_clear_search)
+    @OnClick(R.id.iv_filter)
     public void onViewClicked() {
         edtSearch.setText(Constant.STR_EMPTY);
     }

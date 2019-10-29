@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -206,6 +207,10 @@ public class MainActivity extends ECashBaseActivity {
                 walletTabViewHolder.nameView.setTextColor(ContextCompat.getColor(this, R.color.blue));
                 break;
         }
+    }
+
+    public void addFragment(Fragment pFragment, boolean isAnimation) {
+        addFragment(pFragment, isAnimation, R.id.main_content);
     }
 
     @Override

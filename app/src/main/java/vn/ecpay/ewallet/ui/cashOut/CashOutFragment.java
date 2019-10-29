@@ -124,6 +124,18 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     TextView tvTotalOut;
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
+    @BindView(R.id.layout_500)
+    RelativeLayout layout500;
+    @BindView(R.id.layout_200)
+    RelativeLayout layout200;
+    @BindView(R.id.layout_100)
+    RelativeLayout layout100;
+    @BindView(R.id.layout_50)
+    RelativeLayout layout50;
+    @BindView(R.id.layout_20)
+    RelativeLayout layout20;
+    @BindView(R.id.layout_10)
+    RelativeLayout layout10;
 
     private int total500 = 0, total200 = 0, total100 = 0, total50 = 0, total20 = 0, total10 = 0;
     private int slDatabase500, slDatabase200, slDatabase100, slDatabase50, slDatabase20, slDatabase10;
@@ -245,6 +257,42 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         slDatabase50 = WalletDatabase.getTotalMoney("50000", Constant.STR_CASH_IN);
         slDatabase20 = WalletDatabase.getTotalMoney("20000", Constant.STR_CASH_IN);
         slDatabase10 = WalletDatabase.getTotalMoney("10000", Constant.STR_CASH_IN);
+        if (slDatabase500 > 0) {
+            layout500.setVisibility(View.VISIBLE);
+        } else {
+            layout500.setVisibility(View.GONE);
+        }
+
+        if (slDatabase200 > 0) {
+            layout200.setVisibility(View.VISIBLE);
+        } else {
+            layout200.setVisibility(View.GONE);
+        }
+
+        if (slDatabase100 > 0) {
+            layout100.setVisibility(View.VISIBLE);
+        } else {
+            layout100.setVisibility(View.GONE);
+        }
+
+        if (slDatabase50 > 0) {
+            layout50.setVisibility(View.VISIBLE);
+        } else {
+            layout50.setVisibility(View.GONE);
+        }
+
+        if (slDatabase20 > 0) {
+            layout20.setVisibility(View.VISIBLE);
+        } else {
+            layout20.setVisibility(View.GONE);
+        }
+
+        if (slDatabase10 > 0) {
+            layout10.setVisibility(View.VISIBLE);
+        } else {
+            layout10.setVisibility(View.GONE);
+        }
+
     }
 
     private void updateQualityOut() {
@@ -451,7 +499,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
             responseMess.setReceiver(String.valueOf(accountInfo.getWalletId()));
             responseMess.setTime(CommonUtils.getCurrentTime());
-            responseMess.setType(Constant.TYPE_SEND_MONEY);
+            responseMess.setType(Constant.TYPE_SEND_ECASH_TO_EDONG);
             responseMess.setContent(Constant.STR_EMPTY);
             responseMess.setCashEnc(encData);
             responseMess.setId(CommonUtils.getIdSender(responseMess, getActivity()));
@@ -496,13 +544,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         return encData;
     }
 
-    private void updateDatabase() {
-        DatabaseUtil.updateDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
-        dismissProgress();
-        showDialogCashOutOk();
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
-    }
-
     @Override
     public void showLoading() {
         showProgress();
@@ -527,5 +568,12 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     public void sendECashToEDongSuccess() {
         cashOutPresenter.getEDongInfo(accountInfo);
         updateDatabase();
+    }
+
+    private void updateDatabase() {
+        DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
+        dismissProgress();
+        showDialogCashOutOk();
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
     }
 }

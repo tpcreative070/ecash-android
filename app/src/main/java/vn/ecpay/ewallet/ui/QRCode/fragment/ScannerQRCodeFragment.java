@@ -138,10 +138,10 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     }
                 }
             } else {
-                ((QRCodeActivity) getActivity()).showDialogError("Mã QR của bạn không đúng ahuhu");
+                ((QRCodeActivity) getActivity()).showDialogError("Mã QR của bạn không đúng");
             }
         } catch (JsonSyntaxException e) {
-            ((QRCodeActivity) getActivity()).showDialogError("Mã QR của bạn không đúng ahuhu");
+            ((QRCodeActivity) getActivity()).showDialogError("Mã QR của bạn không đúng");
         }
     }
 

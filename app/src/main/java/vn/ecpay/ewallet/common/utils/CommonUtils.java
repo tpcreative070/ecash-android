@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eccrypto.ECElGamal;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
@@ -275,7 +276,7 @@ public class CommonUtils {
     public static boolean isValidatePass(String pass) {
         if (pass == null)
             return false;
-        if (pass.trim().length() < 6 || pass.trim().length() >20) {
+        if (pass.trim().length() < 6 || pass.trim().length() > 20) {
             return false;
         }
         return true;
@@ -363,7 +364,7 @@ public class CommonUtils {
 
     }
 
-    public static QRCashTransfer getQrCashTransfer(CashLogs cash, ResponseCashMess responseMess, ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet, boolean status){
+    public static QRCashTransfer getQrCashTransfer(CashLogs cash, ResponseCashMess responseMess, ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet, boolean status) {
         QRCashTransfer qrCashTransfer = new QRCashTransfer();
         qrCashTransfer.setParValue(cash.getParValue());
         qrCashTransfer.setSuccess(status);
@@ -371,5 +372,16 @@ public class CommonUtils {
         qrCashTransfer.setPhone(responseGetPublicKeyWallet.getPersonMobilePhone());
         qrCashTransfer.setContent(responseMess.getContent());
         return qrCashTransfer;
+    }
+
+    public static String getDateTransfer(Context context, String date) {
+        if (date.length() > 8) {
+            String strYear = date.substring(0, 4);
+            String strMonth = date.substring(4, 6);
+            String strDay = date.substring(6, 8);
+            return context.getString(R.string.str_date, strDay, strMonth, strYear);
+        } else {
+            return Constant.STR_EMPTY;
+        }
     }
 }

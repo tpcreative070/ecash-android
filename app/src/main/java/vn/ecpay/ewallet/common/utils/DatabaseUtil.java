@@ -62,7 +62,7 @@ public class DatabaseUtil {
     public static boolean isTransactionLogExit(ResponseCashMess responseMess, Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         TransactionLog transactionLog = WalletDatabase.checkTransactionLogExit(responseMess.getId());
-        if (transactionLog != null) {
+        if (null != transactionLog) {
             return true;
         }
         return false;
@@ -120,7 +120,7 @@ public class DatabaseUtil {
         }
     }
 
-    public static boolean SaveCashToDB(CashLogs cash, Context context, String userName) {
+    public static boolean saveCashToDB(CashLogs cash, Context context, String userName) {
         cash.setPreviousHash(getPreviousHashCash(cash, context));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertCashTask(cash, userName);
@@ -142,16 +142,13 @@ public class DatabaseUtil {
         return CommonUtils.generateSignature(dataSign, Constant.STR_PRIVATE_KEY_CHANEL);
     }
 
-    public static void updateDatabase(ArrayList<CashLogs> listCashSend, ResponseCashMess responseMess, Context context, String userName) {
-        //save trasaction log
+    public static void updateTransactionsLogAndCashOutDatabase(ArrayList<CashLogs> listCashSend, ResponseCashMess responseMess, Context context, String userName) {
         saveTransactionLog(responseMess, context);
-        //save to cash log
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         for (int i = 0; i < listCashSend.size(); i++) {
             CashLogs cash = listCashSend.get(i);
             cash.setType(Constant.STR_CASH_OUT);
             cash.setTransactionSignature(responseMess.getId());
-            WalletDatabase.insertCashTask(cash, userName);
+            saveCashToDB(cash, context, userName);
         }
     }
 

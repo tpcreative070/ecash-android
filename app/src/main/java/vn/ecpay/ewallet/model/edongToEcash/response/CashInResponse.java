@@ -1,5 +1,5 @@
 
-package vn.ecpay.ewallet.model.edongToEcash;
+package vn.ecpay.ewallet.model.edongToEcash.response;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class EDongToECash implements Serializable {
+public class CashInResponse implements Serializable {
 
     @SerializedName("amount")
     private Long mAmount;
@@ -49,7 +49,7 @@ public class EDongToECash implements Serializable {
     @SerializedName("terminalId")
     private String mTerminalId;
     @SerializedName("time")
-    private Long mTime;
+    private String mTime;
     @SerializedName("token")
     private String mToken;
     @SerializedName("transLockRefId")
@@ -213,11 +213,11 @@ public class EDongToECash implements Serializable {
         mTerminalId = terminalId;
     }
 
-    public Long getTime() {
+    public String getTime() {
         return mTime;
     }
 
-    public void setTime(Long time) {
+    public void setTime(String time) {
         mTime = time;
     }
 

@@ -45,7 +45,7 @@ public class ECashToEDong {
     @SerializedName("terminalId")
     private String mTerminalId;
     @SerializedName("time")
-    private Long mTime;
+    private String mTime;
     @SerializedName("token")
     private String mToken;
     @SerializedName("transLockRefId")
@@ -199,11 +199,11 @@ public class ECashToEDong {
         mTerminalId = terminalId;
     }
 
-    public Long getTime() {
+    public String getTime() {
         return mTime;
     }
 
-    public void setTime(Long time) {
+    public void setTime(String time) {
         mTime = time;
     }
 

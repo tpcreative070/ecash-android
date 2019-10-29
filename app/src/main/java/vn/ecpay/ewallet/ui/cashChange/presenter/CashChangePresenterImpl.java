@@ -19,8 +19,8 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
-import vn.ecpay.ewallet.model.cashChange.response.ResponseCashChange;
-import vn.ecpay.ewallet.model.cashChange.response.ResponseCashChangeData;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
+import vn.ecpay.ewallet.model.edongToEcash.response.ResponseEdongToECash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
@@ -71,15 +71,14 @@ public class CashChangePresenterImpl implements CashChangePresenter {
     }
 
     @Override
-    public void requestChangeCash(ResponseCashMess responseMess, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue) {
-        cashChangeView.showLoading();
+    public void requestChangeCash(String cashEnc, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
         RequestECashChange requestECashChange = new RequestECashChange();
         requestECashChange.setChannelCode(Constant.CHANNEL_CODE);
         requestECashChange.setFunctionCode(Constant.FUNCTION_CHANGE_CASH);
-        requestECashChange.setCashEnc(requestECashChange.getCashEnc());
+        requestECashChange.setCashEnc(cashEnc);
         requestECashChange.setQuantities(listQuality);
         requestECashChange.setReceiver(accountInfo.getWalletId());
         requestECashChange.setSender(Constant.ISSUER_CODE);
@@ -91,16 +90,16 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestECashChange));
         requestECashChange.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
-        Call<ResponseCashChange> call = apiService.changeCash(requestECashChange);
-        call.enqueue(new Callback<ResponseCashChange>() {
+        Call<ResponseEdongToECash> call = apiService.changeCash(requestECashChange);
+        call.enqueue(new Callback<ResponseEdongToECash>() {
             @Override
-            public void onResponse(Call<ResponseCashChange> call, Response<ResponseCashChange> response) {
+            public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
                 if (response.isSuccessful()) {
                     if (null != response.body().getResponseCode()) {
                         application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (null != response.body().getResponseData()) {
-                                ResponseCashChangeData responseData = response.body().getResponseData();
+                                CashInResponse responseData = response.body().getResponseData();
                                 cashChangeView.changeCashSuccess(responseData);
                             }
                         } else {
@@ -115,7 +114,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             }
 
             @Override
-            public void onFailure(Call<ResponseCashChange> call, Throwable t) {
+            public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashChangeView.dismissLoading();
                 cashChangeView.showDialogError(application.getString(R.string.err_upload));
             }

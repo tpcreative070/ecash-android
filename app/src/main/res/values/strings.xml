@@ -71,7 +71,17 @@
     <string name="str_transfer_all_money">Vui lòng tất toán tài khoản trước khi huỷ ví</string>
     <string name="str_cancel_account_success">Huỷ tài khoản thành công</string>
     <string name="str_main_screen">Màn hình chính</string>
-
+    <string name="str_transactions_history_detail">Chi tiết giao dịch</string>
+    <string name="str_history_human_code">Mã Người nhận: </string>
+    <string name="str_history_name">Họ tên: </string>
+    <string name="str_history_phone">Số điện thoại: </string>
+    <string name="str_history_type">Loại: </string>
+    <string name="str_history_total">Tổng giá trị: </string>
+    <string name="str_history_content">Nội dung: </string>
+    <string name="str_history_date">Ngày tháng: </string>
+    <string name="str_time">Thời gian</string>
+    <string name="str_type_transfer">Loại giao dịch</string>
+    <string name="str_status">Trạng thái</string>
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
     <string name="str_input_account_ecash">Nhập số tài khoản eCash</string>
@@ -84,6 +94,7 @@
     <string name="str_item_transfer_cash">%s - %s</string>
     <string name="str_take_cash">Nhận eCash</string>
     <string name="str_cash_take_success">Thành công</string>
+    <string name="str_fail">Thất bại</string>
     <string name="str_cash_take_info">Thông tin giao dịch</string>
     <string name="str_human_transfer">Người chuyển:</string>
     <string name="str_phone_number_transfer">Số điện thoại: </string>
@@ -93,6 +104,7 @@
 
     //transaction logs
     <string name="str_input_transaction_search">Nhập thông tin tìm kiếm</string>
+    <string name="str_history_transfer">Lịch sử giao dịch</string>
 
     //change cash
     <string name="str_cash_have_in_wallet">Cash có trong ví</string>
@@ -104,7 +116,10 @@
     //rút eCash
     <string name="str_withdraw_edong">Rút về ví eDong</string>
     <string name="number_money">Số tiền</string>
+    <string name="number_total_money_take">Tổng tiền nhận</string>
+    <string name="number_total_money_send">Tổng tiền đổi</string>
     <string name="str_number_recharge">Số tiền nạp</string>
+    <string name="str_number_take">Số tiền nhận</string>
     <string name="str_number_out">Số tiền chuyển</string>
     <string name="str_number_in">Số tiền rút</string>
     <string name="str_phone_number">Số điện thoại</string>
@@ -177,9 +192,13 @@
     <string name="err_conflict_take_and_change">Số tiền đổi và số tiền nhận phải bằng nhau</string>
 
     //%s
+    <string name="str_type_cash_out">-%s</string>
+    <string name="str_type_cash_in">+%s</string>
     <string name="str_number_scan_qr_code">Bạn đã quét thành công %s QR code</string>
     <string name="str_total_money_transfer">+ %s</string>
     <string name="str_money">Số lượng: %s</string>
+    <string name="str_history_date_header">Tháng %s/%s</string>
+    <string name="str_date">%s/%s/%s</string>
     <string name="str_total_money">%s VNĐ</string>
     <string name="str_dialog_cash_in_success">bạn đã nạp thành công số tiền: %s từ tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
     <string name="str_dialog_cash_out_success">bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>

@@ -1,15 +1,24 @@
 package vn.ecpay.ewallet.ui.cashChange.fragment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -18,20 +27,22 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs;
+import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cashChange.response.ResponseCashChangeData;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
+import vn.ecpay.ewallet.ui.cashIn.CashInService;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
-import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 
@@ -79,6 +90,18 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     TextView tvTotalMoneyCashChange;
     @BindView(R.id.tv_total_money_cash_take)
     TextView tvTotalMoneyCashTake;
+    @BindView(R.id.layout_500)
+    RelativeLayout layout500;
+    @BindView(R.id.layout_200)
+    RelativeLayout layout200;
+    @BindView(R.id.layout_100)
+    RelativeLayout layout100;
+    @BindView(R.id.layout_50)
+    RelativeLayout layout50;
+    @BindView(R.id.layout_20)
+    RelativeLayout layout20;
+    @BindView(R.id.layout_10)
+    RelativeLayout layout10;
     private String publicKeyOrganization;
     private AccountInfo accountInfo;
     private long balance;
@@ -86,12 +109,14 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     private int totalChange500 = 0, totalChange200 = 0, totalChange100 = 0, totalChange50 = 0, totalChange20 = 0, totalChange10 = 0;
     private int totalTake500 = 0, totalTake200 = 0, totalTake100 = 0, totalTake50 = 0, totalTake20 = 0, totalTake10 = 0;
     private int totalMoneyChange, totalMoneyTake;
-    private List<Integer> listQuality;
-    private List<Integer> listValue;
+    private List<Integer> listQualitySend;
+    private List<Integer> listValueSend;
+
+    private List<Integer> listQualityTake;
+    private List<Integer> listValueTake;
     private ArrayList<CashLogs> listCashSend;
     @Inject
     CashChangePresenter cashChangePresenter;
-    private String encData;
 
     @Override
     protected int getLayoutResId() {
@@ -134,6 +159,42 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         tvNumber50.setText(String.valueOf(slDatabase50));
         tvNumber20.setText(String.valueOf(slDatabase20));
         tvNumber10.setText(String.valueOf(slDatabase10));
+
+        if (slDatabase500 > 0) {
+            layout500.setVisibility(View.VISIBLE);
+        } else {
+            layout500.setVisibility(View.GONE);
+        }
+
+        if (slDatabase200 > 0) {
+            layout200.setVisibility(View.VISIBLE);
+        } else {
+            layout200.setVisibility(View.GONE);
+        }
+
+        if (slDatabase100 > 0) {
+            layout100.setVisibility(View.VISIBLE);
+        } else {
+            layout100.setVisibility(View.GONE);
+        }
+
+        if (slDatabase50 > 0) {
+            layout50.setVisibility(View.VISIBLE);
+        } else {
+            layout50.setVisibility(View.GONE);
+        }
+
+        if (slDatabase20 > 0) {
+            layout20.setVisibility(View.VISIBLE);
+        } else {
+            layout20.setVisibility(View.GONE);
+        }
+
+        if (slDatabase10 > 0) {
+            layout10.setVisibility(View.VISIBLE);
+        } else {
+            layout10.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -146,7 +207,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_cash_change:
-                DialogUtil.getInstance().showDialogChoseCash(true, getActivity(), accountInfo, getString(R.string.str_cash_change), new DialogUtil.OnResultChoseCash() {
+                DialogUtil.getInstance().showDialogChangeCash(true, getActivity(), accountInfo, getString(R.string.str_cash_change), new DialogUtil.OnResultChoseCash() {
                     @Override
                     public void OnListenerOk(int sl500, int sl200, int sl100, int sl50, int sl20, int sl10) {
                         totalChange10 = sl10;
@@ -156,6 +217,10 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         totalChange200 = sl200;
                         totalChange500 = sl500;
                         layoutChange.setVisibility(View.VISIBLE);
+                        btnCashChange.setBackgroundResource(R.drawable.bg_border_red);
+                        btnCashChange.setTextColor(getResources().getColor(R.color.red));
+                        btnCashTake.setBackgroundResource(R.drawable.bg_border_red);
+                        btnCashTake.setTextColor(getResources().getColor(R.color.red));
                         updateTotalMoneyChangeAndTake();
                     }
                 });
@@ -165,7 +230,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                     ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_transfer));
                     return;
                 }
-                DialogUtil.getInstance().showDialogChoseCash(false, getActivity(), accountInfo, getString(R.string.str_cash_take), new DialogUtil.OnResultChoseCash() {
+                DialogUtil.getInstance().showDialogChangeCash(false, getActivity(), accountInfo, getString(R.string.str_cash_take), new DialogUtil.OnResultChoseCash() {
                     @Override
                     public void OnListenerOk(int sl500, int sl200, int sl100, int sl50, int sl20, int sl10) {
                         totalTake10 = sl10;
@@ -175,6 +240,10 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         totalTake200 = sl200;
                         totalTake500 = sl500;
                         layoutChange.setVisibility(View.VISIBLE);
+                        btnCashChange.setBackgroundResource(R.drawable.bg_border_red);
+                        btnCashChange.setTextColor(getResources().getColor(R.color.red));
+                        btnCashTake.setBackgroundResource(R.drawable.bg_border_red);
+                        btnCashTake.setTextColor(getResources().getColor(R.color.red));
                         updateTotalMoneyChangeAndTake();
                     }
                 });
@@ -211,33 +280,74 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             return;
         }
 
-        listQuality = new ArrayList<>();
-        listValue = new ArrayList<>();
+        DialogUtil.getInstance().showDialogConfirmChangeCash(totalChange500, totalChange200, totalChange100, totalChange50, totalChange20, totalChange10,
+                totalTake500, totalTake200, totalTake100, totalTake50, totalTake20, totalTake10, getActivity(), new DialogUtil.OnResult() {
+                    @Override
+                    public void OnListenerOk() {
+                        showLoading();
+                        getListCashSend();
+                        getListCashTake();
+                        getCashEncrypt(totalChange10, totalChange20, totalChange50, totalChange100, totalChange200, totalChange500, publicKeyOrganization);
+                    }
+                });
+    }
+
+    private void getListCashSend() {
+        listQualitySend = new ArrayList<>();
+        listValueSend = new ArrayList<>();
+        if (totalChange10 > 0) {
+            listQualitySend.add(totalChange10);
+            listValueSend.add(10000);
+        }
+        if (totalChange20 > 0) {
+            listQualitySend.add(totalChange20);
+            listValueSend.add(20000);
+        }
+        if (totalChange50 > 0) {
+            listQualitySend.add(totalChange50);
+            listValueSend.add(50000);
+        }
+        if (totalChange100 > 0) {
+            listQualitySend.add(totalChange100);
+            listValueSend.add(100000);
+        }
+        if (totalChange200 > 0) {
+            listQualitySend.add(totalChange200);
+            listValueSend.add(200000);
+        }
+        if (totalChange500 > 0) {
+            listQualitySend.add(totalChange500);
+            listValueSend.add(500000);
+        }
+    }
+
+    private void getListCashTake() {
+        listQualityTake = new ArrayList<>();
+        listValueTake = new ArrayList<>();
         if (totalTake10 > 0) {
-            listQuality.add(totalTake10);
-            listValue.add(10000);
+            listQualityTake.add(totalTake10);
+            listValueTake.add(10000);
         }
         if (totalTake20 > 0) {
-            listQuality.add(totalTake20);
-            listValue.add(20000);
+            listQualityTake.add(totalTake20);
+            listValueTake.add(20000);
         }
         if (totalTake50 > 0) {
-            listQuality.add(totalTake50);
-            listValue.add(50000);
+            listQualityTake.add(totalTake50);
+            listValueTake.add(50000);
         }
         if (totalTake100 > 0) {
-            listQuality.add(totalTake100);
-            listValue.add(100000);
+            listQualityTake.add(totalTake100);
+            listValueTake.add(100000);
         }
         if (totalTake200 > 0) {
-            listQuality.add(totalTake200);
-            listValue.add(200000);
+            listQualityTake.add(totalTake200);
+            listValueTake.add(200000);
         }
         if (totalTake500 > 0) {
-            listQuality.add(totalTake500);
-            listValue.add(500000);
+            listQualityTake.add(totalTake500);
+            listValueTake.add(500000);
         }
-        getCashEncrypt(totalTake10, totalTake20, totalTake50, totalTake100, totalTake200, totalTake500, publicKeyOrganization);
     }
 
     private void getCashEncrypt(int sl10, int sl20, int sl50, int sl100, int sl200, int sl500,
@@ -292,20 +402,13 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 cashSendArray[i] = moneyItem;
             }
 
-            encData = getEncrypData(cashSendArray, keyPublicReceiver);
-            ResponseCashMess responseMess = new ResponseCashMess();
-            responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
-            responseMess.setReceiver(String.valueOf(accountInfo.getWalletId()));
-            responseMess.setTime(CommonUtils.getCurrentTime());
-            responseMess.setType(Constant.TYPE_SEND_MONEY);
-            responseMess.setContent(Constant.STR_EMPTY);
-            responseMess.setCashEnc(encData);
+            String encData = getEncrypData(cashSendArray, keyPublicReceiver);
             if (encData.isEmpty()) {
                 dismissProgress();
                 ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
                 return;
             }
-            cashChangePresenter.requestChangeCash(responseMess, listQuality, accountInfo, listValue);
+            cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
         } else {
             dismissProgress();
         }
@@ -332,7 +435,84 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     }
 
     @Override
-    public void changeCashSuccess(ResponseCashChangeData responseData) {
+    public void changeCashSuccess(CashInResponse cashInResponse) {
+        saveTransactionLogs(cashInResponse);
+        //update money send
+        saveCashChangeSend();
+        //start service
+        startService(cashInResponse);
+    }
 
+    private void saveCashChangeSend() {
+        for (int i = 0; i < listCashSend.size(); i++) {
+            CashLogs cashLogs = listCashSend.get(i);
+            cashLogs.setType(Constant.STR_CASH_OUT);
+            DatabaseUtil.saveCashToDB(cashLogs, getActivity(), accountInfo.getUsername());
+        }
+    }
+
+    private void saveTransactionLogs(CashInResponse cashInResponse) {
+        TransactionLog transactionLog = new TransactionLog();
+        transactionLog.setSenderAccountId(cashInResponse.getSender());
+        transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
+        transactionLog.setType(cashInResponse.getType());
+        transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
+        transactionLog.setCashEnc(cashInResponse.getCashEnc());
+        transactionLog.setTransactionSignature(cashInResponse.getId());
+        transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
+        DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
+    }
+
+    private void startService(CashInResponse responseData) {
+        Intent intent = new Intent(getActivity(), CashInService.class);
+        intent.putExtra(Constant.EDONG_TO_ECASH, responseData);
+        intent.putExtra(Constant.ACCOUNT_INFO, accountInfo);
+        if (getActivity() != null) {
+            getActivity().startService(intent);
+        }
+    }
+
+    private void showDialogCashChangeOk() {
+        DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success), "Đổi tiền thành công", new DialogUtil.OnConfirm() {
+            @Override
+            public void OnListenerOk() {
+                getMoneyDatabase();
+                layoutChange.setVisibility(View.GONE);
+                btnCashChange.setBackgroundResource(R.drawable.bg_border_blue);
+                btnCashChange.setTextColor(getResources().getColor(R.color.blue));
+                btnCashTake.setBackgroundResource(R.drawable.bg_border_blue);
+                btnCashTake.setTextColor(getResources().getColor(R.color.blue));
+            }
+
+            @Override
+            public void OnListenerCancel() {
+                Objects.requireNonNull(getActivity()).finish();
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateData(EventDataChange event) {
+        if (event.getData().equals(Constant.UPDATE_MONEY)) {
+            dismissProgress();
+            showDialogCashChangeOk();
+            Intent intent = new Intent(getActivity(), CashInService.class);
+            if (getActivity() != null) {
+                getActivity().startService(intent);
+            }
+        }
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().unregister(this);
+        super.onDetach();
     }
 }

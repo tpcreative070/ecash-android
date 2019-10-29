@@ -191,8 +191,8 @@ public class TestSocketActivity extends ECashBaseActivity {
 //                    Constant.STR_PRIVATE_KEY_CHANEL);
 //            Log.e("deCryptEcash", "deCryptEcash");
 //            if (deCryptEcash != null) {
-////                CommonUtils.SaveCashToDB(deCryptEcash, getApplicationContext(), "userName", responseMess.getId());
-//                Log.e("SaveCashToDB", "SaveCashToDB");
+////                CommonUtils.saveCashToDB(deCryptEcash, getApplicationContext(), "userName", responseMess.getId());
+//                Log.e("saveCashToDB", "saveCashToDB");
 //            }
 //        }
 

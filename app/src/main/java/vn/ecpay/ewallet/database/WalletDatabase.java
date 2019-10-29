@@ -17,16 +17,17 @@ import java.util.List;
 
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.CashInvalid;
+import vn.ecpay.ewallet.database.table.CashLogs;
 import vn.ecpay.ewallet.database.table.Contact;
 import vn.ecpay.ewallet.database.table.Decision;
 import vn.ecpay.ewallet.database.table.Profile;
 import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.database.table.TransactionTimeOut;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
 @Database(entities = {Contact.class,
@@ -342,6 +343,13 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     public static List<TransactionsHistoryModel> getListTransactionHistoryFilter(String filter) {
-        return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(filter);
+        return walletDatabase.daoAccess().getAllTransactionsHistoryOnlyFilter(filter);
+    }
+
+    public static List<CashLogTransaction> getAllCashByTransactionLog(String filter) {
+        return walletDatabase.daoAccess().getAllCashByTransactionLog(filter);
+    }
+    public static List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String date, String type, String status) {
+        return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(date, type, status);
     }
 }

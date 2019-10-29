@@ -12,8 +12,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import butterknife.BindView;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.database.WalletDatabase;
@@ -238,6 +240,9 @@ public class DialogUtil {
             });
 
             btnCancel.setOnClickListener(v -> dismissDialog());
+        } else {
+            dismissDialog();
+            showDialogLogout(pContext, onResult);
         }
     }
 
@@ -312,8 +317,9 @@ public class DialogUtil {
                 }
             });
             mDialog.show();
-            Window window = mDialog.getWindow();
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        } else {
+            dismissDialog();
+            showDialogInputOTP(pContext, sdt, error, txtInput, onConfirmOTP);
         }
     }
 
@@ -322,12 +328,18 @@ public class DialogUtil {
     int total500 = 0, total200 = 0, total100 = 0, total50 = 0, total20 = 0, total10 = 0;
     private long totalMoney = 0;
 
-    public void showDialogChoseCash(boolean isChange, Context pContext, AccountInfo accountInfo, String title, final OnResultChoseCash onResultChoseCash) {
+    public void showDialogChangeCash(boolean isChange, Context pContext, AccountInfo accountInfo, String title, final OnResultChoseCash onResultChoseCash) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_chose_cash);
             Button btnOk;
             TextView tvTotalMoney, tvTitle;
+            RelativeLayout layout500;
+            RelativeLayout layout200;
+            RelativeLayout layout100;
+            RelativeLayout layout50;
+            RelativeLayout layout20;
+            RelativeLayout layout10;
             TextView tvSl500, tvSl200, tvSl100, tvSl50, tvSl20, tvSl10;
             TextView tvTotal500, tvTotal200, tvTotal100, tvTotal50, tvTotal20, tvTotal10;
             ImageView ivDown500, ivDown200, ivDown100, ivDown50, ivDown20, ivDown10;
@@ -335,6 +347,13 @@ public class DialogUtil {
 
             tvTitle = mDialog.findViewById(R.id.tv_title);
             tvTotalMoney = mDialog.findViewById(R.id.tv_total_money);
+
+            layout500 = mDialog.findViewById(R.id.layout_500);
+            layout200 = mDialog.findViewById(R.id.layout_200);
+            layout100 = mDialog.findViewById(R.id.layout_100);
+            layout50 = mDialog.findViewById(R.id.layout_50);
+            layout20 = mDialog.findViewById(R.id.layout_20);
+            layout10 = mDialog.findViewById(R.id.layout_10);
 
             tvTotal500 = mDialog.findViewById(R.id.tv_total_500);
             tvTotal200 = mDialog.findViewById(R.id.tv_total_200);
@@ -390,6 +409,41 @@ public class DialogUtil {
 
             if (isChange) {
                 tvTitle.setText(pContext.getString(R.string.str_cash_change));
+                if (slDatabase500 > 0) {
+                    layout500.setVisibility(View.VISIBLE);
+                } else {
+                    layout500.setVisibility(View.GONE);
+                }
+
+                if (slDatabase200 > 0) {
+                    layout200.setVisibility(View.VISIBLE);
+                } else {
+                    layout200.setVisibility(View.GONE);
+                }
+
+                if (slDatabase100 > 0) {
+                    layout100.setVisibility(View.VISIBLE);
+                } else {
+                    layout100.setVisibility(View.GONE);
+                }
+
+                if (slDatabase50 > 0) {
+                    layout50.setVisibility(View.VISIBLE);
+                } else {
+                    layout50.setVisibility(View.GONE);
+                }
+
+                if (slDatabase20 > 0) {
+                    layout20.setVisibility(View.VISIBLE);
+                } else {
+                    layout20.setVisibility(View.GONE);
+                }
+
+                if (slDatabase10 > 0) {
+                    layout10.setVisibility(View.VISIBLE);
+                } else {
+                    layout10.setVisibility(View.GONE);
+                }
             } else {
                 tvTitle.setText(pContext.getString(R.string.str_cash_take));
                 tvSl10.setVisibility(View.GONE);
@@ -398,6 +452,13 @@ public class DialogUtil {
                 tvSl100.setVisibility(View.GONE);
                 tvSl200.setVisibility(View.GONE);
                 tvSl500.setVisibility(View.GONE);
+
+                layout500.setVisibility(View.VISIBLE);
+                layout200.setVisibility(View.VISIBLE);
+                layout100.setVisibility(View.VISIBLE);
+                layout50.setVisibility(View.VISIBLE);
+                layout20.setVisibility(View.VISIBLE);
+                layout10.setVisibility(View.VISIBLE);
             }
 
             ivDown10.setOnClickListener(v -> {
@@ -670,8 +731,8 @@ public class DialogUtil {
             ivUp500.setOnClickListener(v -> {
                 if (isChange) {
                     if (total500 > 0) {
-                        total500 = total500 - 1;
-                        slDatabase500 = slDatabase500 + 1;
+                        total500 = total500 + 1;
+                        slDatabase500 = slDatabase500 - 1;
                     }
                 } else {
                     total500 = total500 - 1;
@@ -704,6 +765,166 @@ public class DialogUtil {
                     onResultChoseCash.OnListenerOk(total500, total200, total100, total50, total20, total10);
                 }
             });
+        }
+    }
+
+    public void showDialogConfirmChangeCash(int slSend500, int slSend200, int slSend100, int slSend50, int slSend20, int slSend10,
+                                            int slTake500, int slTake200, int slTake100, int slTake50, int slTake20, int slTake10, Context pContext, OnResult onResult) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_confirm_change_cash);
+            RelativeLayout layout_send_500, layout_send_200, layout_send_100, layout_send_50, layout_send_20, layout_send_10;
+            RelativeLayout layout_take_500, layout_take_200, layout_take_100, layout_take_50, layout_take_20, layout_take_10;
+
+            TextView tv_number_send_500, tv_number_send_200, tv_number_send_100, tv_number_send_50, tv_number_send_20, tv_number_send_10;
+            TextView tv_number_take_500, tv_number_take_200, tv_number_take_100, tv_number_take_50, tv_number_take_20, tv_number_take_10;
+
+            TextView tv_total_money_send, tv_total_money_take;
+
+            Button btnConfirm;
+            layout_send_500 = mDialog.findViewById(R.id.layout_send_500);
+            layout_send_200 = mDialog.findViewById(R.id.layout_send_200);
+            layout_send_100 = mDialog.findViewById(R.id.layout_send_100);
+            layout_send_50 = mDialog.findViewById(R.id.layout_send_50);
+            layout_send_20 = mDialog.findViewById(R.id.layout_send_20);
+            layout_send_10 = mDialog.findViewById(R.id.layout_send_10);
+
+            layout_take_500 = mDialog.findViewById(R.id.layout_500);
+            layout_take_200 = mDialog.findViewById(R.id.layout_200);
+            layout_take_100 = mDialog.findViewById(R.id.layout_100);
+            layout_take_50 = mDialog.findViewById(R.id.layout_50);
+            layout_take_20 = mDialog.findViewById(R.id.layout_20);
+            layout_take_10 = mDialog.findViewById(R.id.layout_10);
+
+            tv_number_send_500 = mDialog.findViewById(R.id.tv_number_send_500);
+            tv_number_send_200 = mDialog.findViewById(R.id.tv_number_send_200);
+            tv_number_send_100 = mDialog.findViewById(R.id.tv_number_send_100);
+            tv_number_send_50 = mDialog.findViewById(R.id.tv_number_send_50);
+            tv_number_send_20 = mDialog.findViewById(R.id.tv_number_send_20);
+            tv_number_send_10 = mDialog.findViewById(R.id.tv_number_send_10);
+
+            tv_number_take_500 = mDialog.findViewById(R.id.tv_number_take_500);
+            tv_number_take_200 = mDialog.findViewById(R.id.tv_number_take_200);
+            tv_number_take_100 = mDialog.findViewById(R.id.tv_number_take_100);
+            tv_number_take_50 = mDialog.findViewById(R.id.tv_number_take_50);
+            tv_number_take_20 = mDialog.findViewById(R.id.tv_number_take_20);
+            tv_number_take_10 = mDialog.findViewById(R.id.tv_number_take_10);
+
+            tv_total_money_send = mDialog.findViewById(R.id.tv_total_money_send);
+            tv_total_money_take = mDialog.findViewById(R.id.tv_total_money_take);
+
+            btnConfirm = mDialog.findViewById(R.id.btn_confirm);
+
+            if (slSend500 > 0) {
+                layout_send_500.setVisibility(View.VISIBLE);
+            } else {
+                layout_send_500.setVisibility(View.GONE);
+            }
+
+            if (slSend200 > 0) {
+                layout_send_200.setVisibility(View.VISIBLE);
+            } else {
+                layout_send_200.setVisibility(View.GONE);
+            }
+
+            if (slSend100 > 0) {
+                layout_send_100.setVisibility(View.VISIBLE);
+            } else {
+                layout_send_100.setVisibility(View.GONE);
+            }
+
+            if (slSend50 > 0) {
+                layout_send_50.setVisibility(View.VISIBLE);
+            } else {
+                layout_send_50.setVisibility(View.GONE);
+            }
+
+            if (slSend20 > 0) {
+                layout_send_20.setVisibility(View.VISIBLE);
+            } else {
+                layout_send_20.setVisibility(View.GONE);
+            }
+
+            if (slSend10 > 0) {
+                layout_send_10.setVisibility(View.VISIBLE);
+            } else {
+                layout_send_10.setVisibility(View.GONE);
+            }
+
+
+            if (slTake500 > 0) {
+                layout_take_500.setVisibility(View.VISIBLE);
+            } else {
+                layout_take_500.setVisibility(View.GONE);
+            }
+
+            if (slTake200 > 0) {
+                layout_take_200.setVisibility(View.VISIBLE);
+            } else {
+                layout_take_200.setVisibility(View.GONE);
+            }
+
+            if (slTake100 > 0) {
+                layout_take_100.setVisibility(View.VISIBLE);
+            } else {
+                layout_take_100.setVisibility(View.GONE);
+            }
+
+            if (slTake50 > 0) {
+                layout_take_50.setVisibility(View.VISIBLE);
+            } else {
+                layout_take_50.setVisibility(View.GONE);
+            }
+
+            if (slTake20 > 0) {
+                layout_take_20.setVisibility(View.VISIBLE);
+            } else {
+                layout_take_20.setVisibility(View.GONE);
+            }
+
+            if (slTake10 > 0) {
+                layout_take_10.setVisibility(View.VISIBLE);
+            } else {
+                layout_take_10.setVisibility(View.GONE);
+            }
+
+            tv_number_send_500.setText(String.valueOf(slSend500));
+            tv_number_send_200.setText(String.valueOf(slSend200));
+            tv_number_send_100.setText(String.valueOf(slSend100));
+            tv_number_send_50.setText(String.valueOf(slSend50));
+            tv_number_send_20.setText(String.valueOf(slSend20));
+            tv_number_send_10.setText(String.valueOf(slSend10));
+
+            tv_number_take_500.setText(String.valueOf(slTake500));
+            tv_number_take_200.setText(String.valueOf(slTake200));
+            tv_number_take_100.setText(String.valueOf(slTake100));
+            tv_number_take_50.setText(String.valueOf(slTake50));
+            tv_number_take_20.setText(String.valueOf(slTake20));
+            tv_number_take_10.setText(String.valueOf(slTake10));
+
+            long totalMoneyChange = slSend500 * 500000 + slSend200 * 200000 + slSend100 * 100000 + slSend50 * 50000 + slSend20 * 20000 + slSend10 * 10000;
+            tv_total_money_send.setText(CommonUtils.formatPriceVND(totalMoneyChange));
+
+            long totalMoneyTake = slTake500 * 500000 + slTake200 * 200000 + slTake100 * 100000 + slTake50 * 50000 + slTake20 * 20000 + slTake10 * 10000;
+            tv_total_money_take.setText(CommonUtils.formatPriceVND(totalMoneyTake));
+
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismissDialog();
+                    if (onResult != null) {
+                        onResult.OnListenerOk();
+                    }
+                }
+            });
+
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+        } else {
+            dismissDialog();
+            showDialogConfirmChangeCash(slSend500, slSend200, slSend100, slSend50, slSend20, slSend10,
+                    slTake500, slTake200, slTake100, slTake50, slTake20, slTake10, pContext, onResult);
         }
     }
 

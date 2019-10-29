@@ -37,7 +37,7 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.edongToEcash.EDongToECash;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashIn.presenter.CashInPresenter;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
@@ -361,29 +361,28 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     }
 
     @Override
-    public void transferMoneySuccess(EDongToECash eDongToECash, String id) {
+    public void transferMoneySuccess(CashInResponse eDongToECash) {
         saveTransactionLogs(eDongToECash);
         cashInPresenter.getEDongInfo(accountInfo);
-        startService(eDongToECash, id);
+        startService(eDongToECash);
     }
 
-    private void saveTransactionLogs(EDongToECash eDongToECash) {
+    private void saveTransactionLogs(CashInResponse cashInResponse) {
         TransactionLog transactionLog = new TransactionLog();
-        transactionLog.setSenderAccountId(eDongToECash.getSender());
-        transactionLog.setReceiverAccountId(String.valueOf(eDongToECash.getReceiver()));
-        transactionLog.setType(eDongToECash.getType());
-        transactionLog.setTime(String.valueOf(eDongToECash.getTime()));
-        transactionLog.setCashEnc(eDongToECash.getCashEnc());
-        transactionLog.setTransactionSignature(eDongToECash.getId());
-        transactionLog.setRefId(String.valueOf(eDongToECash.getRefId()));
+        transactionLog.setSenderAccountId(cashInResponse.getSender());
+        transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
+        transactionLog.setType(cashInResponse.getType());
+        transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
+        transactionLog.setCashEnc(cashInResponse.getCashEnc());
+        transactionLog.setTransactionSignature(cashInResponse.getId());
+        transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
         DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
     }
 
-    private void startService(EDongToECash responseData, String transactionSignature) {
+    private void startService(CashInResponse responseData) {
         Intent intent = new Intent(getActivity(), CashInService.class);
         intent.putExtra(Constant.EDONG_TO_ECASH, responseData);
         intent.putExtra(Constant.ACCOUNT_INFO, accountInfo);
-        intent.putExtra(Constant.TRANSACTION_SIGNATURE, transactionSignature);
         if (getActivity() != null) {
             getActivity().startService(intent);
         }
