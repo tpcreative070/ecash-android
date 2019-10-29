@@ -173,4 +173,14 @@ public interface WalletAccess {
             "WHERE substr(TRAN.time,1, 6) Like :date AND TRAN.Type LIKE :type AND transactionStatus LIKE :status")
     List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String date, String type, String status);
 
+    @Query("SELECT 0 as isSection, IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') as senderName, TRAN.senderAccountId, " +
+            "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') as receiverName, TRAN.receiverAccountId, " +
+            "TRAN.type AS transactionType, TRAN.time AS transactionDate, TRAN.content AS transactionContent, TRAN.transactionSignature, TRAN.cashEnc, " +
+            "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) as transactionAmount, " +
+            "IFNULL((SELECT MIN(CASH_LOGS.id) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
+            "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
+            "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT as TIMEOUT " +
+            "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) as transactionStatus FROM TRANSACTIONS_LOGS as TRAN WHERE 1=1 AND :strQuery")
+    List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String strQuery);
+
 }

@@ -8,6 +8,7 @@ import android.widget.EditText;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.commonsware.cwac.saferoom.SafeHelperFactory;
 
@@ -349,7 +350,15 @@ public abstract class WalletDatabase extends RoomDatabase {
     public static List<CashLogTransaction> getAllCashByTransactionLog(String filter) {
         return walletDatabase.daoAccess().getAllCashByTransactionLog(filter);
     }
+
     public static List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String date, String type, String status) {
-        return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(date, type, status);
+        String strTransactionsHistoryQuery = "";
+        if(date != null)
+            strTransactionsHistoryQuery += String.format("substr(TRAN.time,1, 6) Like :%s", date);
+        if(type != null)
+            strTransactionsHistoryQuery += String.format("TRAN.Type = '%s'", type);
+        if(status != null)
+            strTransactionsHistoryQuery += String.format("transactionStatus = :%s", status);
+        return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(strTransactionsHistoryQuery);
     }
 }

@@ -61,7 +61,9 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     RelativeLayout layoutFilter;
     private TransactionHistoryAdapter mAdapter;
     private List<TransactionsHistoryModel> mSectionList;
-    private String dateFilter, typeFilter, statusFilter;
+    private String dateFilter = null,
+            typeFilter = null,
+            statusFilter = null;
 
     @Override
     protected int getLayoutResId() {
@@ -132,7 +134,6 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
             strYear = strTransactionDateTime.substring(0, 4);
             strMonth = strTransactionDateTime.substring(4, 6);
             String header = getString(R.string.str_history_date_header, strMonth, strYear);
-
             if (!TextUtils.equals(lastHeader, header)) {
                 lastHeader = header;
                 mSectionList.add(new TransactionsHistoryModel(true, header));
@@ -180,9 +181,9 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                 showDialogChoseStatus();
                 break;
             case R.id.btn_apply:
-//                List<TransactionsHistoryModel> transactionsHistoryModelList =
-//                        WalletDatabase.getAllTransactionsHistoryFilter(CommonUtils.getParamFilter(filter));
-//                setAdapter(transactionsHistoryModelList);
+                List<TransactionsHistoryModel> transactionsHistoryModelList =
+                        WalletDatabase.getAllTransactionsHistoryFilter(dateFilter, typeFilter, statusFilter);
+                setAdapter(transactionsHistoryModelList);
                 break;
             case R.id.iv_filter:
                 if (layoutFilter.getVisibility() == View.VISIBLE) {
@@ -206,7 +207,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
             if (month1 + 1 < 10)
                 monthOfYear = "0" + (month1 + 1);
             tvDate.setText(getString(R.string.str_history_date_header, monthOfYear, String.valueOf(year1)));
-            dateFilter = year1+monthOfYear;
+            dateFilter = year1 + monthOfYear + "%";
         }, year, month, day);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
@@ -221,14 +222,23 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         arrayAdapter.add(getResources().getString(R.string.str_cash_out));
         arrayAdapter.add(getResources().getString(R.string.str_transfer));
         arrayAdapter.add(getResources().getString(R.string.str_change_cash));
-        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                        typeFilter = arrayAdapter.getItem(which);
-                tvType.setText(arrayAdapter.getItem(which));
-            }
+        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+            typeFilter = getTypeFilter(arrayAdapter.getItem(which));
+            tvType.setText(arrayAdapter.getItem(which));
         });
         builderSingle.show();
+    }
+
+    private String getTypeFilter(String type) {
+        if (type.equals(getResources().getString(R.string.str_cash_in))) {
+            return Constant.TYPE_SEND_EDONG_TO_ECASH;
+        } else if (type.equals(getResources().getString(R.string.str_cash_out))) {
+            return Constant.TYPE_SEND_ECASH_TO_EDONG;
+        } else if (type.equals(getResources().getString(R.string.str_transfer))) {
+            return Constant.TYPE_ECASH_TO_ECASH;
+        } else if (type.equals(getResources().getString(R.string.str_change_cash))) {
+            return Constant.TYPE_CASH_EXCHANGE;
+        } else return Constant.STR_EMPTY;
     }
 
     private void showDialogChoseStatus() {
@@ -239,7 +249,18 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         arrayAdapter.add(getResources().getString(R.string.str_cash_take_success));
         arrayAdapter.add(getResources().getString(R.string.str_fail));
 
-        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> tvStatus.setText(arrayAdapter.getItem(which)));
+        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+            statusFilter = getStatusFilter(arrayAdapter.getItem(which));
+            tvStatus.setText(arrayAdapter.getItem(which));
+        });
         builderSingle.show();
+    }
+
+    private String getStatusFilter(String status) {
+        if (status.equals(getResources().getString(R.string.str_cash_take_success))) {
+            return "1";
+        } else if (status.equals(getResources().getString(R.string.str_fail))) {
+            return "0";
+        } else return Constant.STR_EMPTY;
     }
 }
