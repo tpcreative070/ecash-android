@@ -26,8 +26,8 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CashLogs;
-import vn.ecpay.ewallet.database.table.Decision;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.Decision_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
@@ -89,7 +89,7 @@ public class CashInService extends Service {
         @Override
         protected String doInBackground(String[]... strings) {
             String[] object = strings[0];
-            CashLogs cash = new CashLogs();
+            CashLogs_Database cash = new CashLogs_Database();
             cash.setAccSign(object[1].replaceAll("\n", ""));
             cash.setTreSign(object[2].replaceAll("\n", ""));
 
@@ -105,7 +105,7 @@ public class CashInService extends Service {
             cash.setType(Constant.STR_CASH_IN);
             cash.setTransactionSignature(eDongToECashResponse.getId());
             WalletDatabase.getINSTANCE(getApplicationContext(), ECashApplication.masterKey);
-            Decision decision = WalletDatabase.getDecisionNo(item[2]);
+            Decision_Database decision = WalletDatabase.getDecisionNo(item[2]);
             if (decision != null) {
                 checkVerifyCash(cash, decision.getTreasurePublicKeyValue(), decision.getAccountPublicKeyValue());
             } else {
@@ -115,7 +115,7 @@ public class CashInService extends Service {
         }
     }
 
-    private void getPublicKeyCashToCheck(CashLogs cash, String decisionNo) {
+    private void getPublicKeyCashToCheck(CashLogs_Database cash, String decisionNo) {
         Log.e("getPublicKeyCashToCheck", "ahihi");
         Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -163,7 +163,7 @@ public class CashInService extends Service {
     }
 
     private void saveDecision(String decisionNo, ResponseDataGetPublicKeyCash responseDataGetPublicKeyCash) {
-        Decision decision = new Decision();
+        Decision_Database decision = new Decision_Database();
         decision.setDecisionNo(decisionNo);
         decision.setTreasurePublicKeyValue(responseDataGetPublicKeyCash.getDecisionTrekp());
         decision.setAccountPublicKeyValue(responseDataGetPublicKeyCash.getDecisionAcckp());
@@ -171,7 +171,7 @@ public class CashInService extends Service {
         WalletDatabase.insertDecisionTask(decision);
     }
 
-    private void checkVerifyCash(CashLogs cash, String decisionTrekp, String decisionAcckp) {
+    private void checkVerifyCash(CashLogs_Database cash, String decisionTrekp, String decisionAcckp) {
         if (CommonUtils.verifyCash(cash, decisionTrekp, decisionAcckp)) {
             //xác thực đồng ecash ok => save cash
             DatabaseUtil.saveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());

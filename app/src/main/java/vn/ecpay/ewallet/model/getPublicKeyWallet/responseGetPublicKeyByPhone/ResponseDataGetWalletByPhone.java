@@ -1,24 +1,23 @@
 
-package vn.ecpay.ewallet.model.getPublicKeyWallet;
-
-import javax.annotation.Generated;
+package vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ResponseDataGetPublicKeyWallet {
+public class ResponseDataGetWalletByPhone {
 
     @SerializedName("customerId")
     private String mCustomerId;
-    @SerializedName("ecKpAlias")
-    private String mEcKpAlias;
-    @SerializedName("ecKpValue")
-    private String mEcKpValue;
+    @SerializedName("customerStatus")
+    private String mCustomerStatus;
     @SerializedName("idNumber")
     private String mIdNumber;
-    @SerializedName("idType")
-    private String mIdType;
     @SerializedName("personFirstName")
     private String mPersonFirstName;
     @SerializedName("personLastName")
@@ -27,16 +26,8 @@ public class ResponseDataGetPublicKeyWallet {
     private String mPersonMiddleName;
     @SerializedName("personMobilePhone")
     private String mPersonMobilePhone;
-
-    private Long mWalletId;
-
-    public Long getmWalletId() {
-        return mWalletId;
-    }
-
-    public void setmWalletId(Long mWalletId) {
-        this.mWalletId = mWalletId;
-    }
+    @SerializedName("wallets")
+    private ArrayList<Wallet> mWallets;
 
     public String getCustomerId() {
         return mCustomerId;
@@ -46,20 +37,12 @@ public class ResponseDataGetPublicKeyWallet {
         mCustomerId = customerId;
     }
 
-    public String getEcKpAlias() {
-        return mEcKpAlias;
+    public String getCustomerStatus() {
+        return mCustomerStatus;
     }
 
-    public void setEcKpAlias(String ecKpAlias) {
-        mEcKpAlias = ecKpAlias;
-    }
-
-    public String getEcKpValue() {
-        return mEcKpValue;
-    }
-
-    public void setEcKpValue(String ecKpValue) {
-        mEcKpValue = ecKpValue;
+    public void setCustomerStatus(String customerStatus) {
+        mCustomerStatus = customerStatus;
     }
 
     public String getIdNumber() {
@@ -68,14 +51,6 @@ public class ResponseDataGetPublicKeyWallet {
 
     public void setIdNumber(String idNumber) {
         mIdNumber = idNumber;
-    }
-
-    public String getIdType() {
-        return mIdType;
-    }
-
-    public void setIdType(String idType) {
-        mIdType = idType;
     }
 
     public String getPersonFirstName() {
@@ -108,6 +83,14 @@ public class ResponseDataGetPublicKeyWallet {
 
     public void setPersonMobilePhone(String personMobilePhone) {
         mPersonMobilePhone = personMobilePhone;
+    }
+
+    public ArrayList<Wallet> getWallets() {
+        return mWallets;
+    }
+
+    public void setWallets(ArrayList<Wallet> wallets) {
+        mWallets = wallets;
     }
 
 }

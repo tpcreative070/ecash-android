@@ -36,12 +36,12 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CashLogs;
-import vn.ecpay.ewallet.database.table.TransactionLog;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.webSocket.genenSignature.ChangeSignature;
 import vn.ecpay.ewallet.webSocket.genenSignature.WalletSignature;
-import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class TestSocketActivity extends ECashBaseActivity {
     @BindView(R.id.start)
@@ -120,12 +120,12 @@ public class TestSocketActivity extends ECashBaseActivity {
 //        handler.postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-//                DecisionDatabase.getINSTANCE(getApplicationContext());
-//                List<CashLogs> transactionLogList = DecisionDatabase.getAllCash();
+//                Decision_Database.getINSTANCE(getApplicationContext());
+//                List<CashLogs_Database> transactionLogList = Decision_Database.getAllCash();
 //
 //
 //                WalletDatabase.getINSTANCE(getApplicationContext());
-//                List<TransactionLog> transactionLogList1 = WalletDatabase.getAllTransactionLog();
+//                List<TransactionLog_Database> transactionLogList1 = WalletDatabase.getAllTransactionLog();
 //                Log.e("ahiih", "jiji");
 //            }
 //        }, 1000);
@@ -141,7 +141,7 @@ public class TestSocketActivity extends ECashBaseActivity {
     }
 
     private void saveTransactionLog() {
-        TransactionLog transactionLog = new TransactionLog();
+        TransactionLog_Database transactionLog = new TransactionLog_Database();
         transactionLog.setSenderAccountId("responseMess.getSender()");
         transactionLog.setSenderAccountId("responseMess.getReceiver()");
         transactionLog.setType("responseMess.getType()");
@@ -157,12 +157,12 @@ public class TestSocketActivity extends ECashBaseActivity {
     }
 
 
-    private ResponseCashMess getObject() {
+    private ResponseMessSocket getObject() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String strDate = sdf.format(c.getTime());
 
-        ResponseCashMess responseMess = new ResponseCashMess();
+        ResponseMessSocket responseMess = new ResponseMessSocket();
         responseMess.setSender("8314175251");
         responseMess.setReceiver("8314175251");
         responseMess.setTime(strDate);
@@ -176,16 +176,16 @@ public class TestSocketActivity extends ECashBaseActivity {
     private void saveEcash() {
 
         WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-        List<CashLogs> cashList = WalletDatabase.getAllCash();
+        List<CashLogs_Database> cashList = WalletDatabase.getAllCash();
 
 //        UserDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
 //        UserDatabase.getAllProfile();
 
         WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-        List<TransactionLog> transactionLogList = WalletDatabase.getAllTransactionLog();
+        List<TransactionLog_Database> transactionLogList = WalletDatabase.getAllTransactionLog();
 
         Log.e("deCryptEcash", "deCryptEcash");
-//        ResponseCashMess responseMess = getObject();
+//        ResponseMessSocket responseMess = getObject();
 //        if (responseMess.getCashEnc() != null) {
 //            String[][] deCryptEcash = CommonUtils.decrypEcash(responseMess.getCashEnc(),
 //                    Constant.STR_PRIVATE_KEY_CHANEL);
@@ -199,7 +199,7 @@ public class TestSocketActivity extends ECashBaseActivity {
     }
 
     private void insertData() {
-        CashLogs mCash = new CashLogs();
+        CashLogs_Database mCash = new CashLogs_Database();
         mCash.setUserName("userName");
         mCash.setCountryCode("cash.getCountryCode()");
         mCash.setIssuerCode("cash.getIssuerCode()");
@@ -225,7 +225,7 @@ public class TestSocketActivity extends ECashBaseActivity {
             @Override
             public void run() {
                 WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-                List<CashLogs> cashList = WalletDatabase.getAllCash();
+                List<CashLogs_Database> cashList = WalletDatabase.getAllCash();
                 Log.e("cash", String.valueOf(cashList.size()));
             }
         }, 3000);

@@ -51,7 +51,7 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = mContextWeakReference.get();
         if (viewType == SECTION_VIEW) {
-            return new TransactionHistoryAdapter.SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_header_title, parent, false));
+            return new TransactionHistoryAdapter.SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact_header, parent, false));
         }
         return new TransactionHistoryAdapter.ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_transactionhistory, parent, false));
     }

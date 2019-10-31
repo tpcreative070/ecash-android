@@ -1,6 +1,5 @@
 package vn.ecpay.ewallet.ui.cashToCash.fragment;
 
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -9,13 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -26,19 +23,18 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
-import vn.ecpay.ewallet.ui.cashToCash.adapter.RecyclerItemTouchHelper;
 
-public class FragmentContactTransferCash extends ECashBaseFragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class FragmentContactTransferCash extends ECashBaseFragment implements ContactTransferAdapter.onItemTransferListener{
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
     EditText edtSearch;
     private ContactTransferAdapter mAdapter;
-    private List<ContactTransferModel> mSectionList;
-    private ContactTransferModel transferModel;
+    private List<Contact> mSectionList;
+    private Contact transferModel;
     private ContactTransferListener contactTransferListener;
 
     @Override
@@ -63,7 +59,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Re
         }
 
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<ContactTransferModel> transferModelArrayList = WalletDatabase.getListContact();
+        List<Contact> transferModelArrayList = WalletDatabase.getListContact();
 
         setAdapter(transferModelArrayList);
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -90,53 +86,24 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Re
 
     private void setAdapterTextChange(String filter) {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<ContactTransferModel> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter));
+        List<Contact> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter));
         setAdapter(transferModelArrayList);
     }
 
-    private void setAdapter(List<ContactTransferModel> transferModelArrayList) {
+    private void setAdapter(List<Contact> transferModelArrayList) {
         mSectionList = new ArrayList<>();
         getHeaderListLatter(transferModelArrayList);
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new ContactTransferAdapter(mSectionList, getActivity());
+        mAdapter = new ContactTransferAdapter(mSectionList, getActivity(), this);
         recyclerView.setAdapter(mAdapter);
-
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback1 = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                // Row is swiped from recycler view
-                // remove it from adapter
-            }
-
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-        };
-
-        // attaching the touch helper to recycler view
-        new ItemTouchHelper(itemTouchHelperCallback1).attachToRecyclerView(recyclerView);
     }
 
-    private void getHeaderListLatter(List<ContactTransferModel> usersList) {
+    private void getHeaderListLatter(List<Contact> usersList) {
 
-        Collections.sort(usersList, new Comparator<ContactTransferModel>() {
-            @Override
-            public int compare(ContactTransferModel user1, ContactTransferModel user2) {
-                return String.valueOf(user1.getFullName().charAt(0)).toUpperCase()
-                        .compareTo(String.valueOf(user2.getFullName().charAt(0)).toUpperCase());
-            }
-        });
+        Collections.sort(usersList, (user1, user2) -> String.valueOf(user1.getFullName().charAt(0)).toUpperCase()
+                .compareTo(String.valueOf(user2.getFullName().charAt(0)).toUpperCase()));
 
         String lastHeader = "";
 
@@ -144,12 +111,12 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Re
 
         for (int i = 0; i < size; i++) {
 
-            ContactTransferModel user = usersList.get(i);
+            Contact user = usersList.get(i);
             String header = String.valueOf(user.getFullName().charAt(0)).toUpperCase();
 
             if (!TextUtils.equals(lastHeader, header)) {
                 lastHeader = header;
-                mSectionList.add(new ContactTransferModel(true, header));
+                mSectionList.add(new Contact(true, header));
             }
 
             mSectionList.add(user);
@@ -168,11 +135,8 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Re
     }
 
     @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if (viewHolder instanceof ContactTransferAdapter.ItemViewHolder) {
-            transferModel = mSectionList.get(position);
-            contactTransferListener.itemClick(transferModel);
-            ((CashToCashActivity) getActivity()).onBackPressed();
-        }
+    public void onItemClick(Contact contact) {
+        contactTransferListener.itemClick(transferModel);
+        ((CashToCashActivity) getActivity()).onBackPressed();
     }
 }

@@ -6,10 +6,13 @@ import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ResponseCashMess implements Serializable {
+public class ResponseMessSocket implements Serializable {
 
     @SerializedName("sender")
     private String mSender;
@@ -29,6 +32,8 @@ public class ResponseCashMess implements Serializable {
     private String mRequireConfirm;
     @SerializedName("cashEnc")
     private String mCashEnc;
+    @SerializedName("contacts")
+    private ArrayList<Contact> contactSyncSockets;
 
     public String getCashEnc() {
         return mCashEnc;
@@ -102,4 +107,11 @@ public class ResponseCashMess implements Serializable {
         mType = type;
     }
 
+    public ArrayList<Contact> getContacts() {
+        return contactSyncSockets;
+    }
+
+    public void setContacts(ArrayList<Contact> contactSyncSockets) {
+        this.contactSyncSockets = contactSyncSockets;
+    }
 }

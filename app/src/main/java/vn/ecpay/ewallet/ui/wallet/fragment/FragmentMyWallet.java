@@ -108,7 +108,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
             case R.id.layout_help:
                 break;
             case R.id.layout_cancel_account:
-                DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_dialog_notifi_title),
+                DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_dialog_notification_title),
                         getString(R.string.err_confirm_cancel_account), new DialogUtil.OnConfirm() {
                             @Override
                             public void OnListenerOk() {

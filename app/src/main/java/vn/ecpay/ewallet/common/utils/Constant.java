@@ -2,6 +2,9 @@ package vn.ecpay.ewallet.common.utils;
 
 public class Constant {
     public static final String DATABASE_NAME = "eWallet";
+
+    //object transfer
+    public static final String CONTACT_TRANSFER_MODEL = "CONTACT_TRANSFER_MODEL";
     public static final String CONTACT_TRANSFER = "CONTACT_TRANSFER";
     public static final String TRANSACTIONS_HISTORY_MODEL = "TRANSACTIONS_HISTORY_MODEL";
     public static final String IS_SESSION_TIMEOUT = "IS_SESSION_TIMEOUT";
@@ -33,6 +36,7 @@ public class Constant {
     public static final String EVENT_CONNECT_SOCKET_FAIL = "EVENT_CONNECT_SOCKET_FAIL";
     public static final String EVENT_VERIFY_CASH_FAIL = "EVENT_VERIFY_CASH_FAIL";
     public static final String EVENT_QR_CODE_SCAN_CASH_SUCCESS = "EVENT_QR_CODE_SCAN_CASH_SUCCESS";
+    public static final String EVENT_UPDATE_CONTACT = "EVENT_UPDATE_CONTACT";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "FU00012";
@@ -44,6 +48,7 @@ public class Constant {
     public static final String FUNCTION_GET_EDONG_INFO = "FU0002";
     public static final String FUNCTION_WEB_SOCKET = "EC00027";
     public static final String FUNCTION_GET_PUBLIC_KEY_WALLET = "GWEC0007";
+    public static final String FUNCTION_GET_PUBLIC_KEY_BY_PHONE = "GWEC0016";
     public static final String FUNCTION_GET_PUBLIC_KEY_CASH = "GWEC0005";
     public static final String FUNCTION_TRANSFER_EDONG_TO_ECASH = "GWEC0004";
     public static final String FUNCTION_TRANSFER_ECASH_TO_EDONG = "GWEC0009";
@@ -53,6 +58,7 @@ public class Constant {
     public static final String FUNCTION_CHANGE_PASSWORD = "GW000003";
     public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0010";
     public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
+    public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";
@@ -80,13 +86,14 @@ public class Constant {
     public static final String CODE_SUCCESS = "0000";
 
     //Qr Code
-    public static final String IS_QR_CODE  = "IS_QR_CODE";
-    public static final String RESPONSE_CASH_MESS = "ResponseCashMess";
+    public static final String IS_QR_CODE = "IS_QR_CODE";
+    public static final String RESPONSE_CASH_MESS = "ResponseMessSocket";
 
     public static final String TYPE_SEND_EDONG_TO_ECASH = "NC";
     public static final String TYPE_SEND_ECASH_TO_EDONG = "ND";
     public static final String TYPE_CASH_EXCHANGE = "DC";
     public static final String TYPE_ECASH_TO_ECASH = "CT";
+    public static final String TYPE_SYNC_CONTACT = "DB";
     public static final int TRANSACTION_SUCCESS = 0;
     public static final int TRANSACTION_FAIL = 1;
 }

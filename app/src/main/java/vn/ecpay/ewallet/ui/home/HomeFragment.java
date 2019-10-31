@@ -25,7 +25,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,7 +43,6 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.TransactionLog;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
@@ -54,6 +52,7 @@ import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.home.module.HomeModule;
 import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
+import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.iv_qr_code)
@@ -71,7 +70,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.tvHomeAccountEdong)
     TextView tvHomeAccountEdong;
     @BindView(R.id.tvHomeEdongBalance)
-    TextView tvHomeEdongBalance;
+    TextView tvHomeEDongBalance;
     @BindView(R.id.layout_account_info)
     CardView layoutAccountInfo;
     @BindView(R.id.layout_cash_in)
@@ -127,7 +126,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (listEDongInfo.size() > 0) {
             eDongInfoCashIn = listEDongInfo.get(0);
             tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvHomeEdongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
         }
 
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
@@ -180,12 +179,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         for (int i = 0; i < listEDongInfo.size(); i++) {
                             if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
                                 tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
-                                tvHomeEdongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getAccBalance()));
+                                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getAccBalance()));
                             }
                         }
                     } else {
                         tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-                        tvHomeEdongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+                        tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
                     }
                 });
             }
@@ -202,7 +201,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
         builder.setItems(eDong, (dialog, which) -> {
             tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
-            tvHomeEdongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(which).getAccBalance()));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(which).getAccBalance()));
             eDongInfoCashIn = listEDongInfo.get(which);
         });
 
@@ -369,14 +368,26 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void onActiveAccountSuccess(AccountInfo mAccountInfo) {
+        homePresenter.syncContact(getActivity(), mAccountInfo);
         ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
         ((MainActivity) getActivity()).showDialogError(getString(R.string.str_active_account_success));
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
 
     @Override
     public void showDialogError(String err) {
+        ((MainActivity) getActivity()).showDialogError(err);
+    }
+
+    @Override
+    public void onSyncContactSuccess() {
+        ((MainActivity) getActivity()).showDialogError(getResources().getString(R.string.str_sync_contact_success));
+    }
+
+    @Override
+    public void onSyncContactFail(String err) {
         ((MainActivity) getActivity()).showDialogError(err);
     }
 }

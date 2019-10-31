@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:text="@string/str_dialog_notifi_title"
+        android:text="@string/str_dialog_notification_title"
         android:textColor="@color/blue"
         android:textSize="@dimen/text_header" />
 

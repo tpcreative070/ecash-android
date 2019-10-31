@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "TRANSACTIONS_TIMEOUT")
-public class TransactionTimeOut {
+public class TransactionTimeOut_Database {
     @NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

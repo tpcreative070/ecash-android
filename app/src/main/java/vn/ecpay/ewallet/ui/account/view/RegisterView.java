@@ -26,4 +26,8 @@ public interface RegisterView extends ViewBase {
     void loginSuccess(AccountInfo accountInfo);
 
     void getEDongInfoSuccess(AccountInfo accountInfo, ResponseDataEdong responseDataEdong);
+
+    void onSyncContactSuccess();
+
+    void onSyncContactFail(String err);
 }

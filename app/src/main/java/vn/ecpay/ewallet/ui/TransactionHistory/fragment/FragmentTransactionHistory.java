@@ -1,9 +1,7 @@
 package vn.ecpay.ewallet.ui.TransactionHistory.fragment;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,10 +9,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,10 +23,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -40,9 +34,9 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
+import vn.ecpay.ewallet.ui.TransactionHistory.MonthYearPickerDialog;
 import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.TransactionHistoryAdapter;
 
@@ -155,7 +149,8 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)) {
+        if (event.getData().equals(Constant.UPDATE_MONEY) ||
+                event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
             List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
             setAdapter(transactionsHistoryModelList);
         }
@@ -168,9 +163,14 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         super.onDetach();
     }
 
-    @OnClick({R.id.layout_date, R.id.layout_type, R.id.layout_status, R.id.btn_apply, R.id.iv_filter})
+    @OnClick({R.id.layout_date, R.id.layout_type, R.id.layout_status, R.id.btn_apply, R.id.iv_filter, R.id.layout_transparent})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.layout_transparent:
+                if (layoutFilter.getVisibility() == View.VISIBLE) {
+                    layoutFilter.setVisibility(View.GONE);
+                }
+                break;
             case R.id.layout_date:
                 showDialogDate();
                 break;
@@ -184,6 +184,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                 List<TransactionsHistoryModel> transactionsHistoryModelList =
                         WalletDatabase.getAllTransactionsHistoryFilter(dateFilter, typeFilter, statusFilter);
                 setAdapter(transactionsHistoryModelList);
+                layoutFilter.setVisibility(View.GONE);
                 break;
             case R.id.iv_filter:
                 if (layoutFilter.getVisibility() == View.VISIBLE) {
@@ -196,27 +197,16 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     }
 
     private void showDialogDate() {
-        Locale locale = getResources().getConfiguration().locale;
-        Locale.setDefault(locale);
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), (view, year1, month1, dayOfMonth) -> {
-            String monthOfYear = String.valueOf(month1 + 1);
-            if (month1 + 1 < 10)
-                monthOfYear = "0" + (month1 + 1);
-            tvDate.setText(getString(R.string.str_history_date_header, monthOfYear, String.valueOf(year1)));
-            dateFilter = year1 + monthOfYear + "%";
-        }, year, month, day);
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-        datePickerDialog.show();
+        MonthYearPickerDialog pd = new MonthYearPickerDialog();
+        pd.setListener((view, year, month, dayOfMonth) -> {
+            tvDate.setText(getString(R.string.str_history_date_header, String.valueOf(month), String.valueOf(year)));
+            dateFilter = String.valueOf(year) + month;
+        });
+        pd.show(getChildFragmentManager(), "MonthYearPickerDialog");
     }
 
     private void showDialogChoseType() {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        builderSingle.setTitle(getResources().getString(R.string.str_type_transfer));
-
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
         arrayAdapter.add(getResources().getString(R.string.str_cash_in));
         arrayAdapter.add(getResources().getString(R.string.str_cash_out));
@@ -243,8 +233,6 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
 
     private void showDialogChoseStatus() {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        builderSingle.setTitle(getResources().getString(R.string.str_type_transfer));
-
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
         arrayAdapter.add(getResources().getString(R.string.str_cash_take_success));
         arrayAdapter.add(getResources().getString(R.string.str_fail));
@@ -258,9 +246,9 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
 
     private String getStatusFilter(String status) {
         if (status.equals(getResources().getString(R.string.str_cash_take_success))) {
-            return "1";
-        } else if (status.equals(getResources().getString(R.string.str_fail))) {
             return "0";
+        } else if (status.equals(getResources().getString(R.string.str_fail))) {
+            return "1";
         } else return Constant.STR_EMPTY;
     }
 }

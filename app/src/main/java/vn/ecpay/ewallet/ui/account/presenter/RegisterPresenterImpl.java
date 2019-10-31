@@ -36,6 +36,8 @@ import vn.ecpay.ewallet.model.account.login.RequestLogin;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.ResponseLoginAfterRegister;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.ResponseRegister;
+import vn.ecpay.ewallet.model.contact.RequestSyncContact;
+import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
 import vn.ecpay.ewallet.ui.account.view.RegisterView;
 
 public class RegisterPresenterImpl implements RegisterPresenter {
@@ -414,6 +416,50 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
                 registerView.dismissLoading();
                 registerView.showDialogError(application.getString(R.string.err_upload));
+            }
+        });
+    }
+
+    @Override
+    public void syncContact(Context context, AccountInfo accountInfo) {
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
+        APIService apiService = retrofit.create(APIService.class);
+
+        RequestSyncContact requestSyncContact = new RequestSyncContact();
+        requestSyncContact.setChannelCode(Constant.CHANNEL_CODE);
+        requestSyncContact.setFunctionCode(Constant.FUNCTION_SYNC_CONTACT);
+        requestSyncContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestSyncContact.setListContacts(CommonUtils.getListPhoneNumber(context));
+        requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
+        requestSyncContact.setSessionId(accountInfo.getSessionId());
+        requestSyncContact.setUsername(accountInfo.getUsername());
+        requestSyncContact.setWalletId(accountInfo.getWalletId());
+
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
+        requestSyncContact.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Call<ResponseSyncContact> call = apiService.syncContacts(requestSyncContact);
+        call.enqueue(new Callback<ResponseSyncContact>() {
+            @Override
+            public void onResponse(Call<ResponseSyncContact> call, Response<ResponseSyncContact> response) {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    if (response.body().getResponseCode() != null) {
+                        application.checkSessionByErrorCode(response.body().getResponseCode());
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            registerView.onSyncContactSuccess();
+                        } else {
+                            registerView.onSyncContactFail(response.body().getResponseMessage());
+                        }
+                    }
+                } else {
+                    registerView.onSyncContactFail(application.getString(R.string.err_upload));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
+                registerView.onSyncContactFail(application.getString(R.string.err_upload));
             }
         });
     }

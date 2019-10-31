@@ -43,6 +43,7 @@ import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.account.module.RegisterModule;
 import vn.ecpay.ewallet.ui.account.presenter.RegisterPresenter;
 import vn.ecpay.ewallet.ui.account.view.RegisterView;
+import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class FragmentRegister extends ECashBaseFragment implements RegisterView {
     @BindView(R.id.edt_user_name)
@@ -117,7 +118,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         edtPhone.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (!edtPhone.getText().toString().isEmpty()) {
-                    if (!CommonUtils.isValidatePhoneNumberNew(edtPhone.getText().toString())) {
+                    if (!CommonUtils.isValidatePhoneNumber(edtPhone.getText().toString())) {
                         ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_validate_phone_fail));
                         return;
                     }
@@ -245,7 +246,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             return;
         }
 
-        if (!CommonUtils.isValidatePhoneNumberNew(phone)) {
+        if (!CommonUtils.isValidatePhoneNumber(phone)) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_validate_phone_fail));
             return;
         }
@@ -302,6 +303,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void registerSuccess(AccountInfo mAccountInfo, String privateKeyBase64, String publicKeyBase64) {
+        registerPresenter.syncContact(getActivity(), mAccountInfo);
         KeyStoreUtils.saveKeyPrivateWallet(privateKeyBase64, getActivity());
         KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), getActivity());
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
@@ -356,6 +358,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     public void loginSuccess(AccountInfo accountInfo) {
         ECashApplication.setAccountInfo(accountInfo);
         registerPresenter.getEDongInfo(accountInfo);
+        getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
     }
 
     @Override
@@ -368,6 +371,16 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
         Objects.requireNonNull(getActivity()).finish();
+    }
+
+    @Override
+    public void onSyncContactSuccess() {
+        ((AccountActivity) getActivity()).showDialogError(getResources().getString(R.string.str_sync_contact_success));
+    }
+
+    @Override
+    public void onSyncContactFail(String err) {
+        ((AccountActivity) getActivity()).showDialogError(err);
     }
 
     @Override

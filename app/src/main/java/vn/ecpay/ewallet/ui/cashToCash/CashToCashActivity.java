@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.cashToCash;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.CashToCashFragment;
 
 public class CashToCashActivity  extends ECashBaseActivity {
@@ -42,6 +45,12 @@ public class CashToCashActivity  extends ECashBaseActivity {
             toolbarCenterText.setText(getString(R.string.str_transfer));
             ivBack.setOnClickListener(v -> onBackPressed());
             getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+        Intent intent = getIntent();
+        Bundle content = intent.getExtras();
+        if (null != content) {
+            Contact contactTransferModel = (Contact) content.getSerializable(Constant.CONTACT_TRANSFER_MODEL);
+            addFragment(CashToCashFragment.newInstance(contactTransferModel), true);
         }
         addFragment(new CashToCashFragment(), false);
     }

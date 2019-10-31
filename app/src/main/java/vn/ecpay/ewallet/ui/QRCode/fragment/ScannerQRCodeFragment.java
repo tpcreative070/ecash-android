@@ -42,7 +42,7 @@ import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
-import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingScannerView.ResultHandler, QRCodeView {
     @BindView(R.id.layout_scan_qr)
@@ -64,7 +64,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     private StringBuffer eCashSplit;
     @Inject
     QRCodePresenter qrCodePresenter;
-    private ResponseCashMess cashMess;
+    private ResponseMessSocket cashMess;
 
     @Override
     protected int getLayoutResId() {
@@ -123,7 +123,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     for (int i = 1; i <= cashMap.size(); i++) {
                         eCashSplit.append(cashMap.get(i));
                     }
-                    ResponseCashMess cashMess = gson.fromJson(eCashSplit.toString(), ResponseCashMess.class);
+                    ResponseMessSocket cashMess = gson.fromJson(eCashSplit.toString(), ResponseMessSocket.class);
                     if (!DatabaseUtil.isTransactionLogExit(cashMess, getActivity())) {
                         DatabaseUtil.saveTransactionLog(cashMess, getActivity());
                     } else {

@@ -1,23 +1,21 @@
 package vn.ecpay.ewallet.ui.cashToCash.adapter;
 
-/**
- * Created by Sayan Manna on 13-07-2017.
- */
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.daimajia.swipe.SwipeLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 
 
 public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,28 +23,38 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public static final int SECTION_VIEW = 0;
     public static final int CONTENT_VIEW = 1;
 
-    List<ContactTransferModel> mCountriesModelList;
+    List<Contact> contactList;
     WeakReference<Context> mContextWeakReference;
+    private onItemTransferListener onItemTransferListener;
 
-    public ContactTransferAdapter(List<ContactTransferModel> mCountriesModelList, Context context) {
+    public interface onItemTransferListener {
+        void onItemClick(Contact contact);
+    }
 
-        this.mCountriesModelList = mCountriesModelList;
+    public ContactTransferAdapter(List<Contact> mContactList, Context context, onItemTransferListener onItemTransferListener) {
+        this.contactList = mContactList;
         this.mContextWeakReference = new WeakReference<>(context);
+        this.onItemTransferListener = onItemTransferListener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        Context context = mContextWeakReference.get();
         if (viewType == SECTION_VIEW) {
-            return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_header_title, parent, false));
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_contact_header, parent, false);
+            return new ContactTransferAdapter.SectionHeaderViewHolder(view);
         }
-        return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_name, parent, false), context);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_contact_transfer, parent, false);
+        SwipeLayout item = view.findViewById(R.id.swipe_item);
+        item.setShowMode(SwipeLayout.ShowMode.PullOut);
+        item.addDrag(SwipeLayout.DragEdge.Right, item.findViewById(R.id.layout_option_right));
+        return new ContactTransferAdapter.ItemContactContentHolder(view);
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (mCountriesModelList.get(position).isSection) {
+        if (contactList.get(position).isSection) {
             return SECTION_VIEW;
         } else {
             return CONTENT_VIEW;
@@ -55,44 +63,48 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-
         Context context = mContextWeakReference.get();
         if (context == null) {
             return;
         }
         if (SECTION_VIEW == getItemViewType(position)) {
 
-            SectionHeaderViewHolder sectionHeaderViewHolder = (SectionHeaderViewHolder) holder;
-            ContactTransferModel sectionItem = mCountriesModelList.get(position);
+            ContactTransferAdapter.SectionHeaderViewHolder sectionHeaderViewHolder = (ContactTransferAdapter.SectionHeaderViewHolder) holder;
+            Contact sectionItem = contactList.get(position);
             sectionHeaderViewHolder.tvHeader.setText(sectionItem.getFullName());
             return;
         }
 
-        ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-        ContactTransferModel contactTransferModel = mCountriesModelList.get(position);
+        ContactTransferAdapter.ItemContactContentHolder itemViewHolder = (ContactTransferAdapter.ItemContactContentHolder) holder;
+        Contact contactTransferModel = contactList.get(position);
         itemViewHolder.tvName.setText(context.getString(R.string.str_item_transfer_cash,
                 contactTransferModel.getFullName(), String.valueOf(contactTransferModel.getWalletId())));
         itemViewHolder.tvPhone.setText(contactTransferModel.getPhone());
+
+        itemViewHolder.layoutTransfer.setOnClickListener(v -> {
+            if(null != onItemTransferListener){
+                onItemTransferListener.onItemClick(contactTransferModel);
+            }
+        });
     }
 
 
     @Override
     public int getItemCount() {
-        return mCountriesModelList.size();
+        return contactList.size();
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemContactContentHolder extends RecyclerView.ViewHolder {
 
         public TextView tvName, tvPhone;
-        public RelativeLayout viewBackground, viewForeground;
+        public LinearLayout layoutTransfer;
 
 
-        public ItemViewHolder(View itemView, final Context context) {
+        public ItemContactContentHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             tvPhone = itemView.findViewById(R.id.tv_phone);
-            viewBackground = itemView.findViewById(R.id.view_background);
-            viewForeground = itemView.findViewById(R.id.view_foreground);
+            layoutTransfer = itemView.findViewById(R.id.layout_option_right);
         }
     }
 

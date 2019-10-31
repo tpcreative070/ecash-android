@@ -1,7 +1,9 @@
 package vn.ecpay.ewallet.common.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 
@@ -32,13 +34,14 @@ import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eccrypto.Test;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
-import vn.ecpay.ewallet.database.table.CashLogs;
-import vn.ecpay.ewallet.database.table.TransactionLog;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
-import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CommonUtils {
     public static String getModelName() {
@@ -207,6 +210,14 @@ public class CommonUtils {
         }
     }
 
+    public static String getFullName(ResponseDataGetWalletByPhone responseDataGetWalletByPhone) {
+        try {
+            return responseDataGetWalletByPhone.getPersonFirstName() + " " + responseDataGetWalletByPhone.getPersonMiddleName() + " " + responseDataGetWalletByPhone.getPersonLastName();
+        } catch (NullPointerException e) {
+            return Constant.STR_EMPTY;
+        }
+    }
+
     public static String getFullName(ResponseDataGetPublicKeyWallet responseDataGetPublicKeyWallet) {
         try {
             return responseDataGetPublicKeyWallet.getPersonFirstName() + " " + responseDataGetPublicKeyWallet.getPersonMiddleName() + " " + responseDataGetPublicKeyWallet.getPersonLastName();
@@ -215,13 +226,13 @@ public class CommonUtils {
         }
     }
 
-    public static byte[] getDataSign(boolean flag, CashLogs cash) {
+    public static byte[] getDataSign(boolean flag, CashLogs_Database cash) {
         return SHA256.hashSHA256(cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getSerialNo() + ";"
                 + cash.getDecisionNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"
                 + cash.getExpireDate() + (flag ? "" : ";" + cash.getCycle()));
     }
 
-    public static String getSignTransactionLog(TransactionLog transactionLog) {
+    public static String getSignTransactionLog(TransactionLog_Database transactionLog) {
         String cashSign = transactionLog.getId() + transactionLog.getSenderAccountId()
                 + transactionLog.getReceiverAccountId() + transactionLog.getType()
                 + transactionLog.getTime() + transactionLog.getContent()
@@ -230,7 +241,7 @@ public class CommonUtils {
         return CommonUtils.generateSignature(dataSign, Constant.STR_PRIVATE_KEY_CHANEL);
     }
 
-    public static boolean verifyCash(CashLogs cash, String decisionTrekp, String decisionAcckp) {
+    public static boolean verifyCash(CashLogs_Database cash, String decisionTrekp, String decisionAcckp) {
         boolean treResult = true;
         boolean accResult = true;
 
@@ -273,6 +284,11 @@ public class CommonUtils {
         return code.matches(regex);
     }
 
+    public static boolean isValidateNumber(String code){
+        String regex = "[0-9]{10}";
+        return code.matches(regex);
+    }
+
     public static boolean isValidatePass(String pass) {
         if (pass == null)
             return false;
@@ -282,13 +298,14 @@ public class CommonUtils {
         return true;
     }
 
-    public static boolean isValidatePhoneNumberNew(String number) {
+    public static boolean isValidatePhoneNumber(String number) {
         if (number == null)
             return false;
         if (number.trim().length() != 10) {
             return false;
         }
-        return number.substring(0, 1).equals("0");
+        String regex = "((09|03|07|08|05)+([0-9]{8})\\b)";
+        return number.matches(regex);
     }
 
     public static boolean validatePassPort(String idNumber) {
@@ -304,7 +321,7 @@ public class CommonUtils {
         return name.matches(regex);
     }
 
-    public static String getAppenItemCash(CashLogs cash) {
+    public static String getAppenItemCash(CashLogs_Database cash) {
         return (cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getDecisionNo() + ";"
                 + cash.getSerialNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"
                 + cash.getExpireDate() + ";" + cash.getCycle());
@@ -328,12 +345,12 @@ public class CommonUtils {
         return encData;
     }
 
-    public static String getIdSender(ResponseCashMess responseMess, Context context) {
+    public static String getIdSender(ResponseMessSocket responseMess, Context context) {
         byte[] dataSign = SHA256.hashSHA256(getSignBodySender(responseMess));
         return CommonUtils.generateSignature(dataSign, KeyStoreUtils.getPrivateKey(context));
     }
 
-    public static String getSignBodySender(ResponseCashMess responseMess) {
+    public static String getSignBodySender(ResponseMessSocket responseMess) {
         return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
                 + responseMess.getContent() + responseMess.getCashEnc();
     }
@@ -356,7 +373,7 @@ public class CommonUtils {
         return "%" + filter + "%";
     }
 
-    public static boolean verifyData(ResponseCashMess responseMess, String publicKey) {
+    public static boolean verifyData(ResponseMessSocket responseMess, String publicKey) {
         byte[] mDataSign = SHA256.hashSHA256(CommonUtils.getSignBodySender(responseMess));
         return EllipticCurve.verify(mDataSign,
                 Base64.decode(responseMess.getId(), Base64.DEFAULT),
@@ -364,7 +381,7 @@ public class CommonUtils {
 
     }
 
-    public static QRCashTransfer getQrCashTransfer(CashLogs cash, ResponseCashMess responseMess, ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet, boolean status) {
+    public static QRCashTransfer getQrCashTransfer(CashLogs_Database cash, ResponseMessSocket responseMess, ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet, boolean status) {
         QRCashTransfer qrCashTransfer = new QRCashTransfer();
         qrCashTransfer.setParValue(cash.getParValue());
         qrCashTransfer.setSuccess(status);
@@ -383,5 +400,24 @@ public class CommonUtils {
         } else {
             return Constant.STR_EMPTY;
         }
+    }
+
+    public static List<String> getListPhoneNumber(Context context) {
+        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER};
+        Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
+        List<String> userList = new ArrayList<>();
+        assert phones != null;
+        if (phones.getCount() > 0) {
+            while (phones.moveToNext()) {
+                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                        .replace("+84", "0")
+                        .replace(" ", "");
+                if (CommonUtils.isValidatePhoneNumber(phoneNumber)) {
+                    userList.add(phoneNumber);
+                }
+            }
+        }
+        phones.close();
+        return userList;
     }
 }

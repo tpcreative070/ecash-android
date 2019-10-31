@@ -26,6 +26,8 @@ public class RequestGetPublicKeyWallet extends BaseObject {
     private String mUsername;
     @SerializedName("walletId")
     private String mWalletId;
+    @SerializedName("personMobilePhone")
+    private String mPersonMobilePhone;
 
     public String getChannelCode() {
         return mChannelCode;
@@ -91,4 +93,11 @@ public class RequestGetPublicKeyWallet extends BaseObject {
         mWalletId = walletId;
     }
 
+    public String getPersonMobilePhone() {
+        return mPersonMobilePhone;
+    }
+
+    public void setPersonMobilePhone(String mPersonMobilePhone) {
+        this.mPersonMobilePhone = mPersonMobilePhone;
+    }
 }

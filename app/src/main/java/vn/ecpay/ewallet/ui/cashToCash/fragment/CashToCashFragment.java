@@ -50,17 +50,17 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CashLogs;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.module.CashToCashModule;
 import vn.ecpay.ewallet.ui.cashToCash.presenter.CashToCashPresenter;
 import vn.ecpay.ewallet.ui.cashToCash.view.CashToCashView;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
-import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CashToCashFragment extends ECashBaseFragment implements CashToCashView, ContactTransferListener {
     @BindView(R.id.tv_account_name)
@@ -148,11 +148,20 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     private int slDatabase500, slDatabase200, slDatabase100, slDatabase50, slDatabase20, slDatabase10;
     private long totalMoney = 0;
     private ResponseDataGetPublicKeyWallet dataGetPublicKey;
-    private ContactTransferModel transferModel;
+    private Contact transferModel;
     private String currentTime;
+    private Contact contactTransferModel;
 
     @Inject
     CashToCashPresenter cashToCashPresenter;
+
+    public static CashToCashFragment newInstance(Contact contactTransferModel) {
+        Bundle args = new Bundle();
+        args.putSerializable(Constant.CONTACT_TRANSFER_MODEL, contactTransferModel);
+        CashToCashFragment fragment = new CashToCashFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     protected int getLayoutResId() {
@@ -162,6 +171,14 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            this.contactTransferModel = (Contact) bundle.getSerializable(Constant.CONTACT_TRANSFER_MODEL);
+            if (null != contactTransferModel) {
+                edtStkCash.setText(String.valueOf(contactTransferModel.getWalletId()));
+            }
+        }
+
         String userName = ECashApplication.getAccountInfo().getUsername();
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashToCashModule(this)).inject(this);
         cashToCashPresenter.setView(this);
@@ -385,48 +402,48 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         }
     }
 
-    private ArrayList<CashLogs> listCashSend;
-    private ResponseCashMess responseMess;
+    private ArrayList<CashLogs_Database> listCashSend;
+    private ResponseMessSocket responseMess;
 
     private String getObjectJsonSend(int sl10, int sl20, int sl50, int sl100, int sl200, int sl500,
                                      String keyPublicReceiver, String walletReceiver, String contentSendMoney) {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         listCashSend = new ArrayList<>();
         if (sl10 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl10; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl20 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl20; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl50 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl50; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl100 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl100; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl200 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl200; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl500 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl500; i++) {
                 listCashSend.add(cashList.get(i));
             }
@@ -435,12 +452,12 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         if (listCashSend.size() > 0) {
             String[][] cashArray = new String[listCashSend.size()][3];
             for (int i = 0; i < listCashSend.size(); i++) {
-                CashLogs cash = listCashSend.get(i);
+                CashLogs_Database cash = listCashSend.get(i);
                 String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
                 cashArray[i] = moneyItem;
             }
             String encData = CommonUtils.getEncrypData(cashArray, keyPublicReceiver);
-            responseMess = new ResponseCashMess();
+            responseMess = new ResponseMessSocket();
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
             responseMess.setReceiver(walletReceiver);
             responseMess.setTime(CommonUtils.getCurrentTime());
@@ -525,7 +542,6 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             protected void onPostExecute(Void aVoid) {
                 dismissLoading();
                 if (swQrCode.isChecked()) {
-                    DatabaseUtil.saveContact(getActivity(), dataGetPublicKey);
                     DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
                 }
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
@@ -624,7 +640,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     }
 
     @Override
-    public void itemClick(ContactTransferModel mTransferModel) {
+    public void itemClick(Contact mTransferModel) {
         if (mTransferModel != null) {
             this.transferModel = mTransferModel;
             edtStkCash.setText(String.valueOf(transferModel.getWalletId()));

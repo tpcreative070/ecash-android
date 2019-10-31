@@ -179,21 +179,21 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         }
 
         if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
-            loginPresenter.requestLogin(accountInfo, userName, pass);
+            getIMEI();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getIMEI();
-                }
+        if (requestCode == PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getIMEI();
             }
-            default:
-                break;
+        } else if (requestCode == PermissionUtils.PERMISSION_REQUEST_CONTACT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loginPresenter.requestLogin(accountInfo, userName, pass);
+            }
         }
     }
 
@@ -214,7 +214,9 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             editor.putString(Constant.DEVICE_IMEI, IMEI);
             editor.apply();
         }
-        loginPresenter.requestLogin(accountInfo, userName, pass);
+        if (PermissionUtils.checkPermissionReadContact(this, null)) {
+            loginPresenter.requestLogin(accountInfo, userName, pass);
+        }
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {

@@ -13,6 +13,24 @@ public class PermissionUtils {
     public static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 1204;
     public static final int REQUEST_WRITE_STORAGE = 112;
     public static final int MY_CAMERA_REQUEST_CODE = 100;
+    public static final int PERMISSION_REQUEST_CONTACT = 200;
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static boolean checkPermissionReadContact(final Fragment fragment, final Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(fragment != null ? fragment.getContext() : activity,Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                if (fragment != null) {
+                    fragment.requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_CONTACT);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static boolean checkPermissionReadPhoneState(final Fragment fragment, final Activity activity) {

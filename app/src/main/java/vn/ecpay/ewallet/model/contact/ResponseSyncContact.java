@@ -1,17 +1,15 @@
 
-package vn.ecpay.ewallet.model.getPublicKeyWallet;
+package vn.ecpay.ewallet.model.contact;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ResponseGetPublicKeyWallet {
+public class ResponseSyncContact {
 
     @SerializedName("responseCode")
     private String mResponseCode;
-    @SerializedName("responseData")
-    private ResponseDataGetPublicKeyWallet mResponseData;
     @SerializedName("responseMessage")
     private String mResponseMessage;
 
@@ -21,14 +19,6 @@ public class ResponseGetPublicKeyWallet {
 
     public void setResponseCode(String responseCode) {
         mResponseCode = responseCode;
-    }
-
-    public ResponseDataGetPublicKeyWallet getResponseData() {
-        return mResponseData;
-    }
-
-    public void setResponseData(ResponseDataGetPublicKeyWallet responseData) {
-        mResponseData = responseData;
     }
 
     public String getResponseMessage() {

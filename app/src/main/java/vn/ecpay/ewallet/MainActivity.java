@@ -21,7 +21,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
-import vn.ecpay.ewallet.ui.contact.FragmentContact;
+import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;

@@ -1,51 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="1px"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/view_background"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/layout_option_right"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginBottom="1dp"
-        android:background="@color/blue">
+        android:background="@color/blue"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
-        <LinearLayout
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:paddingRight="10dp"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_transfer_white" />
 
-            <ImageView
-                android:id="@+id/delete_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_transfer_sub" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:textSize="@dimen/text_small"
-                android:layout_marginTop="5dp"
-                android:text="@string/str_transfer"
-                android:textColor="@color/white" />
-        </LinearLayout>
-
-    </RelativeLayout>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="3dp"
+            android:text="@string/str_transfer"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_large" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/view_foreground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
         android:background="@color/bg_item_transfer"
-        android:orientation="vertical"
         android:padding="10dp">
 
         <LinearLayout
@@ -80,4 +71,4 @@
             android:src="@drawable/avatar" />
     </RelativeLayout>
 
-</FrameLayout>
+</com.daimajia.swipe.SwipeLayout>

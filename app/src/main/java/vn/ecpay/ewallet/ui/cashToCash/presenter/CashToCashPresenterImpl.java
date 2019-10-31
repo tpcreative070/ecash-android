@@ -15,7 +15,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.ui.cashToCash.view.CashToCashView;
 
 public class CashToCashPresenterImpl implements CashToCashPresenter {

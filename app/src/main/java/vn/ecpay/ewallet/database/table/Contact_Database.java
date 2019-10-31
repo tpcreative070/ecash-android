@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "CONTACTS")
-public class Contact {
+public class Contact_Database {
     @NonNull
     @PrimaryKey()
     @ColumnInfo(name = "walletId")

@@ -64,6 +64,7 @@
         android:background="@color/transparent_gray"
         android:layout_height="match_parent">
         <LinearLayout
+            android:id="@+id/layout_content_filter"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -182,6 +183,11 @@
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
         </LinearLayout>
+        <View
+            android:id="@+id/layout_transparent"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/layout_content_filter"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 
 </RelativeLayout>

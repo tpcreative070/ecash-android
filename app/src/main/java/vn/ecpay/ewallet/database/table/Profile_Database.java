@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 import vn.ecpay.ewallet.model.BaseObject;
 
 @Entity(tableName = "PROFILE")
-public class Profile extends BaseObject {
+public class Profile_Database extends BaseObject {
     @NonNull
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "walletId")

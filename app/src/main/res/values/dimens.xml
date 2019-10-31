@@ -5,6 +5,7 @@
     <item name="splash_logo_width" type="dimen">100dp</item>
     <item name="splash_logo_height" type="dimen">100dp</item>
     <item name="slide_layout_height" type="dimen">60dp</item>
+    <dimen name="toolbar_high" >50dp</dimen>
 
     <dimen name="text_small">11sp</dimen>
     <dimen name="text_normal">13sp</dimen>

@@ -28,6 +28,8 @@ import vn.ecpay.ewallet.model.chanel.RequestUpdateChanel;
 import vn.ecpay.ewallet.model.chanel.response.ResponseUpdateChanel;
 import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
 import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
+import vn.ecpay.ewallet.model.contact.RequestSyncContact;
+import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
 import vn.ecpay.ewallet.model.ecashToEdong.RequestEcashToEdong;
 import vn.ecpay.ewallet.model.ecashToEdong.ResponseECashToEdong;
 import vn.ecpay.ewallet.model.edongToEcash.RequestEdongToECash;
@@ -37,7 +39,8 @@ import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseGetPublicKeyByPhone;
 
 public interface APIService {
 
@@ -65,6 +68,9 @@ public interface APIService {
     @POST("ecgateway/execute/GWEC0007")
     Call<ResponseGetPublicKeyWallet> getPublicKeyWallet(@Body RequestGetPublicKeyWallet body);
 
+    @POST("ecgateway/execute/GWEC0016")
+    Call<ResponseGetPublicKeyByPhone> getPublicKeyWalletByPhone(@Body RequestGetPublicKeyWallet body);
+
     @POST("ecgateway/execute/FU00012")
     Call<ResponseGetAccountWalletInfo> getWalletInfo(@Body RequestGetAccountWalletInfo body);
 
@@ -91,6 +97,9 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0011")
     Call<ResponseEdongToECash> changeCash(@Body RequestECashChange body);
+
+    @POST("ecgateway/execute/GWEC0017")
+    Call<ResponseSyncContact> syncContacts(@Body RequestSyncContact body);
 
     @POST("UpdateChannel")
     Call<ResponseUpdateChanel> updateChannel(@Body RequestUpdateChanel body);

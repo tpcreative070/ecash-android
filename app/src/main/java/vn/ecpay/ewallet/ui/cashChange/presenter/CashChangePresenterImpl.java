@@ -24,7 +24,6 @@ import vn.ecpay.ewallet.model.edongToEcash.response.ResponseEdongToECash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
-import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
 
 public class CashChangePresenterImpl implements CashChangePresenter {
     CashChangeView cashChangeView;

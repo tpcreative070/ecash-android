@@ -118,7 +118,7 @@ public class ECashApplication extends Application {
             DialogUtil.getInstance().dismissDialog();
         }
         DialogUtil.getInstance().showDialogChangePassSuccess(getActivity(),
-                getResources().getString(R.string.str_dialog_notifi_title), messenger, new DialogUtil.OnResult() {
+                getResources().getString(R.string.str_dialog_notification_title), messenger, new DialogUtil.OnResult() {
                     @Override
                     public void OnListenerOk() {
                         Intent intent = new Intent(getActivity(), AccountActivity.class);

@@ -8,7 +8,7 @@ import android.widget.EditText;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.commonsware.cwac.saferoom.SafeHelperFactory;
 
@@ -18,26 +18,25 @@ import java.util.List;
 
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.database.table.CashInvalid;
-import vn.ecpay.ewallet.database.table.CashLogs;
-import vn.ecpay.ewallet.database.table.Contact;
-import vn.ecpay.ewallet.database.table.Decision;
-import vn.ecpay.ewallet.database.table.Profile;
-import vn.ecpay.ewallet.database.table.TransactionLog;
-import vn.ecpay.ewallet.database.table.TransactionTimeOut;
+import vn.ecpay.ewallet.database.table.CashInvalid_Database;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.Contact_Database;
+import vn.ecpay.ewallet.database.table.Decision_Database;
+import vn.ecpay.ewallet.database.table.Profile_Database;
+import vn.ecpay.ewallet.database.table.TransactionLog_Database;
+import vn.ecpay.ewallet.database.table.TransactionTimeOut_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
-@Database(entities = {Contact.class,
-        CashLogs.class,
-        Decision.class,
-        Profile.class,
-        TransactionLog.class,
-        CashInvalid.class,
-        TransactionTimeOut.class}, version = 1, exportSchema = false)
+@Database(entities = {Contact_Database.class,
+        CashLogs_Database.class,
+        Decision_Database.class,
+        Profile_Database.class,
+        TransactionLog_Database.class,
+        CashInvalid_Database.class,
+        TransactionTimeOut_Database.class}, version = 1, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -80,16 +79,16 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     //contact---------------------------------------------------------------------------------------
-    public static void insertContactTask(ResponseDataGetPublicKeyWallet mContact) {
-        Contact contact = new Contact();
-        contact.setWalletId(mContact.getmWalletId());
-        contact.setFullName(CommonUtils.getFullName(mContact));
-        contact.setPublicKeyValue(mContact.getEcKpValue());
-        contact.setPhone(mContact.getPersonMobilePhone());
+    public static void insertContactTask(Contact mContact) {
+        Contact_Database contact = new Contact_Database();
+        contact.setWalletId(mContact.getWalletId());
+        contact.setFullName(mContact.getFullName());
+        contact.setPublicKeyValue(mContact.getPublicKeyValue());
+        contact.setPhone(mContact.getPhone());
         insertContactTask(contact, Constant.STR_EMPTY);
     }
 
-    private static void insertContactTask(final Contact contact, String fake) {
+    private static void insertContactTask(final Contact_Database contact, String fake) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -99,18 +98,26 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static List<ContactTransferModel> getListContact() {
+    public static List<Contact> getListContact() {
         return walletDatabase.daoAccess().getAllContact();
     }
 
-    public static List<ContactTransferModel> getListContactFilter(String filter) {
+    public static List<Contact> getListContactFilter(String filter) {
         return walletDatabase.daoAccess().getAllContactFilter(filter);
+    }
+
+    public static void deleteContact(Long walletId) {
+        walletDatabase.daoAccess().deleteContact(walletId);
+    }
+
+    public static void updateNameContact(String name, Long walletId) {
+        walletDatabase.daoAccess().updateNameContact(name, walletId);
     }
 
 
     //cash------------------------------------------------------------------------------------------
-    public static void insertCashTask(CashLogs cash, String userName) {
-        CashLogs mCash = new CashLogs();
+    public static void insertCashTask(CashLogs_Database cash, String userName) {
+        CashLogs_Database mCash = new CashLogs_Database();
         mCash.setUserName(userName);
         mCash.setCountryCode(cash.getCountryCode());
         mCash.setIssuerCode(cash.getIssuerCode());
@@ -128,7 +135,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         insertCashTask(mCash);
     }
 
-    private static void insertCashTask(final CashLogs cash) {
+    private static void insertCashTask(final CashLogs_Database cash) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -138,7 +145,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static List<CashLogs> getAllCash() {
+    public static List<CashLogs_Database> getAllCash() {
         try {
             return walletDatabase.daoAccess().getAllCash();
         } catch (Exception e) {
@@ -158,7 +165,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.daoAccess().updatePreviousCash(previousHash, minID);
     }
 
-    public static CashLogs getCashByMaxID(int maxID) {
+    public static CashLogs_Database getCashByMaxID(int maxID) {
         return walletDatabase.daoAccess().getCashByMaxID(maxID);
     }
 
@@ -174,13 +181,13 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getListCashForMoney(money, type).size();
     }
 
-    public static List<CashLogs> getListCashForMoney(String money, String type) {
+    public static List<CashLogs_Database> getListCashForMoney(String money, String type) {
         return walletDatabase.daoAccess().getListCashForMoney(money, type);
     }
 
     //Cash_Invalid----------------------------------------------------------------------------------
-    public static void insertCashInvalidTask(CashLogs cash, String userName) {
-        CashInvalid mCash = new CashInvalid();
+    public static void insertCashInvalidTask(CashLogs_Database cash, String userName) {
+        CashInvalid_Database mCash = new CashInvalid_Database();
         mCash.setUserName(userName);
         mCash.setCountryCode(cash.getCountryCode());
         mCash.setIssuerCode(cash.getIssuerCode());
@@ -198,7 +205,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         insertCashInvalidTask(mCash);
     }
 
-    private static void insertCashInvalidTask(final CashInvalid cash) {
+    private static void insertCashInvalidTask(final CashInvalid_Database cash) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -208,16 +215,16 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    //Decision--------------------------------------------------------------------------------------
-    public static void insertDecisionTask(Decision decision) {
-        Decision mDecision = new Decision();
+    //Decision_Database--------------------------------------------------------------------------------------
+    public static void insertDecisionTask(Decision_Database decision) {
+        Decision_Database mDecision = new Decision_Database();
         mDecision.setDecisionNo(decision.getDecisionNo());
         mDecision.setAccountPublicKeyValue(decision.getAccountPublicKeyValue());
         mDecision.setTreasurePublicKeyValue(decision.getTreasurePublicKeyValue());
         insertDecisionTask(mDecision, Constant.STR_EMPTY);
     }
 
-    private static void insertDecisionTask(final Decision decision, String fake) {
+    private static void insertDecisionTask(final Decision_Database decision, String fake) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -227,13 +234,13 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static Decision getDecisionNo(String decisionNo) {
+    public static Decision_Database getDecisionNo(String decisionNo) {
         return walletDatabase.daoAccess().getDecisionNo(decisionNo);
     }
 
     //profile---------------------------------------------------------------------------------------
     public static void insertAccountInfoTask(AccountInfo accountInfo) {
-        Profile user = new Profile();
+        Profile_Database user = new Profile_Database();
         user.setWalletId(accountInfo.getWalletId());
         user.setKeyPublicAlias(accountInfo.getKeyPublicAlias());
         user.setEcKeyPublicValue(accountInfo.getEcKeyPublicValue());
@@ -260,7 +267,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         insertAccountInfoTask(user, Constant.STR_EMPTY);
     }
 
-    private static void insertAccountInfoTask(final Profile accountInfo, String fake) {
+    private static void insertAccountInfoTask(final Profile_Database accountInfo, String fake) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -291,8 +298,8 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     //transaction_log-------------------------------------------------------------------------------
-    public static void insertTransactionLogTask(TransactionLog transactionLog) {
-        TransactionLog mTransactionLog = new TransactionLog();
+    public static void insertTransactionLogTask(TransactionLog_Database transactionLog) {
+        TransactionLog_Database mTransactionLog = new TransactionLog_Database();
         mTransactionLog.setSenderAccountId(transactionLog.getSenderAccountId());
         mTransactionLog.setReceiverAccountId(transactionLog.getReceiverAccountId());
         mTransactionLog.setType(transactionLog.getType());
@@ -305,7 +312,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         insertTransactionLogTask(mTransactionLog, Constant.STR_EMPTY);
     }
 
-    public static void insertTransactionLogTask(final TransactionLog transactionLog, String fake) {
+    public static void insertTransactionLogTask(final TransactionLog_Database transactionLog, String fake) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -315,11 +322,11 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static TransactionLog checkTransactionLogExit(String transactionSignature) {
+    public static TransactionLog_Database checkTransactionLogExit(String transactionSignature) {
         return walletDatabase.daoAccess().checkTransactionLogExit(transactionSignature);
     }
 
-    public static List<TransactionLog> getAllTransactionLog() {
+    public static List<TransactionLog_Database> getAllTransactionLog() {
         return walletDatabase.daoAccess().getAllTransactionLog();
     }
 
@@ -335,7 +342,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.daoAccess().updatePreviousTransactionLogMin(previousHash, minID);
     }
 
-    public static TransactionLog getTransactionLogByMaxID(int maxIDTransactionLog) {
+    public static TransactionLog_Database getTransactionLogByMaxID(int maxIDTransactionLog) {
         return walletDatabase.daoAccess().getTransactionLogByMaxID(maxIDTransactionLog);
     }
 
@@ -352,13 +359,20 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     public static List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String date, String type, String status) {
-        String strTransactionsHistoryQuery = "";
-        if(date != null)
-            strTransactionsHistoryQuery += String.format("substr(TRAN.time,1, 6) Like :%s", date);
-        if(type != null)
-            strTransactionsHistoryQuery += String.format("TRAN.Type = '%s'", type);
-        if(status != null)
-            strTransactionsHistoryQuery += String.format("transactionStatus = :%s", status);
-        return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(strTransactionsHistoryQuery);
+        String strTransactionsHistoryQuery = "SELECT 0 as isSection, IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') as senderName, TRAN.senderAccountId, " +
+                "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') as receiverName, TRAN.receiverAccountId, " +
+                "TRAN.type AS transactionType, TRAN.time AS transactionDate, TRAN.content AS transactionContent, TRAN.transactionSignature, TRAN.cashEnc, " +
+                "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) as transactionAmount, " +
+                "IFNULL((SELECT MIN(CASH_LOGS.id) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
+                "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
+                "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT as TIMEOUT " +
+                "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) as transactionStatus FROM TRANSACTIONS_LOGS as TRAN WHERE 1=1 ";
+        if (date != null)
+            strTransactionsHistoryQuery += String.format("AND substr(TRAN.time,1, 6) = '%s'", date);
+        if (type != null)
+            strTransactionsHistoryQuery += String.format("AND TRAN.Type = '%s'", type);
+        if (status != null)
+            strTransactionsHistoryQuery += String.format("AND transactionStatus = %s", status);
+        return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(new SimpleSQLiteQuery(strTransactionsHistoryQuery));
     }
 }

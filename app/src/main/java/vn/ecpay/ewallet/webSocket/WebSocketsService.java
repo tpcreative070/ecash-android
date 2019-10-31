@@ -44,17 +44,17 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CashLogs;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseDataGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseDataGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.ResponseGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
-import vn.ecpay.ewallet.webSocket.object.ResponseCashMess;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
@@ -93,7 +93,7 @@ public class WebSocketsService extends Service {
             isQRCode = extras.getBoolean(Constant.IS_QR_CODE);
             if (isQRCode) {//cash to eCash by QR_code
                 qrCashTransferList = new ArrayList<>();
-                ResponseCashMess cashMess = (ResponseCashMess) extras.getSerializable(Constant.RESPONSE_CASH_MESS);
+                ResponseMessSocket cashMess = (ResponseMessSocket) extras.getSerializable(Constant.RESPONSE_CASH_MESS);
                 if (cashMess != null) {
                     getPublicKeyWallet(cashMess);
                 }
@@ -136,42 +136,42 @@ public class WebSocketsService extends Service {
     private String getObjectJsonSend(int sl10, int sl20, int sl50, int sl100, int sl200, int sl500,
                                      String keyPublicReceiver, String walletReceiver, String contentSendMoney) {
         WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getMasterKey(getApplicationContext()));
-        ArrayList<CashLogs> listCashSend = new ArrayList<>();
+        ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
         if (sl10 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl10; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl20 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl20; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl50 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl50; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl100 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl100; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl200 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl200; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl500 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl500; i++) {
                 listCashSend.add(cashList.get(i));
             }
@@ -180,12 +180,12 @@ public class WebSocketsService extends Service {
         if (listCashSend.size() > 0) {
             String[][] cashArray = new String[listCashSend.size()][3];
             for (int i = 0; i < listCashSend.size(); i++) {
-                CashLogs cash = listCashSend.get(i);
+                CashLogs_Database cash = listCashSend.get(i);
                 String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
                 cashArray[i] = moneyItem;
             }
             String encData = CommonUtils.getEncrypData(cashArray, keyPublicReceiver);
-            ResponseCashMess responseMess = new ResponseCashMess();
+            ResponseMessSocket responseMess = new ResponseMessSocket();
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
             responseMess.setReceiver(walletReceiver);
             responseMess.setTime(CommonUtils.getCurrentTime());
@@ -251,26 +251,40 @@ public class WebSocketsService extends Service {
         @Override
         public void onMessage(WebSocket webSocket, String data) {
             Log.e("onMessage", data);
-            ResponseCashMess responseMess = new Gson().fromJson(data, ResponseCashMess.class);
+            ResponseMessSocket responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
             if (responseMess != null) {
-                RequestReceived requestReceived = new RequestReceived();
-                requestReceived.setId(responseMess.getId());
-                requestReceived.setReceiver(responseMess.getReceiver());
-                requestReceived.setRefId(responseMess.getRefId());
-                requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+                if (responseMess.getType().equals(Constant.TYPE_ECASH_TO_ECASH)) {
+                    RequestReceived requestReceived = new RequestReceived();
+                    requestReceived.setId(responseMess.getId());
+                    requestReceived.setReceiver(responseMess.getReceiver());
+                    requestReceived.setRefId(responseMess.getRefId());
+                    requestReceived.setType(Constant.TYPE_SEN_SOCKET);
 
-                Gson gson = new Gson();
-                String json = gson.toJson(requestReceived);
-                Log.e("confirm", json);
-                webSocket.send(json);
-            }
-            //save transaction log
-            if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
-                DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
-                if (responseMess.getType().equals("CT")) {
-                    if (responseMess.getCashEnc() != null) {
-                        getPublicKeyWallet(responseMess);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(requestReceived);
+                    webSocket.send(json);
+
+                    //SAVE MONEY TO DATABASE
+                    if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
+                        DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
+                        if (responseMess.getType().equals(Constant.TYPE_ECASH_TO_ECASH)) {
+                            if (responseMess.getCashEnc() != null) {
+                                getPublicKeyWallet(responseMess);
+                            }
+                        }
                     }
+                } else if (responseMess.getType().equals(Constant.TYPE_SYNC_CONTACT)) {
+                    RequestReceived requestReceived = new RequestReceived();
+                    requestReceived.setReceiver(responseMess.getReceiver());
+                    requestReceived.setRefId(responseMess.getRefId());
+                    requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+
+                    Gson gson = new Gson();
+                    String json = gson.toJson(requestReceived);
+                    webSocket.send(json);
+
+                    //SAVE CONTACT TO DATABASE
+                    DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
                 }
             }
         }
@@ -302,7 +316,7 @@ public class WebSocketsService extends Service {
         }
     };
 
-    private void getPublicKeyWallet(ResponseCashMess responseMess) {
+    private void getPublicKeyWallet(ResponseMessSocket responseMess) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -355,7 +369,7 @@ public class WebSocketsService extends Service {
         });
     }
 
-    private void checkArrayCash(ResponseCashMess responseMess) {
+    private void checkArrayCash(ResponseMessSocket responseMess) {
         if (deCryptECash != null) {
             if (deCryptECash.length > 0) {
                 if (numberRequest == deCryptECash.length) {
@@ -378,7 +392,7 @@ public class WebSocketsService extends Service {
         }
     }
 
-    private void putNotificationMoneyChange(ResponseCashMess responseMess) {
+    private void putNotificationMoneyChange(ResponseMessSocket responseMess) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String id = "_channel_01";
             int importance = NotificationManager.IMPORTANCE_LOW;
@@ -399,8 +413,8 @@ public class WebSocketsService extends Service {
         }
     }
 
-    private void splitData(String[] object, ResponseCashMess responseMess) {
-        CashLogs cash = new CashLogs();
+    private void splitData(String[] object, ResponseMessSocket responseMess) {
+        CashLogs_Database cash = new CashLogs_Database();
         cash.setAccSign(object[1].replaceAll("\n", ""));
         cash.setTreSign(object[2].replaceAll("\n", ""));
 
@@ -419,7 +433,7 @@ public class WebSocketsService extends Service {
         getPublicKeyCashToCheck(cash, responseMess);
     }
 
-    private void getPublicKeyCashToCheck(CashLogs cash, ResponseCashMess responseMess) {
+    private void getPublicKeyCashToCheck(CashLogs_Database cash, ResponseMessSocket responseMess) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -463,7 +477,7 @@ public class WebSocketsService extends Service {
         });
     }
 
-    private void checkVerifyCash(CashLogs cash, ResponseDataGetPublicKeyCash responseDataGetPublicKeyCash, ResponseCashMess responseMess) {
+    private void checkVerifyCash(CashLogs_Database cash, ResponseDataGetPublicKeyCash responseDataGetPublicKeyCash, ResponseMessSocket responseMess) {
         if (CommonUtils.verifyCash(cash, responseDataGetPublicKeyCash.getDecisionTrekp(),
                 responseDataGetPublicKeyCash.getDecisionAcckp())) {
             //xác thực đồng ecash ok => save cash

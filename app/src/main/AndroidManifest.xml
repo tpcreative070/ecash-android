@@ -64,6 +64,10 @@
             android:name=".ui.TransactionHistory.TransactionsHistoryDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:name=".ui.contact.AddContactActivity" />
 
         <service android:name=".webSocket.WebSocketsService" />
         <service android:name=".ui.cashIn.CashInService" />
@@ -73,5 +77,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
 </manifest>

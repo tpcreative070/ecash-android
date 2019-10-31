@@ -6,20 +6,19 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import butterknife.BindView;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 
 public class DialogUtil {
     private static DialogUtil mInsance;
@@ -31,6 +30,10 @@ public class DialogUtil {
         void OnListenerOk();
 
         void OnListenerCancel();
+    }
+
+    public interface OnContactUpdate {
+        void OnListenerOk(String name);
     }
 
     public interface OnCancelAccount {
@@ -71,11 +74,11 @@ public class DialogUtil {
     }
 
     public void showDialogConfirm(Context pContext, int message, final OnConfirm pOnConfirm) {
-        showDialogConfirm(pContext, pContext.getResources().getString(R.string.str_dialog_notifi_title), pContext.getResources().getString(message), pOnConfirm);
+        showDialogConfirm(pContext, pContext.getResources().getString(R.string.str_dialog_notification_title), pContext.getResources().getString(message), pOnConfirm);
     }
 
     public void showDialogConfirm(Context pContext, String message, final OnConfirm pOnConfirm) {
-        showDialogConfirm(pContext, pContext.getResources().getString(R.string.str_dialog_notifi_title), message, pOnConfirm);
+        showDialogConfirm(pContext, pContext.getResources().getString(R.string.str_dialog_notification_title), message, pOnConfirm);
     }
 
     public void showDialogConfirm(Context pContext, String title, String message, final OnConfirm pOnConfirm) {
@@ -925,6 +928,42 @@ public class DialogUtil {
             dismissDialog();
             showDialogConfirmChangeCash(slSend500, slSend200, slSend100, slSend50, slSend20, slSend10,
                     slTake500, slTake200, slTake100, slTake50, slTake20, slTake10, pContext, onResult);
+        }
+    }
+
+    public void showDialogEditContact(Context pContext, Contact contactTransferModel, OnContactUpdate onContactUpdate) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_edit_contact);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            Button btnUpdate = mDialog.findViewById(R.id.btn_update);
+            TextView walletId = mDialog.findViewById(R.id.tv_wallet_id);
+            EditText edtName = mDialog.findViewById(R.id.edt_name);
+            TextView tvPhone = mDialog.findViewById(R.id.tv_phone);
+            TextView tvMobileInfo = mDialog.findViewById(R.id.tv_mobile_info);
+
+            walletId.setText(String.valueOf(contactTransferModel.getWalletId()));
+            edtName.setText(contactTransferModel.getFullName());
+            tvPhone.setText(contactTransferModel.getPhone());
+
+            btnUpdate.setOnClickListener(v -> {
+                String name = edtName.getText().toString();
+                if (!name.isEmpty()) {
+                    if (CommonUtils.isValidateName(name)) {
+                        dismissDialog();
+                        if (onContactUpdate != null) {
+                            onContactUpdate.OnListenerOk(name);
+                        }
+                    } else {
+                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_validate_name_fail), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+            mDialog.show();
+        } else {
+            dismissDialog();
+            showDialogEditContact(pContext, contactTransferModel, onContactUpdate);
         }
     }
 

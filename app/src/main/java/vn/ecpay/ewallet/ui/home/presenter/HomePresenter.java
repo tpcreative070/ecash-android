@@ -8,4 +8,6 @@ import vn.ecpay.ewallet.ui.home.view.HomeView;
 
 public interface HomePresenter extends Presenter<HomeView> {
     void activeAccWalletInfo(AccountInfo accountInfo, Context context);
+
+    void syncContact(Context context, AccountInfo accountInfo);
 }

@@ -2,10 +2,9 @@
 <resources>
     <color name="background_tab_pressed">#6633B5E5</color>
     <color name="colorPrimary">#003c77</color>
-    <color name="colorPrimaryDark">#003c77</color>
-    <color name="colorAccent">#D81B60</color>
     <color name="orange">#FF7302</color>
     <color name="red">#ff0000</color>
+    <color name="red_del">#C12225</color>
     <color name="yellow">#f4a42c</color>
     <color name="white">#ffffff</color>
     <color name="transparent_white">#4Dffffff</color>

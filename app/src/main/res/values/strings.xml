@@ -82,6 +82,19 @@
     <string name="str_time">Thời gian</string>
     <string name="str_type_transfer">Loại giao dịch</string>
     <string name="str_status">Trạng thái</string>
+    <string name="str_add">Thêm mới</string>
+    <string name="str_sync_contact_success">Đồng bộ dữ liệu danh bạ thành công</string>
+    <string name="str_edit">Sửa</string>
+    <string name="str_delete">Xoá</string>
+    <string name="str_wallet_number">Số ví</string>
+    <string name="str_full_name">Họ và tên</string>
+    <string name="str_mobile_info">Mobile info</string>
+    <string name="str_update">Cập nhật</string>
+    <string name="str_edt_search_empty">Bạn chưa nhập từ khoá tìm kiếm</string>
+    <string name="str_input_add_contact">Nhập số điện thoại hoặc số ví</string>
+    <string name="str_add_contact_success">Thêm mới thành công</string>
+    <string name="str_confirm_delete">Bạn có chắc muốn xoá ?</string>
+
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
     <string name="str_input_account_ecash">Nhập số tài khoản eCash</string>
@@ -135,7 +148,7 @@
     <string name="str_logout_account">Thoát tài khoản</string>
     <string name="str_register_finish">Hoàn tất</string>
 
-    <string name="str_dialog_notifi_title" translatable="false">Thông báo</string>
+    <string name="str_dialog_notification_title" translatable="false">Thông báo</string>
     <string name="str_Ignore" translatable="false">Bỏ qua</string>
     <string name="yes" translatable="false">Đồng ý</string>
     <string name="str_confirm_out_app" translatable="false">Bạn có muốn thoát khỏi ứng dụng?</string>
@@ -190,6 +203,7 @@
     <string name="err_chose_money_transfer">bạn chưa chọn số tiền muốn đổi</string>
     <string name="err_chose_money_take">bạn chưa chọn số tiền muốn chuyến sang</string>
     <string name="err_conflict_take_and_change">Số tiền đổi và số tiền nhận phải bằng nhau</string>
+    <string name="err_filter_add_contact">Số điện thoại hoặc số ví không chứa ký tự đặc biệt và chỉ có 10 chữ số</string>
 
     //%s
     <string name="str_type_cash_out">-%s</string>

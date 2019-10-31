@@ -7,4 +7,8 @@ public interface HomeView extends BaseView {
     void onActiveAccountSuccess(AccountInfo mAccountInfo);
 
     void showDialogError(String err);
+
+    void onSyncContactSuccess();
+
+    void onSyncContactFail(String responseMessage);
 }

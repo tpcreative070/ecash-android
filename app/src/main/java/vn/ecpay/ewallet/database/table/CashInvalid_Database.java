@@ -5,8 +5,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "CASH_LOGS")
-public class CashLogs {
+@Entity(tableName = "CASH_INVALID")
+public class CashInvalid_Database {
     @NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -21,6 +21,7 @@ public class CashLogs {
     private String countryCode;
 
     @NonNull
+    @ColumnInfo(name = "issuerCode")
     private String issuerCode;
 
     @NonNull
@@ -63,9 +64,16 @@ public class CashLogs {
     @ColumnInfo(name = "transactionSignature")
     private String transactionSignature;
 
-    @NonNull
     @ColumnInfo(name = "previousHash")
     private String previousHash;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     @NonNull
     public String getUserName() {
@@ -112,12 +120,11 @@ public class CashLogs {
         this.serialNo = serialNo;
     }
 
-    @NonNull
     public int getParValue() {
         return parValue;
     }
 
-    public void setParValue(@NonNull int parValue) {
+    public void setParValue(int parValue) {
         this.parValue = parValue;
     }
 
@@ -139,6 +146,14 @@ public class CashLogs {
         this.expireDate = expireDate;
     }
 
+    public int getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(int cycle) {
+        this.cycle = cycle;
+    }
+
     @NonNull
     public String getTreSign() {
         return treSign;
@@ -155,14 +170,6 @@ public class CashLogs {
 
     public void setAccSign(@NonNull String accSign) {
         this.accSign = accSign;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     @NonNull
@@ -183,21 +190,12 @@ public class CashLogs {
         this.transactionSignature = transactionSignature;
     }
 
-    @NonNull
-    public int getCycle() {
-        return cycle;
-    }
-
-    public void setCycle(@NonNull int cycle) {
-        this.cycle = cycle;
-    }
-
-    @NonNull
     public String getPreviousHash() {
         return previousHash;
     }
 
-    public void setPreviousHash(@NonNull String previousHash) {
+    public void setPreviousHash(String previousHash) {
         this.previousHash = previousHash;
     }
 }
+

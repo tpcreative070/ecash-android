@@ -33,8 +33,8 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CashLogs;
-import vn.ecpay.ewallet.database.table.TransactionLog;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
@@ -114,7 +114,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private List<Integer> listQualityTake;
     private List<Integer> listValueTake;
-    private ArrayList<CashLogs> listCashSend;
+    private ArrayList<CashLogs_Database> listCashSend;
     @Inject
     CashChangePresenter cashChangePresenter;
 
@@ -355,40 +355,40 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         listCashSend = new ArrayList<>();
         if (sl10 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl10; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl20 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl20; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl50 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl50; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl100 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl100; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
         if (sl200 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl200; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
         if (sl500 > 0) {
-            List<CashLogs> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
+            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
             for (int i = 0; i < sl500; i++) {
                 listCashSend.add(cashList.get(i));
             }
@@ -397,7 +397,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         if (listCashSend.size() > 0) {
             String[][] cashSendArray = new String[listCashSend.size()][3];
             for (int i = 0; i < listCashSend.size(); i++) {
-                CashLogs cash = listCashSend.get(i);
+                CashLogs_Database cash = listCashSend.get(i);
                 String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
                 cashSendArray[i] = moneyItem;
             }
@@ -445,14 +445,14 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private void saveCashChangeSend() {
         for (int i = 0; i < listCashSend.size(); i++) {
-            CashLogs cashLogs = listCashSend.get(i);
+            CashLogs_Database cashLogs = listCashSend.get(i);
             cashLogs.setType(Constant.STR_CASH_OUT);
             DatabaseUtil.saveCashToDB(cashLogs, getActivity(), accountInfo.getUsername());
         }
     }
 
     private void saveTransactionLogs(CashInResponse cashInResponse) {
-        TransactionLog transactionLog = new TransactionLog();
+        TransactionLog_Database transactionLog = new TransactionLog_Database();
         transactionLog.setSenderAccountId(cashInResponse.getSender());
         transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
         transactionLog.setType(cashInResponse.getType());

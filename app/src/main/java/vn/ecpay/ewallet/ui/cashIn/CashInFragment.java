@@ -34,7 +34,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.TransactionLog;
+import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -368,7 +368,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     }
 
     private void saveTransactionLogs(CashInResponse cashInResponse) {
-        TransactionLog transactionLog = new TransactionLog();
+        TransactionLog_Database transactionLog = new TransactionLog_Database();
         transactionLog.setSenderAccountId(cashInResponse.getSender());
         transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
         transactionLog.setType(cashInResponse.getType());

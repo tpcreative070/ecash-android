@@ -5,49 +5,57 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.RawQuery;
 import androidx.room.Update;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import java.util.List;
 
-import vn.ecpay.ewallet.database.table.CashLogs;
-import vn.ecpay.ewallet.database.table.CashInvalid;
-import vn.ecpay.ewallet.database.table.Contact;
-import vn.ecpay.ewallet.database.table.Decision;
-import vn.ecpay.ewallet.database.table.Profile;
-import vn.ecpay.ewallet.database.table.TransactionLog;
+import vn.ecpay.ewallet.database.table.CashInvalid_Database;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.Contact_Database;
+import vn.ecpay.ewallet.database.table.Decision_Database;
+import vn.ecpay.ewallet.database.table.Profile_Database;
+import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.contactTransfer.ContactTransferModel;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
 @Dao
 public interface WalletAccess {
-    //Contact---------------------------------------------------------------------------------------
+    //Contact_Database---------------------------------------------------------------------------------------
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertOnlySingleContact(Contact contact);
+    void insertOnlySingleContact(Contact_Database contact);
 
     @Query("SELECT * FROM CONTACTS")
-    List<ContactTransferModel> getAllContact();
+    List<Contact> getAllContact();
+
+    @Query("DELETE From CONTACTS WHERE walletId = :strWalletId")
+    void deleteContact(Long strWalletId);
 
     @Query("SELECT * FROM CONTACTS Where phone LIKE  :name OR fullName like :name")
-    List<ContactTransferModel> getAllContactFilter(String name);
+    List<Contact> getAllContactFilter(String name);
 
-    //Decision--------------------------------------------------------------------------------------
+    @Query("UPDATE CONTACTS SET fullName=:name WHERE walletId = :walletId")
+    void updateNameContact(String name, Long walletId);
+
+    //Decision_Database--------------------------------------------------------------------------------------
     @Insert
-    void insertOnlySingleDecision(Decision decision);
+    void insertOnlySingleDecision(Decision_Database decision);
 
     @Query("SELECT * FROM DECISIONS_DIARY WHERE decisionNo LIKE :decisionNo")
-    Decision getDecisionNo(String decisionNo);
+    Decision_Database getDecisionNo(String decisionNo);
 
-    //CashLogs------------------------------------------------------------------------------------------
+    //CashLogs_Database------------------------------------------------------------------------------------------
     @Insert
-    void insertOnlySingleCash(CashLogs cash);
+    void insertOnlySingleCash(CashLogs_Database cash);
 
     @Insert
-    void insertMultipleCash(List<CashLogs> cashList);
+    void insertMultipleCash(List<CashLogs_Database> cashList);
 
     @Query("SELECT * FROM CASH_LOGS")
-    List<CashLogs> getAllCash();
+    List<CashLogs_Database> getAllCash();
 
     @Query("SELECT MAX(id) FROM CASH_LOGS")
     int getCashMaxID();
@@ -59,20 +67,20 @@ public interface WalletAccess {
     void updatePreviousCash(String mPreviousHash, int minID);
 
     @Query("SELECT * FROM CASH_LOGS WHERE id=:maxID")
-    CashLogs getCashByMaxID(int maxID);
+    CashLogs_Database getCashByMaxID(int maxID);
 
     @Query("SELECT SUM(parValue) FROM CASH_LOGS WHERE type LIKE :input")
     int getTotalCash(String input);
 
     @Query("SELECT DISTINCT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type LIKE :type AND serialNo IN (SELECT serialNo FROM CASH_LOGS  GROUP BY serialNo HAVING COUNT(serialNo)%2) AND parValue =:money")
-    List<CashLogs> getListCashForMoney(String money, String type);
+    List<CashLogs_Database> getListCashForMoney(String money, String type);
 
     //Cash_Invalid----------------------------------------------------------------------------------
     @Insert
-    void insertOnlySingleCashInvalid(CashInvalid cash);
+    void insertOnlySingleCashInvalid(CashInvalid_Database cash);
 
     @Query("SELECT * FROM CASH_INVALID")
-    List<CashLogs> getAllCashInvalid();
+    List<CashLogs_Database> getAllCashInvalid();
 
     @Query("SELECT MAX(id) FROM CASH_INVALID")
     int getCashInvalidMaxID();
@@ -84,17 +92,17 @@ public interface WalletAccess {
     void updatePreviousCashInvalid(String mPreviousHash, int minID);
 
     @Query("SELECT * FROM CASH_INVALID WHERE id=:maxID")
-    CashLogs getCashInvalidByMaxID(int maxID);
+    CashLogs_Database getCashInvalidByMaxID(int maxID);
 
     @Query("SELECT SUM(parValue) FROM CASH_INVALID WHERE type LIKE :input")
     int getTotalCashInvalid(String input);
 
     //profile---------------------------------------------------------------------------------------
     @Insert
-    void insertOnlySingleUser(Profile accountInfo);
+    void insertOnlySingleUser(Profile_Database accountInfo);
 
     @Insert
-    void insertMultipleUser(List<Profile> userList);
+    void insertMultipleUser(List<Profile_Database> userList);
 
     @Query("SELECT * FROM PROFILE WHERE username LIKE  :userName")
     AccountInfo fetchOneUserByUserId(String userName);
@@ -106,20 +114,20 @@ public interface WalletAccess {
     List<AccountInfo> getAllProfile();
 
     @Update
-    void updateUser(Profile accountInfo);
+    void updateUser(Profile_Database accountInfo);
 
     @Delete
-    void deleteUser(Profile accountInfo);
+    void deleteUser(Profile_Database accountInfo);
 
     @Query("DELETE FROM PROFILE")
     void deleteAllData();
 
     //Transaction_log-------------------------------------------------------------------------------
     @Insert
-    void insertOnlySingleTransactionLog(TransactionLog transactionLog);
+    void insertOnlySingleTransactionLog(TransactionLog_Database transactionLog);
 
     @Query("SELECT * FROM TRANSACTIONS_LOGS")
-    List<TransactionLog> getAllTransactionLog();
+    List<TransactionLog_Database> getAllTransactionLog();
 
     @Query("SELECT MAX(id) FROM TRANSACTIONS_LOGS")
     int getMaxIDTransactionLog();
@@ -128,10 +136,10 @@ public interface WalletAccess {
     int getMinIDTransactionLog();
 
     @Query("SELECT * FROM TRANSACTIONS_LOGS WHERE id=:maxID")
-    TransactionLog getTransactionLogByMaxID(int maxID);
+    TransactionLog_Database getTransactionLogByMaxID(int maxID);
 
     @Query("SELECT * FROM TRANSACTIONS_LOGS WHERE transactionSignature Like :transactionSignature")
-    TransactionLog checkTransactionLogExit(String transactionSignature);
+    TransactionLog_Database checkTransactionLogExit(String transactionSignature);
 
     @Query("UPDATE TRANSACTIONS_LOGS SET previousHash=:previousHash WHERE id = :minID")
     void updatePreviousTransactionLogMin(String previousHash, int minID);
@@ -183,4 +191,6 @@ public interface WalletAccess {
             "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) as transactionStatus FROM TRANSACTIONS_LOGS as TRAN WHERE 1=1 AND :strQuery")
     List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String strQuery);
 
+    @RawQuery
+    List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(SupportSQLiteQuery strQuery);
 }
