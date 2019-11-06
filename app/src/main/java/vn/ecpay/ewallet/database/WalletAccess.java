@@ -28,17 +28,21 @@ public interface WalletAccess {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleContact(Contact_Database contact);
 
-    @Query("SELECT * FROM CONTACTS")
-    List<Contact> getAllContact();
+    @Query("SELECT * FROM CONTACTS where walletId != :myWalletId and status = '1'")
+    List<Contact> getAllContact(String myWalletId);
 
     @Query("DELETE From CONTACTS WHERE walletId = :strWalletId")
     void deleteContact(Long strWalletId);
 
-    @Query("SELECT * FROM CONTACTS Where phone LIKE  :name OR fullName like :name")
-    List<Contact> getAllContactFilter(String name);
+    @Query("SELECT * FROM CONTACTS Where phone LIKE  :name OR fullName like :name and walletId != :myWalletId  and status = '1'")
+    List<Contact> getAllContactFilter(String name, Long myWalletId);
 
     @Query("UPDATE CONTACTS SET fullName=:name WHERE walletId = :walletId")
     void updateNameContact(String name, Long walletId);
+
+    @Query("UPDATE CONTACTS SET status =:status WHERE walletId = :walletId")
+    void updateStatusContact(int status, Long walletId);
+
 
     //Decision_Database--------------------------------------------------------------------------------------
     @Insert
@@ -138,7 +142,7 @@ public interface WalletAccess {
     @Query("SELECT * FROM TRANSACTIONS_LOGS WHERE id=:maxID")
     TransactionLog_Database getTransactionLogByMaxID(int maxID);
 
-    @Query("SELECT * FROM TRANSACTIONS_LOGS WHERE transactionSignature Like :transactionSignature")
+    @Query("SELECT * FROM TRANSACTIONS_LOGS WHERE transactionSignature = :transactionSignature")
     TransactionLog_Database checkTransactionLogExit(String transactionSignature);
 
     @Query("UPDATE TRANSACTIONS_LOGS SET previousHash=:previousHash WHERE id = :minID")
@@ -148,48 +152,27 @@ public interface WalletAccess {
             "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverName, TRAN.receiverAccountId, " +
             "TRAN.type AS transactionType, TRAN.time  AS transactionDate , TRAN.content AS transactionContent,TRAN.transactionSignature, TRAN.cashEnc, " +
             "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) AS transactionAmount, " +
-            "IFNULL((SELECT MIN(CASH_LOGS.id) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
+            "IFNULL((SELECT DISTINCT CASH_LOGS.type FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
             "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
             "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT AS TIMEOUT " +
-            "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) AS transactionStatus FROM TRANSACTIONS_LOGS AS TRAN ")
+            "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) AS transactionStatus FROM TRANSACTIONS_LOGS AS TRAN ORDER BY TRAN.id DESC")
     List<TransactionsHistoryModel> getAllTransactionsHistory();
 
     @Query("SELECT 0 as isSection, IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') AS senderName, TRAN.senderAccountId, " +
             "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverName, TRAN.receiverAccountId, " +
             "TRAN.type AS transactionType, TRAN.time  AS transactionDate , TRAN.content AS transactionContent,TRAN.transactionSignature, TRAN.cashEnc, " +
             "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) AS transactionAmount, " +
-            "IFNULL((SELECT MIN(CASH_LOGS.id) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
+            "IFNULL((SELECT DISTINCT CASH_LOGS.type FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
             "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
             "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT AS TIMEOUT " +
             "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) AS transactionStatus FROM TRANSACTIONS_LOGS AS TRAN " +
-            "WHERE senderName like :key OR receiverName like :key OR TRAN.receiverAccountId like :key OR TRAN.receiverAccountId like :key OR TRAN.content like :key ")
+            "WHERE senderName like :key OR receiverName like :key OR TRAN.receiverAccountId like :key OR TRAN.receiverAccountId like :key OR TRAN.content like :key ORDER BY TRAN.id DESC")
     List<TransactionsHistoryModel> getAllTransactionsHistoryOnlyFilter(String key);
 
-    @Query("select parValue, count(parValue) as validCount, 1 as status from CASH_LOGS where transactionSignature Like :transactionSignatureLog group by parValue union " +
-            "select parValue,count(parValue) as validCount , 0 as status from CASH_INVALID where transactionSignature Like :transactionSignatureLog " +
+    @Query("select parValue, count(parValue) as validCount, 1 as status from CASH_LOGS where transactionSignature = :transactionSignatureLog group by parValue union " +
+            "select parValue,count(parValue) as validCount , 0 as status from CASH_INVALID where transactionSignature = :transactionSignatureLog " +
             "group by parValue")
     List<CashLogTransaction> getAllCashByTransactionLog(String transactionSignatureLog);
-
-    @Query("SELECT 0 as isSection, IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') as senderName, TRAN.senderAccountId, " +
-            "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') as receiverName, TRAN.receiverAccountId, " +
-            "TRAN.type AS transactionType, TRAN.time AS transactionDate, TRAN.content AS transactionContent, TRAN.transactionSignature, TRAN.cashEnc, " +
-            "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) as transactionAmount, " +
-            "IFNULL((SELECT MIN(CASH_LOGS.id) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
-            "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
-            "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT as TIMEOUT " +
-            "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) as transactionStatus FROM TRANSACTIONS_LOGS as TRAN " +
-            "WHERE substr(TRAN.time,1, 6) Like :date AND TRAN.Type LIKE :type AND transactionStatus LIKE :status")
-    List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String date, String type, String status);
-
-    @Query("SELECT 0 as isSection, IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') as senderName, TRAN.senderAccountId, " +
-            "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') as receiverName, TRAN.receiverAccountId, " +
-            "TRAN.type AS transactionType, TRAN.time AS transactionDate, TRAN.content AS transactionContent, TRAN.transactionSignature, TRAN.cashEnc, " +
-            "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) as transactionAmount, " +
-            "IFNULL((SELECT MIN(CASH_LOGS.id) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
-            "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
-            "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT as TIMEOUT " +
-            "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) as transactionStatus FROM TRANSACTIONS_LOGS as TRAN WHERE 1=1 AND :strQuery")
-    List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String strQuery);
 
     @RawQuery
     List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(SupportSQLiteQuery strQuery);

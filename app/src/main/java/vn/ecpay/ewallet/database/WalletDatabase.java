@@ -9,6 +9,8 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SimpleSQLiteQuery;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import com.commonsware.cwac.saferoom.SafeHelperFactory;
 
@@ -36,7 +38,7 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         Profile_Database.class,
         TransactionLog_Database.class,
         CashInvalid_Database.class,
-        TransactionTimeOut_Database.class}, version = 1, exportSchema = false)
+        TransactionTimeOut_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -53,11 +55,14 @@ public abstract class WalletDatabase extends RoomDatabase {
     public static boolean changeKey(CharSequence newPass) {
         try {
             SafeHelperFactory.rekey(walletDatabase.mDatabase, new SpannableStringBuilder(newPass));
+            walletDatabase = null;
+            factory = null;
             return true;
         } catch (Exception e) {
             return false;
         }
     }
+
 
     public static WalletDatabase getINSTANCE(Context context, String pass) {
         if (pass != null) {
@@ -85,6 +90,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         contact.setFullName(mContact.getFullName());
         contact.setPublicKeyValue(mContact.getPublicKeyValue());
         contact.setPhone(mContact.getPhone());
+        contact.setStatus(mContact.getStatus());
         insertContactTask(contact, Constant.STR_EMPTY);
     }
 
@@ -98,12 +104,12 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static List<Contact> getListContact() {
-        return walletDatabase.daoAccess().getAllContact();
+    public static List<Contact> getListContact(String walletId) {
+        return walletDatabase.daoAccess().getAllContact(walletId);
     }
 
-    public static List<Contact> getListContactFilter(String filter) {
-        return walletDatabase.daoAccess().getAllContactFilter(filter);
+    public static List<Contact> getListContactFilter(String filter, Long walletId) {
+        return walletDatabase.daoAccess().getAllContactFilter(filter, walletId);
     }
 
     public static void deleteContact(Long walletId) {
@@ -112,6 +118,10 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static void updateNameContact(String name, Long walletId) {
         walletDatabase.daoAccess().updateNameContact(name, walletId);
+    }
+
+    public static void updateStatusContact(int status, Long walletId) {
+        walletDatabase.daoAccess().updateStatusContact(status, walletId);
     }
 
 
@@ -363,16 +373,21 @@ public abstract class WalletDatabase extends RoomDatabase {
                 "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') as receiverName, TRAN.receiverAccountId, " +
                 "TRAN.type AS transactionType, TRAN.time AS transactionDate, TRAN.content AS transactionContent, TRAN.transactionSignature, TRAN.cashEnc, " +
                 "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) as transactionAmount, " +
-                "IFNULL((SELECT MIN(CASH_LOGS.id) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
+                "IFNULL((SELECT DISTINCT CASH_LOGS.type FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
                 "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
                 "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT as TIMEOUT " +
                 "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) as transactionStatus FROM TRANSACTIONS_LOGS as TRAN WHERE 1=1 ";
-        if (date != null)
+        if (date != null) {
             strTransactionsHistoryQuery += String.format("AND substr(TRAN.time,1, 6) = '%s'", date);
-        if (type != null)
+        }
+        if (type != null) {
             strTransactionsHistoryQuery += String.format("AND TRAN.Type = '%s'", type);
-        if (status != null)
+        }
+        if (status != null) {
             strTransactionsHistoryQuery += String.format("AND transactionStatus = %s", status);
+        }
+        strTransactionsHistoryQuery += "ORDER BY TRAN.id DESC";
+
         return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(new SimpleSQLiteQuery(strTransactionsHistoryQuery));
     }
 }

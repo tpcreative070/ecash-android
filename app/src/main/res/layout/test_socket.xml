@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
-            android:text="get private !"
+            android:text="get pass!"
             android:textSize="17sp" />
 
         <Button
@@ -54,27 +54,27 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
-            android:text="get master"
+            android:text="change key"
             android:textSize="17sp" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/start"
+        android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="start!"
+        android:text="save account"
         android:textSize="17sp" />
 
     <Button
         android:id="@+id/add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/start"
+        android:layout_below="@+id/save"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="add !"
+        android:text="get Acc !"
         android:textSize="17sp" />
 
 
@@ -92,7 +92,7 @@
         android:id="@+id/output"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/start"
+        android:layout_below="@id/save"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:textSize="16sp" />

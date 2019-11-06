@@ -149,7 +149,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         if (listEDongInfo.size() > 0) {
             eDongInfoCashIn = listEDongInfo.get(0);
             tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
         }
     }
 
@@ -161,13 +161,13 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         if (listEDongInfo.size() > 0) {
             for (int i = 0; i < listEDongInfo.size(); i++) {
                 if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
-                    tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getAccBalance()));
+                    tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
                     tvEdongWallet.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
                 }
             }
         } else {
             tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
         }
     }
 
@@ -195,7 +195,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
         builder.setItems(eDong, (dialog, which) -> {
             tvEdongWallet.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
-            tvOverEdong.setText(String.valueOf(listEDongInfo.get(which).getAccBalance()));
+            tvOverEdong.setText(String.valueOf(listEDongInfo.get(which).getUsableBalance()));
             eDongInfoCashIn = listEDongInfo.get(which);
         });
 

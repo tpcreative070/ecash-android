@@ -3,6 +3,9 @@ package vn.ecpay.ewallet.ui.account.presenter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
+import android.util.Log;
+
+import com.google.gson.Gson;
 
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
@@ -129,7 +132,6 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
     @Override
     public void requestRegister(Context context, String userName, String CMND, String pass, String name, String phone) {
-        registerView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
         RequestRegister requestRegister = new RequestRegister();
@@ -187,6 +189,10 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         String alphabe = CommonUtils.getStringAlphabe(requestRegister);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestRegister));
         requestRegister.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Gson gson = new Gson();
+        String json = gson.toJson(requestRegister);
+        Log.e("json", json);
 
         Call<ResponseRegister> call = apiService.registerAccount(requestRegister);
         call.enqueue(new Callback<ResponseRegister>() {
@@ -285,13 +291,17 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestActiveAccount.setUserId(accountInfo.getUserId());
         requestActiveAccount.setFunctionCode(Constant.FUNCTION_ACTIVE_ACCOUNT);
         requestActiveAccount.setOtpvalue(otp);
-        requestActiveAccount.setmWalletId(accountInfo.getWalletId());
+        requestActiveAccount.setWalletId(accountInfo.getWalletId());
         requestActiveAccount.setTransactionCode(accountInfo.getTransactionCode());
         requestActiveAccount.setChannelSignature("");
 
         String alphabe = CommonUtils.getStringAlphabe(requestActiveAccount);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestActiveAccount));
         requestActiveAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Gson gson = new Gson();
+        String json = gson.toJson(requestActiveAccount);
+        Log.e("json", json);
 
         Call<ResponseActiveAccount> call = apiService.activeAccount(requestActiveAccount);
         call.enqueue(new Callback<ResponseActiveAccount>() {
@@ -302,7 +312,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             registerView.activeAccountSuccess(accountInfo);
-                        } else if (response.body().getResponseCode().equals("3014")) {
+                        } else if (response.body().getResponseCode().equals("3014")||
+                                response.body().getResponseCode().equals("0998")) {
                             registerView.dismissLoading();
                             registerView.requestOtpErr(accountInfo, application.getString(R.string.err_otp_fail));
                         } else {

@@ -2,6 +2,11 @@ package vn.ecpay.ewallet.common.utils;
 
 public class Constant {
     public static final String DATABASE_NAME = "eWallet";
+    public static final int DATABASE_VERSION = 1;
+
+    //type QR code
+    public static final int IS_SCAN_CONTACT = 1;
+    public static final int IS_SCAN_CASH = 2;
 
     //object transfer
     public static final String CONTACT_TRANSFER_MODEL = "CONTACT_TRANSFER_MODEL";
@@ -13,6 +18,8 @@ public class Constant {
     //type and key
     public static final String STR_CASH_IN = "in";
     public static final String STR_CASH_OUT = "out";
+    public static final int CONTACT_ON = 1;
+    public static final int CONTACT_OFF = 0;
     public static final String MASTER_KEY_STRING = "0123456789ABCDEFGHIJKL0123456789";
     public static final String MASTER_KEY_STRING_NEW = "123456";
     public static final String STR_PRIVATE_KEY_CHANEL = "AIEGIA+wEeww8G/u3FF2/839hgTYb+8xD0gWo3X/Me/+";
@@ -94,6 +101,7 @@ public class Constant {
     public static final String TYPE_CASH_EXCHANGE = "DC";
     public static final String TYPE_ECASH_TO_ECASH = "CT";
     public static final String TYPE_SYNC_CONTACT = "DB";
+    public static final String TYPE_CANCEL_CONTACT = "HV";
     public static final int TRANSACTION_SUCCESS = 0;
     public static final int TRANSACTION_FAIL = 1;
 }

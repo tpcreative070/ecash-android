@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.wallet.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
 import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
 public class FragmentAccountInfo extends ECashBaseFragment {
@@ -41,8 +43,6 @@ public class FragmentAccountInfo extends ECashBaseFragment {
     TextView tvEmail;
     @BindView(R.id.tv_cmnd)
     TextView tvCmnd;
-    @BindView(R.id.tv_address)
-    TextView tvAddress;
     @BindView(R.id.btn_login)
     Button btnLogin;
     private AccountInfo accountInfo;
@@ -69,23 +69,36 @@ public class FragmentAccountInfo extends ECashBaseFragment {
             tvSdt.setText(accountInfo.getPersonMobilePhone());
             tvEmail.setText("");
             tvCmnd.setText(accountInfo.getIdNumber());
-            tvAddress.setText("");
         } else {
             tvId.setText("");
             tvName.setText("");
             tvSdt.setText("");
             tvEmail.setText("");
             tvCmnd.setText("");
-            tvAddress.setText("");
         }
     }
 
-    @OnClick({R.id.iv_account, R.id.btn_login})
+    @OnClick({R.id.iv_account, R.id.btn_login, R.id.layout_image_account, R.id.layout_name, R.id.layout_phone, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_account:
                 break;
             case R.id.btn_login:
+                break;
+            case R.id.layout_image_account:
+                break;
+            case R.id.layout_name:
+                break;
+            case R.id.layout_phone:
+                break;
+            case R.id.layout_email:
+                break;
+            case R.id.layout_cmnd:
+                break;
+            case R.id.layout_qr_code:
+                Intent intent = new Intent(getActivity(), MyQRCodeActivity.class);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
         }
     }
@@ -112,5 +125,4 @@ public class FragmentAccountInfo extends ECashBaseFragment {
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
-
 }

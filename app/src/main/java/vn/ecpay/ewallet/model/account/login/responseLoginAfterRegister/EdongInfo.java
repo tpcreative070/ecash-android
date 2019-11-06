@@ -35,6 +35,8 @@ public class EdongInfo {
     @ColumnInfo(name = "accountType")
     @SerializedName("accountType")
     private Long accountType;
+    @SerializedName("usableBalance")
+    private Long usableBalance;
 
 
     public Long getAccBalance() {
@@ -76,5 +78,13 @@ public class EdongInfo {
 
     public void setAccountType(Long accountType) {
         this.accountType = accountType;
+    }
+
+    public Long getUsableBalance() {
+        return usableBalance;
+    }
+
+    public void setUsableBalance(Long usableBalance) {
+        this.usableBalance = usableBalance;
     }
 }

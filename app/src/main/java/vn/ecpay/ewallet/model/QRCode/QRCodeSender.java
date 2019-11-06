@@ -1,14 +1,13 @@
 
 package vn.ecpay.ewallet.model.QRCode;
 
-import javax.annotation.Generated;
-
 import com.google.gson.annotations.SerializedName;
+
+import javax.annotation.Generated;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class QRCodeSender {
-
     @SerializedName("content")
     private String mContent;
     @SerializedName("cycle")

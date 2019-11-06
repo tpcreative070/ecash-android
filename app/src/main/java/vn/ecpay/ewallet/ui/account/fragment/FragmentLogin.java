@@ -39,6 +39,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
@@ -89,8 +90,16 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 break;
             case R.id.layout_register:
                 if (KeyStoreUtils.getMasterKey(getActivity()) != null) {
-                    ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_wallet_is_exit));
-                    return;
+                    List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
+                    if (null != listAccount) {
+                        if (listAccount.size() > 0) {
+                            ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_wallet_is_exit));
+                        } else {
+                            ((AccountActivity) getActivity()).addFragment(new FragmentRegister(), true);
+                        }
+                    } else {
+                        ((AccountActivity) getActivity()).addFragment(new FragmentRegister(), true);
+                    }
                 } else {
                     ((AccountActivity) getActivity()).addFragment(new FragmentRegister(), true);
                 }
@@ -112,7 +121,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = this.getArguments();
-        if (bundle != null) {
+        if (null != bundle) {
             this.isTimeOut = bundle.getBoolean(Constant.IS_SESSION_TIMEOUT);
         }
 
@@ -126,8 +135,11 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             }
             return false;
         });
+        edPassword.setText("123456");
+    }
+
+    private void checkAccountExit() {
         if (KeyStoreUtils.getMasterKey(getActivity()) != null) {
-            ECashApplication.masterKey = KeyStoreUtils.getMasterKey(getActivity());
             List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
             if (listAccount != null) {
                 if (listAccount.size() > 0) {
@@ -146,16 +158,14 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 layoutIsExit.setVisibility(View.GONE);
             }
         }
-
-        edPassword.setText("123456");
     }
 
     @Override
-
     public void onResume() {
         super.onResume();
         loginPresenter.onViewResume();
         ((AccountActivity) getActivity()).updateTitle("Đăng nhập");
+        checkAccountExit();
     }
 
     private void validateData() {
@@ -190,10 +200,6 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getIMEI();
             }
-        } else if (requestCode == PermissionUtils.PERMISSION_REQUEST_CONTACT) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                loginPresenter.requestLogin(accountInfo, userName, pass);
-            }
         }
     }
 
@@ -214,9 +220,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             editor.putString(Constant.DEVICE_IMEI, IMEI);
             editor.apply();
         }
-        if (PermissionUtils.checkPermissionReadContact(this, null)) {
-            loginPresenter.requestLogin(accountInfo, userName, pass);
-        }
+        loginPresenter.requestLogin(accountInfo, userName, pass);
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
@@ -318,10 +322,10 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     }
 
     @Override
-    public void requestLoginSuccess(AccountInfo accountInfo) {
-        accountInfo.setUsername(userName);
-        accountInfo.setToken(CommonUtils.encryptPassword(pass));
-        loginPresenter.getEDongInfo(accountInfo);
+    public void requestLoginSuccess(AccountInfo mAccountInfo) {
+        mAccountInfo.setUsername(userName);
+        mAccountInfo.setToken(CommonUtils.encryptPassword(pass));
+        loginPresenter.getEDongInfo(mAccountInfo);
         if (KeyStoreUtils.getMasterKey(getActivity()) != null &&
                 KeyStoreUtils.getPrivateKey(getActivity()) != null) {
             ECashApplication.masterKey = KeyStoreUtils.getMasterKey(getActivity());

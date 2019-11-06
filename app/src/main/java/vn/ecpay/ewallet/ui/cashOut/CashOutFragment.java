@@ -185,7 +185,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         if (listEDongInfo.size() > 0) {
             edongInfo = listEDongInfo.get(0);
             tvEDongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
             tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
         }
     }
@@ -200,7 +200,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
         builder.setItems(eDong, (dialog, which) -> {
             tvEDongWallet.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
-            tvOverEdong.setText(String.valueOf(listEDongInfo.get(which).getAccBalance()));
+            tvOverEdong.setText(String.valueOf(listEDongInfo.get(which).getUsableBalance()));
             edongInfo = listEDongInfo.get(which);
         });
 
@@ -239,13 +239,13 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         if (listEDongInfo.size() > 0) {
             for (int i = 0; i < listEDongInfo.size(); i++) {
                 if (listEDongInfo.get(i).getAccountIdt().equals(edongInfo.getAccountIdt())) {
-                    tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getAccBalance()));
+                    tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
                     tvEdong.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
                 }
             }
         } else {
             tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
         }
     }
 

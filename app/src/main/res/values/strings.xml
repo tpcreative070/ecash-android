@@ -35,6 +35,7 @@
     <string name="str_close">Đóng</string>
     <string name="str_done">Xong</string>
     <string name="str_continute">Tiếp tục</string>
+    <string name="str_clear_filter">Xoá tìm kiếm</string>
 
     <string name="login_no_account">Bạn chưa có tài khoản?</string>
     <string name="register_now">Đăng ký ngay!</string>
@@ -92,8 +93,13 @@
     <string name="str_update">Cập nhật</string>
     <string name="str_edt_search_empty">Bạn chưa nhập từ khoá tìm kiếm</string>
     <string name="str_input_add_contact">Nhập số điện thoại hoặc số ví</string>
-    <string name="str_add_contact_success">Thêm mới thành công</string>
+    <string name="str_add_contact_success">Thêm mới Contact thành công</string>
     <string name="str_confirm_delete">Bạn có chắc muốn xoá ?</string>
+    <string name="str_my_qr_code">Mã QR của tôi</string>
+    <string name="str_scan_qr_code_to_add_wallet">Quét mã QR code để thêm eWallet</string>
+    <string name="str_save_to_device">Lưu về máy</string>
+    <string name="str_save_to_device_success">Lưu QR code về máy thành công</string>
+    <string name="str_chose_wallet_transfer">Chọn sô ví muốn chuyển</string>
 
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
@@ -165,7 +171,7 @@
     <string name="err_doing">Chức năng đang được phát triển?</string>
     <string name="err_user_not_exit">Tài khoản không tồn tại</string>
     <string name="err_not_input_username">bạn chưa nhập tài khoản</string>
-    <string name="err_not_input_number_username">bạn chưa nhập số tài khoản</string>
+    <string name="err_not_input_number_username">bạn chưa chọn ví nhận</string>
     <string name="err_not_input_pass">bạn chưa nhập mật khẩu</string>
     <string name="err_device_acc_exit">Thiết bị của bạn đã được đăng ký 1 tài khoản khác!</string>
     <string name="err_otp_input_fail">OTP bạn nhập không đúng</string>
@@ -179,7 +185,7 @@
     <string name="err_dit_not_get_key_transfer">không lấy được key của người nhận</string>
     <string name="err_connect_socket_fail">kết nối socket không thành công. Bạn vui lòng kiểm tra kết nối!</string>
     <string name="err_validate_user_name_fail">Tên đăng nhập không chưa ký tự đặc biệt hoặc khoảng trắng</string>
-    <string name="err_validate_name_fail">Họ và tên không chưa ký tự đặc biệt!</string>
+    <string name="err_validate_name_fail">Họ và tên không chứa số và ký tự đặc biệt!</string>
     <string name="err_validate_cmnd_fail">số chứng minh là số từ 9 đến 12 số!</string>
     <string name="err_validate_phone_fail">Số điện thoại bạn vừa nhập không hợp lệ vui lòng nhập lại</string>
     <string name="err_pass_duplicate_fail">2 mật khẩu phải giống nhau</string>
@@ -204,6 +210,9 @@
     <string name="err_chose_money_take">bạn chưa chọn số tiền muốn chuyến sang</string>
     <string name="err_conflict_take_and_change">Số tiền đổi và số tiền nhận phải bằng nhau</string>
     <string name="err_filter_add_contact">Số điện thoại hoặc số ví không chứa ký tự đặc biệt và chỉ có 10 chữ số</string>
+    <string name="err_qr_code_fail">Mã QR của bạn hợp lệ</string>
+    <string name="err_add_contact_conflict">Bạn không thể add chính ví của mình</string>
+    <string name="err_transfer_conflict">Bạn không thể chuyển cho chính ví của mình</string>
 
     //%s
     <string name="str_type_cash_out">-%s</string>

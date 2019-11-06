@@ -47,16 +47,17 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/str_ecash_id"
+                    android:text="@string/str_wallet_number"
                     android:textColor="@color/grey_light" />
 
                 <TextView
                     android:id="@+id/tv_id"
+                    android:layout_marginEnd="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
+                    android:paddingStart="15dp"
                     android:textColor="@color/black"
                     tools:ignore="RtlSymmetry" />
 
@@ -70,6 +71,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/layout_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -85,11 +87,19 @@
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@+id/iv_name_detail"
                     android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
                     android:textColor="@color/black"
                     tools:ignore="RtlSymmetry" />
+
+                <ImageView
+                    android:id="@+id/iv_name_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_arrow_right" />
 
                 <View
                     android:layout_width="match_parent"
@@ -101,6 +111,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/layout_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -118,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
+                    android:paddingEnd="15dp"
                     android:textColor="@color/black"
                     tools:ignore="RtlSymmetry" />
 
@@ -132,6 +143,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/layout_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -147,11 +159,19 @@
                     android:id="@+id/tv_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@+id/iv_email_detail"
                     android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
                     android:textColor="@color/black"
                     tools:ignore="RtlSymmetry" />
+
+                <ImageView
+                    android:id="@+id/iv_email_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_arrow_right" />
 
                 <View
                     android:layout_width="match_parent"
@@ -163,6 +183,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/layout_cmnd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -178,11 +199,19 @@
                     android:id="@+id/tv_cmnd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@+id/iv_cmnd_detail"
                     android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
                     android:textColor="@color/black"
                     tools:ignore="RtlSymmetry" />
+
+                <ImageView
+                    android:id="@+id/iv_cmnd_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_arrow_right" />
 
                 <View
                     android:layout_width="match_parent"
@@ -194,6 +223,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/layout_qr_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -202,23 +232,31 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/str_address"
+                    android:text="@string/str_my_qr_code"
                     android:textColor="@color/grey_light" />
 
-                <TextView
-                    android:id="@+id/tv_address"
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/iv_qr_detail"
+                    android:paddingEnd="10dp"
+                    android:src="@drawable/icon_qr_code"
+                    android:textColor="@color/black"
+                    tools:ignore="RtlSymmetry" />
+
+                <ImageView
+                    android:id="@+id/iv_qr_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
-                    android:textColor="@color/black"
-                    tools:ignore="RtlSymmetry" />
+                    android:src="@drawable/ic_arrow_right" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:layout_below="@+id/tv_address"
+                    android:layout_below="@+id/iv_qr_detail"
                     android:layout_marginTop="30dp"
                     android:background="@color/grey_light" />
 

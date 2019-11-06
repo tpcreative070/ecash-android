@@ -285,6 +285,9 @@ public class WebSocketsService extends Service {
 
                     //SAVE CONTACT TO DATABASE
                     DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
+                } else if (responseMess.getType().equals(Constant.TYPE_CANCEL_CONTACT)) {
+                    String walletIDContactCancel = responseMess.getSender();
+                    DatabaseUtil.updateStatusContact(getApplicationContext(), Constant.CONTACT_OFF, Long.valueOf(walletIDContactCancel));
                 }
             }
         }

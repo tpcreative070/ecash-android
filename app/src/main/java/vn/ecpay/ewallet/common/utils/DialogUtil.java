@@ -738,7 +738,7 @@ public class DialogUtil {
                         slDatabase500 = slDatabase500 - 1;
                     }
                 } else {
-                    total500 = total500 - 1;
+                    total500 = total500 + 1;
                 }
                 totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
                 tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
@@ -950,13 +950,9 @@ public class DialogUtil {
             btnUpdate.setOnClickListener(v -> {
                 String name = edtName.getText().toString();
                 if (!name.isEmpty()) {
-                    if (CommonUtils.isValidateName(name)) {
-                        dismissDialog();
-                        if (onContactUpdate != null) {
-                            onContactUpdate.OnListenerOk(name);
-                        }
-                    } else {
-                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_validate_name_fail), Toast.LENGTH_LONG).show();
+                    dismissDialog();
+                    if (onContactUpdate != null) {
+                        onContactUpdate.OnListenerOk(name);
                     }
                 }
             });

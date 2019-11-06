@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -27,6 +28,7 @@ public class DatabaseUtil {
     }
 
     public static void saveAccountInfo(AccountInfo accountInfo, Context context) {
+        Log.e("key", KeyStoreUtils.getMasterKey(context));
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         WalletDatabase.insertAccountInfoTask(accountInfo);
     }
@@ -37,7 +39,7 @@ public class DatabaseUtil {
     }
 
     public static List<AccountInfo> getAllAccountInfo(Context context) {
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return WalletDatabase.getAllProfile();
     }
 
@@ -54,7 +56,7 @@ public class DatabaseUtil {
         transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog, context));
 
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
+        WalletDatabase.insertTransactionLogTask(transactionLog);
     }
 
     public static void saveTransactionLog(TransactionLog_Database transactionLog, Context context) {
@@ -67,10 +69,7 @@ public class DatabaseUtil {
     public static boolean isTransactionLogExit(ResponseMessSocket responseMess, Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         TransactionLog_Database transactionLog = WalletDatabase.checkTransactionLogExit(responseMess.getId());
-        if (null != transactionLog) {
-            return true;
-        }
-        return false;
+        return null != transactionLog;
     }
 
     //ma hoa mat xich transaction log
@@ -119,7 +118,7 @@ public class DatabaseUtil {
     }
 
     public static void changePassDatabase(Context context, String masterKey) {
-        if (KeyStoreUtils.getMasterKey(context) != null) {
+        if (null != KeyStoreUtils.getMasterKey(context)) {
             WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
             WalletDatabase.changeKey(masterKey);
         }
@@ -161,6 +160,7 @@ public class DatabaseUtil {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         for (int i = 0; i < listContact.size(); i++) {
             Contact contact = listContact.get(i);
+            contact.setStatus(Constant.CONTACT_ON);
             contact.setFullName(getNameContact(context, listContact.get(i).getPhone()));
             WalletDatabase.insertContactTask(contact);
         }
@@ -204,5 +204,10 @@ public class DatabaseUtil {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.updateNameContact(name, walletId);
         return true;
+    }
+
+    public static void updateStatusContact(Context context, int status, Long walletId) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.updateStatusContact(status, walletId);
     }
 }

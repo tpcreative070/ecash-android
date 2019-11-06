@@ -119,13 +119,13 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
             case TYPE_CASH_EXCHANGE:
                 itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_cash_change));
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
-                itemViewHolder.tvTransactionAmount.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())));
+                itemViewHolder.tvTransactionAmount.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
                 break;
 
         }
 
         itemViewHolder.item_view.setOnClickListener(v -> {
-            if(onItemClickListener!=null){
+            if (onItemClickListener != null) {
                 onItemClickListener.onItemClick(transactionsHistoryModel);
             }
         });

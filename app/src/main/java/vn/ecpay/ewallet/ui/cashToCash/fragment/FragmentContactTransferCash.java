@@ -22,20 +22,22 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
 
-public class FragmentContactTransferCash extends ECashBaseFragment implements ContactTransferAdapter.onItemTransferListener{
+public class FragmentContactTransferCash extends ECashBaseFragment implements ContactTransferAdapter.onItemTransferListener {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
     EditText edtSearch;
     private ContactTransferAdapter mAdapter;
     private List<Contact> mSectionList;
-    private Contact transferModel;
     private ContactTransferListener contactTransferListener;
+    private AccountInfo accountInfo;
 
     @Override
     protected int getLayoutResId() {
@@ -59,7 +61,9 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Co
         }
 
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<Contact> transferModelArrayList = WalletDatabase.getListContact();
+        String userName = ECashApplication.getAccountInfo().getUsername();
+        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
 
         setAdapter(transferModelArrayList);
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -86,7 +90,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Co
 
     private void setAdapterTextChange(String filter) {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<Contact> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter));
+        List<Contact> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter), accountInfo.getWalletId());
         setAdapter(transferModelArrayList);
     }
 
@@ -136,7 +140,9 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Co
 
     @Override
     public void onItemClick(Contact contact) {
-        contactTransferListener.itemClick(transferModel);
-        ((CashToCashActivity) getActivity()).onBackPressed();
+        if (null != contactTransferListener) {
+            contactTransferListener.itemClick(contact);
+            ((CashToCashActivity) getActivity()).onBackPressed();
+        }
     }
 }

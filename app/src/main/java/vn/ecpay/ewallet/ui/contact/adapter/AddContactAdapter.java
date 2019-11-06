@@ -16,20 +16,26 @@ import com.daimajia.swipe.SwipeLayout;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 
 public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final AccountInfo accountInfo;
     List<Contact> mCountriesModelList;
     WeakReference<Context> mContextWeakReference;
 
     public AddContactAdapter(List<Contact> mCountriesModelList, Context context) {
         this.mCountriesModelList = mCountriesModelList;
         this.mContextWeakReference = new WeakReference<>(context);
+        String userName = ECashApplication.getAccountInfo().getUsername();
+        accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+
     }
 
     @Override
@@ -55,16 +61,25 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         itemViewHolder.tvPhone.setText(contact.getPhone());
 
         itemViewHolder.layoutTransfer.setOnClickListener(v -> {
-            Intent intentTransferCash = new Intent(context, CashToCashActivity.class);
-            intentTransferCash.putExtra(Constant.CONTACT_TRANSFER_MODEL, contact);
-            context.startActivity(intentTransferCash);
-            ((AddContactActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            if (contact.getWalletId().equals(accountInfo.getWalletId())) {
+                ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_transfer_conflict));
+            } else {
+                DatabaseUtil.saveOnlySingleContact(context, contact);
+                Intent intentTransferCash = new Intent(context, CashToCashActivity.class);
+                intentTransferCash.putExtra(Constant.CONTACT_TRANSFER_MODEL, contact);
+                context.startActivity(intentTransferCash);
+                ((AddContactActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
         });
 
         itemViewHolder.layoutAdd.setOnClickListener(v -> {
-            DatabaseUtil.saveOnlySingleContact(context, contact);
-            Toast.makeText(context,context.getResources()
-                    .getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+            if (contact.getWalletId().equals(accountInfo.getWalletId())) {
+                ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_add_contact_conflict));
+            } else {
+                DatabaseUtil.saveOnlySingleContact(context, contact);
+                Toast.makeText(context, context.getResources()
+                        .getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+            }
         });
     }
 

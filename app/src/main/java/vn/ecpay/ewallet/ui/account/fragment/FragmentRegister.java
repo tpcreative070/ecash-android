@@ -20,7 +20,10 @@ import androidx.annotation.RequiresApi;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -144,7 +147,13 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     @OnClick(R.id.btn_confirm)
     public void onViewClicked() {
         if (KeyStoreUtils.getMasterKey(getActivity()) != null) {
-            ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_device_acc_exit));
+            List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
+            if (listAccount != null) {
+                if (listAccount.size() > 0) {
+                    ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_device_acc_exit));
+                    return;
+                }
+            }
         }
         validateData();
     }
@@ -175,6 +184,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         switch (requestCode) {
             case PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showLoading();
                     startRegisterPassword();
                 }
             }
@@ -250,8 +260,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_validate_phone_fail));
             return;
         }
-
         if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
+            showLoading();
             startRegisterPassword();
         }
 
@@ -304,9 +314,15 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     @Override
     public void registerSuccess(AccountInfo mAccountInfo, String privateKeyBase64, String publicKeyBase64) {
         registerPresenter.syncContact(getActivity(), mAccountInfo);
-        KeyStoreUtils.saveKeyPrivateWallet(privateKeyBase64, getActivity());
-        KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), getActivity());
-        DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
+        DatabaseUtil.changePassDatabase(getActivity(), mAccountInfo.getMasterKey());
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), getActivity());
+                KeyStoreUtils.saveKeyPrivateWallet(privateKeyBase64, getActivity());
+                DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
+            }
+        }, 200);
         requestOTPSuccess(mAccountInfo);
     }
 
@@ -364,8 +380,10 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     @Override
     public void getEDongInfoSuccess(AccountInfo accountInfo, ResponseDataEdong responseDataEdong) {
         ECashApplication.setAccountInfo(accountInfo);
-        if (responseDataEdong.getListAcc().size() > 0) {
-            ECashApplication.setListEDongInfo(responseDataEdong.getListAcc());
+        if (null != responseDataEdong.getListAcc()) {
+            if (responseDataEdong.getListAcc().size() > 0) {
+                ECashApplication.setListEDongInfo(responseDataEdong.getListAcc());
+            }
         }
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
         Intent intent = new Intent(getActivity(), MainActivity.class);

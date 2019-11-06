@@ -67,6 +67,7 @@
             android:background="@drawable/bg_border_gray"
             android:hint="@string/pass"
             android:imeOptions="actionNext"
+            android:maxLength="20"
             android:inputType="textPassword"
             android:padding="10dp"
             android:textColor="@color/grey_light" />
@@ -81,6 +82,7 @@
             android:imeOptions="actionDone"
             android:inputType="textPassword"
             android:padding="10dp"
+            android:maxLength="20"
             android:textColor="@color/grey_light" />
 
         <Button

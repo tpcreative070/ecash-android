@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -69,8 +70,6 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
     TextView tvOverECash;
-    @BindView(R.id.edt_stk_cash)
-    EditText edtStkCash;
     @BindView(R.id.edt_content)
     EditText edtContent;
     @BindView(R.id.tv_500)
@@ -139,16 +138,30 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     TextView tvTotal10;
     @BindView(R.id.sw_qr_code)
     Switch swQrCode;
+    @BindView(R.id.layout_500)
+    RelativeLayout layout500;
+    @BindView(R.id.layout_200)
+    RelativeLayout layout200;
+    @BindView(R.id.layout_100)
+    RelativeLayout layout100;
+    @BindView(R.id.layout_50)
+    RelativeLayout layout50;
+    @BindView(R.id.layout_20)
+    RelativeLayout layout20;
+    @BindView(R.id.layout_10)
+    RelativeLayout layout10;
+    @BindView(R.id.tv_number_wallet)
+    TextView tvNumberWallet;
     private AccountInfo accountInfo;
     private String publicKeyWalletReceiver;
 
-    private String walletId, content;
+    private String content;
     private long balance;
     private int total500 = 0, total200 = 0, total100 = 0, total50 = 0, total20 = 0, total10 = 0;
     private int slDatabase500, slDatabase200, slDatabase100, slDatabase50, slDatabase20, slDatabase10;
     private long totalMoney = 0;
     private ResponseDataGetPublicKeyWallet dataGetPublicKey;
-    private Contact transferModel;
+    private Contact contact;
     private String currentTime;
     private Contact contactTransferModel;
 
@@ -175,7 +188,8 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         if (bundle != null) {
             this.contactTransferModel = (Contact) bundle.getSerializable(Constant.CONTACT_TRANSFER_MODEL);
             if (null != contactTransferModel) {
-                edtStkCash.setText(String.valueOf(contactTransferModel.getWalletId()));
+                tvNumberWallet.setText(String.valueOf(contactTransferModel.getWalletId()));
+                publicKeyWalletReceiver = contactTransferModel.getPublicKeyValue();
             }
         }
 
@@ -184,17 +198,6 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         cashToCashPresenter.setView(this);
         cashToCashPresenter.onViewCreate();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        edtStkCash.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                if (!edtStkCash.getText().toString().isEmpty()) {
-                    if (edtStkCash.getText().toString().equals(accountInfo.getWalletId())) {
-                        ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_duplicate_wallet_id));
-                        return;
-                    }
-                    cashToCashPresenter.getPublicKeyWallet(accountInfo, edtStkCash.getText().toString());
-                }
-            }
-        });
         setData();
         getMoneyDatabase();
         updateQualityMoney();
@@ -218,6 +221,42 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         slDatabase50 = WalletDatabase.getTotalMoney("50000", Constant.STR_CASH_IN);
         slDatabase20 = WalletDatabase.getTotalMoney("20000", Constant.STR_CASH_IN);
         slDatabase10 = WalletDatabase.getTotalMoney("10000", Constant.STR_CASH_IN);
+
+        if (slDatabase500 > 0) {
+            layout500.setVisibility(View.VISIBLE);
+        } else {
+            layout500.setVisibility(View.GONE);
+        }
+
+        if (slDatabase200 > 0) {
+            layout200.setVisibility(View.VISIBLE);
+        } else {
+            layout200.setVisibility(View.GONE);
+        }
+
+        if (slDatabase100 > 0) {
+            layout100.setVisibility(View.VISIBLE);
+        } else {
+            layout100.setVisibility(View.GONE);
+        }
+
+        if (slDatabase50 > 0) {
+            layout50.setVisibility(View.VISIBLE);
+        } else {
+            layout50.setVisibility(View.GONE);
+        }
+
+        if (slDatabase20 > 0) {
+            layout20.setVisibility(View.VISIBLE);
+        } else {
+            layout20.setVisibility(View.GONE);
+        }
+
+        if (slDatabase10 > 0) {
+            layout10.setVisibility(View.VISIBLE);
+        } else {
+            layout10.setVisibility(View.GONE);
+        }
     }
 
     private void updateQualityOut() {
@@ -255,10 +294,10 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         updateTotalMoneySend();
     }
 
-    @OnClick({R.id.iv_contact, R.id.iv_down_500, R.id.iv_up_500, R.id.iv_down_200, R.id.iv_up_200, R.id.iv_down_100, R.id.iv_up_100, R.id.iv_down_50, R.id.iv_up_50, R.id.iv_down_20, R.id.iv_up_20, R.id.iv_down_10, R.id.iv_up_10, R.id.btn_confirm})
+    @OnClick({R.id.layout_chose_wallet, R.id.iv_down_500, R.id.iv_up_500, R.id.iv_down_200, R.id.iv_up_200, R.id.iv_down_100, R.id.iv_up_100, R.id.iv_down_50, R.id.iv_up_50, R.id.iv_down_20, R.id.iv_up_20, R.id.iv_down_10, R.id.iv_up_10, R.id.btn_confirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.iv_contact:
+            case R.id.layout_chose_wallet:
                 ((CashToCashActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this), true);
                 break;
             case R.id.iv_down_500:
@@ -352,9 +391,8 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     }
 
     private void validateData() {
-        walletId = edtStkCash.getText().toString();
         content = edtContent.getText().toString();
-        if (walletId.isEmpty()) {
+        if (null == contact) {
             ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_not_input_number_username));
             return;
         }
@@ -362,7 +400,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_dit_not_content));
             return;
         }
-        if (walletId.equals(String.valueOf(accountInfo.getWalletId()))) {
+        if (contact.getWalletId().equals(String.valueOf(accountInfo.getWalletId()))) {
             ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_duplicate_wallet_id));
             return;
         }
@@ -478,7 +516,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             return;
         }
         String jsonCash = getObjectJsonSend(total10, total20, total50, total100, total200, total500,
-                publicKeyWalletReceiver, edtStkCash.getText().toString(), edtContent.getText().toString());
+                publicKeyWalletReceiver, String.valueOf(contact.getWalletId()), edtContent.getText().toString());
         List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
         ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
         if (stringList.size() > 0) {
@@ -522,7 +560,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
                     if (!mFolder.exists()) {
                         mFolder.mkdir();
                     }
-                    String imageName = walletId + "_" + currentTime + "_" + i + ".jpg";
+                    String imageName = contact.getWalletId() + "_" + currentTime + "_" + i + ".jpg";
                     File file = new File(mFolder, imageName);
                     if (file.exists())
                         file.delete();
@@ -580,7 +618,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         intent.putExtra(Constant.TOTAL_20, total20);
         intent.putExtra(Constant.TOTAL_10, total10);
         intent.putExtra(Constant.KEY_PUBLIC_RECEIVER, publicKeyWalletReceiver);
-        intent.putExtra(Constant.WALLET_RECEIVER, edtStkCash.getText().toString());
+        intent.putExtra(Constant.WALLET_RECEIVER, String.valueOf(contact.getWalletId()));
         intent.putExtra(Constant.CONTENT_SEND_MONEY, edtContent.getText().toString());
         if (getActivity() != null) {
             getActivity().startService(intent);
@@ -589,7 +627,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
 
     private void showDialogSendOk() {
         DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
-                getString(R.string.str_dialog_cash_to_cash_success, CommonUtils.formatPriceVND(totalMoney), edtStkCash.getText().toString()), new DialogUtil.OnConfirm() {
+                getString(R.string.str_dialog_cash_to_cash_success, CommonUtils.formatPriceVND(totalMoney), String.valueOf(contact.getWalletId())), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         total500 = 0;
@@ -625,7 +663,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     @Override
     public void getPublicKeyWalletSuccess(ResponseDataGetPublicKeyWallet responseDataGetPublicKeyWallet) {
         this.dataGetPublicKey = responseDataGetPublicKeyWallet;
-        dataGetPublicKey.setmWalletId(Long.valueOf(edtStkCash.getText().toString()));
+        dataGetPublicKey.setmWalletId(contact.getWalletId());
         publicKeyWalletReceiver = responseDataGetPublicKeyWallet.getEcKpValue();
     }
 
@@ -640,11 +678,11 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     }
 
     @Override
-    public void itemClick(Contact mTransferModel) {
-        if (mTransferModel != null) {
-            this.transferModel = mTransferModel;
-            edtStkCash.setText(String.valueOf(transferModel.getWalletId()));
-            publicKeyWalletReceiver = transferModel.getPublicKeyValue();
+    public void itemClick(Contact mContact) {
+        if (mContact != null) {
+            this.contact = mContact;
+            tvNumberWallet.setText(String.valueOf(contact.getWalletId()));
+            publicKeyWalletReceiver = contact.getPublicKeyValue();
         }
     }
 

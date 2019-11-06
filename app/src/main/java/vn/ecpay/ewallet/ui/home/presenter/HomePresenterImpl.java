@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Base64;
+import android.util.Log;
+
+import com.google.gson.Gson;
 
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
@@ -113,12 +116,14 @@ public class HomePresenterImpl implements HomePresenter {
         String alphabe = CommonUtils.getStringAlphabe(requestGetAccountWalletInfo);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetAccountWalletInfo));
         requestGetAccountWalletInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        Gson gson = new Gson();
+        String json = gson.toJson(requestGetAccountWalletInfo);
+        Log.e("json", json);
 
         Call<ResponseGetAccountWalletInfo> call = apiService.getWalletInfo(requestGetAccountWalletInfo);
         call.enqueue(new Callback<ResponseGetAccountWalletInfo>() {
             @Override
             public void onResponse(Call<ResponseGetAccountWalletInfo> call, Response<ResponseGetAccountWalletInfo> response) {
-                homeView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     application.checkSessionByErrorCode(response.body().getResponseCode());
@@ -134,12 +139,15 @@ public class HomePresenterImpl implements HomePresenter {
                             KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), context);
                             homeView.onActiveAccountSuccess(mAccountInfo);
                         } else {
+                            homeView.dismissLoading();
                             homeView.showDialogError(response.body().getResponseMessage());
                         }
                     } else {
+                        homeView.dismissLoading();
                         homeView.showDialogError(context.getString(R.string.err_upload));
                     }
                 } else {
+                    homeView.dismissLoading();
                     homeView.showDialogError(context.getString(R.string.err_upload));
                 }
             }
@@ -163,7 +171,6 @@ public class HomePresenterImpl implements HomePresenter {
         requestSyncContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestSyncContact.setListContacts(CommonUtils.getListPhoneNumber(context));
         requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
-        requestSyncContact.setSessionId(accountInfo.getSessionId());
         requestSyncContact.setUsername(accountInfo.getUsername());
         requestSyncContact.setWalletId(accountInfo.getWalletId());
 

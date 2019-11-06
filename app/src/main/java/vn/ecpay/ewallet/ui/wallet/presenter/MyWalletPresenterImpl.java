@@ -2,6 +2,8 @@ package vn.ecpay.ewallet.ui.wallet.presenter;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -139,9 +141,11 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
         Call<ResponseCancelAccount> call = apiService.cancelAccount(requestCancelAccount);
         call.enqueue(new Callback<ResponseCancelAccount>() {
             @Override
-            public void onResponse(Call<ResponseCancelAccount> call, Response<ResponseCancelAccount> response) {
+            public void onResponse(@NotNull Call<ResponseCancelAccount> call, @NotNull Response<ResponseCancelAccount> response) {
                 myWalletView.dismissLoading();
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    application.checkSessionByErrorCode(response.body().getResponseCode());
                     if (response.body() != null) {
                         if (response.body().getResponseCode() != null) {
                             String code = response.body().getResponseCode();

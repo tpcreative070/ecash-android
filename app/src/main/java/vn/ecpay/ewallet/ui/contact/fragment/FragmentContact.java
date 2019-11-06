@@ -30,19 +30,22 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.contact.adapter.ContactAdapter;
 
-public class FragmentContact extends ECashBaseFragment{
+public class FragmentContact extends ECashBaseFragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
     EditText edtSearch;
     private ContactAdapter mAdapter;
     private List<Contact> mSectionList;
+    private AccountInfo accountInfo;
 
     @Override
     protected int getLayoutResId() {
@@ -53,7 +56,9 @@ public class FragmentContact extends ECashBaseFragment{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<Contact> transferModelArrayList = WalletDatabase.getListContact();
+        String userName = ECashApplication.getAccountInfo().getUsername();
+        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
 
         setAdapter(transferModelArrayList);
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -72,7 +77,8 @@ public class FragmentContact extends ECashBaseFragment{
                 if (!s.toString().isEmpty()) {
                     setAdapterTextChange(s.toString());
                 } else {
-                    setAdapter(transferModelArrayList);
+                    List<Contact> listAllContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+                    setAdapter(listAllContact);
                 }
             }
         });
@@ -80,20 +86,25 @@ public class FragmentContact extends ECashBaseFragment{
 
     private void setAdapterTextChange(String filter) {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<Contact> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter));
+        List<Contact> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter), accountInfo.getWalletId());
         setAdapter(transferModelArrayList);
     }
 
-    private void setAdapter(List<Contact> transferModelArrayList) {
+    private void setAdapter(List<Contact> listContact) {
+        if (listContact.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            return;
+        }
+        recyclerView.setVisibility(View.VISIBLE);
         mSectionList = new ArrayList<>();
-        getHeaderListLatter(transferModelArrayList);
+        getHeaderListLatter(listContact);
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ContactAdapter(mSectionList, getActivity(), pos -> {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            List<Contact> transferModelArrayList1 = WalletDatabase.getListContact();
-            setAdapter(transferModelArrayList1);
+            List<Contact> listContactAfterDelete = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+            setAdapter(listContactAfterDelete);
         });
         recyclerView.setAdapter(mAdapter);
     }
@@ -155,7 +166,7 @@ public class FragmentContact extends ECashBaseFragment{
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_UPDATE_CONTACT)) {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            List<Contact> transferModelArrayList = WalletDatabase.getListContact();
+            List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
             setAdapter(transferModelArrayList);
         }
         EventBus.getDefault().removeStickyEvent(event);

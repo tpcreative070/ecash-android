@@ -131,7 +131,8 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 layoutQrCode.setVisibility(View.GONE);
                 tvType.setText(getResources().getString(R.string.str_cash_change));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_change));
-                tvTotalMoneyTransfer.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())));
+                tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())/2));
+                tvTotalMoneyTransfer.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())/2));
                 break;
 
         }

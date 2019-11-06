@@ -82,12 +82,10 @@ public class FragmentAddContact extends ECashBaseFragment implements AddContactV
             ((AddContactActivity) getActivity()).showDialogError(getResources().getString(R.string.str_edt_search_empty));
             return;
         }
-
         if (!CommonUtils.isValidateNumber(edtTextSearch)) {
             ((AddContactActivity) getActivity()).showDialogError(getResources().getString(R.string.err_filter_add_contact));
             return;
         }
-
         if (CommonUtils.isValidatePhoneNumber(edtTextSearch)) {
             addContactPresenter.requestSearchByPhone(edtTextSearch, accountInfo);
         } else {

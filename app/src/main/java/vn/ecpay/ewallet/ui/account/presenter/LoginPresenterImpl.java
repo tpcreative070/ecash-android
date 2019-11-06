@@ -1,5 +1,9 @@
 package vn.ecpay.ewallet.ui.account.presenter;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -205,7 +209,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                             accountInfo.setTransactionCode(String.valueOf(response.body().getResponseData().getTransactionCode()));
                             loginView.requestOTPSuccess(accountInfo);
                         } else if (response.body().getResponseCode().equals("3015")) {
-                            loginView.requestOTPFail(response.body().getResponseMessage(), accountInfo);
+                            //quá thời hạn gửi OTP
+                            loginView.showDialogError(response.body().getResponseMessage());
                         } else {
                             loginView.showDialogError(response.body().getResponseMessage());
                         }
@@ -239,13 +244,16 @@ public class LoginPresenterImpl implements LoginPresenter {
         requestActiveAccount.setUserId(accountInfo.getUserId());
         requestActiveAccount.setFunctionCode(Constant.FUNCTION_ACTIVE_ACCOUNT);
         requestActiveAccount.setOtpvalue(otp);
+        requestActiveAccount.setWalletId(accountInfo.getWalletId());
         requestActiveAccount.setTransactionCode(accountInfo.getTransactionCode());
         requestActiveAccount.setChannelSignature("");
 
         String alphabe = CommonUtils.getStringAlphabe(requestActiveAccount);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestActiveAccount));
         requestActiveAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
-
+        Gson gson = new Gson();
+        String json = gson.toJson(requestActiveAccount);
+        Log.e("json", json);
         Call<ResponseActiveAccount> call = apiService.activeAccount(requestActiveAccount);
         call.enqueue(new Callback<ResponseActiveAccount>() {
             @Override
@@ -255,7 +263,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             loginView.activeAccountSuccess();
-                        } else if (response.body().getResponseCode().equals("3014")) {
+                        } else if (response.body().getResponseCode().equals("3014") ||
+                                response.body().getResponseCode().equals("0998")) {
                             loginView.dismissLoading();
                             loginView.requestOTPFail(application.getString(R.string.err_otp_input_fail), accountInfo);
                         } else {

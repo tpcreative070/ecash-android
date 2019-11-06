@@ -65,9 +65,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
+            android:name=".ui.contact.AddContactActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:name=".ui.contact.AddContactActivity" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <activity
+            android:name=".ui.wallet.activity.MyQRCodeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <service android:name=".webSocket.WebSocketsService" />
         <service android:name=".ui.cashIn.CashInService" />

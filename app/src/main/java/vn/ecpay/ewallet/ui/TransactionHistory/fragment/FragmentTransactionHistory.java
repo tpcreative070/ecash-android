@@ -25,6 +25,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -151,8 +153,13 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.UPDATE_MONEY) ||
                 event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
-            List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
-            setAdapter(transactionsHistoryModelList);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
+                    setAdapter(transactionsHistoryModelList);
+                }
+            }, 200);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
@@ -163,7 +170,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         super.onDetach();
     }
 
-    @OnClick({R.id.layout_date, R.id.layout_type, R.id.layout_status, R.id.btn_apply, R.id.iv_filter, R.id.layout_transparent})
+    @OnClick({R.id.layout_date, R.id.layout_type, R.id.layout_status, R.id.btn_apply, R.id.iv_filter, R.id.layout_transparent, R.id.btn_clear, R.id.layout_content_filter})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_transparent:
@@ -186,12 +193,23 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                 setAdapter(transactionsHistoryModelList);
                 layoutFilter.setVisibility(View.GONE);
                 break;
+            case R.id.btn_clear:
+                dateFilter = null;
+                typeFilter = null;
+                statusFilter = null;
+
+                tvDate.setText(Constant.STR_EMPTY);
+                tvType.setText(Constant.STR_EMPTY);
+                tvStatus.setText(Constant.STR_EMPTY);
+                break;
             case R.id.iv_filter:
                 if (layoutFilter.getVisibility() == View.VISIBLE) {
                     layoutFilter.setVisibility(View.GONE);
                 } else {
                     layoutFilter.setVisibility(View.VISIBLE);
                 }
+                break;
+            case R.id.layout_content_filter:
                 break;
         }
     }

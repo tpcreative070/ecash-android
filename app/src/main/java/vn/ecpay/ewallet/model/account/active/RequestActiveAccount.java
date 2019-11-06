@@ -35,7 +35,7 @@ public class RequestActiveAccount extends BaseObject {
         return mWalletId;
     }
 
-    public void setmWalletId(Long mWalletId) {
+    public void setWalletId(Long mWalletId) {
         this.mWalletId = mWalletId;
     }
 

@@ -2,11 +2,9 @@ package vn.ecpay.ewallet.ui.account.presenter;
 
 import android.content.Context;
 
-import androidx.fragment.app.FragmentActivity;
-
+import vn.ecpay.ewallet.common.base.Presenter;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.view.RegisterView;
-import vn.ecpay.ewallet.common.base.Presenter;
 
 public interface RegisterPresenter extends Presenter<RegisterView> {
     void checkUSerNameAccount(String userName);

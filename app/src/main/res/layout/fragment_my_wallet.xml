@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/arrow_next" />
+                android:src="@drawable/ic_arrow_right" />
 
             <View
                 android:layout_width="match_parent"
@@ -149,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/arrow_next" />
+                android:src="@drawable/ic_arrow_right" />
 
             <View
                 android:layout_width="match_parent"
@@ -187,7 +187,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/arrow_next" />
+                android:src="@drawable/ic_arrow_right" />
 
             <View
                 android:layout_width="match_parent"
@@ -226,7 +226,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/arrow_next" />
+                android:src="@drawable/ic_arrow_right" />
 
             <View
                 android:layout_width="match_parent"

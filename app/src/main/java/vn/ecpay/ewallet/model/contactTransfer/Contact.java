@@ -7,15 +7,16 @@ import java.io.Serializable;
 public class Contact implements Serializable {
     @SerializedName("customerId")
     private Long customerId;
-    @SerializedName("publicKeyValue")
+    @SerializedName("ecPublicKey")
     private String publicKeyValue;
-    @SerializedName("phone")
+    @SerializedName("personMobilePhone")
     private String phone;
     @SerializedName("terminalInfo")
     private String terminalInfo;
     @SerializedName("walletId")
     private Long walletId;
     private String fullName;
+    private int status;
     public boolean isSection;
 
     public Contact() {
@@ -32,14 +33,6 @@ public class Contact implements Serializable {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
-    }
-
-    public String getPublicKeyValue() {
-        return publicKeyValue;
-    }
-
-    public void setPublicKeyValue(String publicKeyValue) {
-        this.publicKeyValue = publicKeyValue;
     }
 
     public String getPhone() {
@@ -80,5 +73,21 @@ public class Contact implements Serializable {
 
     public void setSection(boolean section) {
         isSection = section;
+    }
+
+    public String getPublicKeyValue() {
+        return publicKeyValue;
+    }
+
+    public void setPublicKeyValue(String publicKeyValue) {
+        this.publicKeyValue = publicKeyValue;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

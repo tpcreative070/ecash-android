@@ -173,15 +173,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"/>
 
-            <Button
-                android:id="@+id/btn_apply"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:background="@drawable/bg_border_rectangle_blue"
-                android:text="@string/str_apply"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/btn_apply"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/bg_border_rectangle_blue"
+                    android:text="@string/str_apply"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_clear"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/bg_border_rectangle_blue"
+                    android:text="@string/str_clear_filter"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
         <View
             android:id="@+id/layout_transparent"

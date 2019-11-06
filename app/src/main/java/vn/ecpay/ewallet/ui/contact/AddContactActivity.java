@@ -12,6 +12,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentAddContact;
 

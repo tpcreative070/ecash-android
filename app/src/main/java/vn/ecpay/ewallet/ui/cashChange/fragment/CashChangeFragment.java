@@ -438,14 +438,15 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     public void changeCashSuccess(CashInResponse cashInResponse) {
         saveTransactionLogs(cashInResponse);
         //update money send
-        saveCashChangeSend();
+        saveCashChangeSend(cashInResponse);
         //start service
         startService(cashInResponse);
     }
 
-    private void saveCashChangeSend() {
+    private void saveCashChangeSend(CashInResponse cashInResponse) {
         for (int i = 0; i < listCashSend.size(); i++) {
             CashLogs_Database cashLogs = listCashSend.get(i);
+            cashLogs.setTransactionSignature(cashInResponse.getId());
             cashLogs.setType(Constant.STR_CASH_OUT);
             DatabaseUtil.saveCashToDB(cashLogs, getActivity(), accountInfo.getUsername());
         }

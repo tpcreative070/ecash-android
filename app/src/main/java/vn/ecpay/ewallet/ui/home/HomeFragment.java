@@ -45,6 +45,7 @@ import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
@@ -52,7 +53,6 @@ import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.home.module.HomeModule;
 import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
-import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.iv_qr_code)
@@ -126,7 +126,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (listEDongInfo.size() > 0) {
             eDongInfoCashIn = listEDongInfo.get(0);
             tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
         }
 
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
@@ -136,7 +136,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));
             layoutActiveAccount.setVisibility(View.GONE);
             layoutFullInfo.setVisibility(View.VISIBLE);
-
+            //request permission contact
+            PermissionUtils.checkPermissionReadContact(this, null);
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
             if (WalletDatabase.getAllCash() != null) {
                 if (WalletDatabase.getAllCash().size() > 0) {
@@ -179,12 +180,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         for (int i = 0; i < listEDongInfo.size(); i++) {
                             if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
                                 tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
-                                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getAccBalance()));
+                                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
                             }
                         }
                     } else {
                         tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-                        tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getAccBalance()));
+                        tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
                     }
                 });
             }
@@ -201,7 +202,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
         builder.setItems(eDong, (dialog, which) -> {
             tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(which).getAccBalance()));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(which).getUsableBalance()));
             eDongInfoCashIn = listEDongInfo.get(which);
         });
 
@@ -313,14 +314,14 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startRegisterPassword();
-                }
+        if (requestCode == PermissionUtils.PERMISSION_REQUEST_CONTACT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                homePresenter.syncContact(getActivity(), accountInfo);
             }
-            default:
-                break;
+        } else if (requestCode == PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startRegisterPassword();
+            }
         }
     }
 
@@ -368,12 +369,23 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void onActiveAccountSuccess(AccountInfo mAccountInfo) {
+        addMyContact(mAccountInfo);
         homePresenter.syncContact(getActivity(), mAccountInfo);
         ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
+        dismissLoading();
         ((MainActivity) getActivity()).showDialogError(getString(R.string.str_active_account_success));
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
+    }
+
+    private void addMyContact(AccountInfo mAccountInfo) {
+        Contact contact = new Contact();
+        contact.setWalletId(mAccountInfo.getWalletId());
+        contact.setFullName(CommonUtils.getFullName(mAccountInfo));
+        contact.setPhone(mAccountInfo.getPersonMobilePhone());
+        contact.setPublicKeyValue(mAccountInfo.getEcKeyPublicValue());
+        contact.setTerminalInfo(mAccountInfo.getTerminalInfo());
+        DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
     }
 
     @Override
@@ -384,6 +396,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onSyncContactSuccess() {
         ((MainActivity) getActivity()).showDialogError(getResources().getString(R.string.str_sync_contact_success));
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
 
     @Override

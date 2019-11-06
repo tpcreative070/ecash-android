@@ -38,6 +38,8 @@ import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
+import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
@@ -76,7 +78,6 @@ public class CommonUtils {
             allItem.append(String.valueOf(entry.getValue()));
         }
         Gson gson = new Gson();
-        Log.e("json", gson.toJson(baseObject));
         return allItem.toString().replaceAll("null", "");
     }
 
@@ -284,7 +285,7 @@ public class CommonUtils {
         return code.matches(regex);
     }
 
-    public static boolean isValidateNumber(String code){
+    public static boolean isValidateNumber(String code) {
         String regex = "[0-9]{10}";
         return code.matches(regex);
     }
@@ -419,5 +420,13 @@ public class CommonUtils {
         }
         phones.close();
         return userList;
+    }
+
+    public static int getTypeScan(QRScanBase qrScanBase) {
+        if (null != qrScanBase.getContent()) {
+            return Constant.IS_SCAN_CASH;
+        } else {
+            return Constant.IS_SCAN_CONTACT;
+        }
     }
 }
