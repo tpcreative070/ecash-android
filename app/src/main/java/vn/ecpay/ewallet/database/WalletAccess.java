@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.RawQuery;
 import androidx.room.Update;
-import androidx.sqlite.db.SupportSQLiteQuery;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import java.util.List;
 
@@ -175,5 +175,6 @@ public interface WalletAccess {
     List<CashLogTransaction> getAllCashByTransactionLog(String transactionSignatureLog);
 
     @RawQuery
-    List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(SupportSQLiteQuery strQuery);
+    List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(SimpleSQLiteQuery strQuery);
+
 }
