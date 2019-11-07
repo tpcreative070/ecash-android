@@ -169,6 +169,7 @@ public class DatabaseUtil {
 
     public static void saveOnlySingleContact(Context context, Contact contact) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        contact.setStatus(Constant.CONTACT_ON);
         WalletDatabase.insertContactTask(contact);
         EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CONTACT));
     }

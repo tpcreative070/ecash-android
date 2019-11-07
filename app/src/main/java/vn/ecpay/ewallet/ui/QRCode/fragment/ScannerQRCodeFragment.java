@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.QRCode.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -80,18 +81,19 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         return R.layout.fragment_qrcode_scanner;
     }
 
+    @SuppressLint("UseSparseArrays")
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new QRCodeModule(this)).inject(this);
         qrCodePresenter.setView(this);
         qrCodePresenter.onViewCreate();
-        cashMap = new HashMap<>();
         eCashSplit = new StringBuffer();
         mScannerView = new ZXingScannerView(getActivity());
         containerScanner.addView(mScannerView);
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        cashMap = new HashMap<>();
     }
 
     @Override
@@ -121,7 +123,6 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             }
         } catch (JsonSyntaxException e) {
             ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
-            return;
         }
         Handler handler = new Handler();
         handler.postDelayed(() -> mScannerView.resumeCameraPreview(ScannerQRCodeFragment.this), 2000);
@@ -168,22 +169,24 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     }
                     ResponseMessSocket cashMess = gson.fromJson(eCashSplit.toString(), ResponseMessSocket.class);
                     if (!DatabaseUtil.isTransactionLogExit(cashMess, getActivity())) {
-                        DatabaseUtil.saveTransactionLog(cashMess, getActivity());
+                        Intent intent = new Intent(getActivity(), WebSocketsService.class);
+                        intent.putExtra(Constant.IS_QR_CODE, true);
+                        intent.putExtra(Constant.RESPONSE_CASH_MESS, cashMess);
+                        if (getActivity() != null) {
+                            getActivity().startService(intent);
+                        }
                     } else {
+                        dismissLoading();
                         ((QRCodeActivity) getActivity()).showDialogError("QR Code đã được nhận");
                         return;
                     }
-                    Intent intent = new Intent(getActivity(), WebSocketsService.class);
-                    intent.putExtra(Constant.IS_QR_CODE, true);
-                    intent.putExtra(Constant.RESPONSE_CASH_MESS, cashMess);
-                    if (getActivity() != null) {
-                        getActivity().startService(intent);
-                    }
                 }
             } else {
+                dismissLoading();
                 ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ");
             }
         } catch (JsonSyntaxException e) {
+            dismissLoading();
             ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ");
         }
     }
@@ -214,10 +217,12 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         super.onDetach();
     }
 
+    @SuppressLint("UseSparseArrays")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_QR_CODE_SCAN_CASH_SUCCESS)) {
-            cashMap = new HashMap<>();
+            cashMap.clear();
+            eCashSplit.delete(0, eCashSplit.length());
             tvNumberScan.setText(Constant.STR_EMPTY);
             dismissProgress();
             ArrayList<QRCashTransfer> qrCashTransfers = event.getQrCashTransfers();
@@ -225,7 +230,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         }
 
         if (event.getData().equals(Constant.EVENT_VERIFY_CASH_FAIL)) {
-            cashMap = new HashMap<>();
+            cashMap.clear();
+            eCashSplit.delete(0, eCashSplit.length());
             tvNumberScan.setText(Constant.STR_EMPTY);
             dismissProgress();
             ((QRCodeActivity) getActivity()).showDialogError("Giao dịch được gửi cho tài khoản khác");

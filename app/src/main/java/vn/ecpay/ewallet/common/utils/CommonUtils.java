@@ -285,18 +285,15 @@ public class CommonUtils {
         return code.matches(regex);
     }
 
+    public static boolean isValidatePass(String pass) {
+        String regex = "[a-zA-Z0-9!@#$%^&*()~`=_+|:\";',./<>?]{6,20}";
+        return pass.matches(regex);
+    }
+
+
     public static boolean isValidateNumber(String code) {
         String regex = "[0-9]{10}";
         return code.matches(regex);
-    }
-
-    public static boolean isValidatePass(String pass) {
-        if (pass == null)
-            return false;
-        if (pass.trim().length() < 6 || pass.trim().length() > 20) {
-            return false;
-        }
-        return true;
     }
 
     public static boolean isValidatePhoneNumber(String number) {

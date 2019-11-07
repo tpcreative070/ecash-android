@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
@@ -76,6 +77,13 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (contact.getWalletId().equals(accountInfo.getWalletId())) {
                 ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_add_contact_conflict));
             } else {
+                List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+                for (int i = 0; i < listContact.size(); i++) {
+                    if(listContact.get(i).getPhone().equals(contact.getPhone())){
+                        ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_add_contact_duplicate));
+                        return;
+                    }
+                }
                 DatabaseUtil.saveOnlySingleContact(context, contact);
                 Toast.makeText(context, context.getResources()
                         .getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();

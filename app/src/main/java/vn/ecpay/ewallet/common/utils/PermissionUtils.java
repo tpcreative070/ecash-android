@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.common.utils;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
@@ -18,10 +19,22 @@ public class PermissionUtils {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static boolean checkPermissionReadContact(final Fragment fragment, final Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(fragment != null ? fragment.getContext() : activity,Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(fragment != null ? fragment.getContext() : activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
                 if (fragment != null) {
                     fragment.requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_CONTACT);
                 }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean isReadContact(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             } else {
                 return true;
@@ -73,7 +86,7 @@ public class PermissionUtils {
             if (ContextCompat.checkSelfPermission(fragment != null ? fragment.getContext() : activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 if (fragment != null) {
                     fragment.requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
-                }else {
+                } else {
                     activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
                 }
                 return false;

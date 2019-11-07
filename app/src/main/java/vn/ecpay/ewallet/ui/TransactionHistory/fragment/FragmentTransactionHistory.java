@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Index;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -124,11 +125,15 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         int size = usersList.size();
 
         for (int i = 0; i < size; i++) {
-            String strMonth, strYear;
+            String strMonth = Constant.STR_EMPTY, strYear = Constant.STR_EMPTY;
             TransactionsHistoryModel transactionHistory = usersList.get(i);
             String strTransactionDateTime = transactionHistory.getTransactionDate();
-            strYear = strTransactionDateTime.substring(0, 4);
-            strMonth = strTransactionDateTime.substring(4, 6);
+            try {
+                strYear = strTransactionDateTime.substring(0, 4);
+                strMonth = strTransactionDateTime.substring(4, 6);
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
             String header = getString(R.string.str_history_date_header, strMonth, strYear);
             if (!TextUtils.equals(lastHeader, header)) {
                 lastHeader = header;

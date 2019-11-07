@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "320928596444",
+    "firebase_url": "https://ecash-40a22.firebaseio.com",
+    "project_id": "ecash-40a22",
+    "storage_bucket": "ecash-40a22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320928596444:android:a60525e341629913354f19",
+        "android_client_info": {
+          "package_name": "vn.ecpay.ewallet.vinhnq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320928596444-7v9npfirbjlsrrc5d9jjptoq7b59rn7d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFiN-1Q2CNGFtvuzsJzCEAaaS0mJY2HkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320928596444-7v9npfirbjlsrrc5d9jjptoq7b59rn7d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

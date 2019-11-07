@@ -163,7 +163,6 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     private ResponseDataGetPublicKeyWallet dataGetPublicKey;
     private Contact contact;
     private String currentTime;
-    private Contact contactTransferModel;
 
     @Inject
     CashToCashPresenter cashToCashPresenter;
@@ -186,10 +185,10 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            this.contactTransferModel = (Contact) bundle.getSerializable(Constant.CONTACT_TRANSFER_MODEL);
-            if (null != contactTransferModel) {
-                tvNumberWallet.setText(String.valueOf(contactTransferModel.getWalletId()));
-                publicKeyWalletReceiver = contactTransferModel.getPublicKeyValue();
+            this.contact = (Contact) bundle.getSerializable(Constant.CONTACT_TRANSFER_MODEL);
+            if (null != contact) {
+                tvNumberWallet.setText(String.valueOf(contact.getWalletId()));
+                publicKeyWalletReceiver = contact.getPublicKeyValue();
             }
         }
 
@@ -405,15 +404,16 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             return;
         }
 
+        if (null == publicKeyWalletReceiver) {
+            ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_dit_not_get_key_transfer));
+            return;
+        }
+
         if (totalMoney == 0) {
             ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_dit_not_money_transfer));
             return;
         }
 
-        if (null == publicKeyWalletReceiver) {
-            ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_dit_not_get_key_transfer));
-            return;
-        }
         if (swQrCode.isChecked()) {
             if (PermissionUtils.checkPermissionWriteStore(this, null)) {
                 showLoading();

@@ -115,7 +115,7 @@ public class ChangePassActivity extends ECashBaseActivity {
         requestChangePassword.setFunctionCode(Constant.FUNCTION_CHANGE_PASSWORD);
         requestChangePassword.setPassword(CommonUtils.encryptPassword(newPass));
         requestChangePassword.setSessionId(accountInfo.getSessionId());
-        requestChangePassword.setToken(CommonUtils.getToken(accountInfo));
+        requestChangePassword.setToken(CommonUtils.encryptPassword(oldPass));
         requestChangePassword.setUsername(accountInfo.getUsername());
         requestChangePassword.setUserId(accountInfo.getUserId());
 
@@ -133,6 +133,8 @@ public class ChangePassActivity extends ECashBaseActivity {
                         ECashApplication.get(ChangePassActivity.this).checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             ECashApplication.get(ChangePassActivity.this).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
+                        } else if (response.body().getResponseCode().equals("3019")) {
+                            showDialogError(getString(R.string.err_old_pass_invalid));
                         } else {
                             showDialogError(response.body().getResponseMessage());
                         }

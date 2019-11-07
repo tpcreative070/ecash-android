@@ -189,7 +189,7 @@
     <string name="err_validate_cmnd_fail">số chứng minh là số từ 9 đến 12 số!</string>
     <string name="err_validate_phone_fail">Số điện thoại bạn vừa nhập không hợp lệ vui lòng nhập lại</string>
     <string name="err_pass_duplicate_fail">2 mật khẩu phải giống nhau</string>
-    <string name="err_pass_bigger_six_char">Mật khẩu phải từ 6 đến 20 ký tự</string>
+    <string name="err_pass_bigger_six_char">Mật khẩu phải từ 6 đến 20 ký tự chữ thường không dấu</string>
     <string name="err_user_name_null">bạn chưa nhập tên tài khoản</string>
     <string name="err_name_null">bạn chưa nhập họ tên</string>
     <string name="err_cmnd_null">bạn chưa nhập chứng minh nhân dân</string>
@@ -212,7 +212,9 @@
     <string name="err_filter_add_contact">Số điện thoại hoặc số ví không chứa ký tự đặc biệt và chỉ có 10 chữ số</string>
     <string name="err_qr_code_fail">Mã QR của bạn hợp lệ</string>
     <string name="err_add_contact_conflict">Bạn không thể add chính ví của mình</string>
+    <string name="err_add_contact_duplicate">Số điện thoại đã tồn tại trong danh bạ</string>
     <string name="err_transfer_conflict">Bạn không thể chuyển cho chính ví của mình</string>
+    <string name="err_old_pass_invalid">Mật khẩu cũ bạn nhập không đúng</string>
 
     //%s
     <string name="str_type_cash_out">-%s</string>

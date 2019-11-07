@@ -97,7 +97,7 @@ public class WebSocketsService extends Service {
                 if (cashMess != null) {
                     getPublicKeyWallet(cashMess);
                 }
-            } else {//cash to cash by
+            } else {//cash to cash by socket
                 int sl500 = extras.getInt(Constant.TOTAL_500);
                 int sl200 = extras.getInt(Constant.TOTAL_200);
                 int sl100 = extras.getInt(Constant.TOTAL_100);
@@ -266,11 +266,8 @@ public class WebSocketsService extends Service {
 
                     //SAVE MONEY TO DATABASE
                     if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
-                        DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
-                        if (responseMess.getType().equals(Constant.TYPE_ECASH_TO_ECASH)) {
-                            if (responseMess.getCashEnc() != null) {
-                                getPublicKeyWallet(responseMess);
-                            }
+                        if (responseMess.getCashEnc() != null) {
+                            getPublicKeyWallet(responseMess);
                         }
                     }
                 } else if (responseMess.getType().equals(Constant.TYPE_SYNC_CONTACT)) {
@@ -352,6 +349,7 @@ public class WebSocketsService extends Service {
                                 transactionSignature = responseMess.getId();
                                 deCryptECash = CommonUtils.decrypEcash(responseMess.getCashEnc(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
                                 if (deCryptECash != null) {
+                                    DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
                                     numberRequest = 0;
                                     checkArrayCash(responseMess);
                                 } else {
@@ -360,6 +358,8 @@ public class WebSocketsService extends Service {
                             } else {
                                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                             }
+                        } else {
+                            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                         }
                     }
                 }
@@ -367,7 +367,7 @@ public class WebSocketsService extends Service {
 
             @Override
             public void onFailure(Call<ResponseGetPublicKeyWallet> call, Throwable t) {
-                Log.e("getPublicKey", "fail");
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
             }
         });
     }

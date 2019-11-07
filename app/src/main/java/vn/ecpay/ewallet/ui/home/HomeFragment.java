@@ -369,8 +369,10 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void onActiveAccountSuccess(AccountInfo mAccountInfo) {
+        if (PermissionUtils.isReadContact(getActivity())) {
+            homePresenter.syncContact(getActivity(), mAccountInfo);
+        }
         addMyContact(mAccountInfo);
-        homePresenter.syncContact(getActivity(), mAccountInfo);
         ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
