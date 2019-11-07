@@ -1,35 +1,130 @@
 {
   "project_info": {
-    "project_number": "320928596444",
-    "firebase_url": "https://ecash-40a22.firebaseio.com",
-    "project_id": "ecash-40a22",
-    "storage_bucket": "ecash-40a22.appspot.com"
+    "project_number": "1079803027046",
+    "firebase_url": "https://ecnotifications-b69df.firebaseio.com",
+    "project_id": "ecnotifications-b69df",
+    "storage_bucket": "ecnotifications-b69df.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:320928596444:android:a60525e341629913354f19",
+        "mobilesdk_app_id": "1:1079803027046:android:41e3610bad4e37ab",
         "android_client_info": {
-          "package_name": "vn.ecpay.ewallet.vinhnq"
+          "package_name": "com.mypackage.fcmdemo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "320928596444-7v9npfirbjlsrrc5d9jjptoq7b59rn7d.apps.googleusercontent.com",
+          "client_id": "1079803027046-npt88114cp99a0k6keilac2buhjo7ia1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAFiN-1Q2CNGFtvuzsJzCEAaaS0mJY2HkM"
+          "current_key": "AIzaSyCEAljvuYXbIX0FXBmshxhWP83OlFy5PXg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "320928596444-7v9npfirbjlsrrc5d9jjptoq7b59rn7d.apps.googleusercontent.com",
+              "client_id": "1079803027046-npt88114cp99a0k6keilac2buhjo7ia1.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1079803027046-jue052sfds1nm58ir7bb0ee11pitmkp9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ggg.kkk"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079803027046:android:bcba028952039e3a",
+        "android_client_info": {
+          "package_name": "ec.pay.vn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079803027046-ahvda1ts9fq2p1o1et8otj64nikfkl13.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ec.pay.vn",
+            "certificate_hash": "438f78a4dfe638c9672bdd4dcd817b82f79fdfcb"
+          }
+        },
+        {
+          "client_id": "1079803027046-npt88114cp99a0k6keilac2buhjo7ia1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEAljvuYXbIX0FXBmshxhWP83OlFy5PXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079803027046-npt88114cp99a0k6keilac2buhjo7ia1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1079803027046-jue052sfds1nm58ir7bb0ee11pitmkp9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ggg.kkk"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079803027046:android:099584a49ae79db31297a7",
+        "android_client_info": {
+          "package_name": "vn.ecpay.ewallet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079803027046-o442v73ct3af8uvccv5j894j7trbrgiq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.ecpay.ewallet",
+            "certificate_hash": "7eed9160f3cfa906acc7ea412ba063e19434df01"
+          }
+        },
+        {
+          "client_id": "1079803027046-npt88114cp99a0k6keilac2buhjo7ia1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEAljvuYXbIX0FXBmshxhWP83OlFy5PXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079803027046-npt88114cp99a0k6keilac2buhjo7ia1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1079803027046-jue052sfds1nm58ir7bb0ee11pitmkp9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ggg.kkk"
+              }
             }
           ]
         }

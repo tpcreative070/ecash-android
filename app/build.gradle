@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
@@ -31,7 +30,7 @@ android {
         flavorDimensions dimensDefault
         dev {
             dimension dimensDefault
-            applicationIdSuffix ".dev"
+            applicationIdSuffix ""
             resValue("string", "app_name", "ECash Dev")
             buildConfigField("boolean", "ENABLE_LOG", "true")
             buildConfigField "String", "SERVER", '"http://10.1.1.105"'
@@ -110,5 +109,9 @@ dependencies {
 
     //swipe recyclerview
     implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
+    //firebase
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+    //Firebase Messaging library for Sending push Notifications
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
 }
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
