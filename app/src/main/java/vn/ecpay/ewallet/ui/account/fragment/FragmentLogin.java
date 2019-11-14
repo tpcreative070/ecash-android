@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -42,10 +43,13 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
+import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.presenter.LoginPresenter;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
+import vn.ecpay.ewallet.webSocket.WebSocketsService;
 import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
 public class FragmentLogin extends ECashBaseFragment implements LoginView {
@@ -105,6 +109,9 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 }
                 break;
             case R.id.tv_not_login:
+                Intent intent = new Intent(getActivity(), ForgotPasswordActivity.class);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
         }
     }
@@ -141,6 +148,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     private void checkAccountExit() {
         if (KeyStoreUtils.getMasterKey(getActivity()) != null) {
             List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
+            Log.e("keyStore", KeyStoreUtils.getMasterKey(getActivity()));
             if (listAccount != null) {
                 if (listAccount.size() > 0) {
                     accountInfo = listAccount.get(0);
@@ -187,7 +195,6 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 return;
             }
         }
-
         if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
             getIMEI();
         }
@@ -323,8 +330,9 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void requestLoginSuccess(AccountInfo mAccountInfo) {
+        Objects.requireNonNull(getActivity()).startService(new Intent(getActivity(), WebSocketsService.class));
         mAccountInfo.setUsername(userName);
-        mAccountInfo.setToken(CommonUtils.encryptPassword(pass));
+        mAccountInfo.setToken(mAccountInfo.getToken());
         loginPresenter.getEDongInfo(mAccountInfo);
         if (KeyStoreUtils.getMasterKey(getActivity()) != null &&
                 KeyStoreUtils.getPrivateKey(getActivity()) != null) {

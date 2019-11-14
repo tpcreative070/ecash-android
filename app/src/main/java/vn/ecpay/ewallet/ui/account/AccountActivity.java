@@ -53,8 +53,6 @@ public class AccountActivity extends ECashBaseActivity {
         } else {
             addFragment(FragmentLogin.newInstance(false), false);
         }
-        //start socket service
-        startService(new Intent(this, WebSocketsService.class));
     }
 
     public void addFragment(Fragment pFragment, boolean isAnimation) {

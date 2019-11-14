@@ -595,7 +595,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/edittext_bottom_line"
+            android:background="@drawable/edt_bottom_line"
             android:hint="@string/str_input_content"
             android:inputType="text"
             android:padding="10dp"

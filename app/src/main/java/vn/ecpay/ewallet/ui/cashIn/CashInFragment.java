@@ -2,7 +2,6 @@ package vn.ecpay.ewallet.ui.cashIn;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +40,7 @@ import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashIn.presenter.CashInPresenter;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
+import vn.ecpay.ewallet.ui.function.CashInFunction;
 
 public class CashInFragment extends ECashBaseFragment implements CashInView {
     @BindView(R.id.tv_account_name)
@@ -149,7 +149,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         if (listEDongInfo.size() > 0) {
             eDongInfoCashIn = listEDongInfo.get(0);
             tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
         }
     }
 
@@ -167,7 +167,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             }
         } else {
             tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
         }
     }
 
@@ -364,7 +364,8 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     public void transferMoneySuccess(CashInResponse eDongToECash) {
         saveTransactionLogs(eDongToECash);
         cashInPresenter.getEDongInfo(accountInfo);
-        startService(eDongToECash);
+        CashInFunction cashInFunction = new CashInFunction(eDongToECash, accountInfo, getActivity());
+        cashInFunction.handelCash();
     }
 
     private void saveTransactionLogs(CashInResponse cashInResponse) {
@@ -379,15 +380,6 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
     }
 
-    private void startService(CashInResponse responseData) {
-        Intent intent = new Intent(getActivity(), CashInService.class);
-        intent.putExtra(Constant.EDONG_TO_ECASH, responseData);
-        intent.putExtra(Constant.ACCOUNT_INFO, accountInfo);
-        if (getActivity() != null) {
-            getActivity().startService(intent);
-        }
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -399,10 +391,6 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         if (event.getData().equals(Constant.UPDATE_MONEY)) {
             dismissProgress();
             showDialogCashInOk();
-            Intent intent = new Intent(getActivity(), CashInService.class);
-            if (getActivity() != null) {
-                getActivity().startService(intent);
-            }
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

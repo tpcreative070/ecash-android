@@ -2,10 +2,8 @@ package vn.ecpay.ewallet.ui.cashToCash.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,11 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.Writer;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,7 +53,7 @@ import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.module.CashToCashModule;
 import vn.ecpay.ewallet.ui.cashToCash.presenter.CashToCashPresenter;
 import vn.ecpay.ewallet.ui.cashToCash.view.CashToCashView;
-import vn.ecpay.ewallet.webSocket.WebSocketsService;
+import vn.ecpay.ewallet.ui.function.CashOutSocketFunction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CashToCashFragment extends ECashBaseFragment implements CashToCashView, ContactTransferListener {
@@ -421,7 +414,9 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             }
         } else {
             showLoading();
-            startService();
+            CashOutSocketFunction cashOutSocketFunction = new CashOutSocketFunction(getActivity(), total500,
+                    total200, total100, total50, total20, total10, publicKeyWalletReceiver, String.valueOf(contact.getWalletId()), edtContent.getText().toString());
+            cashOutSocketFunction.handleCashOutSocket();
         }
     }
 
@@ -510,7 +505,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     }
 
     private void getListCashSend() {
-        if (!isExternalStorageWritable()) {
+        if (!CommonUtils.isExternalStorageWritable()) {
             dismissLoading();
             ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_store_image));
             return;
@@ -535,13 +530,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         }
     }
 
-    private boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
+    private ArrayList<QRCodeSender> listQRSender;
 
     @SuppressLint("StaticFieldLeak")
     private void saveImageQRCode(ArrayList<QRCodeSender> qrCodeSender) {
@@ -552,9 +541,10 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
 
             @Override
             protected Void doInBackground(Void... voids) {
+                listQRSender = qrCodeSender;
                 for (int i = 0; i < qrCodeSender.size(); i++) {
                     Gson gson = new Gson();
-                    Bitmap bitmap = generateQRCode(gson.toJson(qrCodeSender.get(i)));
+                    Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(qrCodeSender.get(i)));
                     String root = Environment.getExternalStorageDirectory().toString();
                     File mFolder = new File(root + "/qr_image");
                     if (!mFolder.exists()) {
@@ -580,49 +570,14 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
             protected void onPostExecute(Void aVoid) {
                 dismissLoading();
                 if (swQrCode.isChecked()) {
+                    //save log
+                    DatabaseUtil.saveTransactionLogQR(listQRSender, responseMess, getActivity());
                     DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
                 }
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
                 showDialogSendOk();
             }
         }.execute();
-    }
-
-    private Bitmap generateQRCode(String value) {
-        int WIDTH = 400;
-        Writer writer = new QRCodeWriter();
-        BitMatrix bitMatrix = null;
-        try {
-            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
-            Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
-            for (int i = 0; i < 400; i++) {
-                for (int j = 0; j < 400; j++) {
-                    bitmap.setPixel(i, j, bitMatrix.get(i, j) ? Color.BLACK
-                            : Color.WHITE);
-                }
-            }
-            return bitmap;
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void startService() {
-        Intent intent = new Intent(getActivity(), WebSocketsService.class);
-        intent.putExtra(Constant.IS_QR_CODE, false);
-        intent.putExtra(Constant.TOTAL_500, total500);
-        intent.putExtra(Constant.TOTAL_200, total200);
-        intent.putExtra(Constant.TOTAL_100, total100);
-        intent.putExtra(Constant.TOTAL_50, total50);
-        intent.putExtra(Constant.TOTAL_20, total20);
-        intent.putExtra(Constant.TOTAL_10, total10);
-        intent.putExtra(Constant.KEY_PUBLIC_RECEIVER, publicKeyWalletReceiver);
-        intent.putExtra(Constant.WALLET_RECEIVER, String.valueOf(contact.getWalletId()));
-        intent.putExtra(Constant.CONTENT_SEND_MONEY, edtContent.getText().toString());
-        if (getActivity() != null) {
-            getActivity().startService(intent);
-        }
     }
 
     private void showDialogSendOk() {
@@ -703,6 +658,14 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         if (event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
             dismissLoading();
             showDialogSendOk();
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
+        }
+
+        if (event.getData().equals(Constant.UPDATE_MONEY) ||
+                event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
+            setData();
+            getMoneyDatabase();
+            updateQualityMoney();
         }
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {

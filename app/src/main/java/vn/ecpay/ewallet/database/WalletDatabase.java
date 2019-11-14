@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.database;
 
+import android.app.Notification;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.SpannableStringBuilder;
@@ -9,8 +10,6 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SimpleSQLiteQuery;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import com.commonsware.cwac.saferoom.SafeHelperFactory;
 
@@ -24,11 +23,15 @@ import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.Contact_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
+import vn.ecpay.ewallet.database.table.Notification_Database;
 import vn.ecpay.ewallet.database.table.Profile_Database;
+import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.database.table.TransactionTimeOut_Database;
+import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
@@ -38,7 +41,9 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         Profile_Database.class,
         TransactionLog_Database.class,
         CashInvalid_Database.class,
-        TransactionTimeOut_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
+        TransactionTimeOut_Database.class,
+        TransactionLogQR_Database.class,
+        Notification_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -83,7 +88,34 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.clearAllTables();
     }
 
-    //contact---------------------------------------------------------------------------------------
+    // todo notification---------------------------------------------------------------------------------------
+    public static void insertNotificationTask(final Notification_Database notification, String fake) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                walletDatabase.daoAccess().insertOnlySingleNotification(notification);
+                return null;
+            }
+        }.execute();
+    }
+
+    public static List<NotificationObj> getAllNotification() {
+        return walletDatabase.daoAccess().getAllNotification();
+    }
+
+    public static void deleteAllNotification() {
+        walletDatabase.daoAccess().deleteAllNotification();
+    }
+    public static void deleteNotification(Long id) {
+        walletDatabase.daoAccess().deleteNotification(id);
+    }
+
+
+    public static void updateNotificationRead(String read, Long id) {
+        walletDatabase.daoAccess().updateNotificationRead(read, id);
+    }
+
+    // todo contact---------------------------------------------------------------------------------------
     public static void insertContactTask(Contact mContact) {
         Contact_Database contact = new Contact_Database();
         contact.setWalletId(mContact.getWalletId());
@@ -125,7 +157,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
 
-    //cash------------------------------------------------------------------------------------------
+    // todo cash------------------------------------------------------------------------------------------
     public static void insertCashTask(CashLogs_Database cash, String userName) {
         CashLogs_Database mCash = new CashLogs_Database();
         mCash.setUserName(userName);
@@ -195,7 +227,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getListCashForMoney(money, type);
     }
 
-    //Cash_Invalid----------------------------------------------------------------------------------
+    // todo Cash_Invalid----------------------------------------------------------------------------------
     public static void insertCashInvalidTask(CashLogs_Database cash, String userName) {
         CashInvalid_Database mCash = new CashInvalid_Database();
         mCash.setUserName(userName);
@@ -225,7 +257,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    //Decision_Database--------------------------------------------------------------------------------------
+    // todo Decision_Database--------------------------------------------------------------------------------------
     public static void insertDecisionTask(Decision_Database decision) {
         Decision_Database mDecision = new Decision_Database();
         mDecision.setDecisionNo(decision.getDecisionNo());
@@ -248,7 +280,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getDecisionNo(decisionNo);
     }
 
-    //profile---------------------------------------------------------------------------------------
+    // todo profile---------------------------------------------------------------------------------------
     public static void insertAccountInfoTask(AccountInfo accountInfo) {
         Profile_Database user = new Profile_Database();
         user.setWalletId(accountInfo.getWalletId());
@@ -272,7 +304,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         user.setCustomerId(accountInfo.getCustomerId());
         user.setFunctionId(accountInfo.getFunctionId());
         user.setGroupId(accountInfo.getGroupId());
-        user.setPassword(CommonUtils.getToken(accountInfo));
+        user.setPassword(CommonUtils.getToken());
         user.setUserId(accountInfo.getUserId());
         insertAccountInfoTask(user, Constant.STR_EMPTY);
     }
@@ -303,11 +335,32 @@ public abstract class WalletDatabase extends RoomDatabase {
         }
     }
 
-    public static void deleteAllData() {
-        walletDatabase.daoAccess().deleteAllData();
+    // todo transaction_log_QR_code-------------------------------------------------------------------------------
+    public static void insertTransactionLogQRTask(TransactionLogQR_Database transactionLog) {
+        TransactionLogQR_Database mTransactionLog = new TransactionLogQR_Database();
+        mTransactionLog.setSequence(transactionLog.getSequence());
+        mTransactionLog.setTotal(transactionLog.getTotal());
+        mTransactionLog.setTransactionSignature(transactionLog.getTransactionSignature());
+        mTransactionLog.setTransactionSignature(transactionLog.getTransactionSignature());
+        insertTransactionLogQRTask(mTransactionLog, Constant.STR_EMPTY);
     }
 
-    //transaction_log-------------------------------------------------------------------------------
+    public static void insertTransactionLogQRTask(final TransactionLogQR_Database transactionLog, String fake) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                walletDatabase.daoAccess().insertOnlySingleTransactionLogQR(transactionLog);
+                return null;
+            }
+        }.execute();
+    }
+
+    public static List<QRCodeSender> getAllTransactionLogQR(String transactionSignature) {
+        return walletDatabase.daoAccess().getAllTransactionLogQR(transactionSignature);
+    }
+
+
+    // todo transaction_log-------------------------------------------------------------------------------
     public static void insertTransactionLogTask(TransactionLog_Database transactionLog) {
         TransactionLog_Database mTransactionLog = new TransactionLog_Database();
         mTransactionLog.setSenderAccountId(transactionLog.getSenderAccountId());

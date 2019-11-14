@@ -5,8 +5,10 @@ import javax.inject.Singleton;
 import dagger.Component;
 import vn.ecpay.ewallet.ui.QRCode.component.QRCodeComponent;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
+import vn.ecpay.ewallet.ui.account.component.ForgotPassComponent;
 import vn.ecpay.ewallet.ui.account.component.LoginComponent;
 import vn.ecpay.ewallet.ui.account.component.RegisterComponent;
+import vn.ecpay.ewallet.ui.account.module.ForgotPassModule;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.module.RegisterModule;
 import vn.ecpay.ewallet.ui.cashChange.component.CashChangeComponent;
@@ -50,4 +52,6 @@ public interface ApplicationComponent {
     CashChangeComponent plus(CashChangeModule cashChangeModule);
 
     AddContactComponent plus(AddContactModule addContactModule);
+
+    ForgotPassComponent plus(ForgotPassModule forgotPassModule);
 }

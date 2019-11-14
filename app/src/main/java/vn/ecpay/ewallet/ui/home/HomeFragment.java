@@ -53,6 +53,7 @@ import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.home.module.HomeModule;
 import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
+import vn.ecpay.ewallet.ui.notification.NotificationActivity;
 
 public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.iv_qr_code)
@@ -97,6 +98,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     RelativeLayout layoutHeader;
     @BindView(R.id.layout_eDong)
     RelativeLayout layoutEDong;
+    @BindView(R.id.tvNotificationCount)
+    TextView tvNotificationCount;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     private long balance;
@@ -126,11 +129,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (listEDongInfo.size() > 0) {
             eDongInfoCashIn = listEDongInfo.get(0);
             tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
         }
 
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
+            updateNotification();
             accountInfo = dbAccountInfo;
             tvHomeAccountName.setText(CommonUtils.getFullName(accountInfo));
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -155,15 +159,25 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
     }
 
+    private void updateNotification(){
+        if (DatabaseUtil.getSizeNotification(getActivity()) > 0) {
+            tvNotificationCount.setVisibility(View.VISIBLE);
+            tvNotificationCount.setText(String.valueOf(DatabaseUtil.getSizeNotification(getActivity())));
+        } else {
+            tvNotificationCount.setVisibility(View.GONE);
+        }
+    }
+
     private void updateActiveAccount() {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 getActivity().runOnUiThread(() -> {
                     updateAccountInfo();
+                    dismissLoading();
                 });
             }
-        }, 500);
+        }, 2000);
     }
 
     private void updateBalance() {
@@ -180,12 +194,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         for (int i = 0; i < listEDongInfo.size(); i++) {
                             if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
                                 tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
-                                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
+                                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
                             }
                         }
                     } else {
                         tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-                        tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
+                        tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
                     }
                 });
             }
@@ -202,7 +216,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
         builder.setItems(eDong, (dialog, which) -> {
             tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(listEDongInfo.get(which).getUsableBalance()));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
             eDongInfoCashIn = listEDongInfo.get(which);
         });
 
@@ -210,11 +224,15 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         dialog.show();
     }
 
-    @OnClick({R.id.layout_eDong, R.id.iv_qr_code, R.id.iv_bell, R.id.layout_account_info, R.id.layout_cash_in, R.id.layout_cash_out, R.id.layout_change_cash, R.id.layout_transfer_cash, R.id.viewElectronPay, R.id.viewWaterPay, R.id.viewShopPay, R.id.viewCablePay, R.id.layout_active_account})
+    @OnClick({R.id.layout_eDong, R.id.iv_qr_code, R.id.layout_notification, R.id.layout_account_info, R.id.layout_cash_in, R.id.layout_cash_out, R.id.layout_change_cash, R.id.layout_transfer_cash, R.id.viewElectronPay, R.id.viewWaterPay, R.id.viewShopPay, R.id.viewCablePay, R.id.layout_active_account})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.layout_notification:
+                Intent intentNoti = new Intent(getActivity(), NotificationActivity.class);
+                getActivity().startActivity(intentNoti);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                break;
             case R.id.iv_qr_code:
-            case R.id.iv_bell:
             case R.id.viewElectronPay:
             case R.id.viewWaterPay:
             case R.id.viewShopPay:
@@ -348,6 +366,10 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
             updateBalance();
         }
+
+        if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
+            updateNotification();
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -376,7 +398,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
-        dismissLoading();
         ((MainActivity) getActivity()).showDialogError(getString(R.string.str_active_account_success));
     }
 

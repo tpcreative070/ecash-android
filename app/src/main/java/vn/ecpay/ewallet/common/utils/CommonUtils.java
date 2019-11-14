@@ -2,12 +2,20 @@ package vn.ecpay.ewallet.common.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.Writer;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
@@ -27,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eccrypto.ECElGamal;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
@@ -38,7 +47,6 @@ import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
-import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
@@ -146,13 +154,8 @@ public class CommonUtils {
     }
 
     public static String encryptPassword(String pass) {
-        byte[] privateKey = Base64.decode(Constant.STR_PRIVATE_KEY_CHANEL, Base64.DEFAULT);
         EllipticCurve ec = EllipticCurve.getSecp256k1();
-        ECPrivateKeyParameters keyPrivate = ec.generatePrivateKeyParameters(
-                new BigInteger(privateKey)
-        );
-        ECPublicKeyParameters kp = ec.getPublicKeyParameters(keyPrivate);
-
+        ECPublicKeyParameters kp = EllipticCurve.getSecp256k1().getPublicKeyParameters(Base64.decode(Constant.STR_PUBLIC_KEY_CHANEL, Base64.DEFAULT));
         byte[][] blockEncrypted = ECElGamal.encrypt(ec, kp, pass.getBytes());
         String passEncode = Base64.encodeToString(blockEncrypted[0], Base64.DEFAULT) + "$"
                 + Base64.encodeToString(blockEncrypted[1], Base64.DEFAULT) + "$"
@@ -193,6 +196,18 @@ public class CommonUtils {
         return (Base64.encodeToString(blockEnc[0], Base64.DEFAULT) + (char) elementSplit
                 + Base64.encodeToString(blockEnc[1], Base64.DEFAULT) + (char) elementSplit
                 + Base64.encodeToString(blockEnc[2], Base64.DEFAULT)).replaceAll("\n", "");
+    }
+
+    public static String getToken() {
+        if (null != ECashApplication.getAccountInfo()) {
+            if (ECashApplication.getAccountInfo().getPassword() == null || ECashApplication.getAccountInfo().getPassword().isEmpty()) {
+                return ECashApplication.getAccountInfo().getToken();
+            } else {
+                return ECashApplication.getAccountInfo().getPassword();
+            }
+        } else {
+            return Constant.STR_EMPTY;
+        }
     }
 
     public static String getToken(AccountInfo accountInfo) {
@@ -279,6 +294,12 @@ public class CommonUtils {
         return df.format(c.getTime());
     }
 
+    public static String getCurrentTimeNotification() {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat(Constant.FORMAT_DATE_NOTIFICATION);
+        return df.format(c.getTime());
+    }
+
     //validate data input
     public static boolean isValidateUserName(String code) {
         String regex = "[A-Za-z0-9]{0,100}";
@@ -308,14 +329,20 @@ public class CommonUtils {
 
     public static boolean validatePassPort(String idNumber) {
         int lenght = idNumber.length();
-        return !(idNumber.isEmpty() || lenght > 12 || lenght < 9);
+        if (idNumber.isEmpty()) {
+            return false;
+        }
+        if (lenght == 12 || lenght == 9) {
+            return true;
+        }
+        return false;
     }
 
     public static boolean isValidateName(String name) {
         name = name.trim();
         if (name.isEmpty())
             return false;
-        String regex = "[A-Za-zaáàạảâẫấầậẩăằắặẳôốồộổỗơớờởợưứữừựửđóòỏọuúùụủeééẹẻêễễếềệểuúũùụủíìịĩỉýỳỵỹỷAÁÀẠÃẢÂẤẦẬẨĂẰẮẶẲÔỐỒỖỘỔƠỚỜỠỞỢƯỨIỪỰỬĐÓÒỎỌUÚÙỤỦEÉÉẸẺÊẾỀỆỂUÚÙỤỦÍÌỊỈÝỲỴỶ\\s]{0,100}";
+        String regex = "[A-Za-z0-9aáàạảâẫấầậẩăằắặẳôốồộổỗơớờởợưứữừựửđóòỏọuúùụủeééẹẻêễễếềệểuúũùụủíìịĩỉýỳỵỹỷAÁÀẠÃẢÂẤẦẬẨĂẰẮẶẲÔỐỒỖỘỔƠỚỜỠỞỢƯỨIỪỰỬĐÓÒỎỌUÚÙỤỦEÉÉẸẺÊẾỀỆỂUÚÙỤỦÍÌỊỈÝỲỴỶ\\s]{0,100}";
         return name.matches(regex);
     }
 
@@ -422,8 +449,47 @@ public class CommonUtils {
     public static int getTypeScan(QRScanBase qrScanBase) {
         if (null != qrScanBase.getContent()) {
             return Constant.IS_SCAN_CASH;
-        } else {
+        } else if (null != qrScanBase.getWalletId() && null != qrScanBase.getPublicKey()) {
             return Constant.IS_SCAN_CONTACT;
+        } else {
+            return Constant.IS_SCAN_FAIL;
         }
     }
+
+    public static Long getMoneyEdong(Long money) {
+        if (money > 0) {
+            return money;
+        } else {
+            return 0L;
+        }
+    }
+
+    public static Bitmap generateQRCode(String value) {
+        int WIDTH = 400;
+        Writer writer = new QRCodeWriter();
+        BitMatrix bitMatrix = null;
+        try {
+            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
+            Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+            for (int i = 0; i < 400; i++) {
+                for (int j = 0; j < 400; j++) {
+                    bitmap.setPixel(i, j, bitMatrix.get(i, j) ? Color.BLACK
+                            : Color.WHITE);
+                }
+            }
+            return bitmap;
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
 }

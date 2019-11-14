@@ -82,7 +82,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestECashChange.setReceiver(accountInfo.getWalletId());
         requestECashChange.setSender(Constant.ISSUER_CODE);
         requestECashChange.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestECashChange.setToken(CommonUtils.getToken(accountInfo));
+        requestECashChange.setToken(CommonUtils.getToken());
         requestECashChange.setUsername(accountInfo.getUsername());
         requestECashChange.setValues(listValue);
 
@@ -131,7 +131,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestGetPublicKeyOrganizetion.setIssuerCode(Constant.ISSUER_CODE);
         requestGetPublicKeyOrganizetion.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyOrganizetion.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken(accountInfo));
+        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken());
         requestGetPublicKeyOrganizetion.setUsername(accountInfo.getUsername());
         requestGetPublicKeyOrganizetion.setChannelSignature(Constant.STR_EMPTY);
 

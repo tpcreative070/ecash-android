@@ -1,4 +1,4 @@
-package vn.ecpay.ewallet.webSocket;
+package vn.ecpay.ewallet.webSocket.util;
 
 import android.content.Context;
 import android.net.Uri;

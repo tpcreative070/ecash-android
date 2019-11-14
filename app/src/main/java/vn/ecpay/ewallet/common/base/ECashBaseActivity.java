@@ -155,7 +155,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             getFragmentStack().lastElement().onResume();
             ft.show(getFragmentStack().lastElement());
             ft.commit();
-
         } else {
             super.onBackPressed();
         }

@@ -102,6 +102,11 @@ public class ChangePassActivity extends ECashBaseActivity {
             showDialogError(getString(R.string.err_pass_duplicate_fail));
             return;
         }
+
+        if (oldPass.equals(newPass)) {
+            showDialogError(getString(R.string.err_new_pass_must_other_old_pass));
+            return;
+        }
         requestChangePass();
     }
 

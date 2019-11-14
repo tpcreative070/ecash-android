@@ -74,6 +74,14 @@ public class EllipticCurve {
     public EllipticCurve() {
     }
 
+    public AsymmetricCipherKeyPair generateKeyPair() {
+        ECKeyPairGenerator pGen = new ECKeyPairGenerator();
+        ECKeyGenerationParameters genParam = new ECKeyGenerationParameters(ecDomain, secureRandom);
+        pGen.init(genParam);
+
+        return pGen.generateKeyPair();
+    }
+
     public static EllipticCurve getSecp256k1() {
         return new EllipticCurve(
                 new BigInteger("fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f", 16),
@@ -82,14 +90,6 @@ public class EllipticCurve {
                 new BigInteger("0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", 16),
                 new BigInteger("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", 16)
         );
-    }
-
-    public AsymmetricCipherKeyPair generateKeyPair() {
-        ECKeyPairGenerator pGen = new ECKeyPairGenerator();
-        ECKeyGenerationParameters genParam = new ECKeyGenerationParameters(ecDomain, secureRandom);
-        pGen.init(genParam);
-
-        return pGen.generateKeyPair();
     }
 
     public ECPrivateKeyParameters generatePrivateKeyParameters(BigInteger secret) {
@@ -196,7 +196,7 @@ public class EllipticCurve {
         ASN1InputStream asn1 = new ASN1InputStream(signature);
         try {
             ECDSASigner signer = new ECDSASigner();
-            ECPublicKeyParameters pubKey = loadPubKey(publicKey);
+            ECPublicKeyParameters pubKey = getSecp256k1().getPublicKeyParameters(publicKey);
             signer.init(false, pubKey);
             DLSequence seq = (DLSequence) asn1.readObject();
             BigInteger r = ((ASN1Integer) seq.getObjectAt(0)).getPositiveValue();
@@ -210,13 +210,6 @@ public class EllipticCurve {
             } catch (IOException ignored) {
             }
         }
-    }
-
-    private static ECPublicKeyParameters loadPubKey(byte[] pubKey) throws IOException {
-        Security.addProvider(new BouncyCastleProvider());
-        ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256k1");
-        ECDomainParameters domain = new ECDomainParameters(spec.getCurve(), spec.getG(), spec.getN());
-        return new ECPublicKeyParameters(spec.getCurve().decodePoint(pubKey), domain);
     }
 
 

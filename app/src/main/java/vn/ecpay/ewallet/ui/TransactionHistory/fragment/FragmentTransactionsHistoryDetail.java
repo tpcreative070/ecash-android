@@ -1,15 +1,26 @@
 package vn.ecpay.ewallet.ui.TransactionHistory.fragment;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 import butterknife.BindView;
@@ -20,10 +31,13 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.AdapterCashLogTransactionsHistory;
+import vn.ecpay.ewallet.ui.TransactionHistory.adapter.TransactionQRCodeAdapter;
+import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_FAIL;
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
@@ -63,8 +77,14 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     TextView tvTransactionsStatus;
     @BindView(R.id.layout_qr_code)
     LinearLayout layoutQrCode;
+    @BindView(R.id.rv_list_qr_code)
+    RecyclerView rvListQrCode;
     private TransactionsHistoryModel transactionsHistoryModel;
     private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistory;
+    private TransactionQRCodeAdapter transactionQRCodeAdapter;
+    private String currentTime;
+    private boolean isSaveQR = false;
+    private List<QRCodeSender> listQRCodeSender;
 
     public static FragmentTransactionsHistoryDetail newInstance(TransactionsHistoryModel transactionsHistoryModel) {
         Bundle args = new Bundle();
@@ -87,6 +107,8 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
             this.transactionsHistoryModel = (TransactionsHistoryModel) bundle.getSerializable(Constant.TRANSACTIONS_HISTORY_MODEL);
             updateView();
             setAdapterListCash();
+            checkIsHaveQRCode();
+            currentTime = CommonUtils.getCurrentTime();
         }
     }
 
@@ -96,20 +118,16 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         tvHistoryPhone.setText(transactionsHistoryModel.getReceiverPhone());
         tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())));
         tvHistoryContent.setText(transactionsHistoryModel.getTransactionContent());
-
         tvHistoryDate.setText(CommonUtils.getDateTransfer(getActivity(), transactionsHistoryModel.getTransactionDate()));
 
         switch (transactionsHistoryModel.getTransactionType()) {
             case TYPE_SEND_ECASH_TO_EDONG:
-                layoutQrCode.setVisibility(View.GONE);
                 tvType.setText(getResources().getString(R.string.str_cash_out));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_out));
                 tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
                         CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 break;
             case TYPE_ECASH_TO_ECASH:
-                layoutBottom.setVisibility(View.VISIBLE);
-                layoutQrCode.setVisibility(View.VISIBLE);
                 if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
@@ -121,18 +139,16 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 tvHistoryType.setText(getResources().getString(R.string.str_transfer));
                 break;
             case TYPE_SEND_EDONG_TO_ECASH:
-                layoutQrCode.setVisibility(View.GONE);
                 tvType.setText(getResources().getString(R.string.str_cash_in));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_in));
                 tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                         CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 break;
             case TYPE_CASH_EXCHANGE:
-                layoutQrCode.setVisibility(View.GONE);
                 tvType.setText(getResources().getString(R.string.str_cash_change));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_change));
-                tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())/2));
-                tvTotalMoneyTransfer.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())/2));
+                tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
+                tvTotalMoneyTransfer.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
                 break;
 
         }
@@ -142,6 +158,31 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         } else if (Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_FAIL) {
             tvTransactionsStatus.setText(getResources().getString(R.string.str_fail));
         }
+    }
+
+    private void checkIsHaveQRCode() {
+        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+        listQRCodeSender = WalletDatabase.getAllTransactionLogQR(transactionsHistoryModel.getTransactionSignature());
+        if (null != listQRCodeSender) {
+            if (listQRCodeSender.size() > 0) {
+                layoutBottom.setVisibility(View.VISIBLE);
+                layoutQrCode.setVisibility(View.VISIBLE);
+                setAdapterQRCode(listQRCodeSender);
+            } else {
+                layoutBottom.setVisibility(View.GONE);
+                layoutQrCode.setVisibility(View.GONE);
+            }
+        } else {
+            layoutBottom.setVisibility(View.GONE);
+            layoutQrCode.setVisibility(View.GONE);
+        }
+    }
+
+    private void setAdapterQRCode(List<QRCodeSender> listQRCodeSender) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        rvListQrCode.setLayoutManager(layoutManager);
+        transactionQRCodeAdapter = new TransactionQRCodeAdapter(listQRCodeSender, getActivity());
+        rvListQrCode.setAdapter(transactionQRCodeAdapter);
     }
 
     private void setAdapterListCash() {
@@ -154,16 +195,81 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         rvListCashTransfer.setAdapter(adapterCashLogTransactionsHistory);
     }
 
-    private void generateQRCode(){
+    @SuppressLint("StaticFieldLeak")
+    private void saveImageQRCode(List<QRCodeSender> qrCodeSender) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+            }
 
+            @Override
+            protected Void doInBackground(Void... voids) {
+                for (int i = 0; i < qrCodeSender.size(); i++) {
+                    Gson gson = new Gson();
+                    Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(qrCodeSender.get(i)));
+                    String root = Environment.getExternalStorageDirectory().toString();
+                    File mFolder = new File(root + "/qr_image");
+                    if (!mFolder.exists()) {
+                        mFolder.mkdir();
+                    }
+                    String imageName = transactionsHistoryModel.getReceiverAccountId() + "_" + currentTime + "_" + i + ".jpg";
+                    File file = new File(mFolder, imageName);
+                    if (file.exists())
+                        file.delete();
+                    try {
+                        FileOutputStream out = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                        out.flush();
+                        out.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                dismissProgress();
+                if (isSaveQR) {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+                } else {
+
+                }
+            }
+        }.execute();
+    }
+
+    private void shareImage(){
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/jpeg");
+        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
+        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
+        startActivity(Intent.createChooser(share, "Share Image"));
     }
 
     @OnClick({R.id.layout_share, R.id.layout_download})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_share:
+                if (!CommonUtils.isExternalStorageWritable()) {
+                    ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_store_image));
+                    return;
+                }
+                isSaveQR = false;
+                if (listQRCodeSender.size() > 0) {
+                    saveImageQRCode(listQRCodeSender);
+                }
                 break;
             case R.id.layout_download:
+                if (!CommonUtils.isExternalStorageWritable()) {
+                    ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_store_image));
+                    return;
+                }
+                isSaveQR = true;
+                if (listQRCodeSender.size() > 0) {
+                    saveImageQRCode(listQRCodeSender);
+                }
                 break;
         }
     }

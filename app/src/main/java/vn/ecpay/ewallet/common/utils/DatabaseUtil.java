@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentActivity;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -17,9 +19,12 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
+import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class DatabaseUtil {
@@ -28,7 +33,6 @@ public class DatabaseUtil {
     }
 
     public static void saveAccountInfo(AccountInfo accountInfo, Context context) {
-        Log.e("key", KeyStoreUtils.getMasterKey(context));
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         WalletDatabase.insertAccountInfoTask(accountInfo);
     }
@@ -41,6 +45,18 @@ public class DatabaseUtil {
     public static List<AccountInfo> getAllAccountInfo(Context context) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return WalletDatabase.getAllProfile();
+    }
+
+    public static void saveTransactionLogQR(ArrayList<QRCodeSender> codeSenderArrayList, ResponseMessSocket responseMess, FragmentActivity activity) {
+        WalletDatabase.getINSTANCE(activity, ECashApplication.masterKey);
+        for (int i = 0; i < codeSenderArrayList.size(); i++) {
+            TransactionLogQR_Database transactionLog = new TransactionLogQR_Database();
+            transactionLog.setTransactionSignature(responseMess.getId());
+            transactionLog.setTotal(codeSenderArrayList.get(i).getTotal());
+            transactionLog.setValue(codeSenderArrayList.get(i).getContent());
+            transactionLog.setSequence(codeSenderArrayList.get(i).getCycle());
+            WalletDatabase.insertTransactionLogQRTask(transactionLog, Constant.STR_EMPTY);
+        }
     }
 
     public static void saveTransactionLog(ResponseMessSocket responseMess, Context context) {
@@ -210,5 +226,30 @@ public class DatabaseUtil {
     public static void updateStatusContact(Context context, int status, Long walletId) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.updateStatusContact(status, walletId);
+    }
+
+    public static List<NotificationObj> getAllNotification(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllNotification();
+    }
+
+    public static void delAllNotification(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.deleteAllNotification();
+    }
+
+    public static int getSizeNotification(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllNotification().size();
+    }
+
+    public static void deleteNotification(Context context, Long id) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.deleteNotification(id);
+    }
+
+    public static void updateNotificationRead(Context context, String read, Long id) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.updateNotificationRead(read, id);
     }
 }

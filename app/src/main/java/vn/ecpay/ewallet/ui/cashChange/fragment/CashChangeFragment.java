@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.cashChange.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -41,8 +40,8 @@ import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
-import vn.ecpay.ewallet.ui.cashIn.CashInService;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
+import vn.ecpay.ewallet.ui.function.CashInFunction;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 
@@ -440,7 +439,9 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         //update money send
         saveCashChangeSend(cashInResponse);
         //start service
-        startService(cashInResponse);
+//        startService(cashInResponse);
+        CashInFunction cashInFunction = new CashInFunction(cashInResponse, accountInfo, getActivity());
+        cashInFunction.handelCash();
     }
 
     private void saveCashChangeSend(CashInResponse cashInResponse) {
@@ -464,14 +465,16 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
     }
 
-    private void startService(CashInResponse responseData) {
-        Intent intent = new Intent(getActivity(), CashInService.class);
-        intent.putExtra(Constant.EDONG_TO_ECASH, responseData);
-        intent.putExtra(Constant.ACCOUNT_INFO, accountInfo);
-        if (getActivity() != null) {
-            getActivity().startService(intent);
-        }
-    }
+//    private void startService(CashInResponse responseData) {
+//        Intent intent = new Intent(getActivity(), EDongToECashService.class);
+//        intent.putExtra(Constant.EDONG_TO_ECASH, responseData);
+//        intent.putExtra(Constant.ACCOUNT_INFO, accountInfo);
+//        if (getActivity() != null) {
+//            getActivity().startService(intent);
+//        }
+//
+//
+//    }
 
     private void showDialogCashChangeOk() {
         DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success), "Đổi tiền thành công", new DialogUtil.OnConfirm() {
@@ -500,13 +503,10 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)) {
+        if (event.getData().equals(Constant.UPDATE_MONEY) ||
+                event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
             dismissProgress();
             showDialogCashChangeOk();
-            Intent intent = new Intent(getActivity(), CashInService.class);
-            if (getActivity() != null) {
-                getActivity().startService(intent);
-            }
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

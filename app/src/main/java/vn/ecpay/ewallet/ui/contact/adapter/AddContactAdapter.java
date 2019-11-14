@@ -79,7 +79,7 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
                 for (int i = 0; i < listContact.size(); i++) {
-                    if(listContact.get(i).getPhone().equals(contact.getPhone())){
+                    if(listContact.get(i).getWalletId().equals(contact.getWalletId())){
                         ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_add_contact_duplicate));
                         return;
                     }

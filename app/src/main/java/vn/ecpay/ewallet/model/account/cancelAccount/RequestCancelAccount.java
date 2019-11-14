@@ -2,6 +2,7 @@
 package vn.ecpay.ewallet.model.account.cancelAccount;
 
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 import vn.ecpay.ewallet.model.BaseObject;
@@ -24,6 +25,10 @@ public class RequestCancelAccount extends BaseObject {
     private String mUsername;
     @SerializedName("walletId")
     private String mWalletId;
+    @SerializedName("terminalId")
+    private String mTerminalId;
+    @SerializedName("terminalInfo")
+    private String mTerminalInfo;
 
     public String getChannelCode() {
         return mChannelCode;
@@ -81,4 +86,20 @@ public class RequestCancelAccount extends BaseObject {
         mWalletId = walletId;
     }
 
+
+    public String getTerminalId() {
+        return mTerminalId;
+    }
+
+    public void setTerminalId(String mTerminalId) {
+        this.mTerminalId = mTerminalId;
+    }
+
+    public String getTerminalInfo() {
+        return mTerminalInfo;
+    }
+
+    public void setTerminalInfo(String mTerminalInfo) {
+        this.mTerminalInfo = mTerminalInfo;
+    }
 }

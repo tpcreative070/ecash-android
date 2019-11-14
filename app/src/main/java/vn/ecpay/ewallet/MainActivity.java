@@ -1,7 +1,9 @@
 package vn.ecpay.ewallet;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -9,16 +11,27 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.common.base.CustomFragmentTabHost;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
+import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
@@ -49,18 +62,64 @@ public class MainActivity extends ECashBaseActivity {
     public static final String TAB_TAG_MY_WALLET = "wallet";
     public static final String TAB_TAG_QR_CODE = "code";
     private String currentTabTag = TAB_TAG_HOME;
+    private NetworkChangeReceiver networkChangeReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("FCMToken", "token " + FirebaseInstanceId.getInstance().getToken());
         setupTabs();
         tabHost.setOnTabChangedListener(this::onChange);
+        tabHost.getTabWidget().getChildAt(1).setOnClickListener(v -> {
+            if (!isAccountExit()) {
+                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+            } else {
+                tabHost.setCurrentTab(1);
+            }
+        });
 
+        tabHost.getTabWidget().getChildAt(3).setOnClickListener(v -> {
+            if (!isAccountExit()) {
+                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+            } else {
+                tabHost.setCurrentTab(3);
+            }
+        });
+
+        tabHost.getTabWidget().getChildAt(4).setOnClickListener(v -> {
+            if (!isAccountExit()) {
+                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+            } else {
+                tabHost.setCurrentTab(4);
+            }
+        });
         tabHost.getTabWidget().getChildAt(2).setOnClickListener(v -> {
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);
             startActivity(intentCashIn);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+
+        networkChangeReceiver = new NetworkChangeReceiver();
+        registerReceiver(networkChangeReceiver, filter);
+    }
+
+    private boolean isAccountExit() {
+        if (KeyStoreUtils.getMasterKey(this) != null) {
+            List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(this);
+            if (listAccount != null) {
+                if (listAccount.size() > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -234,11 +293,19 @@ public class MainActivity extends ECashBaseActivity {
         tabHost.setCurrentTabByTag(tabSelected);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
     @Override
     protected void onDestroy() {
+        Log.e("stopService", "WebSocketsService");
         Intent webSocketService = new Intent(MainActivity.this, WebSocketsService.class);
         stopService(webSocketService);
+        if (networkChangeReceiver != null) {
+            unregisterReceiver(networkChangeReceiver);
+        }
         super.onDestroy();
     }
 }

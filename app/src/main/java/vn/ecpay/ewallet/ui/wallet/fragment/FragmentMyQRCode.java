@@ -72,29 +72,9 @@ public class FragmentMyQRCode extends ECashBaseFragment {
             qrContact.setPublicKey(accountInfo.getEcKeyPublicValue());
             qrContact.setTerminalInfo(accountInfo.getTerminalInfo());
             Gson gson = new Gson();
-            bitmap = generateQRCode(gson.toJson(qrContact));
+            bitmap = CommonUtils.generateQRCode(gson.toJson(qrContact));
             ivQrCode.setImageBitmap(bitmap);
         }
-    }
-
-    private Bitmap generateQRCode(String value) {
-        int WIDTH = 400;
-        Writer writer = new QRCodeWriter();
-        BitMatrix bitMatrix = null;
-        try {
-            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
-            Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
-            for (int i = 0; i < 400; i++) {
-                for (int j = 0; j < 400; j++) {
-                    bitmap.setPixel(i, j, bitMatrix.get(i, j) ? Color.BLACK
-                            : Color.WHITE);
-                }
-            }
-            return bitmap;
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     @SuppressLint("StaticFieldLeak")

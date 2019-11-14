@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ed_password"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp"
+                android:padding="10dp"
                 android:text="@string/can_not_login" />
 
         </RelativeLayout>

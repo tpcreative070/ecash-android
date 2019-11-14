@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -55,6 +56,7 @@ import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.Resp
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
+import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
 public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
@@ -63,9 +65,8 @@ public class WebSocketsService extends Service {
     private String transactionSignature;
     private long totalMoney;
     private boolean isConnectSuccess;
-    private boolean isQRCode;
-    private ArrayList<QRCashTransfer> qrCashTransferList;
     private ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet;
+    private WebSocket webSocketLocal;
 
     @Override
     public void onCreate() {
@@ -80,128 +81,7 @@ public class WebSocketsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle extras;
-        try {
-            extras = intent.getExtras();
-        } catch (NullPointerException e) {
-            extras = null;
-        }
-
-        if (null != extras) {
-            String userName = ECashApplication.getAccountInfo().getUsername();
-            accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
-            isQRCode = extras.getBoolean(Constant.IS_QR_CODE);
-            if (isQRCode) {//cash to eCash by QR_code
-                qrCashTransferList = new ArrayList<>();
-                ResponseMessSocket cashMess = (ResponseMessSocket) extras.getSerializable(Constant.RESPONSE_CASH_MESS);
-                if (cashMess != null) {
-                    getPublicKeyWallet(cashMess);
-                }
-            } else {//cash to cash by socket
-                int sl500 = extras.getInt(Constant.TOTAL_500);
-                int sl200 = extras.getInt(Constant.TOTAL_200);
-                int sl100 = extras.getInt(Constant.TOTAL_100);
-                int sl50 = extras.getInt(Constant.TOTAL_50);
-                int sl20 = extras.getInt(Constant.TOTAL_20);
-                int sl10 = extras.getInt(Constant.TOTAL_10);
-                String keyPublicReceiver = extras.getString(Constant.KEY_PUBLIC_RECEIVER);
-                String walletReceiver = extras.getString(Constant.WALLET_RECEIVER);
-                String contentSendMoney = extras.getString(Constant.CONTENT_SEND_MONEY);
-                isConnectSuccess = false;
-
-                OkHttpClient client = new OkHttpClient();
-                String url = SocketUtil.getUrl(accountInfo, getApplicationContext()).replaceAll("%20", "+");
-                Request requestCoinPrice = new Request.Builder().url(url).build();
-                WebSocket webSocket = client.newWebSocket(requestCoinPrice, webSocketListener);
-                client.dispatcher().executorService().shutdown();
-
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (isConnectSuccess) {
-                            webSocket.send(getObjectJsonSend(sl10, sl20, sl50, sl100, sl200, sl500,
-                                    keyPublicReceiver, walletReceiver, contentSendMoney));
-                            Log.e("send_money", "send money ok");
-                        } else {
-                            Log.e("connect_socket", "connect socket fail");
-                            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CONNECT_SOCKET_FAIL));
-                        }
-                    }
-                }, 2000);
-            }
-        }
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    private String getObjectJsonSend(int sl10, int sl20, int sl50, int sl100, int sl200, int sl500,
-                                     String keyPublicReceiver, String walletReceiver, String contentSendMoney) {
-        WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getMasterKey(getApplicationContext()));
-        ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
-        if (sl10 > 0) {
-            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl10; i++) {
-                listCashSend.add(cashList.get(i));
-            }
-        }
-        if (sl20 > 0) {
-            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl20; i++) {
-                listCashSend.add(cashList.get(i));
-            }
-        }
-
-        if (sl50 > 0) {
-            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl50; i++) {
-                listCashSend.add(cashList.get(i));
-            }
-        }
-
-        if (sl100 > 0) {
-            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl100; i++) {
-                listCashSend.add(cashList.get(i));
-            }
-        }
-
-        if (sl200 > 0) {
-            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl200; i++) {
-                listCashSend.add(cashList.get(i));
-            }
-        }
-        if (sl500 > 0) {
-            List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl500; i++) {
-                listCashSend.add(cashList.get(i));
-            }
-        }
-
-        if (listCashSend.size() > 0) {
-            String[][] cashArray = new String[listCashSend.size()][3];
-            for (int i = 0; i < listCashSend.size(); i++) {
-                CashLogs_Database cash = listCashSend.get(i);
-                String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
-                cashArray[i] = moneyItem;
-            }
-            String encData = CommonUtils.getEncrypData(cashArray, keyPublicReceiver);
-            ResponseMessSocket responseMess = new ResponseMessSocket();
-            responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
-            responseMess.setReceiver(walletReceiver);
-            responseMess.setTime(CommonUtils.getCurrentTime());
-            responseMess.setType(Constant.TYPE_ECASH_TO_ECASH);
-            responseMess.setContent(contentSendMoney);
-            responseMess.setCashEnc(encData);
-            responseMess.setId(CommonUtils.getIdSender(responseMess, getApplicationContext()));
-            Gson gson = new Gson();
-            String json = gson.toJson(responseMess);
-            if (!json.isEmpty()) {
-                DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getApplicationContext(), accountInfo.getUsername());
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
-            }
-            return json;
-        }
-        return Constant.STR_EMPTY;
     }
 
     @Nullable
@@ -212,11 +92,24 @@ public class WebSocketsService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        Log.e("event", "service");
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
+            Log.e("event", "service_UPDATE_ACCOUNT_LOGIN");
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if (ECashApplication.getAccountInfo() != null) {
+                    AccountInfo dbAccountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), getApplicationContext());
+                    if (dbAccountInfo != null) {
+                        startSocket();
+                    }
+                }
+            }, 500);
+        }
+
+        if (event.getData().equals(Constant.EVENT_NETWORK_CHANGE)) {
+            Log.e("event", "service_EVENT_NETWORK_CHANGE");
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if (!isConnectSuccess) {
                     if (ECashApplication.getAccountInfo() != null) {
                         AccountInfo dbAccountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), getApplicationContext());
                         if (dbAccountInfo != null) {
@@ -224,7 +117,7 @@ public class WebSocketsService extends Service {
                         }
                     }
                 }
-            }, 500);
+            }, 2000);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
@@ -236,7 +129,7 @@ public class WebSocketsService extends Service {
         OkHttpClient client = new OkHttpClient();
         String url = SocketUtil.getUrl(accountInfo, getApplicationContext()).replaceAll("%20", "+");
         Request requestCoinPrice = new Request.Builder().url(url).build();
-        client.newWebSocket(requestCoinPrice, webSocketListener);
+        webSocketLocal = client.newWebSocket(requestCoinPrice, webSocketListener);
         client.dispatcher().executorService().shutdown();
     }
 
@@ -254,17 +147,6 @@ public class WebSocketsService extends Service {
             ResponseMessSocket responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
             if (responseMess != null) {
                 if (responseMess.getType().equals(Constant.TYPE_ECASH_TO_ECASH)) {
-                    RequestReceived requestReceived = new RequestReceived();
-                    requestReceived.setId(responseMess.getId());
-                    requestReceived.setReceiver(responseMess.getReceiver());
-                    requestReceived.setRefId(responseMess.getRefId());
-                    requestReceived.setType(Constant.TYPE_SEN_SOCKET);
-
-                    Gson gson = new Gson();
-                    String json = gson.toJson(requestReceived);
-                    webSocket.send(json);
-
-                    //SAVE MONEY TO DATABASE
                     if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
                         if (responseMess.getCashEnc() != null) {
                             getPublicKeyWallet(responseMess);
@@ -290,11 +172,6 @@ public class WebSocketsService extends Service {
         }
 
         @Override
-        public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.d("onMessage", "MESSAGE: " + bytes.hex());
-        }
-
-        @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             webSocket.close(1000, null);
             webSocket.cancel();
@@ -316,6 +193,18 @@ public class WebSocketsService extends Service {
         }
     };
 
+    private void confirmMess(ResponseMessSocket responseMess) {
+        RequestReceived requestReceived = new RequestReceived();
+        requestReceived.setId(responseMess.getId());
+        requestReceived.setReceiver(responseMess.getReceiver());
+        requestReceived.setRefId(responseMess.getRefId());
+        requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(requestReceived);
+        webSocketLocal.send(json);
+    }
+
     private void getPublicKeyWallet(ResponseMessSocket responseMess) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -325,12 +214,11 @@ public class WebSocketsService extends Service {
         requestGetPublicKeyWallet.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_WALLET);
         requestGetPublicKeyWallet.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyWallet.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyWallet.setToken(CommonUtils.getToken(accountInfo));
+        requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(responseMess.getSender());
         requestGetPublicKeyWallet.setChannelSignature("");
 
-        String alphabe = CommonUtils.getStringAlphabe(requestGetPublicKeyWallet);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyWallet));
         requestGetPublicKeyWallet.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
@@ -344,14 +232,19 @@ public class WebSocketsService extends Service {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             responseGetPublicKeyWallet = response.body().getResponseData();
                             String publicKeyWalletReceiver = responseGetPublicKeyWallet.getEcKpValue();
-                            if (CommonUtils.verifyData(responseMess, publicKeyWalletReceiver)) {
-                                //deCrypt dong eCash
-                                transactionSignature = responseMess.getId();
-                                deCryptECash = CommonUtils.decrypEcash(responseMess.getCashEnc(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-                                if (deCryptECash != null) {
-                                    DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
-                                    numberRequest = 0;
-                                    checkArrayCash(responseMess);
+                            if (null != publicKeyWalletReceiver) {
+                                if (CommonUtils.verifyData(responseMess, publicKeyWalletReceiver)) {
+                                    //deCrypt dong eCash
+                                    transactionSignature = responseMess.getId();
+                                    deCryptECash = CommonUtils.decrypEcash(responseMess.getCashEnc(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
+                                    if (deCryptECash != null) {
+                                        DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
+                                        numberRequest = 0;
+                                        checkArrayCash(responseMess);
+                                        confirmMess(responseMess);
+                                    } else {
+                                        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
+                                    }
                                 } else {
                                     EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                                 }
@@ -377,14 +270,7 @@ public class WebSocketsService extends Service {
             if (deCryptECash.length > 0) {
                 if (numberRequest == deCryptECash.length) {
                     putNotificationMoneyChange(responseMess);
-                    if (isQRCode) {
-                        //put event updatePreviousCash data
-                        qrCashTransferList.get(0).setTotalMoney(String.valueOf(totalMoney));
-                        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_QR_CODE_SCAN_CASH_SUCCESS, qrCashTransferList));
-                        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY_SOCKET));
-                    } else {
-                        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY_SOCKET));
-                    }
+                    EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY_SOCKET));
                     totalMoney = 0;
                     numberRequest = 0;
                     deCryptECash = null;
@@ -446,7 +332,7 @@ public class WebSocketsService extends Service {
         requestGetPublicKeyCash.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_CASH);
         requestGetPublicKeyCash.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyCash.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyCash.setToken(CommonUtils.getToken(accountInfo));
+        requestGetPublicKeyCash.setToken(CommonUtils.getToken());
         requestGetPublicKeyCash.setUsername(accountInfo.getUsername());
         requestGetPublicKeyCash.setChannelSignature(Constant.STR_EMPTY);
 
@@ -484,20 +370,12 @@ public class WebSocketsService extends Service {
         if (CommonUtils.verifyCash(cash, responseDataGetPublicKeyCash.getDecisionTrekp(),
                 responseDataGetPublicKeyCash.getDecisionAcckp())) {
             //xác thực đồng ecash ok => save cash
-            //put info to result
             DatabaseUtil.saveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());
-            if (isQRCode) {
-                qrCashTransferList.add(CommonUtils.getQrCashTransfer(cash, responseMess, responseGetPublicKeyWallet, true));
-            }
 
             //next
             numberRequest = numberRequest + 1;
             checkArrayCash(responseMess);
         } else {
-            //put info to result
-            if (isQRCode) {
-                qrCashTransferList.add(CommonUtils.getQrCashTransfer(cash, responseMess, responseGetPublicKeyWallet, false));
-            }
             //lưu vào tien fake
             DatabaseUtil.SaveCashInvalidToDB(cash, getApplicationContext(), accountInfo.getUsername());
             //chạy thằng tiếp theo

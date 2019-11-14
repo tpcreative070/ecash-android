@@ -195,7 +195,7 @@
             android:layout_marginTop="10dp"
             android:textSize="@dimen/text_normal"
             android:inputType="number"
-            android:background="@drawable/edittext_bottom_line"
+            android:background="@drawable/edt_bottom_line"
             android:layout_height="wrap_content"/>
 
         <EditText
@@ -206,7 +206,7 @@
             android:inputType="number"
             android:layout_marginTop="10dp"
             android:textSize="@dimen/text_normal"
-            android:background="@drawable/edittext_bottom_line"
+            android:background="@drawable/edt_bottom_line"
             android:layout_height="wrap_content"/>
 
         <EditText
@@ -217,7 +217,7 @@
             android:layout_marginTop="10dp"
             android:textSize="@dimen/text_normal"
             android:inputType="text"
-            android:background="@drawable/edittext_bottom_line"
+            android:background="@drawable/edt_bottom_line"
             android:layout_height="wrap_content"/>
 
         <Button

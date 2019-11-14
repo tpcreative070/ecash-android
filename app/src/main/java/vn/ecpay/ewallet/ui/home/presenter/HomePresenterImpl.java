@@ -109,7 +109,7 @@ public class HomePresenterImpl implements HomePresenter {
         String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
         requestGetAccountWalletInfo.setTerminalId(IMEI);
         requestGetAccountWalletInfo.setTerminalInfo(CommonUtils.getModelName());
-        requestGetAccountWalletInfo.setToken(CommonUtils.getToken(accountInfo));
+        requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
         requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());
         requestGetAccountWalletInfo.setChannelSignature(Constant.STR_EMPTY);
 

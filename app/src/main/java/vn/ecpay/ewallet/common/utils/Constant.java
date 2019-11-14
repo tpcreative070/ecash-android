@@ -4,17 +4,25 @@ public class Constant {
     public static final String DATABASE_NAME = "eWallet";
     public static final int DATABASE_VERSION = 1;
 
+    //type notification
+    public static final String ON = "on";
+    public static final String OFF = "off";
+
     //type QR code
+    public static final int IS_SCAN_FAIL = 0;
     public static final int IS_SCAN_CONTACT = 1;
     public static final int IS_SCAN_CASH = 2;
 
     //object transfer
+    public static final String USER_NAME = "USER_NAME";
+    public static final String FORGOT_PASS_TRANSFER_MODEL = "FORGOT_PASS_TRANSFER_MODEL";
     public static final String CONTACT_TRANSFER_MODEL = "CONTACT_TRANSFER_MODEL";
     public static final String CONTACT_TRANSFER = "CONTACT_TRANSFER";
     public static final String TRANSACTIONS_HISTORY_MODEL = "TRANSACTIONS_HISTORY_MODEL";
     public static final String IS_SESSION_TIMEOUT = "IS_SESSION_TIMEOUT";
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
+    public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
     //type and key
     public static final String STR_CASH_IN = "in";
     public static final String STR_CASH_OUT = "out";
@@ -22,8 +30,8 @@ public class Constant {
     public static final int CONTACT_OFF = 0;
     public static final String MASTER_KEY_STRING = "0123456789ABCDEFGHIJKL0123456789";
     public static final String MASTER_KEY_STRING_NEW = "123456";
-    public static final String STR_PRIVATE_KEY_CHANEL = "AIEGIA+wEeww8G/u3FF2/839hgTYb+8xD0gWo3X/Me/+";
-    public static final String STR_PUBLIC_KEY_CHANEL = "BPKwnS/5ZO9EQTgIh4SsJfdDnjTaUltcatm6lMl8AH/n4K47E7cW5bIAmE5aI7C9KwmcUqsvccV9tUWY7wBuauM=";
+    public static final String STR_PRIVATE_KEY_CHANEL = "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
+    public static final String STR_PUBLIC_KEY_CHANEL = "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
     public static final String STR_EMPTY = "";
     public static final String DEVICE_IMEI = "DEVICE_IMEI";
 
@@ -36,6 +44,7 @@ public class Constant {
     public static final String WALLET_ALIAS_MASTER_KEY = "WALLET_ALIAS_PUB_KEY";
 
     //vent bus
+    public static final String UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION";
     public static final String UPDATE_ACCOUNT_LOGIN = "update_account_login";
     public static final String UPDATE_MONEY = "update_money";
     public static final String UPDATE_MONEY_SOCKET = "update_money_socket";
@@ -44,10 +53,11 @@ public class Constant {
     public static final String EVENT_VERIFY_CASH_FAIL = "EVENT_VERIFY_CASH_FAIL";
     public static final String EVENT_QR_CODE_SCAN_CASH_SUCCESS = "EVENT_QR_CODE_SCAN_CASH_SUCCESS";
     public static final String EVENT_UPDATE_CONTACT = "EVENT_UPDATE_CONTACT";
+    public static final String EVENT_NETWORK_CHANGE = "EVENT_NETWORK_CHANGE";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "FU00012";
-    public static final String FUNCTION_LOGIN_AFTER_REGISTER = "FU00004";
+    public static final String FUNCTION_LOGIN = "FU00004";
     public static final String FUNCTION_CHECK_ID_NUMBER = "FU100";
     public static final String FUNCTION_CHECK_USER_NAME = "FU00003";
     public static final String FUNCTION_ACTIVE_ACCOUNT = "FU0003";
@@ -66,6 +76,8 @@ public class Constant {
     public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0010";
     public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
     public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
+    public static final String FUNCTION_FORGOT_PASS_OTP = "GWEC0024";
+    public static final String FUNCTION_CHANGE_PASS = "GWEC0025";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";
@@ -91,10 +103,6 @@ public class Constant {
 
     //error code
     public static final String CODE_SUCCESS = "0000";
-
-    //Qr Code
-    public static final String IS_QR_CODE = "IS_QR_CODE";
-    public static final String RESPONSE_CASH_MESS = "ResponseMessSocket";
 
     public static final String TYPE_SEND_EDONG_TO_ECASH = "NC";
     public static final String TYPE_SEND_ECASH_TO_EDONG = "ND";

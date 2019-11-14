@@ -185,7 +185,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         if (listEDongInfo.size() > 0) {
             edongInfo = listEDongInfo.get(0);
             tvEDongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
             tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
         }
     }
@@ -245,7 +245,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             }
         } else {
             tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(0).getUsableBalance()));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
         }
     }
 

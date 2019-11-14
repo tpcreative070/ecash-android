@@ -80,7 +80,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestGetPublicKeyOrganizetion.setIssuerCode(Constant.ISSUER_CODE);
         requestGetPublicKeyOrganizetion.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyOrganizetion.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken(accountInfo));
+        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken());
         requestGetPublicKeyOrganizetion.setUsername(accountInfo.getUsername());
         requestGetPublicKeyOrganizetion.setChannelSignature(Constant.STR_EMPTY);
 
@@ -135,7 +135,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestEcashToEdong.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestEcashToEdong.setTerminalId(accountInfo.getTerminalId());
         requestEcashToEdong.setTime(CommonUtils.getCurrentTime());
-        requestEcashToEdong.setToken(CommonUtils.getToken(accountInfo));
+        requestEcashToEdong.setToken(CommonUtils.getToken());
         requestEcashToEdong.setType(Constant.TYPE_SEND_ECASH_TO_EDONG);
         requestEcashToEdong.setUsername(accountInfo.getUsername());
         requestEcashToEdong.setChannelSignature(Constant.STR_EMPTY);
@@ -183,7 +183,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestEdongInfo.setChannelCode(Constant.CHANNEL_CODE);
         requestEdongInfo.setFunctionCode(Constant.FUNCTION_GET_EDONG_INFO);
         requestEdongInfo.setSessionId(accountInfo.getSessionId());
-        requestEdongInfo.setToken(CommonUtils.getToken(accountInfo));
+        requestEdongInfo.setToken(CommonUtils.getToken());
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
         String alphabe = CommonUtils.getStringAlphabe(requestEdongInfo);

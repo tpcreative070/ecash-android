@@ -86,7 +86,7 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongToECash.setSender(String.valueOf(accountInfo.getWalletId()));
         requestEdongToECash.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestEdongToECash.setTerminalId(accountInfo.getTerminalId());
-        requestEdongToECash.setToken(CommonUtils.getToken(accountInfo));
+        requestEdongToECash.setToken(CommonUtils.getToken());
         requestEdongToECash.setUsername(accountInfo.getUsername());
         requestEdongToECash.setValues(listValue);
         requestEdongToECash.setChannelSignature(Constant.STR_EMPTY);
@@ -140,7 +140,7 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongInfo.setChannelCode(Constant.CHANNEL_CODE);
         requestEdongInfo.setFunctionCode(Constant.FUNCTION_GET_EDONG_INFO);
         requestEdongInfo.setSessionId(accountInfo.getSessionId());
-        requestEdongInfo.setToken(CommonUtils.getToken(accountInfo));
+        requestEdongInfo.setToken(CommonUtils.getToken());
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
         String alb = CommonUtils.getStringAlphabe(requestEdongInfo);

@@ -26,11 +26,31 @@
         android:maxLines="1"
         android:src="@drawable/ic_logo_white"/>
 
-    <ImageView
-        android:id="@+id/iv_bell"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:padding="10dp"
-        android:src="@drawable/ic_bell_white" />
+    <RelativeLayout
+        android:id="@+id/layout_notification"
+        android:layout_width="30dp"
+        android:layout_height="35dp"
+        android:layout_gravity="right">
+
+        <ImageView
+            android:id="@+id/iv_bell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_bell_white" />
+
+        <TextView
+            android:id="@+id/tvNotificationCount"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@drawable/bg_oval_red"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_mini" />
+    </RelativeLayout>
+
 </androidx.appcompat.widget.Toolbar>

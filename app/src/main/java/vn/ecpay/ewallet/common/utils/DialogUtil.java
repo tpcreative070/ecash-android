@@ -2,6 +2,7 @@ package vn.ecpay.ewallet.common.utils;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
@@ -960,6 +961,25 @@ public class DialogUtil {
         } else {
             dismissDialog();
             showDialogEditContact(pContext, contactTransferModel, onContactUpdate);
+        }
+    }
+
+    public void showDialogViewQRCode(Context pContext, Bitmap ivBitmap) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_view_image);
+            ImageView ivQr;
+            Button btn_close;
+            btn_close = mDialog.findViewById(R.id.btn_close);
+            ivQr = mDialog.findViewById(R.id.iv_qr_code);
+            ivQr.setImageBitmap(ivBitmap);
+            btn_close.setOnClickListener(v -> {
+                dismissDialog();
+            });
+
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
+            mDialog.show();
         }
     }
 

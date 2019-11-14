@@ -237,7 +237,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         RequestGetOTP requestGetOTP = new RequestGetOTP();
         requestGetOTP.setChannelCode(Constant.CHANNEL_CODE);
         requestGetOTP.setFunctionCode(Constant.FUNCTION_GET_OTP);
-        requestGetOTP.setToken(CommonUtils.getToken(accountInfo));
+        requestGetOTP.setToken(CommonUtils.getToken());
         requestGetOTP.setUsername(accountInfo.getUsername());
         requestGetOTP.setWalletId(String.valueOf(accountInfo.getWalletId()));
 
@@ -345,9 +345,9 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
         RequestLogin requestLogin = new RequestLogin();
         requestLogin.setChannelCode(Constant.CHANNEL_CODE);
-        requestLogin.setFunctionCode(Constant.FUNCTION_LOGIN_AFTER_REGISTER);
+        requestLogin.setFunctionCode(Constant.FUNCTION_LOGIN);
         requestLogin.setUsername(accountInfo.getUsername());
-        requestLogin.setToken(CommonUtils.getToken(accountInfo));
+        requestLogin.setToken(CommonUtils.getToken());
 
         String alphabe = CommonUtils.getStringAlphabe(requestLogin);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogin));
@@ -395,7 +395,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestEdongInfo.setChannelCode(Constant.CHANNEL_CODE);
         requestEdongInfo.setFunctionCode(Constant.FUNCTION_GET_EDONG_INFO);
         requestEdongInfo.setSessionId(accountInfo.getSessionId());
-        requestEdongInfo.setToken(CommonUtils.getToken(accountInfo));
+        requestEdongInfo.setToken(CommonUtils.getToken());
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
         String alphabe = CommonUtils.getStringAlphabe(requestEdongInfo);

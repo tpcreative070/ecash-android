@@ -15,16 +15,36 @@ import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.Contact_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
+import vn.ecpay.ewallet.database.table.Notification_Database;
 import vn.ecpay.ewallet.database.table.Profile_Database;
+import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
+import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
 @Dao
 public interface WalletAccess {
-    //Contact_Database---------------------------------------------------------------------------------------
+    // todo Notification_Database---------------------------------------------------------------------------------------
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOnlySingleNotification(Notification_Database notification);
+
+    @Query("SELECT 0 as isCheck,title, body, read, id, date  FROM NOTIFICATION ORDER BY id DESC")
+    List<NotificationObj> getAllNotification();
+
+    @Query("DELETE From NOTIFICATION WHERE id = :idNotification")
+    void deleteNotification(Long idNotification);
+
+    @Query("DELETE From NOTIFICATION")
+    void deleteAllNotification();
+
+    @Query("UPDATE NOTIFICATION SET read=:read WHERE id = :id")
+    void updateNotificationRead(String read, Long id);
+
+    // todo Contact_Database---------------------------------------------------------------------------------------
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleContact(Contact_Database contact);
 
@@ -44,14 +64,14 @@ public interface WalletAccess {
     void updateStatusContact(int status, Long walletId);
 
 
-    //Decision_Database--------------------------------------------------------------------------------------
+    // todo Decision_Database--------------------------------------------------------------------------------------
     @Insert
     void insertOnlySingleDecision(Decision_Database decision);
 
     @Query("SELECT * FROM DECISIONS_DIARY WHERE decisionNo LIKE :decisionNo")
     Decision_Database getDecisionNo(String decisionNo);
 
-    //CashLogs_Database------------------------------------------------------------------------------------------
+    // todo CashLogs_Database------------------------------------------------------------------------------------------
     @Insert
     void insertOnlySingleCash(CashLogs_Database cash);
 
@@ -76,10 +96,10 @@ public interface WalletAccess {
     @Query("SELECT SUM(parValue) FROM CASH_LOGS WHERE type LIKE :input")
     int getTotalCash(String input);
 
-    @Query("SELECT DISTINCT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type LIKE :type AND serialNo IN (SELECT serialNo FROM CASH_LOGS  GROUP BY serialNo HAVING COUNT(serialNo)%2) AND parValue =:money")
+    @Query("SELECT DISTINCT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type LIKE :type AND serialNo IN (SELECT serialNo FROM CASH_LOGS  GROUP BY serialNo HAVING COUNT(serialNo)%2 <> 0) AND parValue =:money")
     List<CashLogs_Database> getListCashForMoney(String money, String type);
 
-    //Cash_Invalid----------------------------------------------------------------------------------
+    // todo Cash_Invalid----------------------------------------------------------------------------------
     @Insert
     void insertOnlySingleCashInvalid(CashInvalid_Database cash);
 
@@ -101,7 +121,7 @@ public interface WalletAccess {
     @Query("SELECT SUM(parValue) FROM CASH_INVALID WHERE type LIKE :input")
     int getTotalCashInvalid(String input);
 
-    //profile---------------------------------------------------------------------------------------
+    // todo profile---------------------------------------------------------------------------------------
     @Insert
     void insertOnlySingleUser(Profile_Database accountInfo);
 
@@ -126,7 +146,14 @@ public interface WalletAccess {
     @Query("DELETE FROM PROFILE")
     void deleteAllData();
 
-    //Transaction_log-------------------------------------------------------------------------------
+    // todo Transaction_log_QRCode------------------------------------------------------------------
+    @Insert
+    void insertOnlySingleTransactionLogQR(TransactionLogQR_Database transactionLogQR);
+
+    @Query("SELECT value  as mContent, sequence as mCycle,total as mTotal   FROM TRANSACTION_QR WHERE transactionSignature = :transactionSignature")
+    List<QRCodeSender> getAllTransactionLogQR(String transactionSignature);
+
+    // todo Transaction_log--------------------------------------------------------------------------
     @Insert
     void insertOnlySingleTransactionLog(TransactionLog_Database transactionLog);
 

@@ -74,7 +74,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
         requestGetPublicKeyWallet.setChannelCode(Constant.CHANNEL_CODE);
         requestGetPublicKeyWallet.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_BY_PHONE);
         requestGetPublicKeyWallet.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestGetPublicKeyWallet.setToken(CommonUtils.getToken(accountInfo));
+        requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setPersonMobilePhone(phoneNumber);
 
@@ -125,7 +125,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
         requestGetPublicKeyWallet.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_WALLET);
         requestGetPublicKeyWallet.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyWallet.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyWallet.setToken(CommonUtils.getToken(accountInfo));
+        requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(walletId);
         requestGetPublicKeyWallet.setChannelSignature(Constant.STR_EMPTY);

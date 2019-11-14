@@ -2,7 +2,6 @@ package vn.ecpay.ewallet.ui.QRCode.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -25,6 +24,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,6 +38,7 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
@@ -48,8 +49,7 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
-import vn.ecpay.ewallet.ui.contact.AddContactActivity;
-import vn.ecpay.ewallet.webSocket.WebSocketsService;
+import vn.ecpay.ewallet.ui.function.CashInQRCodeFunction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingScannerView.ResultHandler, QRCodeView {
@@ -118,8 +118,10 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
             if (CommonUtils.getTypeScan(qrScanBase) == Constant.IS_SCAN_CASH) {
                 handleJsonResult(result.getText());
-            } else {
+            } else if (CommonUtils.getTypeScan(qrScanBase) == Constant.IS_SCAN_CONTACT) {
                 handleContact(result.getText());
+            } else {
+                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
             }
         } catch (JsonSyntaxException e) {
             ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
@@ -143,6 +145,13 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 if (contact.getWalletId().equals(accountInfo.getWalletId())) {
                     ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_conflict));
                 } else {
+                    List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+                    for (int i = 0; i < listContact.size(); i++) {
+                        if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
+                            ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_duplicate));
+                            return;
+                        }
+                    }
                     DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
                     Toast.makeText(getActivity(), getResources().getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
                 }
@@ -169,14 +178,11 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     }
                     ResponseMessSocket cashMess = gson.fromJson(eCashSplit.toString(), ResponseMessSocket.class);
                     if (!DatabaseUtil.isTransactionLogExit(cashMess, getActivity())) {
-                        Intent intent = new Intent(getActivity(), WebSocketsService.class);
-                        intent.putExtra(Constant.IS_QR_CODE, true);
-                        intent.putExtra(Constant.RESPONSE_CASH_MESS, cashMess);
-                        if (getActivity() != null) {
-                            getActivity().startService(intent);
-                        }
+                        CashInQRCodeFunction cashInQRCodeFunction = new CashInQRCodeFunction(getActivity(), cashMess);
+                        cashInQRCodeFunction.handleCashInQRCode();
                     } else {
                         dismissLoading();
+                        eCashSplit.delete(0, eCashSplit.length());
                         ((QRCodeActivity) getActivity()).showDialogError("QR Code đã được nhận");
                         return;
                     }

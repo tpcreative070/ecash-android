@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.ui.contact.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -165,9 +166,12 @@ public class FragmentContact extends ECashBaseFragment {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_UPDATE_CONTACT)) {
-            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
-            setAdapter(transferModelArrayList);
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+                List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+                setAdapter(transferModelArrayList);
+            }, 1000);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

@@ -82,7 +82,7 @@ public class LoginPresenterImpl implements LoginPresenter {
 
         RequestLogin requestLogin = new RequestLogin();
         requestLogin.setChannelCode(Constant.CHANNEL_CODE);
-        requestLogin.setFunctionCode(Constant.FUNCTION_LOGIN_AFTER_REGISTER);
+        requestLogin.setFunctionCode(Constant.FUNCTION_LOGIN);
         requestLogin.setUsername(userName);
         requestLogin.setToken(CommonUtils.encryptPassword(pass));
         requestLogin.setUuid(Constant.STR_EMPTY);
@@ -189,7 +189,7 @@ public class LoginPresenterImpl implements LoginPresenter {
         RequestGetOTP requestGetOTP = new RequestGetOTP();
         requestGetOTP.setChannelCode(Constant.CHANNEL_CODE);
         requestGetOTP.setFunctionCode(Constant.FUNCTION_GET_OTP);
-        requestGetOTP.setToken(CommonUtils.getToken(accountInfo));
+        requestGetOTP.setToken(CommonUtils.getToken());
         requestGetOTP.setUsername(accountInfo.getUsername());
         requestGetOTP.setWalletId(String.valueOf(accountInfo.getWalletId()));
 

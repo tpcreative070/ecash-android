@@ -1,14 +1,8 @@
-package vn.ecpay.ewallet.ui.cashIn;
+package vn.ecpay.ewallet.ui.function;
 
-import android.app.Service;
-import android.content.ComponentName;
-import android.content.Intent;
+import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,39 +28,22 @@ import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseDataGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 
-public class CashInService extends Service {
-    private int numberRequest = 0;
+public class CashInFunction {
     private CashInResponse eDongToECashResponse;
-    private String[][] deCryptECash;
     private AccountInfo accountInfo;
+    private int numberRequest = 0;
+    private String[][] deCryptECash;
+    private Context context;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public CashInFunction(CashInResponse eDongToECashResponse, AccountInfo accountInfo, Context context) {
+        this.eDongToECashResponse = eDongToECashResponse;
+        this.accountInfo = accountInfo;
+        this.context = context;
     }
 
-    @Override
-    public ComponentName startService(Intent service) {
-        return super.startService(service);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle extras;
-        try {
-            extras = intent.getExtras();
-        } catch (NullPointerException e) {
-            extras = null;
-        }
-        if (null != extras) {
-            eDongToECashResponse = (CashInResponse) extras.getSerializable(Constant.EDONG_TO_ECASH);
-            accountInfo = (AccountInfo) extras.getSerializable(Constant.ACCOUNT_INFO);
-            if (eDongToECashResponse != null) {
-                deCryptECash = CommonUtils.decrypEcash(eDongToECashResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-                checkArrayCash();
-            }
-        }
-        return super.onStartCommand(intent, flags, startId);
+    public void handelCash(){
+        deCryptECash = CommonUtils.decrypEcash(eDongToECashResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
+        checkArrayCash();
     }
 
     private void checkArrayCash() {
@@ -75,7 +52,6 @@ public class CashInService extends Service {
                 if (numberRequest == deCryptECash.length) {
                     EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
                     numberRequest = 0;
-                    stopSelf();
                     return;
                 }
                 AsyncTaskCash asynctaskCash = new AsyncTaskCash();
@@ -104,7 +80,7 @@ public class CashInService extends Service {
             cash.setCycle(Integer.valueOf(item[7]));
             cash.setType(Constant.STR_CASH_IN);
             cash.setTransactionSignature(eDongToECashResponse.getId());
-            WalletDatabase.getINSTANCE(getApplicationContext(), ECashApplication.masterKey);
+            WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
             Decision_Database decision = WalletDatabase.getDecisionNo(item[2]);
             if (decision != null) {
                 checkVerifyCash(cash, decision.getTreasurePublicKeyValue(), decision.getAccountPublicKeyValue());
@@ -117,7 +93,7 @@ public class CashInService extends Service {
 
     private void getPublicKeyCashToCheck(CashLogs_Database cash, String decisionNo) {
         Log.e("getPublicKeyCashToCheck", "ahihi");
-        Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(context.getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
         RequestGetPublicKeyCash requestGetPublicKeyCash = new RequestGetPublicKeyCash();
@@ -126,7 +102,7 @@ public class CashInService extends Service {
         requestGetPublicKeyCash.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_CASH);
         requestGetPublicKeyCash.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyCash.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyCash.setToken(CommonUtils.getToken(accountInfo));
+        requestGetPublicKeyCash.setToken(CommonUtils.getToken());
         requestGetPublicKeyCash.setUsername(accountInfo.getUsername());
         requestGetPublicKeyCash.setChannelSignature(Constant.STR_EMPTY);
 
@@ -167,14 +143,14 @@ public class CashInService extends Service {
         decision.setDecisionNo(decisionNo);
         decision.setTreasurePublicKeyValue(responseDataGetPublicKeyCash.getDecisionTrekp());
         decision.setAccountPublicKeyValue(responseDataGetPublicKeyCash.getDecisionAcckp());
-        WalletDatabase.getINSTANCE(getApplicationContext(), ECashApplication.masterKey);
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertDecisionTask(decision);
     }
 
     private void checkVerifyCash(CashLogs_Database cash, String decisionTrekp, String decisionAcckp) {
         if (CommonUtils.verifyCash(cash, decisionTrekp, decisionAcckp)) {
             //xác thực đồng ecash ok => save cash
-            DatabaseUtil.saveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());
+            DatabaseUtil.saveCashToDB(cash, context, accountInfo.getUsername());
             numberRequest = numberRequest + 1;
             checkArrayCash();
         } else {
@@ -183,17 +159,5 @@ public class CashInService extends Service {
             numberRequest = numberRequest + 1;
             checkArrayCash();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

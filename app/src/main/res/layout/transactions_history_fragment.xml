@@ -223,11 +223,10 @@
                     android:textSize="@dimen/text_xlarge"
                     android:background="@color/gray_light"
                     android:layout_height="wrap_content"/>
-                <ImageView
-                    android:layout_width="200dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/icon_qr_code"
-                    android:paddingBottom="50dp"
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_list_qr_code"
+                    android:layout_width="match_parent"
                     android:layout_height="200dp"/>
             </LinearLayout>
         </LinearLayout>
