@@ -14,7 +14,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme.Start">
         <activity
-            android:name=".LaunchActivity"
+            android:name=".ui.startApp.LaunchActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:resizeableActivity="false"

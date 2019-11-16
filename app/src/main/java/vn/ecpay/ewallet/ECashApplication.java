@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
@@ -22,6 +24,16 @@ public class ECashApplication extends Application {
     public static ArrayList<EdongInfo> listEDongInfo;
     public static String privateKey;
     public static String masterKey;
+    private static ECashApplication sInstance;
+    private Gson mGSon;
+
+    public static ECashApplication getInstance() {
+        return sInstance;
+    }
+
+    public Gson getGSon() {
+        return mGSon;
+    }
 
     public static AccountInfo getAccountInfo() {
         return accountInfo;
@@ -46,6 +58,8 @@ public class ECashApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        sInstance = this;
+        mGSon = new Gson();
         initApp();
     }
 
