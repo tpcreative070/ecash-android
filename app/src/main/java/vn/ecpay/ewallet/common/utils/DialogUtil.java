@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.language.LanguageObject;
 
 public class DialogUtil {
     private static DialogUtil mInsance;
@@ -31,6 +32,12 @@ public class DialogUtil {
         void OnListenerOk();
 
         void OnListenerCancel();
+    }
+
+    public interface OnChangeLanguage {
+        void OnListenerVn();
+
+        void OnListenerEn();
     }
 
     public interface OnContactUpdate {
@@ -980,6 +987,64 @@ public class DialogUtil {
             mDialog.setCanceledOnTouchOutside(true);
             mDialog.setCancelable(true);
             mDialog.show();
+        }
+    }
+
+    public void showDialogChangeLanguage(Context pContext, final OnChangeLanguage onChangeLanguage) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_change_language);
+            Button btnVn, btnEn;
+            btnVn = mDialog.findViewById(R.id.btn_vietnam);
+            btnEn = mDialog.findViewById(R.id.btn_english);
+
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+
+            if (LanguageUtils.getCurrentLanguage().getCode().equals(pContext.getResources().getString(R.string.language_vietnamese_code))) {
+                btnVn.setBackground(pContext.getResources().getDrawable(R.drawable.bg_border_gray));
+                btnEn.setTextColor(pContext.getResources().getColor(R.color.gray));
+
+                btnEn.setBackground(pContext.getResources().getDrawable(R.drawable.bg_border_rectangle_blue));
+                btnEn.setTextColor(pContext.getResources().getColor(R.color.white));
+            } else {
+                btnEn.setBackground(pContext.getResources().getDrawable(R.drawable.bg_border_gray));
+                btnEn.setTextColor(pContext.getResources().getColor(R.color.gray));
+
+                btnVn.setBackground(pContext.getResources().getDrawable(R.drawable.bg_border_rectangle_blue));
+                btnVn.setTextColor(pContext.getResources().getColor(R.color.white));
+            }
+
+            btnVn.setOnClickListener(v -> {
+                if (LanguageUtils.getCurrentLanguage().getCode().equals(pContext.getResources().getString(R.string.language_vietnamese_code))) {
+                    Toast.makeText(pContext, pContext.getResources().getString(R.string.err_current_language_conflict), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                dismissDialog();
+                LanguageObject currentLanguage = new LanguageObject(Constant.DEFAULT_LANGUAGE_ID,
+                        pContext.getResources().getString(R.string.language_vietnamese),
+                        pContext.getResources().getString(R.string.language_vietnamese_code));
+                LanguageUtils.changeLanguage(currentLanguage);
+                if (onChangeLanguage != null) {
+                    onChangeLanguage.OnListenerVn();
+                }
+            });
+            btnEn.setOnClickListener(v -> {
+                if (LanguageUtils.getCurrentLanguage().getCode().equals(pContext.getResources().getString(R.string.language_english_code))) {
+                    Toast.makeText(pContext, pContext.getResources().getString(R.string.err_current_language_conflict), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                dismissDialog();
+                LanguageObject currentLanguage = new LanguageObject(1,
+                        pContext.getResources().getString(R.string.language_english),
+                        pContext.getResources().getString(R.string.language_english_code));
+                LanguageUtils.changeLanguage(currentLanguage);
+                if (onChangeLanguage != null) {
+                    onChangeLanguage.OnListenerVn();
+                }
+            });
         }
     }
 

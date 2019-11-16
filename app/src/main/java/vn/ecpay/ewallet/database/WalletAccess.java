@@ -96,7 +96,7 @@ public interface WalletAccess {
     @Query("SELECT SUM(parValue) FROM CASH_LOGS WHERE type LIKE :input")
     int getTotalCash(String input);
 
-    @Query("SELECT DISTINCT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type LIKE :type AND serialNo IN (SELECT serialNo FROM CASH_LOGS  GROUP BY serialNo HAVING COUNT(serialNo)%2 <> 0) AND parValue =:money")
+    @Query("SELECT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type =:type AND (id + serialNo) IN (select max(id)+ serialNo from CASH_LOGS  group by serialNo having count(serialNo)%2 <> 0) AND parValue =:money")
     List<CashLogs_Database> getListCashForMoney(String money, String type);
 
     // todo Cash_Invalid----------------------------------------------------------------------------------

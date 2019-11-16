@@ -19,14 +19,19 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.language.LanguageObject;
+import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
 import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
@@ -45,6 +50,8 @@ public class FragmentAccountInfo extends ECashBaseFragment {
     TextView tvCmnd;
     @BindView(R.id.btn_login)
     Button btnLogin;
+    @BindView(R.id.tv_language)
+    TextView tvLanguage;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
 
@@ -76,11 +83,35 @@ public class FragmentAccountInfo extends ECashBaseFragment {
             tvEmail.setText("");
             tvCmnd.setText("");
         }
+        if (LanguageUtils.getCurrentLanguage().getCode().equals(getActivity().getResources().getString(R.string.language_english_code))) {
+            tvLanguage.setText(getActivity().getResources().getString(R.string.language_english));
+        } else {
+            tvLanguage.setText(getActivity().getResources().getString(R.string.language_vietnamese));
+        }
     }
 
-    @OnClick({R.id.iv_account, R.id.btn_login, R.id.layout_image_account, R.id.layout_name, R.id.layout_phone, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
+    @OnClick({R.id.layout_change_language, R.id.iv_account, R.id.btn_login, R.id.layout_image_account, R.id.layout_name, R.id.layout_phone, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.layout_change_language:
+                DialogUtil.getInstance().showDialogChangeLanguage(getActivity(), new DialogUtil.OnChangeLanguage() {
+                    @Override
+                    public void OnListenerVn() {
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        getActivity().startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+
+                    @Override
+                    public void OnListenerEn() {
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        getActivity().startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                });
+                break;
             case R.id.iv_account:
                 break;
             case R.id.btn_login:
@@ -124,5 +155,9 @@ public class FragmentAccountInfo extends ECashBaseFragment {
             setData();
         }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @OnClick(R.id.layout_change_language)
+    public void onViewClicked() {
     }
 }

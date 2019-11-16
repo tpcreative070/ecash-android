@@ -33,7 +33,8 @@ public class FragmentWallet extends ECashBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        pager.setAdapter(new WalletPagerAdapter(getFragmentManager()));
+        assert getFragmentManager() != null;
+        pager.setAdapter(new WalletPagerAdapter(getFragmentManager(), getActivity()));
         tabs.setViewPager(pager);
     }
 

@@ -1,6 +1,8 @@
 package vn.ecpay.ewallet.common.utils;
 
 public class Constant {
+    public static final int DEFAULT_LANGUAGE_ID = 0;
+
     public static final String DATABASE_NAME = "eWallet";
     public static final int DATABASE_VERSION = 1;
 

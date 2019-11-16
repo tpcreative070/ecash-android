@@ -114,5 +114,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:17.0.0'
     //Firebase Messaging library for Sending push Notifications
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
+
+    implementation 'me.relex:circleindicator:1.2.2@aar'
 }
 apply plugin: 'com.google.gms.google-services'
