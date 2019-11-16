@@ -111,6 +111,7 @@ dependencies {
     implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
     //firebase
     implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-database:17.0.0'
     //Firebase Messaging library for Sending push Notifications
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
 }

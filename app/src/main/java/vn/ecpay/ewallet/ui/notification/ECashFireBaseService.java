@@ -37,6 +37,7 @@ import vn.ecpay.ewallet.database.table.Notification_Database;
 public class ECashFireBaseService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        Map<String, String> data1 = remoteMessage.getData();
         if (remoteMessage.getNotification() != null) {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
             String title = notification.getTitle();
@@ -46,9 +47,10 @@ public class ECashFireBaseService extends FirebaseMessagingService {
             EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_NOTIFICATION));
         } else {
             Map<String, String> data = remoteMessage.getData();
+            String channelKp = data.get("channelKp");
+            String clientKs = data.get("clientKs");
+            String clientKp = data.get("clientKp");
             String type = data.get("type");
-            String ChannelKP = data.get("ChannelKP");
-            String ChannelKS = data.get("ChannelKS");
             //todo update key
         }
     }

@@ -4,16 +4,25 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationModule;
 import vn.ecpay.ewallet.common.dependencyInjection.DaggerApplicationComponent;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.notification.TokenFCMObj;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 
 public class ECashApplication extends Application {
@@ -47,6 +56,7 @@ public class ECashApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initApp();
+        InitTokenFCMDB();
     }
 
     private void initApp() {
@@ -88,6 +98,30 @@ public class ECashApplication extends Application {
                 break;
         }
 
+    }
+
+    private void InitTokenFCMDB()
+    {
+        String token = FirebaseInstanceId.getInstance().getToken();
+        if(token == null || (token != null && token.isEmpty())) return;
+
+        SharedPreferences prefs = this.getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        String strDate = sdf.format(c.getTime());
+
+        TokenFCMObj myToken = new TokenFCMObj();
+        myToken.setApp_name("eCash App");
+        myToken.setCreated_date(strDate);
+        myToken.setStatus("0");
+        myToken.setTerminal_id(prefs.getString(Constant.DEVICE_IMEI, null));
+        myToken.setTerminal_info(CommonUtils.getModelName());
+        myToken.setToken(token);
+        myToken.setChannel_code("MB001");
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("firebase_token");
+        String id = mDatabase.push().getKey();
+        mDatabase.child(id).setValue(myToken);
     }
 
     public void showDialogSwitchLogin(final String messenger) {
