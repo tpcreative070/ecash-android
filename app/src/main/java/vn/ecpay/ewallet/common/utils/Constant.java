@@ -25,15 +25,14 @@ public class Constant {
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
+
     //type and key
     public static final String STR_CASH_IN = "in";
     public static final String STR_CASH_OUT = "out";
     public static final int CONTACT_ON = 1;
     public static final int CONTACT_OFF = 0;
-    public static final String MASTER_KEY_STRING = "0123456789ABCDEFGHIJKL0123456789";
-    public static final String MASTER_KEY_STRING_NEW = "123456";
     public static final String STR_PRIVATE_KEY_CHANEL = "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
-    public static final String STR_PUBLIC_KEY_CHANEL = "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
+    public static final String STR_SERVER_KEY_CHANEL = "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
     public static final String STR_EMPTY = "";
     public static final String DEVICE_IMEI = "DEVICE_IMEI";
 
@@ -41,7 +40,6 @@ public class Constant {
     public static final String INSTANCE_KS_ENCRYPT_PRIVATE = "INSTANCE_KS_ENCRYPT_PRIVATE";
     public static final String INSTANCE_KS_ENCRYPT_MASTER = "INSTANCE_KS_ENCRYPT_MASTER";
 
-    public static final String MASTER_KEY = "MASTER_KEY";
     public static final String WALLET_ALIAS_PRIVATE_KEY = "WALLET_ALIAS_PRIVATE_KEY";
     public static final String WALLET_ALIAS_MASTER_KEY = "WALLET_ALIAS_PUB_KEY";
 
@@ -87,20 +85,7 @@ public class Constant {
     public static final String CREDIT_DEBIT_ACCOUNT = "1238161606";
     public static final String ISSUER_CODE = "ECPAY";
 
-    //put money
-    public static final String TOTAL_500 = "TOTAL_500";
-    public static final String TOTAL_200 = "TOTAL_200";
-    public static final String TOTAL_100 = "TOTAL_100";
-    public static final String TOTAL_50 = "TOTAL_50";
-    public static final String TOTAL_20 = "TOTAL_20";
-    public static final String TOTAL_10 = "TOTAL_10";
-    public static final String KEY_PUBLIC_RECEIVER = "key_public_receiver";
-    public static final String WALLET_RECEIVER = "wallet_receiver";
-    public static final String CONTENT_SEND_MONEY = "content_send_money";
-
     //cashin
-    public static final String EDONG_TO_ECASH = "edong_to_ecash";
-    public static final String ACCOUNT_INFO = "account_info";
     public static final String LIST_CASH_RESULT = "LIST_CASH_RESULT";
 
     //error code

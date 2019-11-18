@@ -1,18 +1,14 @@
-package vn.ecpay.ewallet.ui.notification;
+package vn.ecpay.ewallet.ui.firebase;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.IBinder;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -22,10 +18,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Map;
-import java.util.Random;
 
 import vn.ecpay.ewallet.MainActivity;
-import vn.ecpay.ewallet.MissionActivity;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
@@ -37,7 +31,6 @@ import vn.ecpay.ewallet.database.table.Notification_Database;
 public class ECashFireBaseService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Map<String, String> data1 = remoteMessage.getData();
         if (remoteMessage.getNotification() != null) {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
             String title = notification.getTitle();

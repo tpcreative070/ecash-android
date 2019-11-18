@@ -1,4 +1,4 @@
-package vn.ecpay.ewallet.ui.notification;
+package vn.ecpay.ewallet.ui.firebase;
 
 import android.os.Bundle;
 import android.view.View;

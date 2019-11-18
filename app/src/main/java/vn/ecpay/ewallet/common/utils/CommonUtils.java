@@ -44,7 +44,6 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eccrypto.Test;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
-import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
@@ -155,7 +154,7 @@ public class CommonUtils {
 
     public static String encryptPassword(String pass) {
         EllipticCurve ec = EllipticCurve.getSecp256k1();
-        ECPublicKeyParameters kp = EllipticCurve.getSecp256k1().getPublicKeyParameters(Base64.decode(Constant.STR_PUBLIC_KEY_CHANEL, Base64.DEFAULT));
+        ECPublicKeyParameters kp = EllipticCurve.getSecp256k1().getPublicKeyParameters(Base64.decode(Constant.STR_SERVER_KEY_CHANEL, Base64.DEFAULT));
         byte[][] blockEncrypted = ECElGamal.encrypt(ec, kp, pass.getBytes());
         String passEncode = Base64.encodeToString(blockEncrypted[0], Base64.DEFAULT) + "$"
                 + Base64.encodeToString(blockEncrypted[1], Base64.DEFAULT) + "$"
@@ -246,15 +245,6 @@ public class CommonUtils {
         return SHA256.hashSHA256(cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getSerialNo() + ";"
                 + cash.getDecisionNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"
                 + cash.getExpireDate() + (flag ? "" : ";" + cash.getCycle()));
-    }
-
-    public static String getSignTransactionLog(TransactionLog_Database transactionLog) {
-        String cashSign = transactionLog.getId() + transactionLog.getSenderAccountId()
-                + transactionLog.getReceiverAccountId() + transactionLog.getType()
-                + transactionLog.getTime() + transactionLog.getContent()
-                + transactionLog.getCashEnc() + transactionLog.getTransactionSignature();
-        byte[] dataSign = SHA256.hashSHA256(cashSign);
-        return CommonUtils.generateSignature(dataSign, Constant.STR_PRIVATE_KEY_CHANEL);
     }
 
     public static boolean verifyCash(CashLogs_Database cash, String decisionTrekp, String decisionAcckp) {

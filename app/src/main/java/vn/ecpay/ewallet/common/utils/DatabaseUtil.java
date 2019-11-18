@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import androidx.fragment.app.FragmentActivity;
 

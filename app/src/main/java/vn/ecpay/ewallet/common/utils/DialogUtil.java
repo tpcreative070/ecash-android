@@ -998,8 +998,8 @@ public class DialogUtil {
             btnVn = mDialog.findViewById(R.id.btn_vietnam);
             btnEn = mDialog.findViewById(R.id.btn_english);
 
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.setCancelable(false);
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
             mDialog.show();
 
             if (LanguageUtils.getCurrentLanguage().getCode().equals(pContext.getResources().getString(R.string.language_vietnamese_code))) {

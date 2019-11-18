@@ -23,8 +23,6 @@ public class LaunchActivity extends ECashBaseActivity {
     ViewPager viewPager;
     @BindView(R.id.tv_skip)
     TextView tvSkip;
-    @BindView(R.id.tv_next)
-    TextView tvNext;
     @BindView(R.id.circle)
     CircleIndicator circleIndicator;
     private SlidePager myPager;
@@ -55,9 +53,9 @@ public class LaunchActivity extends ECashBaseActivity {
             @Override
             public void onPageSelected(int position) {
                 if (position == 3) {
-                    tvNext.setText(getResources().getString(R.string.str_start));
+                    tvSkip.setText(getResources().getString(R.string.str_start));
                 } else {
-                    tvNext.setText(getResources().getString(R.string.str_continute));
+                    tvSkip.setText(getResources().getString(R.string.str_skip));
                 }
             }
 
@@ -78,19 +76,11 @@ public class LaunchActivity extends ECashBaseActivity {
 
     }
 
-    @OnClick({R.id.tv_skip, R.id.tv_next})
+    @OnClick({R.id.tv_skip})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_skip:
                 startMainScreen();
-                break;
-            case R.id.tv_next:
-                int currPos = viewPager.getCurrentItem();
-                if (currPos == 3) {
-                    startMainScreen();
-                } else {
-                    viewPager.setCurrentItem(currPos + 1);
-                }
                 break;
         }
     }

@@ -1,11 +1,10 @@
-package vn.ecpay.ewallet.ui.notification;
+package vn.ecpay.ewallet.ui.firebase;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 

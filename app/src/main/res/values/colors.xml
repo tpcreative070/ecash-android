@@ -41,4 +41,7 @@
     <color name="bg_item_transfer">#F2F6F9</color>
 
     <color name="transparent_gray">#66000000</color>
+
+    <color name="color_dot_selected">#38BBE9</color>
+    <color name="color_dot_unselected">#99E3FE</color>
 </resources>

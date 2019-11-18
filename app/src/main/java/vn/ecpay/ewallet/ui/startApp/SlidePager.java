@@ -55,13 +55,13 @@ public class SlidePager extends PagerAdapter {
     private int getImageAt(int position) {
         switch (position) {
             case 1:
-                return R.drawable.ic_intro_2;
+                return R.drawable.ic_intro_icon_2;
             case 2:
-                return R.drawable.ic_intro_3;
+                return R.drawable.ic_intro_icon_3;
             case 3:
-                return R.drawable.ic_intro_4;
+                return R.drawable.ic_intro_icon_4;
             default:
-                return R.drawable.ic_intro_1;
+                return R.drawable.ic_intro_icon_1;
         }
     }
 }

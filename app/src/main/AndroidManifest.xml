@@ -75,7 +75,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ui.notification.NotificationActivity"
+            android:name=".ui.firebase.NotificationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
@@ -85,7 +85,7 @@
             </intent-filter>
         </receiver>
         <service android:name=".webSocket.WebSocketsService" />
-        <service android:name=".ui.notification.ECashFireBaseService">
+        <service android:name=".ui.firebase.ECashFireBaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
