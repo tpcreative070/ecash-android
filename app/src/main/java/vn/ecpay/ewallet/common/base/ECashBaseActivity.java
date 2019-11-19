@@ -380,7 +380,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         return context.createConfigurationContext(configuration);
     }
 
-    @SuppressWarnings("deprecation")
     private Context updateResourcesLocaleLegacy(Context context, Locale locale) {
         Resources resources = context.getResources();
         Configuration configuration = resources.getConfiguration();

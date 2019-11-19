@@ -200,49 +200,58 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         phone = edtPhone.getText().toString();
         pass = edtPass.getText().toString();
         rePass = edtRePass.getText().toString();
-
+        showProgress();
         if (userName.isEmpty()) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_user_name_null));
+            dismissProgress();
             return;
         }
 
         if (name.isEmpty()) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_name_null));
+            dismissProgress();
             return;
         }
 
         if (cmnd.isEmpty()) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_cmnd_null));
+            dismissProgress();
             return;
         }
 
         if (phone.isEmpty()) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_phone_null));
+            dismissProgress();
             return;
         }
 
         if (pass.isEmpty()) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_pass_null));
+            dismissProgress();
             return;
         }
 
         if (rePass.isEmpty()) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_repass_null));
+            dismissProgress();
             return;
         }
 
         if (!CommonUtils.isValidatePass(pass)) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_pass_bigger_six_char));
+            dismissProgress();
             return;
         }
 
         if (!pass.equals(rePass)) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_pass_duplicate_fail));
+            dismissProgress();
             return;
         }
 
         if (!CommonUtils.isValidateUserName(userName)) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_validate_user_name_fail));
+            dismissProgress();
             return;
         }
 
@@ -253,18 +262,20 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
         if (!CommonUtils.validatePassPort(cmnd)) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_validate_cmnd_fail));
+            dismissProgress();
             return;
         }
 
         if (!CommonUtils.isValidatePhoneNumber(phone)) {
             ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_validate_phone_fail));
+            dismissProgress();
             return;
         }
         if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
-            showLoading();
             startRegisterPassword();
+        } else {
+            dismissProgress();
         }
-
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
@@ -313,9 +324,6 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void registerSuccess(AccountInfo mAccountInfo, String privateKeyBase64, String publicKeyBase64) {
-        if (PermissionUtils.isReadContact(getActivity())) {
-            registerPresenter.syncContact(getActivity(), mAccountInfo);
-        }
         DatabaseUtil.changePassDatabase(getActivity(), mAccountInfo.getMasterKey());
         new Timer().schedule(new TimerTask() {
             @Override
@@ -375,6 +383,9 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     @Override
     public void loginSuccess(AccountInfo accountInfo) {
         ECashApplication.setAccountInfo(accountInfo);
+        if (PermissionUtils.isReadContact(getActivity())) {
+            registerPresenter.syncContact(getActivity(), accountInfo);
+        }
         registerPresenter.getEDongInfo(accountInfo);
         getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
     }

@@ -129,7 +129,7 @@ public class DatabaseUtil {
                 + transactionLog.getTime() + transactionLog.getContent()
                 + transactionLog.getCashEnc() + transactionLog.getTransactionSignature();
         byte[] dataSign = SHA256.hashSHA256(cashSign);
-        return CommonUtils.generateSignature(dataSign, Constant.STR_PRIVATE_KEY_CHANEL);
+        return CommonUtils.generateSignature(dataSign, CommonUtils.getPrivateChannelKey());
     }
 
     public static void changePassDatabase(Context context, String masterKey) {
@@ -158,7 +158,7 @@ public class DatabaseUtil {
                 + cash.getSerialNo() + cash.getParValue() + cash.getActiveDate() + cash.getExpireDate()
                 + cash.getCycle() + cash.getAccSign() + cash.getTreSign();
         byte[] dataSign = SHA256.hashSHA256(cashSign);
-        return CommonUtils.generateSignature(dataSign, Constant.STR_PRIVATE_KEY_CHANEL);
+        return CommonUtils.generateSignature(dataSign, CommonUtils.getPrivateChannelKey());
     }
 
     public static void updateTransactionsLogAndCashOutDatabase(ArrayList<CashLogs_Database> listCashSend, ResponseMessSocket responseMess, Context context, String userName) {

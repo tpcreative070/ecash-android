@@ -40,10 +40,8 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
-import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
@@ -240,7 +238,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
             @Override
             public void onRetryOTP() {
-                loginPresenter.requestOTPActiveAccount(accountInfo);
+                loginPresenter.requestOTPActiveAccount(accountInfo, pass);
             }
 
             @Override
@@ -258,7 +256,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
             @Override
             public void onRetryOTP() {
-                loginPresenter.requestOTPActiveAccount(accountInfo);
+                loginPresenter.requestOTPActiveAccount(accountInfo, pass);
             }
 
             @Override
@@ -343,6 +341,6 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void requestActiveAccount() {
-        loginPresenter.requestOTPActiveAccount(accountInfo);
+        loginPresenter.requestOTPActiveAccount(accountInfo, pass);
     }
 }

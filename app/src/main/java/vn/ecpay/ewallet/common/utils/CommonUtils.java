@@ -43,6 +43,7 @@ import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eccrypto.Test;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
+import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
@@ -129,7 +130,7 @@ public class CommonUtils {
     }
 
     public static String generateSignature(byte[] strDataSign) {
-        byte[] privateKey = Base64.decode(Constant.STR_PRIVATE_KEY_CHANEL, Base64.DEFAULT);
+        byte[] privateKey = Base64.decode(getPrivateChannelKey(), Base64.DEFAULT);
 
         EllipticCurve ec = EllipticCurve.getSecp256k1();
         ECPrivateKeyParameters privateKeyParameters = ec.generatePrivateKeyParameters(
@@ -154,7 +155,7 @@ public class CommonUtils {
 
     public static String encryptPassword(String pass) {
         EllipticCurve ec = EllipticCurve.getSecp256k1();
-        ECPublicKeyParameters kp = EllipticCurve.getSecp256k1().getPublicKeyParameters(Base64.decode(Constant.STR_SERVER_KEY_CHANEL, Base64.DEFAULT));
+        ECPublicKeyParameters kp = EllipticCurve.getSecp256k1().getPublicKeyParameters(Base64.decode(CommonUtils.getPublicServerKey(), Base64.DEFAULT));
         byte[][] blockEncrypted = ECElGamal.encrypt(ec, kp, pass.getBytes());
         String passEncode = Base64.encodeToString(blockEncrypted[0], Base64.DEFAULT) + "$"
                 + Base64.encodeToString(blockEncrypted[1], Base64.DEFAULT) + "$"
@@ -482,4 +483,13 @@ public class CommonUtils {
         return false;
     }
 
+    public static String getPublicServerKey() {
+        return "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
+//        return SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class);
+    }
+
+    public static String getPrivateChannelKey() {
+        return "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
+//        return SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class);
+    }
 }

@@ -9,6 +9,9 @@ public class SharedPrefs {
     private static final String PREFS_NAME = "multi_language_active";
     public static final String LANGUAGE = "langauge";
     public static final String INTRO = "intro";
+    public static final String channelKp = "channelKp";
+    public static final String clientKs = "clientKs";
+    public static final String clientKp = "clientKp";
 
     private static SharedPrefs mInstance;
     private SharedPreferences mSharedPreferences;

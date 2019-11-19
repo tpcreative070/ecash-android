@@ -9,7 +9,7 @@ public interface LoginPresenter extends Presenter<LoginView> {
 
     void getEDongInfo(AccountInfo accountInfo);
 
-    void requestOTPActiveAccount(AccountInfo accountInfo);
+    void requestOTPActiveAccount(AccountInfo accountInfo, String pass);
 
     void activeAccount(AccountInfo accountInfo, String otp);
 }

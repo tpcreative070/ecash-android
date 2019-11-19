@@ -23,6 +23,7 @@ import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
+import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.database.WalletDatabase;
@@ -44,7 +45,15 @@ public class ECashFireBaseService extends FirebaseMessagingService {
             String clientKs = data.get("clientKs");
             String clientKp = data.get("clientKp");
             String type = data.get("type");
-            //todo update key
+            saveKey(channelKp, clientKs, clientKp);
+        }
+    }
+
+    private void saveKey(String channelKp, String clientKs, String clientKp) {
+        if (!channelKp.isEmpty() && !clientKs.isEmpty() && !clientKp.isEmpty()) {
+            SharedPrefs.getInstance().put(SharedPrefs.channelKp, channelKp);
+            SharedPrefs.getInstance().put(SharedPrefs.clientKp, clientKp);
+            SharedPrefs.getInstance().put(SharedPrefs.clientKs, clientKs);
         }
     }
 

@@ -35,26 +35,22 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
-        android:paddingTop="10dp"
+        android:paddingTop="20dp"
         android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/btn_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_border_rectangle_blue"
-            android:text="@string/str_ok"
-            android:layout_marginEnd="20dp"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
 
         <Button
+            android:id="@+id/btn_ok"
+            style="@style/btn_submit"
+            android:layout_marginEnd="10dp"
+            android:textSize="@dimen/text_large"
+            android:text="@string/yes" />
+        <Button
             android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_border_rectangle_blue"
-            android:text="@string/str_cancel"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            style="@style/btn_cancel"
+            android:layout_marginStart="10dp"
+            android:textSize="@dimen/text_large"
+            android:text="@string/str_Ignore" />
+
     </LinearLayout>
 
 

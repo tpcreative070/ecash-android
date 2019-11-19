@@ -88,7 +88,7 @@
     <!--buttn of dialog-->
     <style name="btn_cancel">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_height">40dp</item>
         <item name="android:background">@drawable/selector_button_white_green</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingLeft">10dp</item>
@@ -101,7 +101,7 @@
     <!--buttn of dialog-->
     <style name="btn_submit">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_height">40dp</item>
         <item name="android:background">@drawable/selector_button_blue_white</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingLeft">10dp</item>

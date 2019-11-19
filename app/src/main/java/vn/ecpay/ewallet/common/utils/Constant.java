@@ -31,8 +31,8 @@ public class Constant {
     public static final String STR_CASH_OUT = "out";
     public static final int CONTACT_ON = 1;
     public static final int CONTACT_OFF = 0;
-    public static final String STR_PRIVATE_KEY_CHANEL = "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
-    public static final String STR_SERVER_KEY_CHANEL = "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
+//    public static final String STR_PRIVATE_KEY_CHANEL = "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
+//    public static final String STR_SERVER_KEY_CHANEL = "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
     public static final String STR_EMPTY = "";
     public static final String DEVICE_IMEI = "DEVICE_IMEI";
 

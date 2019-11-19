@@ -181,7 +181,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void requestOTPActiveAccount(AccountInfo accountInfo) {
+    public void requestOTPActiveAccount(AccountInfo accountInfo, String pass) {
         loginView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -189,7 +189,7 @@ public class LoginPresenterImpl implements LoginPresenter {
         RequestGetOTP requestGetOTP = new RequestGetOTP();
         requestGetOTP.setChannelCode(Constant.CHANNEL_CODE);
         requestGetOTP.setFunctionCode(Constant.FUNCTION_GET_OTP);
-        requestGetOTP.setToken(CommonUtils.getToken());
+        requestGetOTP.setToken(CommonUtils.encryptPassword(pass));
         requestGetOTP.setUsername(accountInfo.getUsername());
         requestGetOTP.setWalletId(String.valueOf(accountInfo.getWalletId()));
 
