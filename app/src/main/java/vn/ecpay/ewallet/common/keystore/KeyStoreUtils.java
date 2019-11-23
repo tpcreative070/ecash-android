@@ -24,18 +24,6 @@ public class KeyStoreUtils {
         editor.apply();
     }
 
-    public static void saveMasterKey(String masterKey, Context context) {
-        KSEnCrypt mEncrypt = KSEnCrypt.createInstance();
-        mEncrypt.saveKey(Constant.WALLET_ALIAS_MASTER_KEY, masterKey);
-        Gson gson = new Gson();
-        String jsKSEncrypt = gson.toJson(mEncrypt);
-
-        SharedPreferences prefs = getSharedPreference(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(Constant.INSTANCE_KS_ENCRYPT_MASTER, jsKSEncrypt);
-        editor.apply();
-    }
-
     public static String getPrivateKey(Context context) {
         Gson gson = new Gson();
         SharedPreferences prefs = getSharedPreference(context);
@@ -48,6 +36,18 @@ public class KeyStoreUtils {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static void saveMasterKey(String masterKey, Context context) {
+        KSEnCrypt mEncrypt = KSEnCrypt.createInstance();
+        mEncrypt.saveKey(Constant.WALLET_ALIAS_MASTER_KEY, masterKey);
+        Gson gson = new Gson();
+        String jsKSEncrypt = gson.toJson(mEncrypt);
+
+        SharedPreferences prefs = getSharedPreference(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constant.INSTANCE_KS_ENCRYPT_MASTER, jsKSEncrypt);
+        editor.apply();
     }
 
     public static String getMasterKey(Context context) {

@@ -35,8 +35,8 @@
     <string name="pass">Enter password</string>
     <string name="input_name">Enter your first and last name</string>
     <string name="input_stk">Enter an account</string>
-    <string name="title_contact">Phonebook</string>
-    <string name="title_history">Deal</string>
+    <string name="title_contact">Contact</string>
+    <string name="title_history">History</string>
     <string name="title_wallet">My wallet</string>
     <string name="str_account_name">account name</string>
     <string name="str_ecash_id">eCash ID</string>
@@ -44,9 +44,9 @@
     <string name="str_use_qr_code">Use QR code</string>
     <string name="str_account_balance_edong">EDong balance</string>
     <string name="str_account_edong">EDong wallet</string>
-    <string name="str_cash_in">Load eCash</string>
-    <string name="str_cash_out">Withdraw eCash</string>
-    <string name="str_change_cash">Redeem eCash</string>
+    <string name="str_cash_in">eCash In</string>
+    <string name="str_cash_out">eCash Out</string>
+    <string name="str_change_cash">Change eCash</string>
     <string name="str_transfer">Transfer</string>
     <string name="str_payment_service">Payment service</string>
     <string name="str_electron_pay">Payment of EVN</string>
@@ -216,7 +216,7 @@
 
     //%s
     <string name="str_type_cash_out">-%S</string>
-    <string name="str_type_cash_in"> %S</string>
+    <string name="str_type_cash_in">+%S</string>
     <string name="str_number_scan_qr_code">You have successfully scanned %s  QR code</string>
     <string name="str_total_money_transfer">  %S</string>
     <string name="str_money">Quantity: %s </string>
@@ -259,4 +259,6 @@
     <string name="err_current_language_conflict">The current language is English</string>
 
     <string name="str_start">Start</string>
+    <string name="str_have_warning">There was an error</string>
+    <string name="err_not_select_amount">You have not selected the amount you wish to deposit</string>
 </resources>

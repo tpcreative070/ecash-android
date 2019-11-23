@@ -4,18 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.text.TextUtils;
-import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
-import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.ToastUtils;
-import vn.ecpay.fragmentcommon.BaseApplication;
-import vn.ecpay.fragmentcommon.NotificationCenter;
 
 
 public class NetworkChangeReceiver extends BroadcastReceiver {

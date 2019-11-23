@@ -135,11 +135,12 @@ public class ChangePassActivity extends ECashBaseActivity {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        ECashApplication.get(ChangePassActivity.this).checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             ECashApplication.get(ChangePassActivity.this).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
                         } else if (response.body().getResponseCode().equals("3019")) {
                             showDialogError(getString(R.string.err_old_pass_invalid));
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             showDialogError(response.body().getResponseMessage());
                         }

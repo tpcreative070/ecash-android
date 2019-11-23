@@ -35,6 +35,9 @@ public interface WalletAccess {
     @Query("SELECT 0 as isCheck,title, body, read, id, date  FROM NOTIFICATION ORDER BY id DESC")
     List<NotificationObj> getAllNotification();
 
+    @Query("SELECT 0 as isCheck,title, body, read, id, date  FROM NOTIFICATION WHERE read = 'on' ORDER BY id DESC")
+    List<NotificationObj> getAllNotificationUnRead();
+
     @Query("DELETE From NOTIFICATION WHERE id = :idNotification")
     void deleteNotification(Long idNotification);
 

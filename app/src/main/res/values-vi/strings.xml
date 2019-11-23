@@ -254,4 +254,6 @@
     <string name="err_current_language_conflict">Ngôn ngữ hiện tại đang là Tiếng Việt</string>
 
     <string name="str_start">Bắt đầu</string>
+    <string name="str_have_warning">Đã xảy ra lỗi</string>
+    <string name="err_not_select_amount">Bạn chưa chọn số tiền muốn nạp</string>
 </resources>

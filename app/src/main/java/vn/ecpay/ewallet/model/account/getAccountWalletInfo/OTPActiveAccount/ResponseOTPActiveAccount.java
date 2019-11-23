@@ -1,19 +1,17 @@
 
-package vn.ecpay.ewallet.model.account.getAccountWalletInfo;
+package vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount;
 
 import javax.annotation.Generated;
-
 import com.google.gson.annotations.SerializedName;
-
-import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ResponseGetAccountWalletInfo {
+public class ResponseOTPActiveAccount {
+
     @SerializedName("responseCode")
     private String mResponseCode;
     @SerializedName("responseData")
-    private AccountInfo mResponseData;
+    private ResponseData mResponseData;
     @SerializedName("responseMessage")
     private String mResponseMessage;
 
@@ -25,11 +23,11 @@ public class ResponseGetAccountWalletInfo {
         mResponseCode = responseCode;
     }
 
-    public AccountInfo getResponseData() {
+    public ResponseData getResponseData() {
         return mResponseData;
     }
 
-    public void setResponseData(AccountInfo responseData) {
+    public void setResponseData(ResponseData responseData) {
         mResponseData = responseData;
     }
 

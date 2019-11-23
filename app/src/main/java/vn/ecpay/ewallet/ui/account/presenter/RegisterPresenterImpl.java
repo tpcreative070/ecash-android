@@ -140,7 +140,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestRegister.setUsername(userName);
         requestRegister.setIdNumber(CMND);
         requestRegister.setPassword(CommonUtils.encryptPassword(pass));
-        requestRegister.setmNickname(userName);
+        requestRegister.setNickname(userName);
 
         EllipticCurve ec = EllipticCurve.getSecp256k1();
         ECPrivateKeyParameters ks = ec.generatePrivateKeyParameters();
@@ -177,13 +177,16 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         }
 
         requestRegister.setKeyPublicAlias(CommonUtils.getKeyAlias());
-        requestRegister.setmEcKeyPublicValue(publicKeyBase64);
+        requestRegister.setEcKeyPublicValue(publicKeyBase64);
         requestRegister.setPersonMobilePhone(phone);
 
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
         requestRegister.setTerminalId(IMEI);
         requestRegister.setTerminalInfo(CommonUtils.getModelName());
+        requestRegister.setAppName(Constant.app_name);
+        requestRegister.setFirebaseToken(ECashApplication.FBToken);
+
         requestRegister.setChannelSignature("");
 
         String alphabe = CommonUtils.getStringAlphabe(requestRegister);
@@ -210,7 +213,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         accountInfo.setPersonFirstName(requestRegister.getPersonFirstName());
                         accountInfo.setPersonMiddleName(requestRegister.getPersonMiddleName());
                         accountInfo.setPersonLastName(requestRegister.getPersonLastName());
-                        accountInfo.setEcKeyPublicValue(requestRegister.getmEcKeyPublicValue());
+                        accountInfo.setEcKeyPublicValue(requestRegister.getEcKeyPublicValue());
                         registerView.registerSuccess(accountInfo, privateKeyBase64, publicKeyBase64);
                     } else {
                         registerView.registerFail(response.body().getResponseMessage());
@@ -312,7 +315,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             registerView.activeAccountSuccess(accountInfo);
-                        } else if (response.body().getResponseCode().equals("3014")||
+                        } else if (response.body().getResponseCode().equals("3014") ||
                                 response.body().getResponseCode().equals("0998")) {
                             registerView.dismissLoading();
                             registerView.requestOtpErr(accountInfo, application.getString(R.string.err_otp_fail));
@@ -347,7 +350,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestLogin.setChannelCode(Constant.CHANNEL_CODE);
         requestLogin.setFunctionCode(Constant.FUNCTION_LOGIN);
         requestLogin.setUsername(accountInfo.getUsername());
-        requestLogin.setToken(CommonUtils.getToken());
+        requestLogin.setToken(CommonUtils.getToken(accountInfo));
 
         String alphabe = CommonUtils.getStringAlphabe(requestLogin);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogin));
@@ -442,9 +445,9 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestSyncContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestSyncContact.setListContacts(CommonUtils.getListPhoneNumber(context));
         requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
-        requestSyncContact.setSessionId(accountInfo.getSessionId());
         requestSyncContact.setUsername(accountInfo.getUsername());
         requestSyncContact.setWalletId(accountInfo.getWalletId());
+        requestSyncContact.setToken(CommonUtils.getToken(accountInfo));
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
         requestSyncContact.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -456,7 +459,6 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             registerView.onSyncContactSuccess();
                         } else {

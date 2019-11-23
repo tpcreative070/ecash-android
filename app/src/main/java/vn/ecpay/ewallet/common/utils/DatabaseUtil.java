@@ -239,7 +239,7 @@ public class DatabaseUtil {
 
     public static int getSizeNotification(Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        return WalletDatabase.getAllNotification().size();
+        return WalletDatabase.getAllNotificationUnRead().size();
     }
 
     public static void deleteNotification(Context context, Long id) {

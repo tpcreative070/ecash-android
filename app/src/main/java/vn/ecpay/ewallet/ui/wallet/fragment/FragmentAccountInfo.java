@@ -21,6 +21,7 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
@@ -30,10 +31,7 @@ import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.language.LanguageObject;
-import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
-import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
 public class FragmentAccountInfo extends ECashBaseFragment {
     @BindView(R.id.iv_account)

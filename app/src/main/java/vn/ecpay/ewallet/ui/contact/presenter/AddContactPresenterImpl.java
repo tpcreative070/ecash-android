@@ -89,9 +89,10 @@ public class AddContactPresenterImpl implements AddContactPresenter {
                 if (response.isSuccessful()) {
                     if (null != response.body()) {
                         if (null != response.body().getResponseCode()) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
                             if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                                 addContactView.onSearchByPhoneSuccess(response.body().getResponseData());
+                            } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                                application.checkSessionByErrorCode(response.body().getResponseCode());
                             } else {
                                 addContactView.getWalletFail(response.body().getResponseMessage());
                             }
@@ -142,9 +143,10 @@ public class AddContactPresenterImpl implements AddContactPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             addContactView.onSearchByWalletSuccess(response.body().getResponseData());
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             addContactView.getWalletFail(response.body().getResponseMessage());
                         }

@@ -34,6 +34,7 @@
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:textColor="@color/black"
+            android:layout_gravity="right"
             android:textSize="@dimen/text_normal"
             android:layout_height="wrap_content"/>
     </LinearLayout>

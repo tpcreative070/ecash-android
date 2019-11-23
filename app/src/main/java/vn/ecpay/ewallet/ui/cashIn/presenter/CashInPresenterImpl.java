@@ -102,18 +102,25 @@ public class CashInPresenterImpl implements CashInPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
-                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            if (response.body().getResponseData() != null) {
-                                CashInResponse responseData = response.body().getResponseData();
-                                cashInView.transferMoneySuccess(responseData);
-                            }
-                        } else if (response.body().getResponseCode().equals("4011")) {
-                            cashInView.dismissLoading();
-                            cashInView.showDialogError(application.getString(R.string.err_out_of_money_change));
-                        } else {
-                            cashInView.dismissLoading();
-                            cashInView.showDialogError(response.body().getResponseMessage());
+                        switch (response.body().getResponseCode()) {
+                            case Constant.CODE_SUCCESS:
+                                if (response.body().getResponseData() != null) {
+                                    CashInResponse responseData = response.body().getResponseData();
+                                    cashInView.transferMoneySuccess(responseData);
+                                }
+                                break;
+                            case "4011":
+                                cashInView.dismissLoading();
+                                cashInView.showDialogError(application.getString(R.string.err_out_of_money_change));
+                                break;
+                            case Constant.sesion_expid:
+                                cashInView.dismissLoading();
+                                application.checkSessionByErrorCode(response.body().getResponseCode());
+                                break;
+                            default:
+                                cashInView.dismissLoading();
+                                cashInView.showDialogError(response.body().getResponseMessage());
+                                break;
                         }
                     }
                 } else {
@@ -154,11 +161,16 @@ public class CashInPresenterImpl implements CashInPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (response.body().getResponseData().getListAcc().size() > 0) {
                                 ECashApplication.setListEDongInfo(response.body().getResponseData().getListAcc());
                             }
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            cashInView.dismissLoading();
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                        } else {
+                            cashInView.dismissLoading();
+                            cashInView.showDialogError(response.body().getResponseMessage());
                         }
                     }
                 }
@@ -166,6 +178,8 @@ public class CashInPresenterImpl implements CashInPresenter {
 
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
+                cashInView.dismissLoading();
+                cashInView.showDialogError(application.getString(R.string.err_upload));
             }
         });
     }

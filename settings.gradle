@@ -1,1 +1,1 @@
-include ':app', ':fragmentcommon'
+include ':app'

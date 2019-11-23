@@ -226,7 +226,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 break;
             case R.id.btn_cash_take:
                 if (totalMoneyChange == 0) {
-                    ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_transfer));
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_chose_money_transfer));
                     return;
                 }
                 DialogUtil.getInstance().showDialogChangeCash(false, getActivity(), accountInfo, getString(R.string.str_cash_take), new DialogUtil.OnResultChoseCash() {
@@ -263,31 +263,28 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private void validateData() {
         if (null == publicKeyOrganization) {
-            ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_get_public_key_organize));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_get_public_key_organize));
             return;
         }
         if (totalMoneyChange == 0) {
-            ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_transfer));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_chose_money_transfer));
             return;
         }
         if (totalMoneyTake == 0) {
-            ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money_take));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_chose_money_take));
             return;
         }
         if (totalMoneyChange != totalMoneyTake) {
-            ((CashChangeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_conflict_take_and_change));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_conflict_take_and_change));
             return;
         }
 
         DialogUtil.getInstance().showDialogConfirmChangeCash(totalChange500, totalChange200, totalChange100, totalChange50, totalChange20, totalChange10,
-                totalTake500, totalTake200, totalTake100, totalTake50, totalTake20, totalTake10, getActivity(), new DialogUtil.OnResult() {
-                    @Override
-                    public void OnListenerOk() {
-                        showLoading();
-                        getListCashSend();
-                        getListCashTake();
-                        getCashEncrypt(totalChange10, totalChange20, totalChange50, totalChange100, totalChange200, totalChange500, publicKeyOrganization);
-                    }
+                totalTake500, totalTake200, totalTake100, totalTake50, totalTake20, totalTake10, getActivity(), () -> {
+                    showLoading();
+                    getListCashSend();
+                    getListCashTake();
+                    getCashEncrypt(totalChange10, totalChange20, totalChange50, totalChange100, totalChange200, totalChange500, publicKeyOrganization);
                 });
     }
 

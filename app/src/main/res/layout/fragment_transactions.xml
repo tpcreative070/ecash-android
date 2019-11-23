@@ -63,6 +63,7 @@
         android:layout_below="@+id/view_search"
         android:background="@color/transparent_gray"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:id="@+id/layout_content_filter"
             android:padding="10dp"
@@ -182,22 +183,18 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="40dp"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:background="@drawable/bg_border_rectangle_blue"
+                    style="@style/btn_submit_full"
                     android:text="@string/str_apply"
-                    android:textColor="@android:color/white"
                     android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/btn_clear"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:background="@drawable/bg_border_rectangle_blue"
+                    style="@style/btn_submit_full"
                     android:text="@string/str_clear_filter"
-                    android:textColor="@android:color/white"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

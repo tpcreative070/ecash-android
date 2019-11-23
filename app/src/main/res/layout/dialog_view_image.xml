@@ -15,11 +15,9 @@
 
     <Button
         android:id="@+id/btn_close"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:background="@drawable/bg_border_rectangle_blue"
         android:text="@string/str_close"
-        android:textColor="@android:color/white"
+        android:textAllCaps="true"
+        style="@style/btn_submit_full"
         android:textStyle="bold" />
 </LinearLayout>

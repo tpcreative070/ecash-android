@@ -23,6 +23,7 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
@@ -37,7 +38,6 @@ import vn.ecpay.ewallet.ui.wallet.activity.ChangePassActivity;
 import vn.ecpay.ewallet.ui.wallet.module.MyWalletModule;
 import vn.ecpay.ewallet.ui.wallet.presenter.MyWalletPresenter;
 import vn.ecpay.ewallet.ui.wallet.view.MyWalletView;
-import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
 public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView {
     @BindView(R.id.iv_account)

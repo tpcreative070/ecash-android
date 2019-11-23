@@ -13,6 +13,8 @@ import vn.ecpay.ewallet.model.account.checkIDNumberAccount.RequestCheckIDNumberA
 import vn.ecpay.ewallet.model.account.checkIDNumberAccount.ResponseCheckIDNumberAccount;
 import vn.ecpay.ewallet.model.account.checkUserName.RequestCheckUserNameAccount;
 import vn.ecpay.ewallet.model.account.checkUserName.ResponseCheckUserNameAccount;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.RequestOTPActiveAccount;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseOTPActiveAccount;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.RequestGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.ResponseGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
@@ -110,6 +112,9 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0025")
     Call<ChangePassResponse> changePass(@Body ChangePassRequest body);
+
+    @POST("ecgateway/execute/GWEC0029")
+    Call<ResponseOTPActiveAccount> getOTPActivieAccount(@Body RequestOTPActiveAccount body);
 
     @POST("UpdateChannel")
     Call<ResponseUpdateChanel> updateChannel(@Body RequestUpdateChanel body);

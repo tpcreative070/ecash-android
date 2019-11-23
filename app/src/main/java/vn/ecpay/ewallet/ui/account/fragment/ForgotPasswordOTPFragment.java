@@ -25,6 +25,7 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.forgotPassword.getOTP.request.ForgotPassOTPRequest;
 import vn.ecpay.ewallet.model.forgotPassword.getOTP.response.ForgotPassOTPResponse;
@@ -86,12 +87,12 @@ public class ForgotPasswordOTPFragment extends ECashBaseFragment {
     public void onViewClicked() {
         userName = edtUserName.getText().toString();
         if (userName.isEmpty()) {
-            ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_user_name_null));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_user_name_null));
             return;
         }
 
         if (!CommonUtils.isValidateUserName(userName)) {
-            ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_validate_user_name_fail));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_validate_user_name_fail));
             return;
         }
         showProgress();
@@ -146,6 +147,6 @@ public class ForgotPasswordOTPFragment extends ECashBaseFragment {
     }
 
     private void showDialogError(String err) {
-        ((ForgotPasswordActivity) getActivity()).showDialogError(err);
+        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 }

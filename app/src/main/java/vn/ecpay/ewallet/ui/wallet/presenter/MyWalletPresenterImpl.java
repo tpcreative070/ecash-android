@@ -1,8 +1,6 @@
 package vn.ecpay.ewallet.ui.wallet.presenter;
 
-import android.util.Log;
-
-import org.jetbrains.annotations.NotNull;
+import com.google.firebase.database.annotations.NotNull;
 
 import javax.inject.Inject;
 
@@ -137,7 +135,6 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
         requestCancelAccount.setTerminalId(accountInfo.getTerminalId());
         requestCancelAccount.setTerminalInfo(accountInfo.getTerminalInfo());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestCancelAccount);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestCancelAccount));
         requestCancelAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
         Call<ResponseCancelAccount> call = apiService.cancelAccount(requestCancelAccount);
@@ -147,18 +144,15 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
                 myWalletView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    application.checkSessionByErrorCode(response.body().getResponseCode());
-                    if (response.body() != null) {
-                        if (response.body().getResponseCode() != null) {
-                            String code = response.body().getResponseCode();
-                            if (code.equals(Constant.CODE_SUCCESS)) {
-                                myWalletView.onCancelAccountSuccess();
-                            } else {
-                                myWalletView.showDialogError(response.body().getResponseMessage());
-                            }
+                    if (response.body().getResponseCode() != null) {
+                        String code = response.body().getResponseCode();
+                        if (code.equals(Constant.CODE_SUCCESS)) {
+                            myWalletView.onCancelAccountSuccess();
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                        } else {
+                            myWalletView.showDialogError(response.body().getResponseMessage());
                         }
-                    } else {
-                        myWalletView.showDialogError(application.getString(R.string.err_upload));
                     }
                 }
             }

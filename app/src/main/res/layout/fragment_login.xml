@@ -28,13 +28,11 @@
 
             <Button
                 android:id="@+id/btn_login"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ed_password"
                 android:layout_marginTop="50dp"
-                android:background="@drawable/bg_border_rectangle_blue"
+                style="@style/btn_submit_full"
                 android:text="@string/txt_sign_in"
-                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
             <EditText
@@ -106,7 +104,7 @@
                     android:visibility="gone"
                     android:orientation="vertical">
 
-                    <vn.ecpay.fragmentcommon.ui.widget.CircleImageView
+                    <vn.ecpay.ewallet.common.base.CircleImageView
                         android:id="@+id/iv_account"
                         android:layout_width="80dp"
                         android:layout_height="80dp"

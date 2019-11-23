@@ -431,11 +431,11 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
     private void validateData() {
         if (totalMoney == 0) {
-            ((CashOutActivity) getActivity()).showDialogError(getResources().getString(R.string.err_chose_money));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_chose_money));
             return;
         }
         if (publicKeyOrganization.isEmpty()) {
-            ((CashOutActivity) getActivity()).showDialogError(getResources().getString(R.string.err_get_public_key_organize));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_get_public_key_organize));
             return;
         }
         showProgress();
@@ -507,7 +507,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             responseMess.setRefId(refId);
             if (refId.isEmpty() || encData.isEmpty()) {
                 dismissProgress();
-                ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
+                DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_upload));
                 return;
             }
             cashOutPresenter.sendECashToEDong(encData, refId, totalMoney, edongInfo, accountInfo);
@@ -561,7 +561,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
     @Override
     public void showDialogError(String err) {
-        ((CashOutActivity) getActivity()).showDialogError(err);
+        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 
     @Override

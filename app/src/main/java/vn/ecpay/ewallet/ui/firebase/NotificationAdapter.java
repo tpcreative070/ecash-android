@@ -10,10 +10,13 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
@@ -66,6 +69,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         itemViewHolder.layoutContent.setOnClickListener(v -> {
             if (notification.getRead().equals(Constant.ON)) {
                 DatabaseUtil.updateNotificationRead(context, Constant.OFF, notification.getId());
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_NOTIFICATION));
                 notificationObjList.get(position).setRead(Constant.OFF);
                 notifyItemChanged(position);
             }

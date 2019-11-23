@@ -96,14 +96,18 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             cashOutView.loadPublicKeyOrganizeSuccess(response.body().getResponseData().getIssuerKpValue());
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            cashOutView.dismissLoading();
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
+                            cashOutView.dismissLoading();
                             cashOutView.showDialogError(response.body().getResponseMessage());
                         }
                     }
                 } else {
+                    cashOutView.dismissLoading();
                     cashOutView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
@@ -151,9 +155,11 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             cashOutView.sendECashToEDongSuccess();
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            cashOutView.dismissLoading();
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             cashOutView.dismissLoading();
                             cashOutView.showDialogError(response.body().getResponseMessage());
@@ -197,11 +203,16 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (response.body().getResponseData().getListAcc().size() > 0) {
                                 ECashApplication.setListEDongInfo(response.body().getResponseData().getListAcc());
                             }
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            cashOutView.dismissLoading();
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                        } else {
+                            cashOutView.dismissLoading();
+                            cashOutView.showDialogError(response.body().getResponseMessage());
                         }
                     }
                 }

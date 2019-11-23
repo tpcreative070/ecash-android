@@ -2,8 +2,6 @@ package vn.ecpay.ewallet.ui.home.presenter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 
@@ -11,9 +9,6 @@ import com.google.gson.Gson;
 
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -31,6 +26,9 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.RequestOTPActiveAccount;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseData;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseOTPActiveAccount;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.RequestGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.ResponseGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -82,38 +80,93 @@ public class HomePresenterImpl implements HomePresenter {
 
     }
 
+    private String privateKeyBase64;
+
     @Override
-    public void activeAccWalletInfo(AccountInfo accountInfo, Context context) {
+    public void getOTPActiveAccount(AccountInfo accountInfo, Context context) {
         homeView.showLoading();
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
+        APIService apiService = retrofit.create(APIService.class);
+
         EllipticCurve ec = EllipticCurve.getSecp256k1();
+
         ECPrivateKeyParameters ks = ec.generatePrivateKeyParameters();
         ECPublicKeyParameters kp = ec.getPublicKeyParameters(ks);
 
         byte[] mPriKey = ks.getD().toByteArray();
         byte[] mPubKey = kp.getQ().getEncoded(false);
-        String privateKeyBase64 = Base64.encodeToString(mPriKey, Base64.DEFAULT).replaceAll("\n", "");
+        privateKeyBase64 = Base64.encodeToString(mPriKey, Base64.DEFAULT).replaceAll("\n", "");
         String publicKeyBase64 = Base64.encodeToString(mPubKey, Base64.DEFAULT).replaceAll("\n", "");
+        SharedPreferences prefs = application.getSharedPreferences(application.getPackageName(), Context.MODE_PRIVATE);
+        String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
+
+        RequestOTPActiveAccount requestOTPActiveAccount = new RequestOTPActiveAccount();
+        requestOTPActiveAccount.setChannelCode(Constant.CHANNEL_CODE);
+        requestOTPActiveAccount.setFunctionCode(Constant.FUNCTION_GET_OTP_ACTIVE_ACCOUNT);
+        requestOTPActiveAccount.setChannelId(String.valueOf(accountInfo.getChannelId()));
+        requestOTPActiveAccount.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestOTPActiveAccount.setEcKeyPublicValue(publicKeyBase64);
+        requestOTPActiveAccount.setKeyPublicAlias(CommonUtils.getKeyAlias());
+        requestOTPActiveAccount.setTerminalId(IMEI);
+        requestOTPActiveAccount.setTerminalInfo(CommonUtils.getModelName());
+        requestOTPActiveAccount.setUsername(accountInfo.getUsername());
+        requestOTPActiveAccount.setToken(CommonUtils.getToken(accountInfo));
+
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestOTPActiveAccount));
+        requestOTPActiveAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Call<ResponseOTPActiveAccount> call = apiService.getOTPActivieAccount(requestOTPActiveAccount);
+        call.enqueue(new Callback<ResponseOTPActiveAccount>() {
+            @Override
+            public void onResponse(Call<ResponseOTPActiveAccount> call, Response<ResponseOTPActiveAccount> response) {
+                homeView.dismissLoading();
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    if (response.body().getResponseCode() != null) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            homeView.onGetOTPActiveAccountSuccess(response.body().getResponseData());
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                        } else {
+                            homeView.showDialogError(response.body().getResponseMessage());
+                        }
+                    }
+                } else {
+                    homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseOTPActiveAccount> call, Throwable t) {
+                homeView.dismissLoading();
+                homeView.onSyncContactFail(application.getString(R.string.err_upload));
+            }
+        });
+    }
+
+    @Override
+    public void activeAccWalletInfo(AccountInfo accountInfo, ResponseData responseData, String otp, Context context) {
+        homeView.showLoading();
 
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
-
-        RequestGetAccountWalletInfo requestGetAccountWalletInfo = new RequestGetAccountWalletInfo();
-        requestGetAccountWalletInfo.setChannelCode(Constant.CHANNEL_CODE);
-        requestGetAccountWalletInfo.setChannelId(String.valueOf(accountInfo.getChannelId()));
-        requestGetAccountWalletInfo.setCustomerId(accountInfo.getCustomerId());
-        requestGetAccountWalletInfo.setEcKeyPublicValue(publicKeyBase64);
-        requestGetAccountWalletInfo.setFunctionCode(Constant.FUNCTION_GET_WALLET_INFO);
-        requestGetAccountWalletInfo.setKeyPublicAlias(CommonUtils.getKeyAlias());
-        requestGetAccountWalletInfo.setSessionId(accountInfo.getSessionId());
         SharedPreferences prefs = application.getSharedPreferences(application.getPackageName(), Context.MODE_PRIVATE);
         String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
-        requestGetAccountWalletInfo.setTerminalId(IMEI);
-        requestGetAccountWalletInfo.setTerminalInfo(CommonUtils.getModelName());
-        requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
-        requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());
-        requestGetAccountWalletInfo.setChannelSignature(Constant.STR_EMPTY);
 
-        String alphabe = CommonUtils.getStringAlphabe(requestGetAccountWalletInfo);
+        RequestGetAccountWalletInfo requestGetAccountWalletInfo = new RequestGetAccountWalletInfo();
+        requestGetAccountWalletInfo.setAppName(Constant.app_name);
+        requestGetAccountWalletInfo.setFirebaseToken(ECashApplication.FBToken);
+        requestGetAccountWalletInfo.setChannelCode(Constant.CHANNEL_CODE);
+        requestGetAccountWalletInfo.setFunctionCode(Constant.FUNCTION_GET_WALLET_INFO);
+        requestGetAccountWalletInfo.setOtpvalue(otp);
+        requestGetAccountWalletInfo.setSessionId(accountInfo.getSessionId());
+        requestGetAccountWalletInfo.setTerminalId(IMEI);
+        requestGetAccountWalletInfo.setTerminalInfor(CommonUtils.getModelName());
+        requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
+        requestGetAccountWalletInfo.setTransactionCode(responseData.getTransactionCode());
+        requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());
+        requestGetAccountWalletInfo.setWalletId(responseData.getWalletId());
+
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetAccountWalletInfo));
         requestGetAccountWalletInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
         Gson gson = new Gson();
@@ -126,10 +179,10 @@ public class HomePresenterImpl implements HomePresenter {
             public void onResponse(Call<ResponseGetAccountWalletInfo> call, Response<ResponseGetAccountWalletInfo> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    application.checkSessionByErrorCode(response.body().getResponseCode());
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            AccountInfo mAccountInfo = response.body().getAccountInfo();
+                            AccountInfo mAccountInfo = response.body().getResponseData();
+                            mAccountInfo.setMasterKey(responseData.getMasterKey());
                             ECashApplication.privateKey = privateKeyBase64;
                             ECashApplication.masterKey = mAccountInfo.getMasterKey();
 
@@ -138,6 +191,13 @@ public class HomePresenterImpl implements HomePresenter {
                             KeyStoreUtils.saveKeyPrivateWallet(privateKeyBase64, context);
                             KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), context);
                             homeView.onActiveAccountSuccess(mAccountInfo);
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            homeView.dismissLoading();
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                        } else if (response.body().getResponseCode().equals("3014") ||
+                                response.body().getResponseCode().equals("0998")) {
+                            homeView.dismissLoading();
+                            homeView.requestOTPFail(context.getResources().getString(R.string.err_otp_fail), responseData);
                         } else {
                             homeView.dismissLoading();
                             homeView.showDialogError(response.body().getResponseMessage());
@@ -173,6 +233,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
         requestSyncContact.setUsername(accountInfo.getUsername());
         requestSyncContact.setWalletId(accountInfo.getWalletId());
+        requestSyncContact.setToken(CommonUtils.getToken(accountInfo));
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
         requestSyncContact.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -184,11 +245,12 @@ public class HomePresenterImpl implements HomePresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             homeView.onSyncContactSuccess();
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            homeView.onSyncContactFail(response.body().getResponseMessage());
+                            homeView.showDialogError(response.body().getResponseMessage());
                         }
                     }
                 } else {

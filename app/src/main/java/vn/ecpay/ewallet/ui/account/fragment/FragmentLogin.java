@@ -32,14 +32,15 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
@@ -48,7 +49,6 @@ import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.presenter.LoginPresenter;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
-import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
 public class FragmentLogin extends ECashBaseFragment implements LoginView {
     @BindView(R.id.btn_login)
@@ -95,7 +95,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                     List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
                     if (null != listAccount) {
                         if (listAccount.size() > 0) {
-                            ((AccountActivity) getActivity()).showDialogError(getString(R.string.err_wallet_is_exit));
+                            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_wallet_is_exit));
                         } else {
                             ((AccountActivity) getActivity()).addFragment(new FragmentRegister(), true);
                         }
@@ -323,7 +323,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void showDialogError(String responseMessage) {
-        ((AccountActivity) getActivity()).showDialogError(responseMessage);
+        DialogUtil.getInstance().showDialogWarning(getActivity(), responseMessage);
     }
 
     @Override

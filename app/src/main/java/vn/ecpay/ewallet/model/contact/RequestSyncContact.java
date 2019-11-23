@@ -10,7 +10,6 @@ import vn.ecpay.ewallet.model.BaseObject;
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class RequestSyncContact extends BaseObject {
-
     @SerializedName("channelCode")
     private String mChannelCode;
     @SerializedName("channelSignature")
@@ -23,6 +22,8 @@ public class RequestSyncContact extends BaseObject {
     private String mPhoneNumber;
     @SerializedName("sessionId")
     private String mSessionId;
+    @SerializedName("token")
+    private String mToken;
     @SerializedName("username")
     private String mUsername;
     @SerializedName("walletId")
@@ -74,6 +75,14 @@ public class RequestSyncContact extends BaseObject {
 
     public void setSessionId(String sessionId) {
         mSessionId = sessionId;
+    }
+
+    public String getToken() {
+        return mToken;
+    }
+
+    public void setToken(String token) {
+        mToken = token;
     }
 
     public String getUsername() {

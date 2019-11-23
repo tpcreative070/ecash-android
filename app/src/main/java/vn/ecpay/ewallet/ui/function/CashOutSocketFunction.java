@@ -3,10 +3,10 @@ package vn.ecpay.ewallet.ui.function;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.annotations.NotNull;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class CashOutSocketFunction {
             }
 
             @Override
-            public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @org.jetbrains.annotations.Nullable Response response) {
+            public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @NotNull Response response) {
                 super.onFailure(webSocket, t, response);
                 Log.e("connect_socket", "connect socket fail");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CONNECT_SOCKET_FAIL));

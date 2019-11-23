@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.home.view;
 
 import vn.ecpay.ewallet.common.base.BaseView;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 
 public interface HomeView extends BaseView {
@@ -11,4 +12,8 @@ public interface HomeView extends BaseView {
     void onSyncContactSuccess();
 
     void onSyncContactFail(String responseMessage);
+
+    void onGetOTPActiveAccountSuccess(ResponseData transactionCode);
+
+    void requestOTPFail(String code, ResponseData responseCode);
 }

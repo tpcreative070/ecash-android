@@ -18,7 +18,7 @@
             android:layout_height="130dp"
             android:layout_gravity="center">
 
-            <vn.ecpay.fragmentcommon.ui.widget.CircleImageView
+            <vn.ecpay.ewallet.common.base.CircleImageView
                 android:id="@+id/iv_account"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -39,6 +39,7 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:background="@drawable/item_selector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -71,6 +72,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:background="@drawable/item_selector"
                 android:id="@+id/layout_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -143,6 +145,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:background="@drawable/item_selector"
                 android:id="@+id/layout_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -183,6 +186,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:background="@drawable/item_selector"
                 android:id="@+id/layout_cmnd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -223,6 +227,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:background="@drawable/item_selector"
                 android:id="@+id/layout_qr_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -263,6 +268,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:background="@drawable/item_selector"
                 android:id="@+id/layout_change_language"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -282,7 +288,6 @@
                     android:layout_toStartOf="@+id/iv_language_detail"
                     android:layout_centerVertical="true"
                     android:paddingEnd="10dp"
-                    android:text="Việt Nam"
                     android:textColor="@color/black"
                     tools:ignore="RtlSymmetry" />
 
@@ -305,13 +310,9 @@
 
             <Button
                 android:id="@+id/btn_login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/ed_password"
                 android:layout_marginTop="30dp"
-                android:background="@drawable/bg_border_rectangle_blue"
+                style="@style/btn_submit_full"
                 android:text="@string/str_edit_info"
-                android:textColor="@android:color/white"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

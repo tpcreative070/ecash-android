@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationModule;
@@ -33,6 +34,7 @@ public class ECashApplication extends Application {
     public static ArrayList<EdongInfo> listEDongInfo;
     public static String privateKey;
     public static String masterKey;
+    public static String FBToken;
     private static ECashApplication sInstance;
     private Gson mGSon;
 
@@ -120,13 +122,13 @@ public class ECashApplication extends Application {
                     if (!task.isSuccessful()) {
                         return;
                     }
+                    FBToken = Objects.requireNonNull(task.getResult()).getToken();
+                    if (FBToken.isEmpty()) return;
                     if (!SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class).isEmpty() &&
                             !SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class).isEmpty() &&
                             !SharedPrefs.getInstance().get(SharedPrefs.clientKp, String.class).isEmpty()) {
                         return;
                     }
-                    String token = task.getResult().getToken();
-                    if (token.isEmpty()) return;
 
                     SharedPreferences prefs = this.getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE);
                     Calendar c = Calendar.getInstance();
@@ -134,12 +136,12 @@ public class ECashApplication extends Application {
                     String strDate = sdf.format(c.getTime());
 
                     TokenFCMObj myToken = new TokenFCMObj();
-                    myToken.setApp_name("eCash App");
+                    myToken.setApp_name(Constant.app_name);
                     myToken.setCreated_date(strDate);
                     myToken.setStatus("0");
                     myToken.setTerminal_id(prefs.getString(Constant.DEVICE_IMEI, null));
                     myToken.setTerminal_info(CommonUtils.getModelName());
-                    myToken.setToken(token);
+                    myToken.setToken(FBToken);
                     myToken.setChannel_code("MB001");
 
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("firebase_token");

@@ -1,5 +1,5 @@
 
-package vn.ecpay.ewallet.model.account.getAccountWalletInfo;
+package vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
@@ -8,41 +8,30 @@ import vn.ecpay.ewallet.model.BaseObject;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class RequestGetAccountWalletInfo extends BaseObject {
-    @SerializedName("appName")
-    private String mAppName;
+public class RequestOTPActiveAccount extends BaseObject {
+
     @SerializedName("channelCode")
     private String mChannelCode;
+    @SerializedName("channelId")
+    private String mChannelId;
     @SerializedName("channelSignature")
     private String mChannelSignature;
-    @SerializedName("firebaseToken")
-    private String mFirebaseToken;
+    @SerializedName("ecKeyPublicValue")
+    private String mEcKeyPublicValue;
     @SerializedName("functionCode")
     private String mFunctionCode;
-    @SerializedName("otpvalue")
-    private String mOtpvalue;
+    @SerializedName("keyPublicAlias")
+    private String mKeyPublicAlias;
     @SerializedName("sessionId")
     private String mSessionId;
     @SerializedName("terminalId")
     private String mTerminalId;
-    @SerializedName("terminalInfor")
-    private String mTerminalInfor;
+    @SerializedName("terminalInfo")
+    private String mTerminalInfo;
     @SerializedName("token")
     private String mToken;
-    @SerializedName("transactionCode")
-    private String mTransactionCode;
     @SerializedName("username")
     private String mUsername;
-    @SerializedName("walletId")
-    private Long mWalletId;
-
-    public String getAppName() {
-        return mAppName;
-    }
-
-    public void setAppName(String appName) {
-        mAppName = appName;
-    }
 
     public String getChannelCode() {
         return mChannelCode;
@@ -50,6 +39,14 @@ public class RequestGetAccountWalletInfo extends BaseObject {
 
     public void setChannelCode(String channelCode) {
         mChannelCode = channelCode;
+    }
+
+    public String getChannelId() {
+        return mChannelId;
+    }
+
+    public void setChannelId(String channelId) {
+        mChannelId = channelId;
     }
 
     public String getChannelSignature() {
@@ -60,12 +57,12 @@ public class RequestGetAccountWalletInfo extends BaseObject {
         mChannelSignature = channelSignature;
     }
 
-    public String getFirebaseToken() {
-        return mFirebaseToken;
+    public String getEcKeyPublicValue() {
+        return mEcKeyPublicValue;
     }
 
-    public void setFirebaseToken(String firebaseToken) {
-        mFirebaseToken = firebaseToken;
+    public void setEcKeyPublicValue(String ecKeyPublicValue) {
+        mEcKeyPublicValue = ecKeyPublicValue;
     }
 
     public String getFunctionCode() {
@@ -76,12 +73,12 @@ public class RequestGetAccountWalletInfo extends BaseObject {
         mFunctionCode = functionCode;
     }
 
-    public String getOtpvalue() {
-        return mOtpvalue;
+    public String getKeyPublicAlias() {
+        return mKeyPublicAlias;
     }
 
-    public void setOtpvalue(String otpvalue) {
-        mOtpvalue = otpvalue;
+    public void setKeyPublicAlias(String keyPublicAlias) {
+        mKeyPublicAlias = keyPublicAlias;
     }
 
     public String getSessionId() {
@@ -100,12 +97,12 @@ public class RequestGetAccountWalletInfo extends BaseObject {
         mTerminalId = terminalId;
     }
 
-    public String getTerminalInfor() {
-        return mTerminalInfor;
+    public String getTerminalInfo() {
+        return mTerminalInfo;
     }
 
-    public void setTerminalInfor(String terminalInfor) {
-        mTerminalInfor = terminalInfor;
+    public void setTerminalInfo(String terminalInfo) {
+        mTerminalInfo = terminalInfo;
     }
 
     public String getToken() {
@@ -116,14 +113,6 @@ public class RequestGetAccountWalletInfo extends BaseObject {
         mToken = token;
     }
 
-    public String getTransactionCode() {
-        return mTransactionCode;
-    }
-
-    public void setTransactionCode(String transactionCode) {
-        mTransactionCode = transactionCode;
-    }
-
     public String getUsername() {
         return mUsername;
     }
@@ -132,11 +121,4 @@ public class RequestGetAccountWalletInfo extends BaseObject {
         mUsername = username;
     }
 
-    public Long getWalletId() {
-        return mWalletId;
-    }
-
-    public void setWalletId(Long walletId) {
-        mWalletId = walletId;
-    }
 }

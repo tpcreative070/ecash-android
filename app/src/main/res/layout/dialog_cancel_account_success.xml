@@ -27,11 +27,8 @@
 
     <Button
         android:id="@+id/btn_go_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_border_rectangle_blue"
+        style="@style/btn_submit_full"
         android:text="@string/str_main_screen"
-        android:textColor="@android:color/white"
         android:textStyle="bold" />
 
 </LinearLayout>

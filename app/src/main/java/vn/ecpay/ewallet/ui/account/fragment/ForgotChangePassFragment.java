@@ -18,6 +18,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.forgotPassword.getOTP.response.ForgotPassResponseData;
 import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.ForgotPassModule;
@@ -88,45 +89,45 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
         newPass = edtNewPass.getText().toString();
         reNewPass = edtReNewPass.getText().toString();
         if (userName.isEmpty()) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_user_name_null));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_user_name_null));
             return;
         }
         if (otp.isEmpty()) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_input_otp_null));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_input_otp_null));
             return;
         }
         if (newPass.isEmpty()) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_pass_null));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_pass_null));
             return;
         }
         if (reNewPass.isEmpty()) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_repass_null));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_repass_null));
             return;
         }
 
         if (!CommonUtils.isValidatePass(newPass)) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_pass_bigger_six_char));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_pass_bigger_six_char));
             return;
         }
 
         if (!newPass.equals(reNewPass)) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_pass_duplicate_fail));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_pass_duplicate_fail));
             return;
         }
 
         if (!CommonUtils.isValidateUserName(userName)) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_validate_user_name_fail));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_validate_user_name_fail));
             return;
         }
         if (null == forgotPassResponseData) {
-            ((ForgotPasswordActivity) getActivity()).showDialogError(getString(R.string.err_upload));
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_upload));
         }
         forgotPassPresenter.requestChangePass(forgotPassResponseData, otp, newPass);
     }
 
     @Override
     public void showDialogError(String err) {
-        ((ForgotPasswordActivity) getActivity()).showDialogError(err);
+        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 
     @Override

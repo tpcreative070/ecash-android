@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <vn.ecpay.fragmentcommon.ui.widget.CircleImageView
+        <vn.ecpay.ewallet.common.base.CircleImageView
             android:id="@+id/iv_account"
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -85,6 +85,7 @@
 
         <RelativeLayout
             android:id="@+id/layout_change_pass"
+            android:background="@drawable/item_selector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -124,6 +125,7 @@
 
         <RelativeLayout
             android:id="@+id/layout_help"
+            android:background="@drawable/item_selector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -161,6 +163,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:background="@drawable/item_selector"
             android:id="@+id/layout_cancel_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -200,6 +203,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:background="@drawable/item_selector"
             android:id="@+id/layout_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

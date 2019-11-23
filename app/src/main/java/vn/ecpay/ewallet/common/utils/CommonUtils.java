@@ -155,6 +155,9 @@ public class CommonUtils {
 
     public static String encryptPassword(String pass) {
         EllipticCurve ec = EllipticCurve.getSecp256k1();
+        if(CommonUtils.getPublicServerKey().isEmpty()){
+            return Constant.STR_EMPTY;
+        }
         ECPublicKeyParameters kp = EllipticCurve.getSecp256k1().getPublicKeyParameters(Base64.decode(CommonUtils.getPublicServerKey(), Base64.DEFAULT));
         byte[][] blockEncrypted = ECElGamal.encrypt(ec, kp, pass.getBytes());
         String passEncode = Base64.encodeToString(blockEncrypted[0], Base64.DEFAULT) + "$"
@@ -484,12 +487,10 @@ public class CommonUtils {
     }
 
     public static String getPublicServerKey() {
-        return "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
-//        return SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class);
+        return SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class);
     }
 
     public static String getPrivateChannelKey() {
-        return "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
-//        return SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class);
+        return SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class);
     }
 }

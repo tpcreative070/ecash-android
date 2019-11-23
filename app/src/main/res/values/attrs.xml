@@ -36,4 +36,22 @@
         <attr name="pstsTextSelectedAlpha" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="HiveProgressView">
+        <attr name="hive_animDuration" format="integer" />
+        <attr name="hive_maxAlpha" format="integer" />
+        <attr name="hive_color" format="color" />
+        <attr name="hive_rainbow" format="boolean" />
+        <attr name="hive_cornerRadius" format="integer" />
+        <attr name="hive_shrink" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension"/>
+        <attr name="civ_border_color" format="color"/>
+        <attr name="civ_border_overlay" format="boolean"/>
+        <!-- {@deprecated Use civ_circlebackground_color instead.} -->
+        <attr name="civ_fill_color" format="color"/>
+        <attr name="civ_circle_background_color" format="color"/>
+    </declare-styleable>
+
 </resources>

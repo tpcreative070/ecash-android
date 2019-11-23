@@ -29,6 +29,7 @@ public class SocketUtil {
                 .appendQueryParameter("auditNumber", CommonUtils.getAuditNumber())
                 .appendQueryParameter("sessionId", ECashApplication.getAccountInfo().getSessionId())
                 .appendQueryParameter("channelSignature", getChannelSignature(accountInfo))
+                .appendQueryParameter("token", CommonUtils.getToken(accountInfo))
                 .appendQueryParameter("walletSignature", getWalletSignature(accountInfo, context));
         return builder.build().toString();
     }
@@ -44,6 +45,7 @@ public class SocketUtil {
         changeSignature.setTerminalInfo(accountInfo.getTerminalInfo());
         changeSignature.setUsername(accountInfo.getUsername());
         changeSignature.setmWalletId(String.valueOf(accountInfo.getWalletId()));
+        changeSignature.setToken(CommonUtils.getToken(accountInfo));
 
         String data = CommonUtils.getStringAlphabe(changeSignature);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(changeSignature));

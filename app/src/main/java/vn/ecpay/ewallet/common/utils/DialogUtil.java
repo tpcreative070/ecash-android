@@ -206,31 +206,6 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogFail(Context pContext, String title, String todo, String money,
-                               String stk, final OnResult onResult) {
-        if (!isShowing() && pContext != null) {
-            initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_result);
-            Button btnComeHome;
-            TextView tvTitle, tvDo, tvMoney, tvSTK;
-            btnComeHome = mDialog.findViewById(R.id.btn_come_home);
-            tvTitle = mDialog.findViewById(R.id.tv_title);
-            tvDo = mDialog.findViewById(R.id.tv_do);
-            tvMoney = mDialog.findViewById(R.id.tv_money);
-            tvSTK = mDialog.findViewById(R.id.tv_stk);
-
-            tvTitle.setText(title);
-            tvDo.setText(todo);
-            tvMoney.setText(money);
-            tvSTK.setText(stk);
-
-            mDialog.setCanceledOnTouchOutside(true);
-            mDialog.setCancelable(true);
-            mDialog.show();
-            btnComeHome.setOnClickListener(v -> dismissDialog());
-        }
-    }
-
     public void showDialogLogout(Context pContext, final OnResult onResult) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
@@ -323,7 +298,11 @@ public class DialogUtil {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     InputMethodManager imm = (InputMethodManager) pContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mDialog.getWindow().getCurrentFocus().getWindowToken(), 0);
+                    try {
+                        imm.hideSoftInputFromWindow(mDialog.getWindow().getCurrentFocus().getWindowToken(), 0);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                     return false;
                 }
             });
@@ -1045,6 +1024,22 @@ public class DialogUtil {
                     onChangeLanguage.OnListenerVn();
                 }
             });
+        }
+    }
+
+    public void showDialogWarning(Context pContext, String mess) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_warning);
+            Button btnClose;
+            TextView tv_mess;
+            btnClose = mDialog.findViewById(R.id.btn_close);
+            tv_mess = mDialog.findViewById(R.id.tv_mess);
+            tv_mess.setText(mess);
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
+            mDialog.show();
+            btnClose.setOnClickListener(v -> dismissDialog());
         }
     }
 

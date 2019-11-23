@@ -1,15 +1,13 @@
 
 package vn.ecpay.ewallet.model.account.register;
 
-import com.google.gson.annotations.SerializedName;
-
 import javax.annotation.Generated;
-
-import vn.ecpay.ewallet.model.BaseObject;
+import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class RequestRegister extends BaseObject {
+public class RequestRegisterT {
+
     @SerializedName("appName")
     private String mAppName;
     @SerializedName("channelCode")
@@ -180,4 +178,5 @@ public class RequestRegister extends BaseObject {
     public void setUsername(String username) {
         mUsername = username;
     }
+
 }

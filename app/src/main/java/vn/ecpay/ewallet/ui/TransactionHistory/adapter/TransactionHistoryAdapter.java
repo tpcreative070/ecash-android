@@ -14,18 +14,17 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import vn.ecpay.ewallet.R;
-
+import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
-import vn.ecpay.fragmentcommon.ui.widget.CircleImageView;
 
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_FAIL;
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_TO_ECASH;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_ECASH_TO_EDONG;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_TO_ECASH;
 
 
 public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

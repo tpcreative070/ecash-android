@@ -10,28 +10,27 @@
 
 
     <!-- Base application theme. -->
-    <style name="AppTheme.Start" parent="@style/Theme.Start">
-        <item name="android:windowBackground">@drawable/splash_background</item>
-    </style>
-
-    <style name="AppTheme" parent="@style/Theme">
-        <!--  <item name="popupStyle">@style/PopupLayout.DriverPopup</item>-->
-    </style>
-
     <style name="DialogTransparent" parent="Theme.AppCompat.Light.Dialog">
         <item name="windowNoTitle">true</item>
     </style>
 
-
-    <style name="NegativeButtonStyle" parent="PopUpButton">
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:background">@drawable/bg_white_corners_borders_selector</item>
+    <!-- Base application theme. -->
+    <style name="AppTheme.Start" parent="@style/Theme.Start">
+        <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
-    <style name="PositiveButtonStyle" parent="PopUpButton">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@drawable/bg_green_border_selector</item>
+    <style name="Theme.Start" parent="Theme.AppCompat.Light">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:colorBackground">@android:color/white</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
+
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light"/>
 
     <style name="MySwitch" parent="@style/Widget.AppCompat.CompoundButton.Switch">
         <item name="android:textColorPrimaryDisableOnly">#b71c1c</item>
@@ -102,6 +101,18 @@
     <style name="btn_submit">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">40dp</item>
+        <item name="android:background">@drawable/selector_button_blue_white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@drawable/selector_text_white_to_blue</item>
+        <item name="android:textSize">@dimen/text_normal</item>
+    </style>
+
+    <style name="btn_submit_full">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/selector_button_blue_white</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingLeft">10dp</item>

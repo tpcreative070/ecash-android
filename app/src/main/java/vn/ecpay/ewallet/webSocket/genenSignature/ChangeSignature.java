@@ -26,6 +26,8 @@ public class ChangeSignature extends BaseObject {
     private String mUsername;
     @SerializedName("walletId")
     private String mWalletId;
+    @SerializedName("token")
+    private String mToken;
 
     public String getAuditNumber() {
         return mAuditNumber;
@@ -89,5 +91,13 @@ public class ChangeSignature extends BaseObject {
 
     public void setmWalletId(String mWalletId) {
         this.mWalletId = mWalletId;
+    }
+
+    public String getToken() {
+        return mToken;
+    }
+
+    public void setToken(String mToken) {
+        this.mToken = mToken;
     }
 }

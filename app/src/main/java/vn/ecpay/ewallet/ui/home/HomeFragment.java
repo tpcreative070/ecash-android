@@ -8,12 +8,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,11 +43,14 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseData;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
@@ -159,13 +164,16 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
     }
 
-    private void updateNotification(){
-        if (DatabaseUtil.getSizeNotification(getActivity()) > 0) {
-            tvNotificationCount.setVisibility(View.VISIBLE);
-            tvNotificationCount.setText(String.valueOf(DatabaseUtil.getSizeNotification(getActivity())));
-        } else {
-            tvNotificationCount.setVisibility(View.GONE);
-        }
+    private void updateNotification() {
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            if (DatabaseUtil.getSizeNotification(getActivity()) > 0) {
+                tvNotificationCount.setVisibility(View.VISIBLE);
+                tvNotificationCount.setText(String.valueOf(DatabaseUtil.getSizeNotification(getActivity())));
+            } else {
+                tvNotificationCount.setVisibility(View.GONE);
+            }
+        }, 1000);
     }
 
     private void updateActiveAccount() {
@@ -302,6 +310,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 break;
 
             case R.id.layout_active_account:
+                if (ECashApplication.FBToken.isEmpty()) {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_upload));
+                    return;
+                }
+
                 if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
                     startRegisterPassword();
                 }
@@ -326,7 +339,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             editor.putString(Constant.DEVICE_IMEI, IMEI);
             editor.apply();
         }
-        homePresenter.activeAccWalletInfo(accountInfo, getActivity());
+        homePresenter.getOTPActiveAccount(accountInfo, getActivity());
     }
 
     @Override
@@ -370,6 +383,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
             updateNotification();
         }
+
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -398,7 +412,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
-        ((MainActivity) getActivity()).showDialogError(getString(R.string.str_active_account_success));
+        Toast.makeText(getActivity(), getString(R.string.str_active_account_success), Toast.LENGTH_LONG).show();
     }
 
     private void addMyContact(AccountInfo mAccountInfo) {
@@ -413,17 +427,57 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void showDialogError(String err) {
-        ((MainActivity) getActivity()).showDialogError(err);
+        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 
     @Override
     public void onSyncContactSuccess() {
-        ((MainActivity) getActivity()).showDialogError(getResources().getString(R.string.str_sync_contact_success));
+        Toast.makeText(getActivity(), getString(R.string.str_sync_contact_success), Toast.LENGTH_LONG).show();
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
 
     @Override
     public void onSyncContactFail(String err) {
-        ((MainActivity) getActivity()).showDialogError(err);
+        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
+    }
+
+    @Override
+    public void onGetOTPActiveAccountSuccess(ResponseData responseData) {
+        Toast.makeText(getActivity(), getResources().getString(R.string.str_send_otp_success), Toast.LENGTH_LONG).show();
+        DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
+            @Override
+            public void onSuccess(String otp) {
+                homePresenter.activeAccWalletInfo(accountInfo, responseData, otp, getActivity());
+            }
+
+            @Override
+            public void onRetryOTP() {
+                homePresenter.getOTPActiveAccount(accountInfo, getActivity());
+            }
+
+            @Override
+            public void onCancel() {
+            }
+        });
+    }
+
+    @Override
+    public void requestOTPFail(String err, ResponseData responseData) {
+        DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", err, "", new DialogUtil.OnConfirmOTP() {
+            @Override
+            public void onSuccess(String otp) {
+                homePresenter.activeAccWalletInfo(accountInfo, responseData, otp, getActivity());
+            }
+
+            @Override
+            public void onRetryOTP() {
+                homePresenter.getOTPActiveAccount(accountInfo, getActivity());
+            }
+
+            @Override
+            public void onCancel() {
+                ((AccountActivity) getActivity()).onBackPressed();
+            }
+        });
     }
 }

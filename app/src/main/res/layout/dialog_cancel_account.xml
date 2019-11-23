@@ -53,22 +53,18 @@
 
     <Button
         android:id="@+id/btn_transfer_cash"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:background="@drawable/bg_border_rectangle_blue"
         android:text="@string/str_transfer_cash"
-        android:textColor="@android:color/white"
+        android:textAllCaps="true"
+        style="@style/btn_submit_full"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/btn_cash_out"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_border_rectangle_blue"
         android:text="@string/str_cash_out"
-        android:textColor="@android:color/white"
+        android:textAllCaps="true"
+        style="@style/btn_submit_full"
         android:textStyle="bold" />
 
     <Button
@@ -76,8 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_border_blue"
         android:text="@string/str_cancel"
-        android:textColor="@color/blue"
+        android:textAllCaps="true"
+        style="@style/btn_cancel"
         android:textStyle="bold" />
 </LinearLayout>

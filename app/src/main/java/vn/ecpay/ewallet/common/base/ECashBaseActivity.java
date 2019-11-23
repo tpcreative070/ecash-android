@@ -46,6 +46,7 @@ import vn.ecpay.ewallet.common.keystore.KSDeCrypt;
 import vn.ecpay.ewallet.common.keystore.KSEnCrypt;
 import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.model.language.LanguageObject;
 
@@ -328,25 +329,26 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     }
 
     public void showDialogError(String messenger) {
-        Snackbar snackbar = Snackbar
-                .make(getWindow().getDecorView().findViewById(android.R.id.content), messenger, Snackbar.LENGTH_LONG);
-        final ViewGroup.LayoutParams params = snackbar.getView().getLayoutParams();
-        if (params instanceof CoordinatorLayout.LayoutParams) {
-            ((CoordinatorLayout.LayoutParams) params).gravity = Gravity.TOP;
-        } else {
-            ((FrameLayout.LayoutParams) params).gravity = Gravity.TOP;
-        }
-        snackbar.getView().setLayoutParams(params);
-
-        View sbView = snackbar.getView();
-        sbView.setBackgroundColor(ContextCompat.getColor(this, R.color.yellow));
-
-        TextView textView = sbView.findViewById(R.id.snackbar_text);
-        textView.setTextColor(Color.WHITE);
-        snackbar.setDuration(3000);
-        textView.setMaxLines(3);
-        snackbar.show();
-        dismissLoading();
+        DialogUtil.getInstance().showDialogWarning(this, messenger);
+//        Snackbar snackbar = Snackbar
+//                .make(getWindow().getDecorView().findViewById(android.R.id.content), messenger, Snackbar.LENGTH_LONG);
+//        final ViewGroup.LayoutParams params = snackbar.getView().getLayoutParams();
+//        if (params instanceof CoordinatorLayout.LayoutParams) {
+//            ((CoordinatorLayout.LayoutParams) params).gravity = Gravity.TOP;
+//        } else {
+//            ((FrameLayout.LayoutParams) params).gravity = Gravity.TOP;
+//        }
+//        snackbar.getView().setLayoutParams(params);
+//
+//        View sbView = snackbar.getView();
+//        sbView.setBackgroundColor(ContextCompat.getColor(this, R.color.yellow));
+//
+//        TextView textView = sbView.findViewById(R.id.snackbar_text);
+//        textView.setTextColor(Color.WHITE);
+//        snackbar.setDuration(3000);
+//        textView.setMaxLines(3);
+//        snackbar.show();
+//        dismissLoading();
     }
 
     public void showDialogError(int resMessage) {

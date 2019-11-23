@@ -97,7 +97,7 @@
         </LinearLayout>
 
 
-        <vn.ecpay.fragmentcommon.ui.widget.CircleImageView
+        <vn.ecpay.ewallet.common.base.CircleImageView
             android:id="@+id/iv_account"
             android:layout_width="40dp"
             android:layout_height="40dp"

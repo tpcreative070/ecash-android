@@ -1,6 +1,5 @@
 package vn.ecpay.ewallet.database;
 
-import android.app.Notification;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.SpannableStringBuilder;
@@ -12,8 +11,7 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.commonsware.cwac.saferoom.SafeHelperFactory;
-
-import org.jetbrains.annotations.NotNull;
+import com.google.firebase.database.annotations.NotNull;
 
 import java.util.List;
 
@@ -101,6 +99,10 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static List<NotificationObj> getAllNotification() {
         return walletDatabase.daoAccess().getAllNotification();
+    }
+
+    public static List<NotificationObj> getAllNotificationUnRead() {
+        return walletDatabase.daoAccess().getAllNotificationUnRead();
     }
 
     public static void deleteAllNotification() {
@@ -431,13 +433,13 @@ public abstract class WalletDatabase extends RoomDatabase {
                 "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT as TIMEOUT " +
                 "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) as transactionStatus FROM TRANSACTIONS_LOGS as TRAN WHERE 1=1 ";
         if (date != null) {
-            strTransactionsHistoryQuery += String.format("AND substr(TRAN.time,1, 6) = '%s'", date);
+            strTransactionsHistoryQuery += String.format("AND substr(TRAN.time,1, 6) = '%s' ", date);
         }
         if (type != null) {
-            strTransactionsHistoryQuery += String.format("AND TRAN.Type = '%s'", type);
+            strTransactionsHistoryQuery += String.format("AND TRAN.Type = '%s' ", type);
         }
         if (status != null) {
-            strTransactionsHistoryQuery += String.format("AND transactionStatus = %s", status);
+            strTransactionsHistoryQuery += String.format("AND transactionStatus = %s ", status);
         }
         strTransactionsHistoryQuery += "ORDER BY TRAN.id DESC";
 

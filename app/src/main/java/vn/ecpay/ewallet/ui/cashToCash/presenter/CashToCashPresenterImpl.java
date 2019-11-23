@@ -88,9 +88,10 @@ public class CashToCashPresenterImpl implements CashToCashPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             cashToCashView.getPublicKeyWalletSuccess(response.body().getResponseData());
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             cashToCashView.getPublicKeyWalletFail(response.body().getResponseMessage());
                         }

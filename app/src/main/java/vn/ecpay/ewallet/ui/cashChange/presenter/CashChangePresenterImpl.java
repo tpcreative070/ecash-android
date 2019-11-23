@@ -95,11 +95,16 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
                 if (response.isSuccessful()) {
                     if (null != response.body().getResponseCode()) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (null != response.body().getResponseData()) {
                                 CashInResponse responseData = response.body().getResponseData();
                                 cashChangeView.changeCashSuccess(responseData);
+                            } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                                cashChangeView.dismissLoading();
+                                application.checkSessionByErrorCode(response.body().getResponseCode());
+                            } else {
+                                cashChangeView.dismissLoading();
+                                cashChangeView.showDialogError(response.body().getResponseMessage());
                             }
                         } else {
                             cashChangeView.dismissLoading();
@@ -147,9 +152,10 @@ public class CashChangePresenterImpl implements CashChangePresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        application.checkSessionByErrorCode(response.body().getResponseCode());
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             cashChangeView.loadPublicKeyOrganizeSuccess(response.body().getResponseData().getIssuerKpValue());
+                        }else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             cashChangeView.showDialogError(response.body().getResponseMessage());
                         }

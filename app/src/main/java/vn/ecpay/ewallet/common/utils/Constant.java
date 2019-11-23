@@ -1,6 +1,8 @@
 package vn.ecpay.ewallet.common.utils;
 
 public class Constant {
+    public static final String app_name  = "eCash App";
+    public static final String sesion_expid = "3043";
     public static final int DEFAULT_LANGUAGE_ID = 0;
 
     public static final String DATABASE_NAME = "eWallet";
@@ -56,7 +58,7 @@ public class Constant {
     public static final String EVENT_NETWORK_CHANGE = "EVENT_NETWORK_CHANGE";
 
     //function
-    public static final String FUNCTION_GET_WALLET_INFO = "FU00012";
+    public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
     public static final String FUNCTION_LOGIN = "FU00004";
     public static final String FUNCTION_CHECK_ID_NUMBER = "FU100";
     public static final String FUNCTION_CHECK_USER_NAME = "FU00003";
@@ -78,6 +80,7 @@ public class Constant {
     public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
     public static final String FUNCTION_FORGOT_PASS_OTP = "GWEC0024";
     public static final String FUNCTION_CHANGE_PASS = "GWEC0025";
+    public static final String FUNCTION_GET_OTP_ACTIVE_ACCOUNT = "GWEC0029";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";

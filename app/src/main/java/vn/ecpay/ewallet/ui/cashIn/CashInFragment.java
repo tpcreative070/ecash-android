@@ -290,7 +290,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     private void validateData() {
         if (totalMoney == 0) {
-            ((CashInActivity) getActivity()).showDialogError("Bạn chưa chọn số tiền muốn nạp");
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_not_select_amount));
             return;
         }
         listQuality = new ArrayList<>();
@@ -357,7 +357,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     @Override
     public void showDialogError(String err) {
-        ((CashInActivity) Objects.requireNonNull(getActivity())).showDialogError(err);
+        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 
     @Override

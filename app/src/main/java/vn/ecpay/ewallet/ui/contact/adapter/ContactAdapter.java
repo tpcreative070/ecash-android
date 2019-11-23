@@ -14,7 +14,6 @@ import com.daimajia.swipe.SwipeLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Objects;
 
 import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;

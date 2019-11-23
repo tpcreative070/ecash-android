@@ -528,12 +528,10 @@
 
         <Button
             android:id="@+id/btn_confirm"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:background="@drawable/bg_border_rectangle_blue"
+            style="@style/btn_submit_full"
             android:text="@string/confirm"
-            android:textColor="@android:color/white"
             android:textStyle="bold" />
     </LinearLayout>
 
