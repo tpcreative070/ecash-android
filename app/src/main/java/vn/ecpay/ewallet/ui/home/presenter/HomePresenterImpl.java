@@ -184,6 +184,8 @@ public class HomePresenterImpl implements HomePresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             AccountInfo mAccountInfo = response.body().getResponseData();
+                            mAccountInfo.setTerminalId(IMEI);
+                            mAccountInfo.setTerminalInfo(CommonUtils.getModelName());
                             mAccountInfo.setMasterKey(responseData.getMasterKey());
                             ECashApplication.privateKey = privateKeyBase64;
                             ECashApplication.masterKey = mAccountInfo.getMasterKey();

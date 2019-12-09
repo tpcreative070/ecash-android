@@ -101,6 +101,7 @@ public class CommonUtils {
     }
 
     public static String generateSignature(byte[] strDataSign) {
+        String key = getPrivateChannelKey();
         byte[] privateKey = Base64.decode(getPrivateChannelKey(), Base64.DEFAULT);
 
         EllipticCurve ec = EllipticCurve.getSecp256k1();

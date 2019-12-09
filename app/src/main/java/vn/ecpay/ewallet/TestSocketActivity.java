@@ -303,7 +303,7 @@ public class TestSocketActivity extends ECashBaseActivity {
         changeSignature.setTerminalId(accountInfo.getTerminalId());
         changeSignature.setTerminalInfo(accountInfo.getTerminalInfo());
         changeSignature.setUsername(accountInfo.getUsername());
-        changeSignature.setmWalletId(String.valueOf(accountInfo.getWalletId()));
+        changeSignature.setWalletId(String.valueOf(accountInfo.getWalletId()));
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(changeSignature));
         return CommonUtils.generateSignature(dataSign);
@@ -313,7 +313,7 @@ public class TestSocketActivity extends ECashBaseActivity {
         WalletSignature walletSignature = new WalletSignature();
         walletSignature.setTerminalId(accountInfo.getTerminalId());
         walletSignature.setTerminalInfo(accountInfo.getTerminalInfo());
-        walletSignature.setmWalletId(String.valueOf(accountInfo.getWalletId()));
+        walletSignature.setWalletId(String.valueOf(accountInfo.getWalletId()));
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(walletSignature));
         return CommonUtils.generateSignature(dataSign, KeyStoreUtils.getPrivateKey(this));

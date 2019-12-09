@@ -19,13 +19,6 @@ import vn.ecpay.ewallet.webSocket.genenSignature.WalletSignature;
 public class SocketUtil {
 
     public static String getUrl(AccountInfo accountInfo, Context context) {
-        String token;
-        try {
-            token = URLEncoder.encode(CommonUtils.getToken(accountInfo), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            token = Constant.STR_EMPTY;
-        }
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("ws")
                 .encodedAuthority(context.getString(R.string.url_socket))
@@ -54,7 +47,7 @@ public class SocketUtil {
         changeSignature.setTerminalId(accountInfo.getTerminalId());
         changeSignature.setTerminalInfo(accountInfo.getTerminalInfo());
         changeSignature.setUsername(accountInfo.getUsername());
-        changeSignature.setmWalletId(String.valueOf(accountInfo.getWalletId()));
+        changeSignature.setWalletId(String.valueOf(accountInfo.getWalletId()));
         changeSignature.setToken(CommonUtils.getToken(accountInfo));
 
         CommonUtils.logJson(changeSignature);
@@ -68,7 +61,7 @@ public class SocketUtil {
 
         walletSignature.setTerminalId(accountInfo.getTerminalId());
         walletSignature.setTerminalInfo(accountInfo.getTerminalInfo());
-        walletSignature.setmWalletId(String.valueOf(accountInfo.getWalletId()));
+        walletSignature.setWalletId(String.valueOf(accountInfo.getWalletId()));
 
         String data = CommonUtils.getStringAlphabe(walletSignature);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(walletSignature));

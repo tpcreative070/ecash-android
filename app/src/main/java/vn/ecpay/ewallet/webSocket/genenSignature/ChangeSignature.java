@@ -85,11 +85,11 @@ public class ChangeSignature extends BaseObject {
         mUsername = username;
     }
 
-    public String getmWalletId() {
+    public String getWalletId() {
         return mWalletId;
     }
 
-    public void setmWalletId(String mWalletId) {
+    public void setWalletId(String mWalletId) {
         this.mWalletId = mWalletId;
     }
 

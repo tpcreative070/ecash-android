@@ -88,16 +88,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
             public void onResponse(Call<ResponseLogOut> call, Response<ResponseLogOut> response) {
                 myWalletView.dismissLoading();
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        if (response.body().getResponseCode() != null) {
-                            String code = response.body().getResponseCode();
-                            if (code.equals(Constant.CODE_SUCCESS)) {
-                                myWalletView.onLogoutSuccess();
-                            } else {
-                                myWalletView.showDialogError(response.body().getResponseMessage());
-                            }
-                        }
-                    }
+                    myWalletView.onLogoutSuccess();
                 }
             }
 
