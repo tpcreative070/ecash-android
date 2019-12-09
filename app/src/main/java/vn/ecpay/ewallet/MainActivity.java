@@ -16,9 +16,10 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -26,20 +27,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.common.base.CustomFragmentTabHost;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
-import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
+import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
+import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
-import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
+
+import static vn.ecpay.ewallet.common.utils.Constant.UPDATE_IMAGE_AVATAR;
 
 public class MainActivity extends ECashBaseActivity {
 
@@ -47,7 +49,7 @@ public class MainActivity extends ECashBaseActivity {
     @BindView(R.id.main_content)
     FrameLayout mainContent;
     @BindView(android.R.id.tabcontent)
-    FrameLayout tabcontent;
+    FrameLayout tabContent;
     @BindView(R.id.tab_host)
     CustomFragmentTabHost tabHost;
 
@@ -308,5 +310,11 @@ public class MainActivity extends ECashBaseActivity {
             unregisterReceiver(networkChangeReceiver);
         }
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        EventBus.getDefault().postSticky(new EventDataChange(UPDATE_IMAGE_AVATAR, requestCode,this,  resultCode, data));
     }
 }

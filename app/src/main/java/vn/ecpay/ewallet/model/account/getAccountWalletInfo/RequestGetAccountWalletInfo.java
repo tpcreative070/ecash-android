@@ -35,6 +35,15 @@ public class RequestGetAccountWalletInfo extends BaseObject {
     private String mUsername;
     @SerializedName("walletId")
     private Long mWalletId;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getAppName() {
         return mAppName;

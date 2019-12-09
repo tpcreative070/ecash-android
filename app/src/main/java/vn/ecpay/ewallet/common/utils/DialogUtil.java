@@ -40,6 +40,12 @@ public class DialogUtil {
         void OnListenerEn();
     }
 
+    public interface OnChangeAvatar {
+        void OnListenerFromStore();
+
+        void OnListenerTakePhoto();
+    }
+
     public interface OnContactUpdate {
         void OnListenerOk(String name);
     }
@@ -720,7 +726,7 @@ public class DialogUtil {
             });
             ivUp500.setOnClickListener(v -> {
                 if (isChange) {
-                    if (total500 > 0) {
+                    if (slDatabase500 > 0) {
                         total500 = total500 + 1;
                         slDatabase500 = slDatabase500 - 1;
                     }
@@ -1039,6 +1045,36 @@ public class DialogUtil {
             mDialog.setCanceledOnTouchOutside(true);
             mDialog.setCancelable(true);
             mDialog.show();
+            btnClose.setOnClickListener(v -> dismissDialog());
+        }
+    }
+
+    public void showDialogChangeAvatar(Context pContext, final OnChangeAvatar onChangeAvatar) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_change_avatar);
+            Button btnChoseFromStore, btnTakePhoto, btnClose;
+
+            btnChoseFromStore = mDialog.findViewById(R.id.btn_chose_store);
+            btnTakePhoto = mDialog.findViewById(R.id.btn_take_photo);
+            btnClose = mDialog.findViewById(R.id.btn_cancel);
+
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
+            mDialog.show();
+
+            btnChoseFromStore.setOnClickListener(v -> {
+                dismissDialog();
+                if (onChangeAvatar != null) {
+                    onChangeAvatar.OnListenerFromStore();
+                }
+            });
+            btnTakePhoto.setOnClickListener(v -> {
+                dismissDialog();
+                if (onChangeAvatar != null) {
+                    onChangeAvatar.OnListenerTakePhoto();
+                }
+            });
             btnClose.setOnClickListener(v -> dismissDialog());
         }
     }

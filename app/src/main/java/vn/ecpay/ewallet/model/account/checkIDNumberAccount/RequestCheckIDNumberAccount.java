@@ -20,7 +20,15 @@ public class RequestCheckIDNumberAccount extends BaseObject {
     private String mIdNumber;
     @SerializedName("personMobilePhone")
     private String mPersonMobilePhone;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
 
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
     public String getChannelCode() {
         return mChannelCode;
     }

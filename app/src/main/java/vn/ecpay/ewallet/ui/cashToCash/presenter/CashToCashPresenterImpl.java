@@ -76,8 +76,7 @@ public class CashToCashPresenterImpl implements CashToCashPresenter {
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(idWallet);
         requestGetPublicKeyWallet.setChannelSignature(Constant.STR_EMPTY);
-
-        String alphabe = CommonUtils.getStringAlphabe(requestGetPublicKeyWallet);
+        requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyWallet));
         requestGetPublicKeyWallet.setChannelSignature(CommonUtils.generateSignature(dataSign));
 

@@ -27,6 +27,16 @@ public class RequestChangePassword extends BaseObject {
     private String mUsername;
     @SerializedName("channelSignature")
     private String mChannelSignature;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getChannelCode() {
         return mChannelCode;

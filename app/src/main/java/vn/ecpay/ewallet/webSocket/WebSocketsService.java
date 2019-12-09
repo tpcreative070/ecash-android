@@ -127,7 +127,7 @@ public class WebSocketsService extends Service {
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
         OkHttpClient client = new OkHttpClient();
-        String url = SocketUtil.getUrl(accountInfo, getApplicationContext()).replaceAll("%20", "+");
+        String url = SocketUtil.getUrl(accountInfo, getApplicationContext());
         Request requestCoinPrice = new Request.Builder().url(url).build();
         webSocketLocal = client.newWebSocket(requestCoinPrice, webSocketListener);
         client.dispatcher().executorService().shutdown();
@@ -217,7 +217,7 @@ public class WebSocketsService extends Service {
         requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(responseMess.getSender());
-        requestGetPublicKeyWallet.setChannelSignature("");
+        requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyWallet));
         requestGetPublicKeyWallet.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -335,8 +335,8 @@ public class WebSocketsService extends Service {
         requestGetPublicKeyCash.setToken(CommonUtils.getToken());
         requestGetPublicKeyCash.setUsername(accountInfo.getUsername());
         requestGetPublicKeyCash.setChannelSignature(Constant.STR_EMPTY);
+        requestGetPublicKeyCash.setAuditNumber(CommonUtils.getAuditNumber());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestGetPublicKeyCash);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyCash));
         requestGetPublicKeyCash.setChannelSignature(CommonUtils.generateSignature(dataSign));
 

@@ -4,7 +4,7 @@
 
     <application
         android:name=".ECashApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,7 +16,7 @@
         <activity
             android:name=".ui.startApp.LaunchActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:resizeableActivity="false"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
             <intent-filter>
@@ -79,12 +79,24 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <receiver android:name=".common.network.NetworkChangeReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
         <service android:name=".webSocket.WebSocketsService" />
+
         <service android:name=".ui.firebase.ECashFireBaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

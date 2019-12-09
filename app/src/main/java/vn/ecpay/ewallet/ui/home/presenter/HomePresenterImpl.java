@@ -111,6 +111,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestOTPActiveAccount.setTerminalInfo(CommonUtils.getModelName());
         requestOTPActiveAccount.setUsername(accountInfo.getUsername());
         requestOTPActiveAccount.setToken(CommonUtils.getToken(accountInfo));
+        requestOTPActiveAccount.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestOTPActiveAccount));
         requestOTPActiveAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -166,6 +167,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestGetAccountWalletInfo.setTransactionCode(responseData.getTransactionCode());
         requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());
         requestGetAccountWalletInfo.setWalletId(responseData.getWalletId());
+        requestGetAccountWalletInfo.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetAccountWalletInfo));
         requestGetAccountWalletInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -234,6 +236,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestSyncContact.setUsername(accountInfo.getUsername());
         requestSyncContact.setWalletId(accountInfo.getWalletId());
         requestSyncContact.setToken(CommonUtils.getToken(accountInfo));
+        requestSyncContact.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
         requestSyncContact.setChannelSignature(CommonUtils.generateSignature(dataSign));

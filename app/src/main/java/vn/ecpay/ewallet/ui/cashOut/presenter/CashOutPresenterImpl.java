@@ -82,9 +82,8 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestGetPublicKeyOrganizetion.setTerminalId(accountInfo.getTerminalId());
         requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken());
         requestGetPublicKeyOrganizetion.setUsername(accountInfo.getUsername());
-        requestGetPublicKeyOrganizetion.setChannelSignature(Constant.STR_EMPTY);
+        requestGetPublicKeyOrganizetion.setAuditNumber(CommonUtils.getAuditNumber());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestGetPublicKeyOrganizetion);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyOrganizetion));
         requestGetPublicKeyOrganizetion.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
@@ -142,9 +141,8 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestEcashToEdong.setToken(CommonUtils.getToken());
         requestEcashToEdong.setType(Constant.TYPE_SEND_ECASH_TO_EDONG);
         requestEcashToEdong.setUsername(accountInfo.getUsername());
-        requestEcashToEdong.setChannelSignature(Constant.STR_EMPTY);
+        requestEcashToEdong.setAuditNumber(CommonUtils.getAuditNumber());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestEcashToEdong);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEcashToEdong));
         requestEcashToEdong.setChannelSignature(CommonUtils.generateSignature(dataSign));
 

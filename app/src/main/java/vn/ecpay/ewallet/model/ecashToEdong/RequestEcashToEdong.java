@@ -44,6 +44,15 @@ public class RequestEcashToEdong extends BaseObject {
     private String mType;
     @SerializedName("username")
     private String mUsername;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public Long getAmount() {
         return mAmount;

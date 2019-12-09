@@ -261,4 +261,8 @@
     <string name="str_start">Start</string>
     <string name="str_have_warning">There was an error</string>
     <string name="err_not_select_amount">You have not selected the amount you wish to deposit</string>
+
+    <string name="str_change_avatar">Change avatar</string>
+    <string name="str_chose_image_from_store">Chose image from store</string>
+    <string name="str_take_photo">Take photograp</string>
 </resources>

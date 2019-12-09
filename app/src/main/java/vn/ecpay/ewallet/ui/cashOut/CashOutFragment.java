@@ -17,6 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -434,8 +435,9 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_chose_money));
             return;
         }
-        if (publicKeyOrganization.isEmpty()) {
+        if (null == publicKeyOrganization) {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_get_public_key_organize));
+            ((CashOutActivity) Objects.requireNonNull(getActivity())).onBackPressed();
             return;
         }
         showProgress();

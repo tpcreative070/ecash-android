@@ -115,7 +115,4 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0029")
     Call<ResponseOTPActiveAccount> getOTPActivieAccount(@Body RequestOTPActiveAccount body);
-
-    @POST("UpdateChannel")
-    Call<ResponseUpdateChanel> updateChannel(@Body RequestUpdateChanel body);
 }

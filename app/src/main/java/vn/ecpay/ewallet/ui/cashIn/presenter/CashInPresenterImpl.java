@@ -1,5 +1,9 @@
 package vn.ecpay.ewallet.ui.cashIn.presenter;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -90,11 +94,13 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongToECash.setUsername(accountInfo.getUsername());
         requestEdongToECash.setValues(listValue);
         requestEdongToECash.setChannelSignature(Constant.STR_EMPTY);
-
-        String alphabe = CommonUtils.getStringAlphabe(requestEdongToECash);
+        requestEdongToECash.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEdongToECash));
         requestEdongToECash.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
+        Gson gson = new Gson();
+        String json = gson.toJson(requestEdongToECash);
+        Log.e("requestEdongToECash", json);
         Call<ResponseEdongToECash> call = apiService.transferMoneyEdongToECash(requestEdongToECash);
         call.enqueue(new Callback<ResponseEdongToECash>() {
             @Override

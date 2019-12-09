@@ -63,6 +63,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestCheckUserNameAccount.setFunctionCode(Constant.FUNCTION_CHECK_USER_NAME);
         requestCheckUserNameAccount.setUsername(userName);
         requestCheckUserNameAccount.setChannelSignature(Constant.STR_EMPTY);
+        requestCheckUserNameAccount.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestCheckUserNameAccount));
         requestCheckUserNameAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -98,6 +99,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestCheckIDNumberAccount.setIdNumber(idNumber);
         requestCheckIDNumberAccount.setmPersonMobilePhone(phone);
         requestCheckIDNumberAccount.setChannelSignature(Constant.STR_EMPTY);
+        requestCheckIDNumberAccount.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestCheckIDNumberAccount));
         requestCheckIDNumberAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -186,10 +188,9 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestRegister.setTerminalInfo(CommonUtils.getModelName());
         requestRegister.setAppName(Constant.app_name);
         requestRegister.setFirebaseToken(ECashApplication.FBToken);
-
+        requestRegister.setAuditNumber(CommonUtils.getAuditNumber());
         requestRegister.setChannelSignature("");
 
-        String alphabe = CommonUtils.getStringAlphabe(requestRegister);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestRegister));
         requestRegister.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
@@ -206,6 +207,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                 if (response.isSuccessful()) {
                     if (code.equals(Constant.CODE_SUCCESS)) {
                         AccountInfo accountInfo = response.body().getResponseData();
+                        accountInfo.setTerminalId(IMEI);
+                        accountInfo.setTerminalInfo(CommonUtils.getModelName());
                         accountInfo.setPassword(CommonUtils.encryptPassword(pass));
                         accountInfo.setUsername(userName);
                         accountInfo.setIdNumber(CMND);
@@ -243,8 +246,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestGetOTP.setToken(CommonUtils.getToken());
         requestGetOTP.setUsername(accountInfo.getUsername());
         requestGetOTP.setWalletId(String.valueOf(accountInfo.getWalletId()));
+        requestGetOTP.setAuditNumber(CommonUtils.getAuditNumber());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestGetOTP);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetOTP));
         requestGetOTP.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
@@ -296,9 +299,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestActiveAccount.setOtpvalue(otp);
         requestActiveAccount.setWalletId(accountInfo.getWalletId());
         requestActiveAccount.setTransactionCode(accountInfo.getTransactionCode());
-        requestActiveAccount.setChannelSignature("");
-
-        String alphabe = CommonUtils.getStringAlphabe(requestActiveAccount);
+        requestActiveAccount.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestActiveAccount));
         requestActiveAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
@@ -351,8 +352,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestLogin.setFunctionCode(Constant.FUNCTION_LOGIN);
         requestLogin.setUsername(accountInfo.getUsername());
         requestLogin.setToken(CommonUtils.getToken(accountInfo));
-
-        String alphabe = CommonUtils.getStringAlphabe(requestLogin);
+        requestLogin.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogin));
         requestLogin.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
@@ -448,6 +448,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestSyncContact.setUsername(accountInfo.getUsername());
         requestSyncContact.setWalletId(accountInfo.getWalletId());
         requestSyncContact.setToken(CommonUtils.getToken(accountInfo));
+        requestSyncContact.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
         requestSyncContact.setChannelSignature(CommonUtils.generateSignature(dataSign));

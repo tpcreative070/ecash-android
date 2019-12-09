@@ -1,6 +1,10 @@
 package vn.ecpay.ewallet.common.utils;
 
 public class Constant {
+    public static final String ACTIVITY_RESULT = "ActivityResult";
+    public static final int REQUEST_IMAGE_CAPTURE = 3;
+    public static final int REQUEST_TAKE_PHOTO = 2;
+
     public static final String app_name  = "eCash App";
     public static final String sesion_expid = "3043";
     public static final int DEFAULT_LANGUAGE_ID = 0;
@@ -46,6 +50,7 @@ public class Constant {
     public static final String WALLET_ALIAS_MASTER_KEY = "WALLET_ALIAS_PUB_KEY";
 
     //vent bus
+    public static final String UPDATE_IMAGE_AVATAR= "UPDATE_IMAGE_AVATAR";
     public static final String UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION";
     public static final String UPDATE_ACCOUNT_LOGIN = "update_account_login";
     public static final String UPDATE_MONEY = "update_money";

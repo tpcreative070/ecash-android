@@ -256,4 +256,8 @@
     <string name="str_start">Bắt đầu</string>
     <string name="str_have_warning">Đã xảy ra lỗi</string>
     <string name="err_not_select_amount">Bạn chưa chọn số tiền muốn nạp</string>
+
+    <string name="str_change_avatar">Đổi ảnh đại diện</string>
+    <string name="str_chose_image_from_store">Chọn từ thư viện ảnh</string>
+    <string name="str_take_photo">Chụp ảnh</string>
 </resources>

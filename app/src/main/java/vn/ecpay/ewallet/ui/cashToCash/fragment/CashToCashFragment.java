@@ -563,18 +563,18 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
                         e.printStackTrace();
                     }
                 }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                dismissLoading();
                 if (swQrCode.isChecked()) {
                     //save log
                     DatabaseUtil.saveTransactionLogQR(listQRSender, responseMess, getActivity());
                     DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
                 }
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                dismissLoading();
                 showDialogSendOk();
             }
         }.execute();
@@ -669,6 +669,7 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
         }
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
+            dismissLoading();
             ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_connect_socket_fail));
         }
         EventBus.getDefault().removeStickyEvent(event);

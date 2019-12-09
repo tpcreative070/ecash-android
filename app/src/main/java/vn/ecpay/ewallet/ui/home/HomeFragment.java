@@ -131,10 +131,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     private void updateAccountInfo() {
         accountInfo = ECashApplication.getAccountInfo();
         listEDongInfo = ECashApplication.getListEDongInfo();
-        if (listEDongInfo.size() > 0) {
-            eDongInfoCashIn = listEDongInfo.get(0);
-            tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+        if (null != listEDongInfo) {
+            if (listEDongInfo.size() > 0) {
+                eDongInfoCashIn = listEDongInfo.get(0);
+                tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+            }
         }
 
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());

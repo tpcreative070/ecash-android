@@ -85,6 +85,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestECashChange.setToken(CommonUtils.getToken());
         requestECashChange.setUsername(accountInfo.getUsername());
         requestECashChange.setValues(listValue);
+        requestECashChange.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestECashChange));
         requestECashChange.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -139,8 +140,8 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken());
         requestGetPublicKeyOrganizetion.setUsername(accountInfo.getUsername());
         requestGetPublicKeyOrganizetion.setChannelSignature(Constant.STR_EMPTY);
+        requestGetPublicKeyOrganizetion.setAuditNumber(CommonUtils.getAuditNumber());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestGetPublicKeyOrganizetion);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyOrganizetion));
         requestGetPublicKeyOrganizetion.setChannelSignature(CommonUtils.generateSignature(dataSign));
 

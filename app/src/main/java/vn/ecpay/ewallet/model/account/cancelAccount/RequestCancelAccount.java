@@ -29,6 +29,16 @@ public class RequestCancelAccount extends BaseObject {
     private String mTerminalId;
     @SerializedName("terminalInfo")
     private String mTerminalInfo;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getChannelCode() {
         return mChannelCode;

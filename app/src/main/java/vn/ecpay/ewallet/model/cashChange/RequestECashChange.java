@@ -35,6 +35,16 @@ public class RequestECashChange extends BaseObject {
     private List<Integer> mValues;
     @SerializedName("channelSignature")
     private String mChannelSignature;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getCashEnc() {
         return mCashEnc;

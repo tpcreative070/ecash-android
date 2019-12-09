@@ -30,6 +30,15 @@ public class RequestActiveAccount extends BaseObject {
     private String mUserId;
     @SerializedName("walletId")
     private Long mWalletId;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public Long getmWalletId() {
         return mWalletId;

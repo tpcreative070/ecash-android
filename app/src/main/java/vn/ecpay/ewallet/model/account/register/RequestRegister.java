@@ -44,6 +44,8 @@ public class RequestRegister extends BaseObject {
     private String mTerminalInfo;
     @SerializedName("username")
     private String mUsername;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
 
     public String getAppName() {
         return mAppName;
@@ -179,5 +181,13 @@ public class RequestRegister extends BaseObject {
 
     public void setUsername(String username) {
         mUsername = username;
+    }
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
     }
 }

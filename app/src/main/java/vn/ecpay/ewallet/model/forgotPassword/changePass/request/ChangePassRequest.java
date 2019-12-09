@@ -2,6 +2,7 @@
 package vn.ecpay.ewallet.model.forgotPassword.changePass.request;
 
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 import vn.ecpay.ewallet.model.BaseObject;
@@ -24,6 +25,16 @@ public class ChangePassRequest extends BaseObject {
     private String mTransactionCode;
     @SerializedName("userId")
     private String mUserId;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getChannelCode() {
         return mChannelCode;

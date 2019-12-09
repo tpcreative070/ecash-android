@@ -77,6 +77,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
         requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setPersonMobilePhone(phoneNumber);
+        requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyWallet));
         requestGetPublicKeyWallet.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -129,9 +130,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
         requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(walletId);
-        requestGetPublicKeyWallet.setChannelSignature(Constant.STR_EMPTY);
-
-        String alphabe = CommonUtils.getStringAlphabe(requestGetPublicKeyWallet);
+        requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyWallet));
         requestGetPublicKeyWallet.setChannelSignature(CommonUtils.generateSignature(dataSign));
 

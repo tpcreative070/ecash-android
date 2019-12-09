@@ -104,9 +104,7 @@ public class CashInFunction {
         requestGetPublicKeyCash.setTerminalId(accountInfo.getTerminalId());
         requestGetPublicKeyCash.setToken(CommonUtils.getToken());
         requestGetPublicKeyCash.setUsername(accountInfo.getUsername());
-        requestGetPublicKeyCash.setChannelSignature(Constant.STR_EMPTY);
-
-        String alphabe = CommonUtils.getStringAlphabe(requestGetPublicKeyCash);
+        requestGetPublicKeyCash.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyCash));
         requestGetPublicKeyCash.setChannelSignature(CommonUtils.generateSignature(dataSign));
 

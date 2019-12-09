@@ -76,7 +76,6 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void requestLogin(AccountInfo accountInfo, String userName, String pass) {
-        loginView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -89,11 +88,12 @@ public class LoginPresenterImpl implements LoginPresenter {
         requestLogin.setChannelSignature(Constant.STR_EMPTY);
         requestLogin.setTerminalId(Constant.STR_EMPTY);
         requestLogin.setTransactionId(Constant.STR_EMPTY);
+        requestLogin.setAuditNumber(CommonUtils.getAuditNumber());
 
         String alphabe = CommonUtils.getStringAlphabe(requestLogin);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogin));
         requestLogin.setChannelSignature(CommonUtils.generateSignature(dataSign));
-
+        CommonUtils.logJson(requestLogin);
         Call<ResponseLoginAfterRegister> call = apiService.login(requestLogin);
         call.enqueue(new Callback<ResponseLoginAfterRegister>() {
             @Override
@@ -104,6 +104,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             loginView.requestLoginSuccess(response.body().getAccountInfo());
                         } else if (response.body().getResponseCode().equals("3077")) {
+                            //must save account to active account
                             if (accountInfo != null) {
                                 loginView.requestActiveAccount();
                             } else {
@@ -148,7 +149,7 @@ public class LoginPresenterImpl implements LoginPresenter {
         String alphabe = CommonUtils.getStringAlphabe(requestEdongInfo);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEdongInfo));
         requestEdongInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
-
+        CommonUtils.logJson(requestEdongInfo);
         Call<ResponseEdongInfo> call = apiService.getEdongInfo(requestEdongInfo);
         call.enqueue(new Callback<ResponseEdongInfo>() {
             @Override
@@ -192,11 +193,11 @@ public class LoginPresenterImpl implements LoginPresenter {
         requestGetOTP.setToken(CommonUtils.encryptPassword(pass));
         requestGetOTP.setUsername(accountInfo.getUsername());
         requestGetOTP.setWalletId(String.valueOf(accountInfo.getWalletId()));
+        requestGetOTP.setAuditNumber(CommonUtils.getAuditNumber());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestGetOTP);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetOTP));
         requestGetOTP.setChannelSignature(CommonUtils.generateSignature(dataSign));
-
+        CommonUtils.logJson(requestGetOTP);
         Call<ResponseGetOTP> call = apiService.getOTP(requestGetOTP);
         call.enqueue(new Callback<ResponseGetOTP>() {
             @Override
@@ -229,7 +230,6 @@ public class LoginPresenterImpl implements LoginPresenter {
             }
         });
     }
-
     @Override
     public void activeAccount(AccountInfo accountInfo, String otp) {
         loginView.showLoading();
@@ -246,14 +246,12 @@ public class LoginPresenterImpl implements LoginPresenter {
         requestActiveAccount.setOtpvalue(otp);
         requestActiveAccount.setWalletId(accountInfo.getWalletId());
         requestActiveAccount.setTransactionCode(accountInfo.getTransactionCode());
-        requestActiveAccount.setChannelSignature("");
+        requestActiveAccount.setAuditNumber(CommonUtils.getAuditNumber());
 
         String alphabe = CommonUtils.getStringAlphabe(requestActiveAccount);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestActiveAccount));
         requestActiveAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
-        Gson gson = new Gson();
-        String json = gson.toJson(requestActiveAccount);
-        Log.e("json", json);
+        CommonUtils.logJson(requestActiveAccount);
         Call<ResponseActiveAccount> call = apiService.activeAccount(requestActiveAccount);
         call.enqueue(new Callback<ResponseActiveAccount>() {
             @Override

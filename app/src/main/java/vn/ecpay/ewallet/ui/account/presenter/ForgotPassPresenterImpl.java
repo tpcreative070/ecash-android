@@ -74,6 +74,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
         forgotPassOTPRequest.setChannelCode(Constant.CHANNEL_CODE);
         forgotPassOTPRequest.setFunctionCode(Constant.FUNCTION_FORGOT_PASS_OTP);
         forgotPassOTPRequest.setUsername(userName);
+        forgotPassOTPRequest.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(forgotPassOTPRequest));
         forgotPassOTPRequest.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -121,6 +122,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
         changePassRequest.setPassword(CommonUtils.encryptPassword(newPass));
         changePassRequest.setTransactionCode(forgotPassResponseData.getTransactionCode());
         changePassRequest.setUserId(forgotPassResponseData.getUserId());
+        changePassRequest.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(changePassRequest));
         changePassRequest.setChannelSignature(CommonUtils.generateSignature(dataSign));

@@ -26,6 +26,15 @@ public class RequestGetPublicKeyCash extends BaseObject {
     private String mToken;
     @SerializedName("username")
     private String mUsername;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getChannelCode() {
         return mChannelCode;

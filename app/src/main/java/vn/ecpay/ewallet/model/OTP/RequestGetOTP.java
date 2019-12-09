@@ -2,6 +2,7 @@
 package vn.ecpay.ewallet.model.OTP;
 
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 import vn.ecpay.ewallet.model.BaseObject;
@@ -22,6 +23,16 @@ public class RequestGetOTP extends BaseObject {
     private String mUsername;
     @SerializedName("walletId")
     private String mWalletId;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getChannelCode() {
         return mChannelCode;

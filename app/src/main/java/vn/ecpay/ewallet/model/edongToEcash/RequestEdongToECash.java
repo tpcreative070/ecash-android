@@ -2,7 +2,9 @@
 package vn.ecpay.ewallet.model.edongToEcash;
 
 import java.util.List;
+
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 import vn.ecpay.ewallet.model.BaseObject;
@@ -39,6 +41,16 @@ public class RequestEdongToECash extends BaseObject {
     private String mUsername;
     @SerializedName("values")
     private List<Integer> mValues;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public Long getAmount() {
         return mAmount;

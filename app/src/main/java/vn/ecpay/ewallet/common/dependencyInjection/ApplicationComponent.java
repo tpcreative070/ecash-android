@@ -23,7 +23,9 @@ import vn.ecpay.ewallet.ui.contact.component.AddContactComponent;
 import vn.ecpay.ewallet.ui.contact.module.AddContactModule;
 import vn.ecpay.ewallet.ui.home.component.HomeComponent;
 import vn.ecpay.ewallet.ui.home.module.HomeModule;
+import vn.ecpay.ewallet.ui.wallet.component.AccountInfoComponent;
 import vn.ecpay.ewallet.ui.wallet.component.MyWalletComponent;
+import vn.ecpay.ewallet.ui.wallet.module.AccountInfoModule;
 import vn.ecpay.ewallet.ui.wallet.module.MyWalletModule;
 
 @Singleton
@@ -54,4 +56,6 @@ public interface ApplicationComponent {
     AddContactComponent plus(AddContactModule addContactModule);
 
     ForgotPassComponent plus(ForgotPassModule forgotPassModule);
+
+    AccountInfoComponent plus(AccountInfoModule accountInfoModule);
 }

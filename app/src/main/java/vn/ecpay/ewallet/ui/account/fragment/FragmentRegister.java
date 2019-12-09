@@ -411,7 +411,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void onSyncContactSuccess() {
-        DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.str_sync_contact_success));
+        Toast.makeText(getActivity(), getResources().getString(R.string.str_sync_contact_success), Toast.LENGTH_LONG).show();
     }
 
     @Override

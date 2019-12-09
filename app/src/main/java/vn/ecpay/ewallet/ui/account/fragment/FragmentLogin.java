@@ -175,20 +175,24 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     }
 
     private void validateData() {
+        showLoading();
         userName = edUserName.getText().toString();
         pass = edPassword.getText().toString();
         if (userName.isEmpty()) {
+            dismissLoading();
             showDialogError(getString(R.string.err_not_input_username));
             return;
         }
 
         if (pass.isEmpty()) {
+            dismissLoading();
             showDialogError(getString(R.string.err_not_input_pass));
             return;
         }
 
         if (accountInfo != null) {
             if (!userName.equals(accountInfo.getUsername())) {
+                dismissLoading();
                 showDialogError(getString(R.string.err_device_acc_exit));
                 return;
             }

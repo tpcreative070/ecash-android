@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -85,48 +86,18 @@ public class CommonUtils {
             Map.Entry entry = (Map.Entry) it.next();
             allItem.append(String.valueOf(entry.getValue()));
         }
-        Gson gson = new Gson();
         return allItem.toString().replaceAll("null", "");
     }
 
     public static String getAuditNumber() {
-        Log.i("time current", " " + System.currentTimeMillis());
-        String ret = String.valueOf(System.currentTimeMillis());
-        ret = ret.substring(ret.length() - 9, ret.length() - 3);
-        if (ret.startsWith("0")) {
-            ret = "1" + ret.substring(1);
-        }
-        Log.i("audit number", ret);
-        return ret;
+        Random random = new Random();
+        return String.valueOf((long) (100000000000000L + random.nextFloat() * 900000000000000L));
     }
 
     public static String getKeyAlias() {
         String ret = String.valueOf(System.currentTimeMillis());
         ret = ret.substring(ret.length() - 9, ret.length() - 3);
         return "KP" + ret;
-    }
-
-    public static String getErrocodeRegisterAccount(String code) {
-        switch (code) {
-            case "1000":
-                return "Tạo khách hàng không thành công";
-            case "1001":
-                return "Loại khách hàng không hợp lệ";
-            case "1002":
-                return "Loại giấy tờ tùy thân không hợp lệ";
-            case "1004":
-                return "Khách hàng không tồn tại trên hệ thống";
-            case "1005":
-                return "Mã khách hàng không đúng";
-            case "1006":
-                return "Mã khách hàng đã tồn tại trên hệ thống";
-            case "1007":
-                return "Số điện thoại không hợp lệ";
-            case "1008":
-                return "Ngày cấp giấy tờ tùy thân không hợp lệ";
-            default:
-                return "Đã có lỗi của server xảy ra.Xin vui lòng thử lại";
-        }
     }
 
     public static String generateSignature(byte[] strDataSign) {
@@ -155,7 +126,7 @@ public class CommonUtils {
 
     public static String encryptPassword(String pass) {
         EllipticCurve ec = EllipticCurve.getSecp256k1();
-        if(CommonUtils.getPublicServerKey().isEmpty()){
+        if (CommonUtils.getPublicServerKey().isEmpty()) {
             return Constant.STR_EMPTY;
         }
         ECPublicKeyParameters kp = EllipticCurve.getSecp256k1().getPublicKeyParameters(Base64.decode(CommonUtils.getPublicServerKey(), Base64.DEFAULT));
@@ -486,11 +457,19 @@ public class CommonUtils {
         return false;
     }
 
-    public static String getPublicServerKey() {
+    private static String getPublicServerKey() {
+        Log.e("channelKp", SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class));
         return SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class);
     }
 
-    public static String getPrivateChannelKey() {
+    static String getPrivateChannelKey() {
+        Log.e("clientKs", SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class));
         return SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class);
+    }
+
+    public static void logJson(BaseObject baseObject) {
+        Gson gson = new Gson();
+        String json = gson.toJson(baseObject);
+        Log.e("json", json);
     }
 }

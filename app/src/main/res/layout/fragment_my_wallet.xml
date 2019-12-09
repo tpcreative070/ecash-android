@@ -15,7 +15,7 @@
             android:id="@+id/iv_account"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/avatar" />
+            android:src="@drawable/ic_avatar" />
 
         <LinearLayout
             android:layout_width="match_parent"

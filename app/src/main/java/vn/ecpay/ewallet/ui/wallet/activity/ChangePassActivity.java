@@ -123,6 +123,7 @@ public class ChangePassActivity extends ECashBaseActivity {
         requestChangePassword.setToken(CommonUtils.encryptPassword(oldPass));
         requestChangePassword.setUsername(accountInfo.getUsername());
         requestChangePassword.setUserId(accountInfo.getUserId());
+        requestChangePassword.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestChangePassword));
         requestChangePassword.setmChannelSignature(CommonUtils.generateSignature(dataSign));

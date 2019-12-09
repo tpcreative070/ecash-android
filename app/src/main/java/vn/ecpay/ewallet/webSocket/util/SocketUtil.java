@@ -3,6 +3,9 @@ package vn.ecpay.ewallet.webSocket.util;
 import android.content.Context;
 import android.net.Uri;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
@@ -16,6 +19,13 @@ import vn.ecpay.ewallet.webSocket.genenSignature.WalletSignature;
 public class SocketUtil {
 
     public static String getUrl(AccountInfo accountInfo, Context context) {
+        String token;
+        try {
+            token = URLEncoder.encode(CommonUtils.getToken(accountInfo), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            token = Constant.STR_EMPTY;
+        }
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("ws")
                 .encodedAuthority(context.getString(R.string.url_socket))
@@ -47,6 +57,7 @@ public class SocketUtil {
         changeSignature.setmWalletId(String.valueOf(accountInfo.getWalletId()));
         changeSignature.setToken(CommonUtils.getToken(accountInfo));
 
+        CommonUtils.logJson(changeSignature);
         String data = CommonUtils.getStringAlphabe(changeSignature);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(changeSignature));
         return CommonUtils.generateSignature(dataSign);

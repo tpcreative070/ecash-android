@@ -53,7 +53,7 @@ public class ResponseData {
     @SerializedName("userID")
     private Long mUserID;
     @SerializedName("userId")
-    private Long mUserId;
+    private Integer mUserId;
     @SerializedName("username")
     private String mUsername;
     @SerializedName("walletId")
@@ -233,14 +233,6 @@ public class ResponseData {
 
     public void setUserID(Long userID) {
         mUserID = userID;
-    }
-
-    public Long getUserId() {
-        return mUserId;
-    }
-
-    public void setUserId(Long userId) {
-        mUserId = userId;
     }
 
     public String getUsername() {

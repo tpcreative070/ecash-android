@@ -107,6 +107,7 @@ public class ForgotPasswordOTPFragment extends ECashBaseFragment {
         forgotPassOTPRequest.setChannelCode(Constant.CHANNEL_CODE);
         forgotPassOTPRequest.setFunctionCode(Constant.FUNCTION_FORGOT_PASS_OTP);
         forgotPassOTPRequest.setUsername(userName);
+        forgotPassOTPRequest.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(forgotPassOTPRequest));
         forgotPassOTPRequest.setChannelSignature(CommonUtils.generateSignature(dataSign));

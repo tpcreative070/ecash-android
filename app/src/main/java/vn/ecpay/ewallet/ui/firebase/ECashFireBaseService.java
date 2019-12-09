@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -45,6 +46,10 @@ public class ECashFireBaseService extends FirebaseMessagingService {
             String clientKs = data.get("clientKs");
             String clientKp = data.get("clientKp");
             String type = data.get("type");
+
+            Log.e("channelKp", channelKp);
+            Log.e("clientKs", clientKs);
+            Log.e("clientKp", clientKp);
             saveKey(channelKp, clientKs, clientKp);
         }
     }

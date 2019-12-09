@@ -2,6 +2,7 @@
 package vn.ecpay.ewallet.model.getPublicKeyOrganization;
 
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 import vn.ecpay.ewallet.model.BaseObject;
@@ -26,6 +27,16 @@ public class RequestGetPublicKeyOrganizetion extends BaseObject {
     private String mToken;
     @SerializedName("username")
     private String mUsername;
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+
+    public String getAuditNumber() {
+        return mAuditNumber;
+    }
+
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
+    }
 
     public String getChannelCode() {
         return mChannelCode;

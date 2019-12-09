@@ -462,17 +462,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
     }
 
-//    private void startService(CashInResponse responseData) {
-//        Intent intent = new Intent(getActivity(), EDongToECashService.class);
-//        intent.putExtra(Constant.EDONG_TO_ECASH, responseData);
-//        intent.putExtra(Constant.ACCOUNT_INFO, accountInfo);
-//        if (getActivity() != null) {
-//            getActivity().startService(intent);
-//        }
-//
-//
-//    }
-
     private void showDialogCashChangeOk() {
         DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success), "Đổi tiền thành công", new DialogUtil.OnConfirm() {
             @Override
@@ -483,6 +472,20 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 btnCashChange.setTextColor(getResources().getColor(R.color.blue));
                 btnCashTake.setBackgroundResource(R.drawable.bg_border_blue);
                 btnCashTake.setTextColor(getResources().getColor(R.color.blue));
+                totalChange500 = 0;
+                totalChange200 = 0;
+                totalChange100 = 0;
+                totalChange50 = 0;
+                totalChange20 = 0;
+                totalChange10 = 0;
+                totalTake500 = 0;
+                totalTake200 = 0;
+                totalTake100 = 0;
+                totalTake50 = 0;
+                totalTake20 = 0;
+                totalTake10 = 0;
+                totalMoneyChange = 0;
+                totalMoneyTake = 0;
             }
 
             @Override

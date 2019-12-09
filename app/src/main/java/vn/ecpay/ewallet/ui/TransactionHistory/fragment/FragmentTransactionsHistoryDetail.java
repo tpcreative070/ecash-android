@@ -1,7 +1,9 @@
 package vn.ecpay.ewallet.ui.TransactionHistory.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,23 +15,33 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import vn.ecpay.ewallet.BuildConfig;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
@@ -195,6 +207,8 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         rvListCashTransfer.setAdapter(adapterCashLogTransactionsHistory);
     }
 
+    private ArrayList<Uri> uris;
+
     @SuppressLint("StaticFieldLeak")
     private void saveImageQRCode(List<QRCodeSender> qrCodeSender) {
         new AsyncTask<Void, Void, Void>() {
@@ -204,6 +218,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
 
             @Override
             protected Void doInBackground(Void... voids) {
+                uris = new ArrayList<>();
                 for (int i = 0; i < qrCodeSender.size(); i++) {
                     Gson gson = new Gson();
                     Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(qrCodeSender.get(i)));
@@ -214,6 +229,8 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                     }
                     String imageName = transactionsHistoryModel.getReceiverAccountId() + "_" + currentTime + "_" + i + ".jpg";
                     File file = new File(mFolder, imageName);
+                    Uri uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", file);
+                    uris.add(uri);
                     if (file.exists())
                         file.delete();
                     try {
@@ -234,18 +251,16 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 if (isSaveQR) {
                     Toast.makeText(getActivity(), getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
                 } else {
-
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                    intent.putExtra(Intent.EXTRA_STREAM, uris);
+                    //A content: URI holding a stream of data associated with the Intent, used with ACTION_SEND to supply the data being sent.
+                    intent.setType("image/*"); //any kind of images can support.
+                    Intent chooser = Intent.createChooser(intent, "QR Code");//choosers title
+                    startActivity(chooser);
                 }
             }
         }.execute();
-    }
-
-    private void shareImage(){
-        Intent share = new Intent(Intent.ACTION_SEND);
-        share.setType("image/jpeg");
-        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
-        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
-        startActivity(Intent.createChooser(share, "Share Image"));
     }
 
     @OnClick({R.id.layout_share, R.id.layout_download})
@@ -253,23 +268,44 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         switch (view.getId()) {
             case R.id.layout_share:
                 if (!CommonUtils.isExternalStorageWritable()) {
-                    ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_store_image));
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_store_image));
                     return;
                 }
                 isSaveQR = false;
                 if (listQRCodeSender.size() > 0) {
-                    saveImageQRCode(listQRCodeSender);
+                    if (PermissionUtils.checkPermissionWriteStore(this, null)) {
+                        showProgress();
+                        saveImageQRCode(listQRCodeSender);
+                    }
                 }
                 break;
             case R.id.layout_download:
                 if (!CommonUtils.isExternalStorageWritable()) {
-                    ((CashToCashActivity) getActivity()).showDialogError(getString(R.string.err_store_image));
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_store_image));
                     return;
                 }
                 isSaveQR = true;
                 if (listQRCodeSender.size() > 0) {
+                    if (PermissionUtils.checkPermissionWriteStore(this, null)) {
+                        showProgress();
+                        saveImageQRCode(listQRCodeSender);
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PermissionUtils.REQUEST_WRITE_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showProgress();
                     saveImageQRCode(listQRCodeSender);
                 }
+            }
+            default:
                 break;
         }
     }
@@ -278,5 +314,44 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     public void onResume() {
         super.onResume();
         ((TransactionsHistoryDetailActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
+    }
+
+    private void exPortDBFile(Context context) {
+        try {
+            exportFile(context.getDatabasePath(Constant.DATABASE_NAME).getAbsolutePath(), Constant.DATABASE_NAME);
+            exportFile(context.getDatabasePath(Constant.DATABASE_NAME + "-shm").getAbsolutePath(), Constant.DATABASE_NAME + "-shm");
+            exportFile(context.getDatabasePath(Constant.DATABASE_NAME + "-wal").getAbsolutePath(), Constant.DATABASE_NAME + "-wal");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private File exportFile(String input, String dst) throws IOException {
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
+
+        File mFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/eCash_DB");
+        if (!mFolder.exists()) {
+            mFolder.mkdir();
+        }
+        File expFile = new File(mFolder, dst);
+
+        try {
+            inChannel = new FileInputStream(input).getChannel();
+            outChannel = new FileOutputStream(expFile).getChannel();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } finally {
+            if (inChannel != null)
+                inChannel.close();
+            if (outChannel != null)
+                outChannel.close();
+        }
+
+        return expFile;
     }
 }

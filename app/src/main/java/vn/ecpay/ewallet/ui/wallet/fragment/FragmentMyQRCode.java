@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.wallet.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -24,6 +26,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
+import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contact.QRContact;
@@ -103,20 +106,37 @@ public class FragmentMyQRCode extends ECashBaseFragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 dismissProgress();
-                Toast.makeText(getActivity(),getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
             }
         }.execute();
     }
 
     @OnClick(R.id.tv_download)
     public void onViewClicked() {
-        showProgress();
-        saveImageQRCode();
+        if (PermissionUtils.checkPermissionWriteStore(this, null)) {
+            showProgress();
+            saveImageQRCode();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PermissionUtils.REQUEST_WRITE_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showProgress();
+                    saveImageQRCode();
+                }
+            }
+            default:
+                break;
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((MyQRCodeActivity)getActivity()).updateTitle(getResources().getString(R.string.str_my_qr_code));
+        ((MyQRCodeActivity) getActivity()).updateTitle(getResources().getString(R.string.str_my_qr_code));
     }
 }

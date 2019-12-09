@@ -66,7 +66,6 @@ public abstract class WalletDatabase extends RoomDatabase {
         }
     }
 
-
     public static WalletDatabase getINSTANCE(Context context, String pass) {
         if (pass != null) {
             if (walletDatabase == null) {
