@@ -19,6 +19,7 @@ import vn.ecpay.ewallet.webSocket.genenSignature.WalletSignature;
 public class SocketUtil {
 
     public static String getUrl(AccountInfo accountInfo, Context context) {
+        String auditNumber = CommonUtils.getAuditNumber();
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("ws")
                 .encodedAuthority(context.getString(R.string.url_socket))
@@ -29,18 +30,18 @@ public class SocketUtil {
                 .appendQueryParameter("functionCode", Constant.FUNCTION_WEB_SOCKET)
                 .appendQueryParameter("terminalId", accountInfo.getTerminalId())
                 .appendQueryParameter("terminalInfo", accountInfo.getTerminalInfo())
-                .appendQueryParameter("auditNumber", CommonUtils.getAuditNumber())
+                .appendQueryParameter("auditNumber", auditNumber)
                 .appendQueryParameter("sessionId", ECashApplication.getAccountInfo().getSessionId())
-                .appendQueryParameter("channelSignature", getChannelSignature(accountInfo))
+                .appendQueryParameter("channelSignature", getChannelSignature(accountInfo, auditNumber))
                 .appendQueryParameter("token", CommonUtils.getToken(accountInfo))
                 .appendQueryParameter("walletSignature", getWalletSignature(accountInfo, context));
         return builder.build().toString();
     }
 
-    public static String getChannelSignature(AccountInfo accountInfo) {
+    public static String getChannelSignature(AccountInfo accountInfo, String auditNumber) {
         ChangeSignature changeSignature = new ChangeSignature();
 
-        changeSignature.setAuditNumber(CommonUtils.getAuditNumber());
+        changeSignature.setAuditNumber(auditNumber);
         changeSignature.setChannelCode(Constant.CHANNEL_CODE);
         changeSignature.setFunctionCode(Constant.FUNCTION_WEB_SOCKET);
         changeSignature.setSessionId(ECashApplication.getAccountInfo().getSessionId());
