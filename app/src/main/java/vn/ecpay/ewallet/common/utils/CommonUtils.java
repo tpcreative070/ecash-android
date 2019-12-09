@@ -186,10 +186,10 @@ public class CommonUtils {
     }
 
     public static String getToken(AccountInfo accountInfo) {
-        if (accountInfo.getPassword() == null || accountInfo.getPassword().isEmpty()) {
-            return accountInfo.getToken();
-        } else {
+        if (accountInfo.getToken() == null || accountInfo.getToken().isEmpty()) {
             return accountInfo.getPassword();
+        } else {
+            return accountInfo.getToken();
         }
     }
 

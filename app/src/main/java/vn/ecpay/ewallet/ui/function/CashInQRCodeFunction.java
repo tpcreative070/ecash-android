@@ -67,6 +67,7 @@ public class CashInQRCodeFunction {
         requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(responseMess.getSender());
+        requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyWallet));
         requestGetPublicKeyWallet.setChannelSignature(CommonUtils.generateSignature(dataSign));
