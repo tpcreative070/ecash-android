@@ -389,7 +389,9 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     public void loginSuccess(AccountInfo accountInfo) {
         ECashApplication.setAccountInfo(accountInfo);
         if (PermissionUtils.isReadContact(getActivity())) {
-            registerPresenter.syncContact(getActivity(), accountInfo);
+            if (CommonUtils.getListPhoneNumber(getActivity()).size() > 0) {
+                registerPresenter.syncContact(getActivity(), accountInfo);
+            }
         }
         registerPresenter.getEDongInfo(accountInfo);
         getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
@@ -406,7 +408,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
-        if(getActivity()!=null)
+        if (getActivity() != null)
             getActivity().finish();
     }
 

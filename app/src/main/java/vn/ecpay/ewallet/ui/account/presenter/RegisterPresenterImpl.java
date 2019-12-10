@@ -182,9 +182,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestRegister.setEcKeyPublicValue(publicKeyBase64);
         requestRegister.setPersonMobilePhone(phone);
 
-        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
-        requestRegister.setTerminalId(IMEI);
+        requestRegister.setTerminalId(CommonUtils.getIMEI(context));
         requestRegister.setTerminalInfo(CommonUtils.getModelName());
         requestRegister.setAppName(Constant.app_name);
         requestRegister.setFirebaseToken(ECashApplication.FBToken);
@@ -207,7 +205,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                 if (response.isSuccessful()) {
                     if (code.equals(Constant.CODE_SUCCESS)) {
                         AccountInfo accountInfo = response.body().getResponseData();
-                        accountInfo.setTerminalId(IMEI);
+                        accountInfo.setTerminalId(CommonUtils.getIMEI(context));
                         accountInfo.setTerminalInfo(CommonUtils.getModelName());
                         accountInfo.setPassword(CommonUtils.encryptPassword(pass));
                         accountInfo.setUsername(userName);

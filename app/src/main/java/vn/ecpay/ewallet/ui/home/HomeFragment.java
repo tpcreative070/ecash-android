@@ -349,7 +349,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionUtils.PERMISSION_REQUEST_CONTACT) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                homePresenter.syncContact(getActivity(), accountInfo);
+                if (CommonUtils.getListPhoneNumber(getActivity()).size() > 0) {
+                    homePresenter.syncContact(getActivity(), accountInfo);
+                }
             }
         } else if (requestCode == PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -412,7 +414,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onActiveAccountSuccess(AccountInfo mAccountInfo) {
         if (PermissionUtils.isReadContact(getActivity())) {
-            homePresenter.syncContact(getActivity(), mAccountInfo);
+            if (getActivity() != null) {
+                if (CommonUtils.getListPhoneNumber(getActivity()).size() > 0) {
+                    homePresenter.syncContact(getActivity(), accountInfo);
+                }
+            }
         }
         addMyContact(mAccountInfo);
         ECashApplication.setAccountInfo(mAccountInfo);

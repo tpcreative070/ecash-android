@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.common.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -472,5 +473,10 @@ public class CommonUtils {
         Gson gson = new Gson();
         String json = gson.toJson(baseObject);
         Log.e("json", json);
+    }
+
+    public static String getIMEI(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        return prefs.getString(Constant.DEVICE_IMEI, null);
     }
 }

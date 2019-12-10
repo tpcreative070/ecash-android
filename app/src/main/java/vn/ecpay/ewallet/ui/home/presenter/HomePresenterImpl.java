@@ -97,8 +97,6 @@ public class HomePresenterImpl implements HomePresenter {
         byte[] mPubKey = kp.getQ().getEncoded(false);
         privateKeyBase64 = Base64.encodeToString(mPriKey, Base64.DEFAULT).replaceAll("\n", "");
         String publicKeyBase64 = Base64.encodeToString(mPubKey, Base64.DEFAULT).replaceAll("\n", "");
-        SharedPreferences prefs = application.getSharedPreferences(application.getPackageName(), Context.MODE_PRIVATE);
-        String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
 
         RequestOTPActiveAccount requestOTPActiveAccount = new RequestOTPActiveAccount();
         requestOTPActiveAccount.setChannelCode(Constant.CHANNEL_CODE);
@@ -107,7 +105,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestOTPActiveAccount.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestOTPActiveAccount.setEcKeyPublicValue(publicKeyBase64);
         requestOTPActiveAccount.setKeyPublicAlias(CommonUtils.getKeyAlias());
-        requestOTPActiveAccount.setTerminalId(IMEI);
+        requestOTPActiveAccount.setTerminalId(CommonUtils.getIMEI(context));
         requestOTPActiveAccount.setTerminalInfo(CommonUtils.getModelName());
         requestOTPActiveAccount.setUsername(accountInfo.getUsername());
         requestOTPActiveAccount.setToken(CommonUtils.getToken(accountInfo));
@@ -151,8 +149,6 @@ public class HomePresenterImpl implements HomePresenter {
 
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
-        SharedPreferences prefs = application.getSharedPreferences(application.getPackageName(), Context.MODE_PRIVATE);
-        String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
 
         RequestGetAccountWalletInfo requestGetAccountWalletInfo = new RequestGetAccountWalletInfo();
         requestGetAccountWalletInfo.setAppName(Constant.app_name);
@@ -161,7 +157,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestGetAccountWalletInfo.setFunctionCode(Constant.FUNCTION_GET_WALLET_INFO);
         requestGetAccountWalletInfo.setOtpvalue(otp);
         requestGetAccountWalletInfo.setSessionId(accountInfo.getSessionId());
-        requestGetAccountWalletInfo.setTerminalId(IMEI);
+        requestGetAccountWalletInfo.setTerminalId(CommonUtils.getIMEI(context));
         requestGetAccountWalletInfo.setTerminalInfor(CommonUtils.getModelName());
         requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
         requestGetAccountWalletInfo.setTransactionCode(responseData.getTransactionCode());
@@ -184,7 +180,7 @@ public class HomePresenterImpl implements HomePresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             AccountInfo mAccountInfo = response.body().getResponseData();
-                            mAccountInfo.setTerminalId(IMEI);
+                            mAccountInfo.setTerminalId(CommonUtils.getIMEI(context));
                             mAccountInfo.setTerminalInfo(CommonUtils.getModelName());
                             mAccountInfo.setMasterKey(responseData.getMasterKey());
                             ECashApplication.privateKey = privateKeyBase64;

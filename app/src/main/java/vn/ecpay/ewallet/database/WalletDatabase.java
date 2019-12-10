@@ -305,7 +305,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         user.setCustomerId(accountInfo.getCustomerId());
         user.setFunctionId(accountInfo.getFunctionId());
         user.setGroupId(accountInfo.getGroupId());
-        user.setPassword(CommonUtils.getToken());
+        user.setPassword(CommonUtils.getToken(accountInfo));
         user.setUserId(accountInfo.getUserId());
         insertAccountInfoTask(user, Constant.STR_EMPTY);
     }
