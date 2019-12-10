@@ -201,7 +201,7 @@
     <string name="err_chose_money_take">bạn chưa chọn số tiền muốn chuyến sang</string>
     <string name="err_conflict_take_and_change">Số tiền đổi và số tiền nhận phải bằng nhau</string>
     <string name="err_filter_add_contact">Số điện thoại hoặc số ví không chứa ký tự đặc biệt và chỉ có 10 chữ số</string>
-    <string name="err_qr_code_fail">Mã QR của bạn hợp lệ</string>
+    <string name="err_qr_code_fail">Mã QR của bạn không hợp lệ</string>
     <string name="err_add_contact_conflict">Bạn không thể add chính ví của mình</string>
     <string name="err_add_contact_duplicate">Đã tồn tại tài khoản này trong danh bạ</string>
     <string name="err_transfer_conflict">Bạn không thể chuyển cho chính ví của mình</string>

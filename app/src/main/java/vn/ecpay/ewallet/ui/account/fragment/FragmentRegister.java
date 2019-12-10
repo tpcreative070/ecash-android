@@ -406,7 +406,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
-        Objects.requireNonNull(getActivity()).finish();
+        if(getActivity()!=null)
+            getActivity().finish();
     }
 
     @Override

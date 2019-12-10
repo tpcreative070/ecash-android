@@ -194,7 +194,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     public void showLoading() {
         if (!isFinishing()) {
-            //show dialog
             showProgressDialog();
         }
     }
@@ -206,9 +205,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             progressDialog.setContentView(R.layout.dialog_progress);
             progressDialog.setCancelable(false);
         }
-
-//        TextView textView = (TextView) progressDialog.findViewById(R.id.progress_message);
-//        textView.setText(msg);
 
         if (!progressDialog.isShowing()) {
             runOnUiThread(() -> progressDialog.show());
@@ -254,11 +250,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         }
     }
 
-    public void clearStack() {
-        int count = getFragmentStack().size();
-        getFragmentStack().clear();
-    }
-
     public void replaceFragment(Fragment pFragment, boolean isAnimation, int resContainer) {
         try {
             final FragmentTransaction ft = getFmgr().beginTransaction();
@@ -299,56 +290,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         }
     }
 
-    public boolean isCloseKeyBoard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            return true;
-        }
-        return false;
-    }
-
-    public static View getToolbarLogoIcon(Toolbar toolbar) {
-        //check if contentDescription previously was set
-        boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
-        String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
-        toolbar.setLogoDescription(contentDescription);
-        ArrayList<View> potentialViews = new ArrayList<View>();
-        //find the view based on it's content description, set programatically or with android:contentDescription
-        toolbar.findViewsWithText(potentialViews, contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
-        //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
-        View logoIcon = null;
-        if (potentialViews.size() > 0) {
-            logoIcon = potentialViews.get(0);
-        }
-        //Clear content description if not previously present
-        if (hadContentDescription)
-            toolbar.setLogoDescription(null);
-        return logoIcon;
-    }
-
     public void showDialogError(String messenger) {
         DialogUtil.getInstance().showDialogWarning(this, messenger);
-//        Snackbar snackbar = Snackbar
-//                .make(getWindow().getDecorView().findViewById(android.R.id.content), messenger, Snackbar.LENGTH_LONG);
-//        final ViewGroup.LayoutParams params = snackbar.getView().getLayoutParams();
-//        if (params instanceof CoordinatorLayout.LayoutParams) {
-//            ((CoordinatorLayout.LayoutParams) params).gravity = Gravity.TOP;
-//        } else {
-//            ((FrameLayout.LayoutParams) params).gravity = Gravity.TOP;
-//        }
-//        snackbar.getView().setLayoutParams(params);
-//
-//        View sbView = snackbar.getView();
-//        sbView.setBackgroundColor(ContextCompat.getColor(this, R.color.yellow));
-//
-//        TextView textView = sbView.findViewById(R.id.snackbar_text);
-//        textView.setTextColor(Color.WHITE);
-//        snackbar.setDuration(3000);
-//        textView.setMaxLines(3);
-//        snackbar.show();
-//        dismissLoading();
     }
 
     public void showDialogError(int resMessage) {

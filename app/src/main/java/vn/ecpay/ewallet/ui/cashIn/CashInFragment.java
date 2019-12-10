@@ -340,7 +340,8 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
                     @Override
                     public void OnListenerCancel() {
-                        Objects.requireNonNull(getActivity()).finish();
+                        if(getActivity()!=null)
+                            getActivity().finish();
                     }
                 });
     }

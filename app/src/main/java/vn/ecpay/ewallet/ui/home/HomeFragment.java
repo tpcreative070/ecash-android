@@ -370,16 +370,20 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             updateAccountInfo();
         }
 
-        if (event.getData().equals(Constant.UPDATE_MONEY)) {
-            updateBalance();
-        }
-
-        if (event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
-            updateBalance();
-        }
-
-        if (event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
-            updateBalance();
+        if (event.getData().equals(Constant.UPDATE_MONEY)
+                || event.getData().equals(Constant.UPDATE_MONEY_SOCKET)
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> updateBalance());
+                    } catch (NullPointerException e) {
+                        return;
+                    }
+                }
+            }, 500);
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {

@@ -18,6 +18,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -490,7 +492,8 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
             @Override
             public void OnListenerCancel() {
-                Objects.requireNonNull(getActivity()).finish();
+                if(getActivity()!=null)
+                    getActivity().finish();
             }
         });
     }
@@ -503,10 +506,26 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY) ||
-                event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
+        if (event.getData().equals(Constant.UPDATE_MONEY)) {
             dismissProgress();
             showDialogCashChangeOk();
+        }
+
+        if (event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> {
+                            setData();
+                            getMoneyDatabase();
+                        });
+                    } catch (NullPointerException e) {
+                        return;
+                    }
+                }
+            }, 500);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

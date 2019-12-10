@@ -156,15 +156,23 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY) ||
-                event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+        if (event.getData().equals(Constant.UPDATE_MONEY)
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
+                || event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
-                    setAdapter(transactionsHistoryModelList);
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> {
+                            List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
+                            setAdapter(transactionsHistoryModelList);
+                        });
+                    } catch (NullPointerException e) {
+                        return;
+                    }
                 }
-            }, 200);
+            }, 500);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

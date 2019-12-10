@@ -278,11 +278,13 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         }
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
         if (isTimeOut) {
-            Objects.requireNonNull(getActivity()).finish();
+            if (getActivity() != null)
+                getActivity().finish();
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
-            Objects.requireNonNull(getActivity()).finish();
+            if (getActivity() != null)
+                getActivity().finish();
         }
     }
 
@@ -332,7 +334,8 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void requestLoginSuccess(AccountInfo mAccountInfo) {
-        Objects.requireNonNull(getActivity()).startService(new Intent(getActivity(), WebSocketsService.class));
+        if (getActivity() != null)
+            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
         mAccountInfo.setUsername(userName);
         mAccountInfo.setToken(mAccountInfo.getToken());
         loginPresenter.getEDongInfo(mAccountInfo);

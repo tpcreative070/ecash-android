@@ -437,7 +437,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         }
         if (null == publicKeyOrganization) {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_get_public_key_organize));
-            ((CashOutActivity) Objects.requireNonNull(getActivity())).onBackPressed();
+            if (getActivity() != null)
+                getActivity().onBackPressed();
             return;
         }
         showProgress();

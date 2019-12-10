@@ -59,7 +59,8 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
             this.forgotPassResponseData = (ForgotPassResponseData) bundle.getSerializable(Constant.FORGOT_PASS_TRANSFER_MODEL);
             this.userName = bundle.getString(Constant.USER_NAME);
         } else {
-            ((ForgotPasswordActivity) Objects.requireNonNull(getActivity())).onBackPressed();
+            if(getActivity()!=null)
+                getActivity().onBackPressed();
         }
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new ForgotPassModule(this)).inject(this);
         forgotPassPresenter.setView(this);
@@ -132,7 +133,8 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
 
     @Override
     public void changePassSuccess() {
-        ECashApplication.get(Objects.requireNonNull(getActivity())).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
+        if (getActivity() != null)
+            ECashApplication.get(getActivity()).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
     }
 
     @Override

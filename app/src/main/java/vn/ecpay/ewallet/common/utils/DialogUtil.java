@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;

@@ -177,7 +177,8 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     public void onLogoutSuccess() {
         Intent intent = new Intent(getActivity(), AccountActivity.class);
         startActivity(intent);
-        Objects.requireNonNull(getActivity()).finish();
+        if(getActivity()!=null)
+            getActivity().finish();
     }
 
     @Override

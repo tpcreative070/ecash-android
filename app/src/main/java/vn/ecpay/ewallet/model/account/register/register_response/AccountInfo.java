@@ -104,6 +104,20 @@ public class AccountInfo extends BaseObject implements Serializable {
     @SerializedName("sessionId")
     private String sessionId;
 
+    @SerializedName("personEmail")
+    private String personEmail;
+
+    @SerializedName("personCurrentAddress")
+    private String personCurrentAddress;
+    @SerializedName("wardName")
+    private String wardName;
+    @SerializedName("districtName")
+    private String districtName;
+    @SerializedName("provinceName")
+    private String provinceName;
+    @SerializedName("countryName")
+    private String countryName;
+
     public String getSessionId() {
         return sessionId;
     }
@@ -355,5 +369,53 @@ public class AccountInfo extends BaseObject implements Serializable {
 
     public void setTransactionCode(String transactionCode) {
         this.transactionCode = transactionCode;
+    }
+
+    public String getPersonEmail() {
+        return personEmail;
+    }
+
+    public void setPersonEmail(String personEmail) {
+        this.personEmail = personEmail;
+    }
+
+    public String getPersonCurrentAddress() {
+        return personCurrentAddress;
+    }
+
+    public void setPersonCurrentAddress(String personCurrentAddress) {
+        this.personCurrentAddress = personCurrentAddress;
+    }
+
+    public String getWardName() {
+        return wardName;
+    }
+
+    public void setWardName(String wardName) {
+        this.wardName = wardName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getProvinceName() {
+        return provinceName;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 }

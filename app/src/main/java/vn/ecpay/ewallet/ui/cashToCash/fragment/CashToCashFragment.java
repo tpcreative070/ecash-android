@@ -29,6 +29,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -49,6 +51,7 @@ import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.module.CashToCashModule;
 import vn.ecpay.ewallet.ui.cashToCash.presenter.CashToCashPresenter;
@@ -626,7 +629,8 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
     public void getPublicKeyWalletFail(String err) {
         publicKeyWalletReceiver = Constant.STR_EMPTY;
         try {
-            ((CashToCashActivity) Objects.requireNonNull(getActivity())).showDialogError(err);
+            if (getActivity() != null)
+            ((CashToCashActivity) getActivity()).showDialogError(err);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -663,9 +667,21 @@ public class CashToCashFragment extends ECashBaseFragment implements CashToCashV
 
         if (event.getData().equals(Constant.UPDATE_MONEY) ||
                 event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
-            setData();
-            getMoneyDatabase();
-            updateQualityMoney();
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> {
+                            setData();
+                            getMoneyDatabase();
+                            updateQualityMoney();
+                        });
+                    } catch (NullPointerException e) {
+                        return;
+                    }
+                }
+            }, 500);
         }
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
