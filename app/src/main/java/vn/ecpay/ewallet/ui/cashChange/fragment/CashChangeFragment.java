@@ -17,7 +17,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -440,7 +439,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         //start service
 //        startService(cashInResponse);
         CashInFunction cashInFunction = new CashInFunction(cashInResponse, accountInfo, getActivity());
-        cashInFunction.handelCash();
+        cashInFunction.handleCash();
     }
 
     private void saveCashChangeSend(CashInResponse cashInResponse) {

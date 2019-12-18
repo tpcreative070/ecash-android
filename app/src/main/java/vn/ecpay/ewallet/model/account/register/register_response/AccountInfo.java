@@ -2,6 +2,7 @@
 package vn.ecpay.ewallet.model.account.register.register_response;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -109,14 +110,9 @@ public class AccountInfo extends BaseObject implements Serializable {
 
     @SerializedName("personCurrentAddress")
     private String personCurrentAddress;
-    @SerializedName("wardName")
-    private String wardName;
-    @SerializedName("districtName")
-    private String districtName;
-    @SerializedName("provinceName")
-    private String provinceName;
-    @SerializedName("countryName")
-    private String countryName;
+
+    @SerializedName("large")
+    private String large;
 
     public String getSessionId() {
         return sessionId;
@@ -387,35 +383,11 @@ public class AccountInfo extends BaseObject implements Serializable {
         this.personCurrentAddress = personCurrentAddress;
     }
 
-    public String getWardName() {
-        return wardName;
+    public String getLarge() {
+        return large;
     }
 
-    public void setWardName(String wardName) {
-        this.wardName = wardName;
-    }
-
-    public String getDistrictName() {
-        return districtName;
-    }
-
-    public void setDistrictName(String districtName) {
-        this.districtName = districtName;
-    }
-
-    public String getProvinceName() {
-        return provinceName;
-    }
-
-    public void setProvinceName(String provinceName) {
-        this.provinceName = provinceName;
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
+    public void setLarge(String large) {
+        this.large = large;
     }
 }

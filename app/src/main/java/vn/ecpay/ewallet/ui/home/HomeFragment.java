@@ -349,8 +349,10 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionUtils.PERMISSION_REQUEST_CONTACT) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (CommonUtils.getListPhoneNumber(getActivity()).size() > 0) {
-                    homePresenter.syncContact(getActivity(), accountInfo);
+                if (getActivity() != null) {
+                    if (CommonUtils.getListPhoneNumber(getActivity()).size() > 0) {
+                        homePresenter.syncContact(getActivity(), accountInfo);
+                    }
                 }
             }
         } else if (requestCode == PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE) {
@@ -369,6 +371,10 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
+            updateAccountInfo();
+        }
+
+        if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {
             updateAccountInfo();
         }
 
@@ -421,7 +427,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             }
         }
         addMyContact(mAccountInfo);
-        ECashApplication.setAccountInfo(mAccountInfo);
+//        ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
         Toast.makeText(getActivity(), getString(R.string.str_active_account_success), Toast.LENGTH_LONG).show();

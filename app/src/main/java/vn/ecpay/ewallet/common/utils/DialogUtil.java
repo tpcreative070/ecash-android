@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.common.utils;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.cropImage.CropView;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -111,25 +113,19 @@ public class DialogUtil {
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();
-            btnOk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismissDialog();
-                    if (pOnConfirm != null) {
-                        pOnConfirm.OnListenerOk();
-                    }
-
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerOk();
                 }
             });
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismissDialog();
-                    if (pOnConfirm != null) {
-                        pOnConfirm.OnListenerCancel();
-                    }
+            btnCancel.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerCancel();
                 }
             });
+            ((ECashBaseActivity) pContext).dismissLoading();
         }
     }
 
@@ -1077,6 +1073,37 @@ public class DialogUtil {
                 }
             });
             btnClose.setOnClickListener(v -> dismissDialog());
+        }
+    }
+
+    public void showDialogUpdateAccountInfo(Context pContext, String title, String message, final OnConfirm pOnConfirm) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_update_account_info);
+            Button btnOk, btnCancel;
+            TextView tvTitle, tvMessage;
+            btnOk = mDialog.findViewById(R.id.btnOk);
+            btnCancel = mDialog.findViewById(R.id.btnCancel);
+            tvTitle = mDialog.findViewById(R.id.tvTitle);
+            tvMessage = mDialog.findViewById(R.id.tvContent);
+            tvTitle.setText(title);
+            tvMessage.setText(message);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerOk();
+                }
+
+            });
+            btnCancel.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerCancel();
+                }
+            });
         }
     }
 

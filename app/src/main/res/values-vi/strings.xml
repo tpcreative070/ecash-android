@@ -89,6 +89,8 @@
     <string name="str_restore_pass">Khôi phục mật khẩu</string>
     <string name="str_send_again_code">Gửi lại mã</string>
     <string name="str_input_otp">Nhập mã OTP</string>
+    <string name="str_change_avatar">Đổi ảnh đại diện</string>
+    <string name="str_update_avatar_success">Thay đổi ảnh đại diện thành công</string>
 
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
@@ -147,6 +149,7 @@
     <string name="str_dialog_notification_title">Thông báo</string>
     <string name="str_Ignore">Bỏ qua</string>
     <string name="yes">Đồng ý</string>
+    <string name="back">Trở về</string>
     <string name="str_confirm_out_app">Bạn có muốn thoát khỏi ứng dụng?</string>
     <string name="str_dialog_not_login">Bạn chưa đăng nhập.Hãy đăng nhập để sử dụng chức năng này</string>
     <string name="str_dialog_active_acc">Bạn vui lòng kích hoạt tài khoản để sử dụng chức năng này</string>
@@ -207,6 +210,9 @@
     <string name="err_transfer_conflict">Bạn không thể chuyển cho chính ví của mình</string>
     <string name="err_old_pass_invalid">Mật khẩu cũ bạn nhập không đúng</string>
     <string name="err_input_otp_null">Bạn chưa nhập OTP</string>
+    <string name="err_email_validate_fail">Email bạn nhập không hợp lệ</string>
+    <string name="err_update_avatar_fails">"Cập nhật avatar không thành công"</string>
+    <string name="device_un_support">Thiết bị không hỗ trợ chức năng này.</string>
 
     //%s
     <string name="str_type_cash_out">-%s</string>
@@ -257,7 +263,6 @@
     <string name="str_have_warning">Đã xảy ra lỗi</string>
     <string name="err_not_select_amount">Bạn chưa chọn số tiền muốn nạp</string>
 
-    <string name="str_change_avatar">Đổi ảnh đại diện</string>
     <string name="str_chose_image_from_store">Chọn từ thư viện ảnh</string>
     <string name="str_take_photo">Chụp ảnh</string>
 </resources>

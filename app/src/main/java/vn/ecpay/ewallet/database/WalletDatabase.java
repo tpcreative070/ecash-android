@@ -107,6 +107,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     public static void deleteAllNotification() {
         walletDatabase.daoAccess().deleteAllNotification();
     }
+
     public static void deleteNotification(Long id) {
         walletDatabase.daoAccess().deleteNotification(id);
     }
@@ -307,6 +308,9 @@ public abstract class WalletDatabase extends RoomDatabase {
         user.setGroupId(accountInfo.getGroupId());
         user.setPassword(CommonUtils.getToken(accountInfo));
         user.setUserId(accountInfo.getUserId());
+        user.setPersonEmail(accountInfo.getPersonEmail());
+        user.setPersonCurrentAddress(accountInfo.getPersonCurrentAddress());
+        user.setLarge(accountInfo.getLarge());
         insertAccountInfoTask(user, Constant.STR_EMPTY);
     }
 
@@ -334,6 +338,16 @@ public abstract class WalletDatabase extends RoomDatabase {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static void updateAccountInfo(String fistName, String lastName, String middleName, String idNumber,
+                                         String address, String email, String userName) {
+        walletDatabase.daoAccess().updateAccountInfo(fistName, lastName, middleName, idNumber,
+                address, email, userName);
+    }
+
+    public static void updateAccountAvatar(String bIconLarge, String userName) {
+        walletDatabase.daoAccess().updateAvatar(bIconLarge, userName);
     }
 
     // todo transaction_log_QR_code-------------------------------------------------------------------------------

@@ -1,1 +1,3 @@
-include ':app'
+include ':app', ':cropImage', ':ucrop'
+project(':cropImage').projectDir = new File('ucrop')
+project(':ucrop').projectDir = new File('ucrop_image')

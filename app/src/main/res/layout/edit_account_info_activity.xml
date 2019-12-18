@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <include layout="@layout/toolbar_login" />
+    <vn.ecpay.ewallet.common.base.CircleImageView
+        android:id="@+id/iv_account"
+        android:layout_width="130dp"
+
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="130dp"
+        android:src="@drawable/ic_avatar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Họ và tên"
+            android:textSize="@dimen/text_normal"
+            android:textColor="@color/gray"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/edt_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_edit_text"
+            android:inputType="text"
+            android:textSize="@dimen/text_normal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Địa chỉ"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_normal"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/edt_address"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_edit_text"
+            android:inputType="text"
+            android:textSize="@dimen/text_normal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Số CMND"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_normal"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/edt_cmnd"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:maxLength="20"
+            android:background="@drawable/bg_edit_text"
+            android:inputType="number"
+            android:textSize="@dimen/text_normal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Email"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_normal"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/edt_email"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_edit_text"
+            android:inputType="textWebEmailAddress"
+            android:textSize="@dimen/text_normal" />
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_marginTop="30dp"
+            style="@style/btn_submit_full"
+            android:textAllCaps="true"
+            android:text="@string/confirm"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

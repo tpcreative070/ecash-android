@@ -95,6 +95,8 @@
     <string name="str_restore_pass">Password recovery</string>
     <string name="str_send_again_code">Resend code</string>
     <string name="str_input_otp">Enter the OTP code</string>
+    <string name="str_change_avatar">Change avatar</string>
+    <string name="str_update_avatar_success">Change avatar successfully</string>
 
     //chuyển khoản
     <string name="transfer_to_cash">Transfer to eCash account</string>
@@ -153,6 +155,7 @@
     <string name="str_dialog_notification_title">Notification</string>
     <string name="str_Ignore">Ignore</string>
     <string name="yes">Agree</string>
+    <string name="back">Back</string>
     <string name="str_confirm_out_app">Do you want to exit the application?</string>
     <string name="str_dialog_not_login">You are not logged in. Please login to use this function</string>
     <string name="str_dialog_active_acc">Please activate your account to use this function</string>
@@ -213,6 +216,9 @@
     <string name="err_transfer_conflict">You cannot transfer to your own wallet</string>
     <string name="err_old_pass_invalid">The old password you entered is incorrect</string>
     <string name="err_input_otp_null">You have not entered OTP</string>
+    <string name="err_email_validate_fail">The email you entered is not valid</string>
+    <string name="err_update_avatar_fails">"Update avatar fail"</string>
+    <string name="device_un_support">Device does not support this function.</string>
 
     //%s
     <string name="str_type_cash_out">-%S</string>
@@ -262,7 +268,6 @@
     <string name="str_have_warning">There was an error</string>
     <string name="err_not_select_amount">You have not selected the amount you wish to deposit</string>
 
-    <string name="str_change_avatar">Change avatar</string>
     <string name="str_chose_image_from_store">Chose image from store</string>
     <string name="str_take_photo">Take photograp</string>
 </resources>

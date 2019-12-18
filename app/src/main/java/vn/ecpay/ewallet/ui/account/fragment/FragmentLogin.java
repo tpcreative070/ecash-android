@@ -155,6 +155,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                     tvName.setText(CommonUtils.getFullName(accountInfo));
                     tvPhone.setText(accountInfo.getPersonMobilePhone());
                     edUserName.setText(accountInfo.getUsername());
+                    CommonUtils.loadAvatar(getActivity(), ivAccount, accountInfo.getLarge());
                 } else {
                     edUserName.setVisibility(View.VISIBLE);
                     layoutIsExit.setVisibility(View.GONE);

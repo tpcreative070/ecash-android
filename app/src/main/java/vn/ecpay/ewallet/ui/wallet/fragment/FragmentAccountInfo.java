@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,9 +42,9 @@ import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.ui.wallet.activity.EditAccountInfoActivity;
 import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
 import vn.ecpay.ewallet.ui.wallet.module.AccountInfoModule;
-import vn.ecpay.ewallet.ui.wallet.module.MyWalletModule;
 import vn.ecpay.ewallet.ui.wallet.presenter.AccountInfoPresenter;
 import vn.ecpay.ewallet.ui.wallet.view.AccountInfoView;
 
@@ -65,10 +64,10 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     TextView tvEmail;
     @BindView(R.id.tv_cmnd)
     TextView tvCmnd;
-    @BindView(R.id.btn_login)
-    Button btnLogin;
     @BindView(R.id.tv_language)
     TextView tvLanguage;
+    @BindView(R.id.tv_address)
+    TextView tvAddress;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     @Inject
@@ -93,17 +92,13 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
         listEDongInfo = ECashApplication.getListEDongInfo();
         if (accountInfo != null) {
+            updateAvatar();
             tvId.setText(String.valueOf(accountInfo.getWalletId()));
             tvName.setText(CommonUtils.getFullName(accountInfo));
             tvSdt.setText(accountInfo.getPersonMobilePhone());
-            tvEmail.setText("");
+            tvEmail.setText(accountInfo.getPersonEmail());
             tvCmnd.setText(accountInfo.getIdNumber());
-        } else {
-            tvId.setText("");
-            tvName.setText("");
-            tvSdt.setText("");
-            tvEmail.setText("");
-            tvCmnd.setText("");
+            tvAddress.setText(accountInfo.getPersonCurrentAddress());
         }
         if (LanguageUtils.getCurrentLanguage().getCode().equals(getActivity().getResources().getString(R.string.language_english_code))) {
             tvLanguage.setText(getActivity().getResources().getString(R.string.language_english));
@@ -112,7 +107,16 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         }
     }
 
-    @OnClick({R.id.layout_change_language, R.id.layout_export_db, R.id.iv_account, R.id.btn_login, R.id.layout_image_account, R.id.layout_name, R.id.layout_phone, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
+    private void updateAvatar() {
+        if (ECashApplication.getAccountInfo().getLarge() == null) {
+            if (getActivity() != null)
+                ivAccount.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_avatar));
+        } else {
+            CommonUtils.loadAvatar(getActivity(), ivAccount, ECashApplication.getAccountInfo().getLarge());
+        }
+    }
+
+    @OnClick({R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_change_language:
@@ -127,10 +131,12 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
 
                     @Override
                     public void OnListenerEn() {
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        getActivity().startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                        if (getActivity() != null) {
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            getActivity().startActivity(intent);
+                            getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                        }
                     }
                 });
                 break;
@@ -141,22 +147,21 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
                     }
                 }
                 break;
-            case R.id.iv_account:
-                break;
-            case R.id.btn_login:
-                break;
             case R.id.layout_name:
-                break;
-            case R.id.layout_phone:
-                break;
             case R.id.layout_email:
-                break;
             case R.id.layout_cmnd:
+            case R.id.layout_address:
+                if (getActivity() != null) {
+                    getActivity().startActivity(new Intent(getActivity(), EditAccountInfoActivity.class));
+                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
                 break;
             case R.id.layout_qr_code:
-                Intent intent = new Intent(getActivity(), MyQRCodeActivity.class);
-                getActivity().startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (getActivity() != null) {
+                    Intent intent = new Intent(getActivity(), MyQRCodeActivity.class);
+                    getActivity().startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
                 break;
             case R.id.layout_export_db:
                 if (PermissionUtils.checkPermissionWriteStore(this, null)) {
@@ -176,7 +181,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
 
             @Override
             public void OnListenerTakePhoto() {
-                accountInfoPresenter.onCaptureImage(REQUEST_IMAGE_CAPTURE);
+                accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
             }
         });
     }
@@ -184,14 +189,18 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PermissionUtils.MY_CAMERA_REQUEST_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == PermissionUtils.REQUEST_WRITE_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (PermissionUtils.checkPermissionCamera(this, null)) {
                     showDialogChangeAvatar();
                 }
             }
-            default:
-                break;
+        } else if (requestCode == PermissionUtils.MY_CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (PermissionUtils.checkPermissionWriteStore(this, null)) {
+                    showDialogChangeAvatar();
+                }
+            }
         }
     }
 
@@ -212,17 +221,23 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         if (event.getData().equals(Constant.UPDATE_MONEY)) {
             setData();
         }
+
+        if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {
+            setData();
+        }
+
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             setData();
         }
-        if (event.getData().equals(Constant.UPDATE_IMAGE_AVATAR)) {
-            accountInfoPresenter.onEvent(event);
+
+        if (event.getData().equals(Constant.EVENT_UPDATE_AVARTAR)) {
+            updateAvatar();
+        }
+
+        if (event.getData().equals(Constant.EVENT_CHOSE_IMAGE)) {
+            accountInfoPresenter.onEvent(event, accountInfo);
         }
         EventBus.getDefault().removeStickyEvent(event);
-    }
-
-    @OnClick(R.id.layout_change_language)
-    public void onViewClicked() {
     }
 
     private void exPortDBFile(Context context) {
@@ -275,5 +290,21 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     @Override
     public void dismissLoading() {
         dismissProgress();
+    }
+
+    @OnClick(R.id.layout_address)
+    public void onViewClicked() {
+    }
+
+    @Override
+    public void onUpdateFail(String err) {
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).showDialogError(err);
+    }
+
+    @Override
+    public void showDialogError(String err) {
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).showDialogError(err);
     }
 }

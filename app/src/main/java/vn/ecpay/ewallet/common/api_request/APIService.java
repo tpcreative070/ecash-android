@@ -25,6 +25,10 @@ import vn.ecpay.ewallet.model.account.logout.RequestLogOut;
 import vn.ecpay.ewallet.model.account.logout.response.ResponseLogOut;
 import vn.ecpay.ewallet.model.account.register.RequestRegister;
 import vn.ecpay.ewallet.model.account.register.register_response.ResponseRegister;
+import vn.ecpay.ewallet.model.account.updateAvartar.request.RequestUpdateAvartar;
+import vn.ecpay.ewallet.model.account.updateAvartar.response.ResponseUpdateAvartar;
+import vn.ecpay.ewallet.model.account.updateInfo.request.RequestUpdateAccountInfo;
+import vn.ecpay.ewallet.model.account.updateInfo.response.ResponseUpdateAccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.chanel.RequestUpdateChanel;
 import vn.ecpay.ewallet.model.chanel.response.ResponseUpdateChanel;
@@ -115,4 +119,10 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0029")
     Call<ResponseOTPActiveAccount> getOTPActivieAccount(@Body RequestOTPActiveAccount body);
+
+    @POST("ecgateway/execute/GWEC0021")
+    Call<ResponseUpdateAccountInfo> updateAccountInfo(@Body RequestUpdateAccountInfo body);
+
+    @POST("ecgateway/execute/GWEC0022")
+    Call<ResponseUpdateAvartar> updateAvartar(@Body RequestUpdateAvartar body);
 }

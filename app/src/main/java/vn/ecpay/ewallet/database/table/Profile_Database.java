@@ -5,12 +5,14 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 import vn.ecpay.ewallet.model.BaseObject;
 
 @Entity(tableName = "PROFILE")
 public class Profile_Database extends BaseObject {
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     @ColumnInfo(name = "walletId")
     private Long walletId;
 
@@ -94,6 +96,15 @@ public class Profile_Database extends BaseObject {
 
     @ColumnInfo(name = "sessionId")
     private String sessionId;
+
+    @ColumnInfo(name = "personCurrentAddress")
+    private String personCurrentAddress;
+
+    @ColumnInfo(name = "personEmail")
+    private String personEmail;
+
+    @SerializedName("large")
+    private String large;
 
     @NonNull
     public Long getWalletId() {
@@ -318,5 +329,29 @@ public class Profile_Database extends BaseObject {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public String getPersonCurrentAddress() {
+        return personCurrentAddress;
+    }
+
+    public void setPersonCurrentAddress(String personCurrentAddress) {
+        this.personCurrentAddress = personCurrentAddress;
+    }
+
+    public String getPersonEmail() {
+        return personEmail;
+    }
+
+    public void setPersonEmail(String personEmail) {
+        this.personEmail = personEmail;
+    }
+
+    public String getLarge() {
+        return large;
+    }
+
+    public void setLarge(String large) {
+        this.large = large;
     }
 }

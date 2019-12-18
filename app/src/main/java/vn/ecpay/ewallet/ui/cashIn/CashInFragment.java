@@ -18,7 +18,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -366,7 +365,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         saveTransactionLogs(eDongToECash);
         cashInPresenter.getEDongInfo(accountInfo);
         CashInFunction cashInFunction = new CashInFunction(eDongToECash, accountInfo, getActivity());
-        cashInFunction.handelCash();
+        cashInFunction.handleCash();
     }
 
     private void saveTransactionLogs(CashInResponse cashInResponse) {

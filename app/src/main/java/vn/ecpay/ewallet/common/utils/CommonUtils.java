@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Environment;
@@ -11,6 +12,9 @@ import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
@@ -21,6 +25,8 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -39,6 +45,7 @@ import java.util.TreeMap;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.eccrypto.ECElGamal;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
@@ -273,6 +280,11 @@ public class CommonUtils {
         return code.matches(regex);
     }
 
+    public static boolean isValidateEmail(String email) {
+        String regex = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        return email.matches(regex);
+    }
+
     public static boolean isValidatePass(String pass) {
         String regex = "[a-zA-Z0-9!@#$%^&*()~`=_+|:\";',./<>?]{6,20}";
         return pass.matches(regex);
@@ -475,8 +487,31 @@ public class CommonUtils {
         Log.e("json", json);
     }
 
-    public static String getIMEI(Context context){
+    public static String getIMEI(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         return prefs.getString(Constant.DEVICE_IMEI, null);
+    }
+
+    public static String validateLeghtFileImage(File file) {
+        if (file != null) {
+            double bytes = file.length();
+            double kilobytes = (bytes / 1024);
+            double megabytes = (kilobytes / 1024);
+            if (megabytes > 4) {
+                return "Kích thước ảnh hiển thị không được vượt quá 4MB";
+            }
+        }
+        return "";
+    }
+
+    public static void loadAvatar(Context mContext, CircleImageView avatar, String image) {
+        if (mContext != null) {
+            Glide.get(mContext).clearMemory();
+            RequestOptions requestOptions = new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(150, 150)
+                    //.transform(new MyTransformation(mContext))
+                    .error(R.drawable.ic_avatar);
+            Glide.with(mContext).load("data:image/png;base64," + image).apply(requestOptions).into(avatar);
+        }
     }
 }

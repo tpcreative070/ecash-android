@@ -27,21 +27,36 @@ import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseDataGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CashInFunction {
     private CashInResponse eDongToECashResponse;
     private AccountInfo accountInfo;
-    private int numberRequest = 0;
     private String[][] deCryptECash;
     private Context context;
+    private ResponseMessSocket responseMessSocket;
+    private String transactionSignature;
 
     public CashInFunction(CashInResponse eDongToECashResponse, AccountInfo accountInfo, Context context) {
         this.eDongToECashResponse = eDongToECashResponse;
         this.accountInfo = accountInfo;
         this.context = context;
+        this.transactionSignature = eDongToECashResponse.getId();
     }
 
-    public void handelCash(){
+    public CashInFunction(AccountInfo accountInfo, Context context, ResponseMessSocket responseMessSocket) {
+        this.accountInfo = accountInfo;
+        this.context = context;
+        this.responseMessSocket = responseMessSocket;
+        this.transactionSignature = responseMessSocket.getId();
+    }
+
+    public void handleCashSocket() {
+        deCryptECash = CommonUtils.decrypEcash(responseMessSocket.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
+        checkArrayCash();
+    }
+
+    public void handleCash() {
         deCryptECash = CommonUtils.decrypEcash(eDongToECashResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
         checkArrayCash();
     }
@@ -49,45 +64,46 @@ public class CashInFunction {
     private void checkArrayCash() {
         if (null != deCryptECash) {
             if (deCryptECash.length > 0) {
-                if (numberRequest == deCryptECash.length) {
-                    EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
-                    numberRequest = 0;
-                    return;
-                }
                 AsyncTaskCash asynctaskCash = new AsyncTaskCash();
-                asynctaskCash.execute(deCryptECash[numberRequest]);
+                asynctaskCash.execute(deCryptECash);
             }
         }
     }
 
-    private class AsyncTaskCash extends AsyncTask<String[], Void, String> {
-
+    private class AsyncTaskCash extends AsyncTask<String[][], Void, Void> {
         @Override
-        protected String doInBackground(String[]... strings) {
-            String[] object = strings[0];
-            CashLogs_Database cash = new CashLogs_Database();
-            cash.setAccSign(object[1].replaceAll("\n", ""));
-            cash.setTreSign(object[2].replaceAll("\n", ""));
+        protected Void doInBackground(String[][]... params) {
+            String[][] deCryptArray = params[0];
+            for (String[] object : deCryptArray) {
+                CashLogs_Database cash = new CashLogs_Database();
+                cash.setAccSign(object[1].replaceAll("\n", ""));
+                cash.setTreSign(object[2].replaceAll("\n", ""));
 
-            String[] item = object[0].split(";");
-            cash.setCountryCode(item[0]);
-            cash.setIssuerCode(item[1]);
-            cash.setDecisionNo(item[2]);
-            cash.setSerialNo(item[3]);
-            cash.setParValue(Integer.valueOf(item[4]));
-            cash.setActiveDate(item[5]);
-            cash.setExpireDate(item[6]);
-            cash.setCycle(Integer.valueOf(item[7]));
-            cash.setType(Constant.STR_CASH_IN);
-            cash.setTransactionSignature(eDongToECashResponse.getId());
-            WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-            Decision_Database decision = WalletDatabase.getDecisionNo(item[2]);
-            if (decision != null) {
-                checkVerifyCash(cash, decision.getTreasurePublicKeyValue(), decision.getAccountPublicKeyValue());
-            } else {
-                getPublicKeyCashToCheck(cash, item[2]);
+                String[] item = object[0].split(";");
+                cash.setCountryCode(item[0]);
+                cash.setIssuerCode(item[1]);
+                cash.setDecisionNo(item[2]);
+                cash.setSerialNo(item[3]);
+                cash.setParValue(Integer.valueOf(item[4]));
+                cash.setActiveDate(item[5]);
+                cash.setExpireDate(item[6]);
+                cash.setCycle(Integer.valueOf(item[7]));
+                cash.setType(Constant.STR_CASH_IN);
+                cash.setTransactionSignature(transactionSignature);
+                WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+                Decision_Database decision = WalletDatabase.getDecisionNo(item[2]);
+                if (decision != null) {
+                    checkVerifyCash(cash, decision.getTreasurePublicKeyValue(), decision.getAccountPublicKeyValue());
+                } else {
+                    getPublicKeyCashToCheck(cash, item[2]);
+                }
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
         }
     }
 
@@ -120,9 +136,6 @@ public class CashInFunction {
                             saveDecision(decisionNo, responseGetPublicKeyCash);
                             checkVerifyCash(cash, responseGetPublicKeyCash.getDecisionTrekp(),
                                     responseGetPublicKeyCash.getDecisionAcckp());
-                        } else {
-                            numberRequest = numberRequest + 1;
-                            checkArrayCash();
                         }
                     }
                 }
@@ -130,8 +143,6 @@ public class CashInFunction {
 
             @Override
             public void onFailure(Call<ResponseGetPublicKeyCash> call, Throwable t) {
-                numberRequest = numberRequest + 1;
-                checkArrayCash();
             }
         });
     }
@@ -149,13 +160,10 @@ public class CashInFunction {
         if (CommonUtils.verifyCash(cash, decisionTrekp, decisionAcckp)) {
             //xác thực đồng ecash ok => save cash
             DatabaseUtil.saveCashToDB(cash, context, accountInfo.getUsername());
-            numberRequest = numberRequest + 1;
-            checkArrayCash();
         } else {
             //lưu vào tien fake
+            DatabaseUtil.SaveCashInvalidToDB(cash, context, accountInfo.getUsername());
             //todo nothing
-            numberRequest = numberRequest + 1;
-            checkArrayCash();
         }
     }
 }

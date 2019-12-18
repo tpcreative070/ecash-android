@@ -1,6 +1,8 @@
 package vn.ecpay.ewallet.ui.cashOut;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -23,8 +25,14 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.api_request.APIService;
+import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
@@ -39,6 +47,8 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.ecashToEdong.RequestEcashToEdong;
+import vn.ecpay.ewallet.model.ecashToEdong.ResponseECashToEdong;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
@@ -220,6 +230,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                         total50 = 0;
                         total20 = 0;
                         total10 = 0;
+                        getMoneyDatabase();
                         updateTotalMoneySend();
                         updateQualityOut();
                         updateBalance();
@@ -227,7 +238,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
                     @Override
                     public void OnListenerCancel() {
-                        getActivity().finish();
+                        if (getActivity() != null)
+                            getActivity().finish();
                     }
                 });
     }
@@ -441,50 +453,63 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 getActivity().onBackPressed();
             return;
         }
-        showProgress();
-        getCashEncrypt(total10, total20, total50, total100, total200, total500, publicKeyOrganization);
+        AsyncTaskCash asyncTaskCash = new AsyncTaskCash();
+        asyncTaskCash.execute();
     }
 
-    private void getCashEncrypt(int sl10, int sl20, int sl50, int sl100, int sl200, int sl500,
-                                String keyPublicReceiver) {
+    private class AsyncTaskCash extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            showProgress();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getCashEncrypt();
+            return null;
+        }
+    }
+
+    private void getCashEncrypt() {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         listCashSend = new ArrayList<>();
-        if (sl10 > 0) {
+        if (total10 > 0) {
             List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("10000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl10; i++) {
+            for (int i = 0; i < total10; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
-        if (sl20 > 0) {
+        if (total20 > 0) {
             List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("20000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl20; i++) {
+            for (int i = 0; i < total20; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
-        if (sl50 > 0) {
+        if (total50 > 0) {
             List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("50000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl50; i++) {
+            for (int i = 0; i < total50; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
-        if (sl100 > 0) {
+        if (total100 > 0) {
             List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("100000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl100; i++) {
+            for (int i = 0; i < total100; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
 
-        if (sl200 > 0) {
+        if (total200 > 0) {
             List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("200000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl200; i++) {
+            for (int i = 0; i < total200; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
-        if (sl500 > 0) {
+        if (total500 > 0) {
             List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney("500000", Constant.STR_CASH_IN);
-            for (int i = 0; i < sl500; i++) {
+            for (int i = 0; i < total500; i++) {
                 listCashSend.add(cashList.get(i));
             }
         }
@@ -497,7 +522,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 cashSendArray[i] = moneyItem;
             }
 
-            encData = getEncrypData(cashSendArray, keyPublicReceiver);
+            encData = getEncrypData(cashSendArray, publicKeyOrganization);
             responseMess = new ResponseMessSocket();
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
             responseMess.setReceiver(String.valueOf(accountInfo.getWalletId()));
@@ -514,8 +539,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 return;
             }
             cashOutPresenter.sendECashToEDong(encData, refId, totalMoney, edongInfo, accountInfo);
-        } else {
-            dismissProgress();
         }
     }
 
@@ -569,14 +592,24 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
     @Override
     public void sendECashToEDongSuccess() {
-        cashOutPresenter.getEDongInfo(accountInfo);
-        updateDatabase();
+        AsyncTaskSendSuccess asyncTaskSendSuccess = new AsyncTaskSendSuccess();
+        asyncTaskSendSuccess.execute();
+
     }
 
-    private void updateDatabase() {
-        DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
-        dismissProgress();
-        showDialogCashOutOk();
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
+    private class AsyncTaskSendSuccess extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
+            cashOutPresenter.getEDongInfo(accountInfo);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            showDialogCashOutOk();
+        }
     }
 }

@@ -14,8 +14,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Objects;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -73,22 +71,32 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new MyWalletModule(this)).inject(this);
         myWalletPresenter.setView(this);
         myWalletPresenter.onViewCreate();
-        WalletDatabase.getINSTANCE(getContext(), ECashApplication.masterKey);
-        accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
         setData();
     }
 
     private void setData() {
+        WalletDatabase.getINSTANCE(getContext(), ECashApplication.masterKey);
+        accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
         if (accountInfo != null) {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
             balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
             tvPrice.setText(CommonUtils.formatPriceVND(balance));
             tvId.setText(String.valueOf(accountInfo.getWalletId()));
             tvAccountName.setText(CommonUtils.getFullName(accountInfo));
+            updateAvatar();
         } else {
             tvId.setText(Constant.STR_EMPTY);
             tvAccountName.setText(Constant.STR_EMPTY);
             tvPrice.setText(Constant.STR_EMPTY);
+        }
+    }
+
+    private void updateAvatar() {
+        if (ECashApplication.getAccountInfo().getLarge() == null) {
+            if (getActivity() != null)
+                ivAccount.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_avatar));
+        } else {
+            CommonUtils.loadAvatar(getActivity(), ivAccount, ECashApplication.getAccountInfo().getLarge());
         }
     }
 
@@ -146,6 +154,13 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
             updateBalance();
         }
 
+        if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {
+            setData();
+        }
+        if (event.getData().equals(Constant.EVENT_UPDATE_AVARTAR)) {
+            updateAvatar();
+        }
+
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateLogin();
         }
@@ -177,7 +192,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     public void onLogoutSuccess() {
         Intent intent = new Intent(getActivity(), AccountActivity.class);
         startActivity(intent);
-        if(getActivity()!=null)
+        if (getActivity() != null)
             getActivity().finish();
     }
 

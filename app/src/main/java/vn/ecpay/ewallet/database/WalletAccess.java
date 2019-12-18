@@ -51,13 +51,13 @@ public interface WalletAccess {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleContact(Contact_Database contact);
 
-    @Query("SELECT * FROM CONTACTS where walletId != :myWalletId and status = '1'")
+    @Query("SELECT * FROM CONTACTS where walletId <>:myWalletId and status = '1'")
     List<Contact> getAllContact(String myWalletId);
 
     @Query("DELETE From CONTACTS WHERE walletId = :strWalletId")
     void deleteContact(Long strWalletId);
 
-    @Query("SELECT * FROM CONTACTS Where phone LIKE  :name OR fullName like :name and walletId != :myWalletId  and status = '1'")
+    @Query("SELECT * FROM CONTACTS Where (phone LIKE :name OR fullName like :name) AND walletId <>:myWalletId AND status = '1'")
     List<Contact> getAllContactFilter(String name, Long myWalletId);
 
     @Query("UPDATE CONTACTS SET fullName=:name WHERE walletId = :walletId")
@@ -131,7 +131,7 @@ public interface WalletAccess {
     @Insert
     void insertMultipleUser(List<Profile_Database> userList);
 
-    @Query("SELECT * FROM PROFILE WHERE username LIKE  :userName")
+    @Query("SELECT * FROM PROFILE WHERE username =:userName")
     AccountInfo fetchOneUserByUserId(String userName);
 
     @Query("SELECT * FROM PROFILE WHERE id =0")
@@ -139,6 +139,13 @@ public interface WalletAccess {
 
     @Query("SELECT * FROM PROFILE")
     List<AccountInfo> getAllProfile();
+
+    @Query("UPDATE PROFILE SET personFirstName=:fistName, personLastName=:lastName, personMiddleName=:middleName,idNumber=:idNumber,personCurrentAddress=:address, personEmail=:email WHERE username =:userName")
+    void updateAccountInfo(String fistName, String lastName, String middleName, String idNumber,
+                           String address, String email, String userName);
+
+    @Query("UPDATE PROFILE SET large=:bIconLarge WHERE username =:userName")
+    void updateAvatar(String bIconLarge, String userName);
 
     @Update
     void updateUser(Profile_Database accountInfo);
@@ -153,7 +160,7 @@ public interface WalletAccess {
     @Insert
     void insertOnlySingleTransactionLogQR(TransactionLogQR_Database transactionLogQR);
 
-    @Query("SELECT value  as mContent, sequence as mCycle,total as mTotal   FROM TRANSACTION_QR WHERE transactionSignature = :transactionSignature")
+    @Query("SELECT value  as mContent, sequence as mCycle,total as mTotal FROM TRANSACTION_QR WHERE transactionSignature = :transactionSignature")
     List<QRCodeSender> getAllTransactionLogQR(String transactionSignature);
 
     // todo Transaction_log--------------------------------------------------------------------------

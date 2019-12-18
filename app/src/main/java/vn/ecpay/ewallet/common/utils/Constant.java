@@ -50,7 +50,8 @@ public class Constant {
     public static final String WALLET_ALIAS_MASTER_KEY = "WALLET_ALIAS_PUB_KEY";
 
     //vent bus
-    public static final String UPDATE_IMAGE_AVATAR= "UPDATE_IMAGE_AVATAR";
+    public static final String EVENT_UPDATE_AVARTAR= "EVENT_UPDATE_AVARTAR";
+    public static final String EVENT_CHOSE_IMAGE = "EVENT_CHOSE_IMAGE";
     public static final String UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION";
     public static final String UPDATE_ACCOUNT_LOGIN = "update_account_login";
     public static final String UPDATE_MONEY = "update_money";
@@ -61,6 +62,7 @@ public class Constant {
     public static final String EVENT_QR_CODE_SCAN_CASH_SUCCESS = "EVENT_QR_CODE_SCAN_CASH_SUCCESS";
     public static final String EVENT_UPDATE_CONTACT = "EVENT_UPDATE_CONTACT";
     public static final String EVENT_NETWORK_CHANGE = "EVENT_NETWORK_CHANGE";
+    public static final String EVENT_UPDATE_ACCOUNT_INFO = "EVENT_UPDATE_ACCOUNT_INFO";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
@@ -86,6 +88,8 @@ public class Constant {
     public static final String FUNCTION_FORGOT_PASS_OTP = "GWEC0024";
     public static final String FUNCTION_CHANGE_PASS = "GWEC0025";
     public static final String FUNCTION_GET_OTP_ACTIVE_ACCOUNT = "GWEC0029";
+    public static final String FUNCTION_UPDATE_ACCOUNT_INFO = "GWEC0021";
+    public static final String FUNCTION_UPDATE_AVARTAR = "GWEC0022";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";

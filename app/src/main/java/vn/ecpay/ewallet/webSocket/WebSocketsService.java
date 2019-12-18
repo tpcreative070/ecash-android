@@ -1,13 +1,8 @@
 package vn.ecpay.ewallet.webSocket;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -20,17 +15,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import okio.ByteString;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -40,30 +29,21 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CashLogs_Database;
-import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.getPublicKeyCash.RequestGetPublicKeyCash;
-import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseDataGetPublicKeyCash;
-import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
+import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
 public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
-    private int numberRequest;
-    private String[][] deCryptECash;
-    private String transactionSignature;
-    private long totalMoney;
     private boolean isConnectSuccess;
     private ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet;
     private WebSocket webSocketLocal;
@@ -133,7 +113,6 @@ public class WebSocketsService extends Service {
         client.dispatcher().executorService().shutdown();
     }
 
-    //socket
     WebSocketListener webSocketListener = new WebSocketListener() {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
@@ -149,7 +128,7 @@ public class WebSocketsService extends Service {
                 if (responseMess.getType().equals(Constant.TYPE_ECASH_TO_ECASH)) {
                     if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
                         if (responseMess.getCashEnc() != null) {
-                            getPublicKeyWallet(responseMess);
+                            requestSearchWalletID(accountInfo, responseMess);
                         }
                     }
                 } else if (responseMess.getType().equals(Constant.TYPE_SYNC_CONTACT)) {
@@ -193,16 +172,47 @@ public class WebSocketsService extends Service {
         }
     };
 
-    private void confirmMess(ResponseMessSocket responseMess) {
-        RequestReceived requestReceived = new RequestReceived();
-        requestReceived.setId(responseMess.getId());
-        requestReceived.setReceiver(responseMess.getReceiver());
-        requestReceived.setRefId(responseMess.getRefId());
-        requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+    public void requestSearchWalletID(AccountInfo accountInfo, ResponseMessSocket responseMess) {
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
+        APIService apiService = retrofit.create(APIService.class);
 
-        Gson gson = new Gson();
-        String json = gson.toJson(requestReceived);
-        webSocketLocal.send(json);
+        RequestGetPublicKeyWallet requestGetPublicKeyWallet = new RequestGetPublicKeyWallet();
+        requestGetPublicKeyWallet.setChannelCode(Constant.CHANNEL_CODE);
+        requestGetPublicKeyWallet.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_WALLET);
+        requestGetPublicKeyWallet.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestGetPublicKeyWallet.setTerminalId(accountInfo.getTerminalId());
+        requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
+        requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
+        requestGetPublicKeyWallet.setWalletId(responseMess.getSender());
+        requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyWallet));
+        requestGetPublicKeyWallet.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Call<ResponseGetPublicKeyWallet> call = apiService.getPublicKeyWallet(requestGetPublicKeyWallet);
+        call.enqueue(new Callback<ResponseGetPublicKeyWallet>() {
+            @Override
+            public void onResponse(Call<ResponseGetPublicKeyWallet> call, retrofit2.Response<ResponseGetPublicKeyWallet> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null)
+                        if (response.body().getResponseCode() != null) {
+                            if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                                ResponseDataGetPublicKeyWallet responseDataGetPublicKeyWallet = response.body().getResponseData();
+                                Contact contact = new Contact();
+                                contact.setFullName(CommonUtils.getFullName(responseDataGetPublicKeyWallet));
+                                contact.setPhone(responseDataGetPublicKeyWallet.getPersonMobilePhone());
+                                contact.setPublicKeyValue(responseDataGetPublicKeyWallet.getEcKpValue());
+                                contact.setWalletId(Long.valueOf(responseMess.getSender()));
+                                DatabaseUtil.saveOnlySingleContact(getApplicationContext(), contact);
+                                getPublicKeyWallet(responseMess);
+                            }
+                        }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseGetPublicKeyWallet> call, Throwable t) {
+            }
+        });
     }
 
     private void getPublicKeyWallet(ResponseMessSocket responseMess) {
@@ -234,17 +244,11 @@ public class WebSocketsService extends Service {
                             String publicKeyWalletReceiver = responseGetPublicKeyWallet.getEcKpValue();
                             if (null != publicKeyWalletReceiver) {
                                 if (CommonUtils.verifyData(responseMess, publicKeyWalletReceiver)) {
+                                    DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
+                                    confirmMess(responseMess);
                                     //deCrypt dong eCash
-                                    transactionSignature = responseMess.getId();
-                                    deCryptECash = CommonUtils.decrypEcash(responseMess.getCashEnc(), KeyStoreUtils.getPrivateKey(getApplicationContext()));
-                                    if (deCryptECash != null) {
-                                        DatabaseUtil.saveTransactionLog(responseMess, getApplicationContext());
-                                        numberRequest = 0;
-                                        checkArrayCash(responseMess);
-                                        confirmMess(responseMess);
-                                    } else {
-                                        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
-                                    }
+                                    CashInFunction cashInFunction = new CashInFunction(accountInfo, getApplicationContext(), responseMess);
+                                    cashInFunction.handleCashSocket();
                                 } else {
                                     EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                                 }
@@ -265,124 +269,18 @@ public class WebSocketsService extends Service {
         });
     }
 
-    private void checkArrayCash(ResponseMessSocket responseMess) {
-        if (deCryptECash != null) {
-            if (deCryptECash.length > 0) {
-                if (numberRequest == deCryptECash.length) {
-                    putNotificationMoneyChange(responseMess);
-                    EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY_SOCKET));
-                    totalMoney = 0;
-                    numberRequest = 0;
-                    deCryptECash = null;
-                    return;
-                }
-                splitData(deCryptECash[numberRequest], responseMess);
-            }
-        }
+    private void confirmMess(ResponseMessSocket responseMess) {
+        RequestReceived requestReceived = new RequestReceived();
+        requestReceived.setId(responseMess.getId());
+        requestReceived.setReceiver(responseMess.getReceiver());
+        requestReceived.setRefId(responseMess.getRefId());
+        requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(requestReceived);
+        webSocketLocal.send(json);
     }
 
-    private void putNotificationMoneyChange(ResponseMessSocket responseMess) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String id = "_channel_01";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel mChannel = new NotificationChannel(id, "notification", importance);
-            mChannel.enableLights(true);
-
-            Notification notification = new Notification.Builder(getApplicationContext(), id)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle("eCash")
-                    .setContentText("Bạn đã được chuyển " + CommonUtils.formatPriceVND(totalMoney) + " từ tài khoản: " + responseMess.getSender())
-                    .setAutoCancel(true)
-                    .build();
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (mNotificationManager != null) {
-                mNotificationManager.createNotificationChannel(mChannel);
-                mNotificationManager.notify(1, notification);
-            }
-        }
-    }
-
-    private void splitData(String[] object, ResponseMessSocket responseMess) {
-        CashLogs_Database cash = new CashLogs_Database();
-        cash.setAccSign(object[1].replaceAll("\n", ""));
-        cash.setTreSign(object[2].replaceAll("\n", ""));
-
-        String[] item = object[0].split(";");
-        totalMoney = totalMoney + Integer.valueOf(item[4]);
-        cash.setCountryCode(item[0]);
-        cash.setIssuerCode(item[1]);
-        cash.setDecisionNo(item[2]);
-        cash.setSerialNo(item[3]);
-        cash.setParValue(Integer.valueOf(item[4]));
-        cash.setActiveDate(item[5]);
-        cash.setExpireDate(item[6]);
-        cash.setCycle(Integer.valueOf(item[7]));
-        cash.setType(Constant.STR_CASH_IN);
-        cash.setTransactionSignature(transactionSignature);
-        getPublicKeyCashToCheck(cash, responseMess);
-    }
-
-    private void getPublicKeyCashToCheck(CashLogs_Database cash, ResponseMessSocket responseMess) {
-        Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
-        APIService apiService = retrofit.create(APIService.class);
-
-        RequestGetPublicKeyCash requestGetPublicKeyCash = new RequestGetPublicKeyCash();
-        requestGetPublicKeyCash.setChannelCode(Constant.CHANNEL_CODE);
-        requestGetPublicKeyCash.setDecisionCode(cash.getDecisionNo());
-        requestGetPublicKeyCash.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_CASH);
-        requestGetPublicKeyCash.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestGetPublicKeyCash.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyCash.setToken(CommonUtils.getToken());
-        requestGetPublicKeyCash.setUsername(accountInfo.getUsername());
-        requestGetPublicKeyCash.setChannelSignature(Constant.STR_EMPTY);
-        requestGetPublicKeyCash.setAuditNumber(CommonUtils.getAuditNumber());
-
-        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyCash));
-        requestGetPublicKeyCash.setChannelSignature(CommonUtils.generateSignature(dataSign));
-
-        Call<ResponseGetPublicKeyCash> call = apiService.getPublicKeyCash(requestGetPublicKeyCash);
-        call.enqueue(new Callback<ResponseGetPublicKeyCash>() {
-            @Override
-            public void onResponse(Call<ResponseGetPublicKeyCash> call, retrofit2.Response<ResponseGetPublicKeyCash> response) {
-                if (response.isSuccessful()) {
-                    assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
-                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            ResponseDataGetPublicKeyCash responseGetPublicKeyCash = response.body().getResponseData();
-                            checkVerifyCash(cash, responseGetPublicKeyCash, responseMess);
-                        } else {
-                            numberRequest = numberRequest + 1;
-                            checkArrayCash(responseMess);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseGetPublicKeyCash> call, Throwable t) {
-                numberRequest = numberRequest + 1;
-                checkArrayCash(responseMess);
-            }
-        });
-    }
-
-    private void checkVerifyCash(CashLogs_Database cash, ResponseDataGetPublicKeyCash responseDataGetPublicKeyCash, ResponseMessSocket responseMess) {
-        if (CommonUtils.verifyCash(cash, responseDataGetPublicKeyCash.getDecisionTrekp(),
-                responseDataGetPublicKeyCash.getDecisionAcckp())) {
-            //xác thực đồng ecash ok => save cash
-            DatabaseUtil.saveCashToDB(cash, getApplicationContext(), accountInfo.getUsername());
-
-            //next
-            numberRequest = numberRequest + 1;
-            checkArrayCash(responseMess);
-        } else {
-            //lưu vào tien fake
-            DatabaseUtil.SaveCashInvalidToDB(cash, getApplicationContext(), accountInfo.getUsername());
-            //chạy thằng tiếp theo
-            numberRequest = numberRequest + 1;
-            checkArrayCash(responseMess);
-        }
-    }
 
     @Override
     public void onDestroy() {

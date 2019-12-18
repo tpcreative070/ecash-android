@@ -144,5 +144,4 @@ public class CashOutSocketFunction {
         }
         return Constant.STR_EMPTY;
     }
-
 }

@@ -41,7 +41,7 @@ import vn.ecpay.ewallet.ui.home.HomeFragment;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
-import static vn.ecpay.ewallet.common.utils.Constant.UPDATE_IMAGE_AVATAR;
+import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
 
 public class MainActivity extends ECashBaseActivity {
 
@@ -315,6 +315,6 @@ public class MainActivity extends ECashBaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        EventBus.getDefault().postSticky(new EventDataChange(UPDATE_IMAGE_AVATAR, requestCode,this,  resultCode, data));
+        EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode,this,  resultCode, data));
     }
 }

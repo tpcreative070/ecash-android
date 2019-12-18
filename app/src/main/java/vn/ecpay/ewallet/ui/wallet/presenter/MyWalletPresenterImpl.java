@@ -79,7 +79,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
         requestLogout.setToken(CommonUtils.getToken());
         requestLogout.setUsername(accountInfo.getUsername());
         requestLogout.setAuditNumber(CommonUtils.getAuditNumber());
-        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogout).replaceAll("null", ""));
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogout));
         requestLogout.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
         Call<ResponseLogOut> call = apiService.logOut(requestLogout);
@@ -144,6 +144,8 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
                         } else {
                             myWalletView.showDialogError(response.body().getResponseMessage());
                         }
+                    }else {
+                        myWalletView.showDialogError(application.getString(R.string.err_upload));
                     }
                 }
             }
