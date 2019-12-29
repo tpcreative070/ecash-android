@@ -2,13 +2,12 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@drawable/bg_border_gray"
     android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
         android:padding="10dp"
-        android:background="@drawable/bg_border_gray"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -21,184 +20,11 @@
             android:textStyle="bold" />
 
         <RelativeLayout
-            android:id="@+id/layout_send_500"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:text="500.000VNĐ"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_send_500"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_send_200"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="200.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_send_200"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_send_100"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="100.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_send_100"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_send_50"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="50.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_send_50"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_send_20"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="20.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_send_20"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_send_10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:text="10.000VNĐ"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_send_10"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_cash_change"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
 
@@ -243,190 +69,11 @@
             android:textStyle="bold" />
 
         <RelativeLayout
-            android:id="@+id/layout_500"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_500"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="500.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_take_500"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_200"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_200"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="200.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_take_200"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_100"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_100"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="100.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_take_100"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_50"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_50"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="50.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_take_50"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_20"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="20.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_take_20"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="10.000VNĐ"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_normal" />
-
-            <TextView
-                android:id="@+id/tv_number_take_10"
-                android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:paddingRight="15dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/bg_radius_grey"
-                android:textSize="@dimen/text_xlarge"
-                android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_cash_take"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
 
@@ -466,6 +113,6 @@
             android:textAllCaps="true"
             style="@style/btn_submit_full"
             android:textStyle="bold" />
-
     </LinearLayout>
+
 </androidx.core.widget.NestedScrollView>

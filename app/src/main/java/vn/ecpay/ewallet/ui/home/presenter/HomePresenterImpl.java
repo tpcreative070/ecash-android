@@ -10,6 +10,11 @@ import com.google.gson.Gson;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -32,6 +37,8 @@ import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.Resp
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.RequestGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.ResponseGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.request.RequestGetMoneyValue;
+import vn.ecpay.ewallet.model.cashValue.response.ResponseGetMoneyValue;
 import vn.ecpay.ewallet.model.contact.RequestSyncContact;
 import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
@@ -138,6 +145,47 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseOTPActiveAccount> call, Throwable t) {
                 homeView.dismissLoading();
+                homeView.onSyncContactFail(application.getString(R.string.err_upload));
+            }
+        });
+    }
+
+    @Override
+    public void getCashValues(AccountInfo accountInfo, Context context) {
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
+        APIService apiService = retrofit.create(APIService.class);
+
+        RequestGetMoneyValue requestGetMoneyValue = new RequestGetMoneyValue();
+        requestGetMoneyValue.setChannelCode(Constant.CHANNEL_CODE);
+        requestGetMoneyValue.setFunctionCode(Constant.FUNCTION_GET_MONEY_VALUE);
+        requestGetMoneyValue.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestGetMoneyValue.setIssuerCodes(Collections.singletonList(Constant.ISSUER_CODE));
+        requestGetMoneyValue.setUsername(accountInfo.getUsername());
+        requestGetMoneyValue.setToken(CommonUtils.getToken(accountInfo));
+        requestGetMoneyValue.setAuditNumber(CommonUtils.getAuditNumber());
+
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetMoneyValue));
+        requestGetMoneyValue.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Call<ResponseGetMoneyValue> call = apiService.getMoneyValue(requestGetMoneyValue);
+        call.enqueue(new Callback<ResponseGetMoneyValue>() {
+            @Override
+            public void onResponse(Call<ResponseGetMoneyValue> call, Response<ResponseGetMoneyValue> response) {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    if (response.body().getResponseCode() != null) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            DatabaseUtil.deleteAllCashValue(context);
+                            homeView.getCashValuesSuccess(response.body().getResponseData().getListDenomination());
+                        }
+                    }
+                } else {
+                    homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseGetMoneyValue> call, Throwable t) {
                 homeView.onSyncContactFail(application.getString(R.string.err_upload));
             }
         });

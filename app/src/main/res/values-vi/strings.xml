@@ -41,6 +41,7 @@
     <string name="str_cash_in">Nạp eCash</string>
     <string name="str_cash_out">Rút eCash</string>
     <string name="str_change_cash">Đổi eCash</string>
+    <string name="str_lixi">Lixi</string>
     <string name="str_transfer">Chuyển khoản</string>
     <string name="str_payment_service">Dịch vụ thanh toán</string>
     <string name="str_electron_pay">Thanh toán EVN</string>
@@ -91,6 +92,16 @@
     <string name="str_input_otp">Nhập mã OTP</string>
     <string name="str_change_avatar">Đổi ảnh đại diện</string>
     <string name="str_update_avatar_success">Thay đổi ảnh đại diện thành công</string>
+    <string name="str_edit_name">Họ và tên</string>
+    <string name="str_my_lixi">Lì xì của bạn</string>
+    <string name="str_lixi_open">Đã mở</string>
+    <string name="str_lixi_close">Chưa mở</string>
+    <string name="str_send_lixi">Gửi lì xì</string>
+    <string name="str_input_wish">Nhắn lời chúc</string>
+    <string name="str_change_cash_success">Đổi tiền thành công</string>
+    <string name="str_total_lixi">Tổng lì xì</string>
+    <string name="str_wishes">Lời chúc</string>
+    <string name="str_take_lixi_success">Bạn nhận được một gói Lì Xi bạn vui lòng mở gói Lì Xì</string>
 
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
@@ -212,9 +223,12 @@
     <string name="err_input_otp_null">Bạn chưa nhập OTP</string>
     <string name="err_email_validate_fail">Email bạn nhập không hợp lệ</string>
     <string name="err_update_avatar_fails">"Cập nhật avatar không thành công"</string>
-    <string name="device_un_support">Thiết bị không hỗ trợ chức năng này.</string>
+    <string name="err_device_un_support">Thiết bị không hỗ trợ chức năng này.</string>
+    <string name="err_un_chose_wallet_send">Chưa chọn tài khoản nhận</string>
+    <string name="err_amount_not_enough_to_transfer">Số tiền trong ví cảu bán không đủ để chuyển khoản</string>
 
     //%s
+    <string name="str_lixi_sender">Lì xì được gửi từ: %s</string>
     <string name="str_type_cash_out">-%s</string>
     <string name="str_type_cash_in">+%s</string>
     <string name="str_number_scan_qr_code">Bạn đã quét thành công %s QR code</string>

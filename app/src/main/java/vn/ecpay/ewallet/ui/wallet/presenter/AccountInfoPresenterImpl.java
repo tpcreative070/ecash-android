@@ -114,7 +114,7 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
                 ((MainActivity) activity).startActivityForResult(takePictureIntent, requestCode);
             }
         } catch (UnsupportedOperationException e) {
-            accountInfoPresenter.showDialogError(activity.getResources().getString(R.string.device_un_support));
+            accountInfoPresenter.showDialogError(activity.getResources().getString(R.string.err_device_un_support));
         }
     }
 

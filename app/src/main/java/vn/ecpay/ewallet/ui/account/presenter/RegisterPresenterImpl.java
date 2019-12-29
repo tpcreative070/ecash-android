@@ -172,7 +172,11 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             requestRegister.setPersonFirstName(separated[0]);
             StringBuilder middleName = new StringBuilder();
             for (int i = 1; i < separated.length - 1; i++) {
-                middleName.append(separated[i]);
+                if (i == 1) {
+                    middleName.append(separated[i]);
+                } else {
+                    middleName.append(" ").append(separated[i]);
+                }
             }
             requestRegister.setPersonMiddleName(middleName.toString());
             requestRegister.setPersonLastName(separated[separated.length - 1]);

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,30 +24,36 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
+import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
+import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 
-public class FragmentContactTransferCash extends ECashBaseFragment implements ContactTransferAdapter.onItemTransferListener {
+public class FragmentContactTransferCash extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
     EditText edtSearch;
+    @BindView(R.id.toolbar_center_text)
+    TextView toolbarCenterText;
     private ContactTransferAdapter mAdapter;
     private List<Contact> mSectionList;
-    private ContactTransferListener contactTransferListener;
+    private MultiTransferListener multiTransferListener;
     private AccountInfo accountInfo;
+    private ArrayList<Contact> multiTransferList;
 
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_contact_transfer;
     }
 
-    public static FragmentContactTransferCash newInstance(ContactTransferListener contactTransferListener) {
+    public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener) {
         Bundle args = new Bundle();
-        args.putSerializable(Constant.CONTACT_TRANSFER, contactTransferListener);
+        args.putSerializable(Constant.CONTACT_MULTI_TRANSFER, multiTransferListener);
         FragmentContactTransferCash fragment = new FragmentContactTransferCash();
         fragment.setArguments(args);
         return fragment;
@@ -55,9 +62,10 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Co
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        toolbarCenterText.setText(getResources().getString(R.string.str_account_receive));
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            this.contactTransferListener = (ContactTransferListener) bundle.getSerializable(Constant.CONTACT_TRANSFER);
+            this.multiTransferListener = (MultiTransferListener) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
         }
 
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -127,22 +135,44 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Co
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((CashToCashActivity) getActivity()).updateTitle(getString(R.string.str_account_receive));
-    }
-
-    @OnClick(R.id.iv_filter)
-    public void onViewClicked() {
-        edtSearch.setText(Constant.STR_EMPTY);
-    }
-
-    @Override
-    public void onItemClick(Contact contact) {
-        if (null != contactTransferListener) {
-            contactTransferListener.itemClick(contact);
-            ((CashToCashActivity) getActivity()).onBackPressed();
+    @OnClick({R.id.iv_back, R.id.tv_done, R.id.iv_filter})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_back:
+                try {
+                    if (getActivity() != null)
+                        ((CashToCashActivity) getActivity()).onBackPressed();
+                } catch (ClassCastException e) {
+                    if (getActivity() != null)
+                        ((MyLixiActivity) getActivity()).onBackPressed();
+                }
+                break;
+            case R.id.tv_done:
+                if (multiTransferList != null) {
+                    if (multiTransferList.size() > 0) {
+                        multiTransferListener.onMultiTransfer(multiTransferList);
+                        try {
+                            if (getActivity() != null)
+                                ((CashToCashActivity) getActivity()).onBackPressed();
+                        } catch (ClassCastException e) {
+                            if (getActivity() != null)
+                                ((MyLixiActivity) getActivity()).onBackPressed();
+                        }
+                    } else {
+                        DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_un_chose_wallet_send));
+                    }
+                } else {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_un_chose_wallet_send));
+                }
+                break;
+            case R.id.iv_filter:
+                edtSearch.setText(Constant.STR_EMPTY);
+                break;
         }
+    }
+
+    @Override
+    public void onMultiTransfer(ArrayList<Contact> contactList) {
+        multiTransferList = contactList;
     }
 }

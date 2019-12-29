@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,10 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.daimajia.swipe.SwipeLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
 
 public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,20 +29,18 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     List<Contact> contactList;
     WeakReference<Context> mContextWeakReference;
-    private onItemTransferListener onItemTransferListener;
+    private MultiTransferListener multiTransferListener;
+    ArrayList<Contact> multiTransferList;
 
-    public interface onItemTransferListener {
-        void onItemClick(Contact contact);
-    }
-
-    public ContactTransferAdapter(List<Contact> mContactList, Context context, onItemTransferListener onItemTransferListener) {
+    public ContactTransferAdapter(List<Contact> mContactList, Context context, MultiTransferListener multiTransferListener) {
         this.contactList = mContactList;
         this.mContextWeakReference = new WeakReference<>(context);
-        this.onItemTransferListener = onItemTransferListener;
+        this.multiTransferListener = multiTransferListener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        multiTransferList = new ArrayList<>();
         if (viewType == SECTION_VIEW) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_contact_header, parent, false);
@@ -46,9 +48,6 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_contact_transfer, parent, false);
-        SwipeLayout item = view.findViewById(R.id.swipe_item);
-        item.setShowMode(SwipeLayout.ShowMode.PullOut);
-        item.addDrag(SwipeLayout.DragEdge.Right, item.findViewById(R.id.layout_option_right));
         return new ContactTransferAdapter.ItemContactContentHolder(view);
     }
 
@@ -68,26 +67,45 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             return;
         }
         if (SECTION_VIEW == getItemViewType(position)) {
-
             ContactTransferAdapter.SectionHeaderViewHolder sectionHeaderViewHolder = (ContactTransferAdapter.SectionHeaderViewHolder) holder;
             Contact sectionItem = contactList.get(position);
             sectionHeaderViewHolder.tvHeader.setText(sectionItem.getFullName());
             return;
         }
-
         ContactTransferAdapter.ItemContactContentHolder itemViewHolder = (ContactTransferAdapter.ItemContactContentHolder) holder;
         Contact contactTransferModel = contactList.get(position);
         itemViewHolder.tvName.setText(context.getString(R.string.str_item_transfer_cash,
                 contactTransferModel.getFullName(), String.valueOf(contactTransferModel.getWalletId())));
         itemViewHolder.tvPhone.setText(contactTransferModel.getPhone());
 
-        itemViewHolder.layoutTransfer.setOnClickListener(v -> {
-            if(null != onItemTransferListener){
-                onItemTransferListener.onItemClick(contactTransferModel);
+
+        itemViewHolder.view_foreground.setOnClickListener(v -> {
+            if (itemViewHolder.iv_multi_chose.getVisibility() == View.VISIBLE) {
+                addAndRemoveMultiTransfer(contactTransferModel, false);
+                itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
+            } else {
+                addAndRemoveMultiTransfer(contactTransferModel, true);
+                itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
+            }
+
+            if (null != multiTransferListener) {
+                multiTransferListener.onMultiTransfer(multiTransferList);
             }
         });
     }
 
+    private void addAndRemoveMultiTransfer(Contact contact, boolean isAdd) {
+        if (isAdd) {
+            multiTransferList.add(contact);
+        } else {
+            for (int i = 0; i < multiTransferList.size(); i++) {
+                if (multiTransferList.get(i).getWalletId().equals(contact.getWalletId())) {
+                    multiTransferList.remove(i);
+                    break;
+                }
+            }
+        }
+    }
 
     @Override
     public int getItemCount() {
@@ -95,16 +113,16 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public static class ItemContactContentHolder extends RecyclerView.ViewHolder {
+        TextView tvName, tvPhone;
+        RelativeLayout view_foreground;
+        ImageView iv_multi_chose;
 
-        public TextView tvName, tvPhone;
-        public LinearLayout layoutTransfer;
-
-
-        public ItemContactContentHolder(View itemView) {
+        ItemContactContentHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             tvPhone = itemView.findViewById(R.id.tv_phone);
-            layoutTransfer = itemView.findViewById(R.id.layout_option_right);
+            view_foreground = itemView.findViewById(R.id.view_foreground);
+            iv_multi_chose = itemView.findViewById(R.id.iv_multi_chose);
         }
     }
 

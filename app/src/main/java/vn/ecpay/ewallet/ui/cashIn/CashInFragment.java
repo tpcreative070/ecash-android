@@ -4,13 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,7 +36,9 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
+import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashIn.presenter.CashInPresenter;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
@@ -52,70 +55,23 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     ImageView ivDropDown;
     @BindView(R.id.tv_eDong_wallet)
     TextView tvEdongWallet;
-    @BindView(R.id.tv_over_edong)
-    TextView tvOverEdong;
-    @BindView(R.id.tv_500)
-    TextView tv500;
-    @BindView(R.id.iv_down_500)
-    ImageView ivDown500;
-    @BindView(R.id.tv_total_500)
-    TextView tvTotal500;
-    @BindView(R.id.iv_up_500)
-    ImageView ivUp500;
-    @BindView(R.id.tv_200)
-    TextView tv200;
-    @BindView(R.id.iv_down_200)
-    ImageView ivDown200;
-    @BindView(R.id.tv_total_200)
-    TextView tvTotal200;
-    @BindView(R.id.iv_up_200)
-    ImageView ivUp200;
-    @BindView(R.id.tv_100)
-    TextView tv100;
-    @BindView(R.id.iv_down_100)
-    ImageView ivDown100;
-    @BindView(R.id.tv_total_100)
-    TextView tvTotal100;
-    @BindView(R.id.iv_up_100)
-    ImageView ivUp100;
-    @BindView(R.id.tv_50)
-    TextView tv50;
-    @BindView(R.id.iv_down_50)
-    ImageView ivDown50;
-    @BindView(R.id.tv_total_50)
-    TextView tvTotal50;
-    @BindView(R.id.iv_up_50)
-    ImageView ivUp50;
-    @BindView(R.id.tv_20)
-    TextView tv20;
-    @BindView(R.id.iv_down_20)
-    ImageView ivDown20;
-    @BindView(R.id.tv_total_20)
-    TextView tvTotal20;
-    @BindView(R.id.iv_up_20)
-    ImageView ivUp20;
-    @BindView(R.id.tv_10)
-    TextView tv10;
-    @BindView(R.id.iv_down_10)
-    ImageView ivDown10;
-    @BindView(R.id.tv_total_10)
-    TextView tvTotal10;
-    @BindView(R.id.iv_up_10)
-    ImageView ivUp10;
-    @BindView(R.id.tv_total_cash_in)
-    TextView tvTotalCashIn;
-    @BindView(R.id.btn_confirm)
-    Button btnConfirm;
     @BindView(R.id.layout_eDong)
     RelativeLayout layoutEDong;
+    @BindView(R.id.tv_over_edong)
+    TextView tvOverEdong;
+    @BindView(R.id.rv_cash_values)
+    RecyclerView rvCashValues;
+    @BindView(R.id.tv_total_cash_in)
+    TextView tvTotalCashIn;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     private long balance;
-    private int total500 = 0, total200 = 0, total100 = 0, total50 = 0, total20 = 0, total10 = 0;
     private long totalMoney;
     private EdongInfo eDongInfoCashIn;
     private List<Integer> listQuality;
     private List<Integer> listValue;
+    private List<CashTotal> valuesListAdapter;
+    private CashValueAdapter cashValueAdapter;
 
     @Inject
     CashInPresenter cashInPresenter;
@@ -135,10 +91,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         listEDongInfo = ECashApplication.getListEDongInfo();
         setData();
-        updateQualityIn();
     }
 
     private void setData() {
+        setAdapter();
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -150,6 +106,22 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
         }
+    }
+
+    private void setAdapter() {
+        valuesListAdapter = DatabaseUtil.getAllCashValues(getActivity());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        rvCashValues.setLayoutManager(mLayoutManager);
+        cashValueAdapter = new CashValueAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
+        rvCashValues.setAdapter(cashValueAdapter);
+    }
+
+    private void updateTotalMoney() {
+        totalMoney = 0;
+        for (int i = 0; i < valuesListAdapter.size(); i++) {
+            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
+        }
+        tvTotalCashIn.setText(CommonUtils.formatPriceVND(totalMoney));
     }
 
     private void updateBalance() {
@@ -168,20 +140,6 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
         }
-    }
-
-    private void updateQualityIn() {
-        tvTotal500.setText(String.valueOf(total500));
-        tvTotal200.setText(String.valueOf(total200));
-        tvTotal100.setText(String.valueOf(total100));
-        tvTotal50.setText(String.valueOf(total50));
-        tvTotal20.setText(String.valueOf(total20));
-        tvTotal10.setText(String.valueOf(total10));
-    }
-
-    private void updateTotalMoneySend() {
-        totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-        tvTotalCashIn.setText(CommonUtils.formatPriceVND(totalMoney));
     }
 
     private void showDialogEDong() {
@@ -208,74 +166,9 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         super.onResume();
     }
 
-    private void updateAllData() {
-        updateQualityIn();
-        updateTotalMoneySend();
-    }
-
-    @OnClick({R.id.layout_eDong, R.id.iv_down_500, R.id.iv_up_500, R.id.iv_down_200, R.id.iv_up_200, R.id.iv_down_100, R.id.iv_up_100, R.id.iv_down_50, R.id.iv_up_50, R.id.iv_down_20, R.id.iv_up_20, R.id.iv_down_10, R.id.iv_up_10, R.id.btn_confirm})
+    @OnClick({R.id.layout_eDong, R.id.btn_confirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.iv_down_500:
-                if (total500 > 0) {
-                    total500 = total500 - 1;
-                }
-                updateAllData();
-                break;
-            case R.id.iv_up_500:
-                total500 = total500 + 1;
-                updateAllData();
-                break;
-            case R.id.iv_down_200:
-                if (total200 > 0) {
-                    total200 = total200 - 1;
-                }
-                updateAllData();
-                break;
-            case R.id.iv_up_200:
-                total200 = total200 + 1;
-                updateAllData();
-                break;
-            case R.id.iv_down_100:
-                if (total100 > 0) {
-                    total100 = total100 - 1;
-                }
-                updateAllData();
-                break;
-            case R.id.iv_up_100:
-                total100 = total100 + 1;
-                updateAllData();
-                break;
-            case R.id.iv_down_50:
-                if (total50 > 0) {
-                    total50 = total50 - 1;
-                }
-                updateAllData();
-                break;
-            case R.id.iv_up_50:
-                total50 = total50 + 1;
-                updateAllData();
-                break;
-            case R.id.iv_down_20:
-                if (total20 > 0) {
-                    total20 = total20 - 1;
-                }
-                updateAllData();
-                break;
-            case R.id.iv_up_20:
-                total20 = total20 + 1;
-                updateAllData();
-                break;
-            case R.id.iv_down_10:
-                if (total10 > 0) {
-                    total10 = total10 - 1;
-                }
-                updateAllData();
-                break;
-            case R.id.iv_up_10:
-                total10 = total10 + 1;
-                updateAllData();
-                break;
             case R.id.layout_eDong:
                 if (listEDongInfo.size() > 1) {
                     showDialogEDong();
@@ -294,29 +187,11 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         }
         listQuality = new ArrayList<>();
         listValue = new ArrayList<>();
-        if (total10 > 0) {
-            listQuality.add(total10);
-            listValue.add(10000);
-        }
-        if (total20 > 0) {
-            listQuality.add(total20);
-            listValue.add(20000);
-        }
-        if (total50 > 0) {
-            listQuality.add(total50);
-            listValue.add(50000);
-        }
-        if (total100 > 0) {
-            listQuality.add(total100);
-            listValue.add(100000);
-        }
-        if (total200 > 0) {
-            listQuality.add(total200);
-            listValue.add(200000);
-        }
-        if (total500 > 0) {
-            listQuality.add(total500);
-            listValue.add(500000);
+        for (int i = 0; i < valuesListAdapter.size(); i++) {
+            if (valuesListAdapter.get(i).getTotal() > 0) {
+                listQuality.add(valuesListAdapter.get(i).getTotal());
+                listValue.add(valuesListAdapter.get(i).getParValue());
+            }
         }
         cashInPresenter.transferMoneyEDongToECash(totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
     }
@@ -326,20 +201,14 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                 getString(R.string.str_dialog_cash_in_success, CommonUtils.formatPriceVND(totalMoney), String.valueOf(eDongInfoCashIn.getAccountIdt())), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
-                        total500 = 0;
-                        total200 = 0;
-                        total100 = 0;
-                        total50 = 0;
-                        total20 = 0;
-                        total10 = 0;
+                        setData();
                         updateBalance();
-                        updateQualityIn();
-                        updateTotalMoneySend();
+                        updateTotalMoney();
                     }
 
                     @Override
                     public void OnListenerCancel() {
-                        if(getActivity()!=null)
+                        if (getActivity() != null)
                             getActivity().finish();
                     }
                 });

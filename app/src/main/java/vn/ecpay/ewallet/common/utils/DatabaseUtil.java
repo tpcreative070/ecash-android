@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 
-import androidx.fragment.app.FragmentActivity;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -22,8 +20,12 @@ import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.cashValue.response.Denomination;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
+import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class DatabaseUtil {
@@ -46,7 +48,7 @@ public class DatabaseUtil {
         return WalletDatabase.getAllProfile();
     }
 
-    public static void saveTransactionLogQR(ArrayList<QRCodeSender> codeSenderArrayList, ResponseMessSocket responseMess, FragmentActivity activity) {
+    public static void saveTransactionLogQR(ArrayList<QRCodeSender> codeSenderArrayList, ResponseMessSocket responseMess, Context activity) {
         WalletDatabase.getINSTANCE(activity, ECashApplication.masterKey);
         for (int i = 0; i < codeSenderArrayList.size(); i++) {
             TransactionLogQR_Database transactionLog = new TransactionLogQR_Database();
@@ -85,6 +87,13 @@ public class DatabaseUtil {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         TransactionLog_Database transactionLog = WalletDatabase.checkTransactionLogExit(responseMess.getId());
         return null != transactionLog;
+    }
+
+    //check cash team exit
+    public static boolean isCashTempExit(ResponseMessSocket responseMess, Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        CashTemp cashTemp = WalletDatabase.checkCashTempExit(responseMess.getId());
+        return null != cashTemp;
     }
 
     //ma hoa mat xich transaction log
@@ -162,13 +171,12 @@ public class DatabaseUtil {
     }
 
     public static void updateTransactionsLogAndCashOutDatabase(ArrayList<CashLogs_Database> listCashSend, ResponseMessSocket responseMess, Context context, String userName) {
-        saveTransactionLog(responseMess, context);
-        for (int i = 0; i < listCashSend.size(); i++) {
-            CashLogs_Database cash = listCashSend.get(i);
-            cash.setType(Constant.STR_CASH_OUT);
-            cash.setTransactionSignature(responseMess.getId());
-            saveCashToDB(cash, context, userName);
+        for(CashLogs_Database cashLogsDatabase:listCashSend){
+            cashLogsDatabase.setType(Constant.STR_CASH_OUT);
+            cashLogsDatabase.setTransactionSignature(responseMess.getId());
+            saveCashToDB(cashLogsDatabase, context, userName);
         }
+        saveTransactionLog(responseMess, context);
     }
 
     public static void saveListContact(Context context, ArrayList<Contact> listContact) {
@@ -227,6 +235,14 @@ public class DatabaseUtil {
         WalletDatabase.updateStatusContact(status, walletId);
     }
 
+    public static boolean checkContactExit(Context context, String walletId) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        if (null != WalletDatabase.checkContactExit(walletId)) {
+            return true;
+        }
+        return false;
+    }
+
     public static List<NotificationObj> getAllNotification(Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         return WalletDatabase.getAllNotification();
@@ -250,5 +266,50 @@ public class DatabaseUtil {
     public static void updateNotificationRead(Context context, String read, Long id) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.updateNotificationRead(read, id);
+    }
+
+    public static List<CashTemp> getAllCashTemp(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllCashTemp();
+    }
+
+    public static void saveCashValue(Denomination cashValues, Context context) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        WalletDatabase.insertCashValue(cashValues);
+    }
+
+    public static void deleteAllCashValue(Context context) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        WalletDatabase.deleteAllCashValue();
+    }
+
+    public static void saveCashTemp(CashTemp cashTemp, Context context) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        WalletDatabase.insertCashTemp(cashTemp);
+    }
+
+    public static List<CashTemp> getAllLixiUnRead(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllLixiUnRead();
+    }
+
+    public static void updateStattusLixi(Context context, String status, int id) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.updateStatusLixi(status, id);
+    }
+
+    public static List<CashTotal> getAllCashTotal(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllCashTotal();
+    }
+
+    public static List<CashTotal> getAllCashValues(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllCashValues();
+    }
+
+    public static TransactionsHistoryModel getCurrentTransactionsHistory(Context context, String transactionSignature) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getCurrentTransactionsHistory(transactionSignature);
     }
 }

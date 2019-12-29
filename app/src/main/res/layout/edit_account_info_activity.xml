@@ -21,7 +21,7 @@
         android:layout_height="match_parent">
         <TextView
             android:layout_width="wrap_content"
-            android:text="Họ và tên"
+            android:text="@string/str_edit_name"
             android:textSize="@dimen/text_normal"
             android:textColor="@color/gray"
             android:layout_height="wrap_content"/>
@@ -35,7 +35,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:text="Địa chỉ"
+            android:text="@string/str_address"
             android:textColor="@color/gray"
             android:textSize="@dimen/text_normal"
             android:layout_marginTop="20dp"
@@ -50,7 +50,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:text="Số CMND"
+            android:text="@string/str_cmnd"
             android:textColor="@color/gray"
             android:textSize="@dimen/text_normal"
             android:layout_marginTop="20dp"
@@ -67,7 +67,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:text="Email"
+            android:text="@string/str_email"
             android:textColor="@color/gray"
             android:textSize="@dimen/text_normal"
             android:layout_marginTop="20dp"

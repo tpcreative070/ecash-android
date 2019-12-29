@@ -27,30 +27,67 @@
         android:src="@drawable/ic_logo_white"/>
 
     <RelativeLayout
-        android:id="@+id/layout_notification"
-        android:layout_width="30dp"
-        android:layout_height="35dp"
-        android:layout_gravity="right">
+        android:layout_width="70dp"
+        android:layout_gravity="right"
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/iv_bell"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+        <RelativeLayout
+            android:id="@+id/layout_lixi"
+            android:layout_width="30dp"
+            android:layout_toStartOf="@+id/layout_notification"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_bell_white" />
+            android:layout_marginEnd="5dp"
+            android:layout_height="35dp">
 
-        <TextView
-            android:id="@+id/tvNotificationCount"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:background="@drawable/bg_oval_red"
+            <ImageView
+                android:id="@+id/iv_lixi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_lixi" />
+
+            <TextView
+                android:id="@+id/tvNumberLixi"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:background="@drawable/bg_oval_red"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_mini" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_notification"
+            android:layout_width="30dp"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:gravity="center"
-            android:visibility="gone"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_mini" />
+            android:layout_centerVertical="true"
+            android:layout_height="35dp">
+
+            <ImageView
+                android:id="@+id/iv_bell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_bell_white" />
+
+            <TextView
+                android:id="@+id/tvNotificationCount"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:background="@drawable/bg_oval_red"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_mini" />
+        </RelativeLayout>
+
     </RelativeLayout>
 
 </androidx.appcompat.widget.Toolbar>

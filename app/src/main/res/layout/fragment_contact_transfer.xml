@@ -5,11 +5,50 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+    <RelativeLayout android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_high"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:padding="15dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/tv_done"
+            android:layout_width="wrap_content"
+            android:text="@string/str_done"
+            android:textColor="@color/blue"
+            android:gravity="center_vertical"
+            android:layout_alignParentEnd="true"
+            android:textSize="@dimen/text_header"
+            android:padding="10dp"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/toolbar_center_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:maxLines="1"
+            android:text="@string/str_add"
+            android:textAppearance="@style/TextAppearance.Title"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/text_header"
+            android:textStyle="normal" />
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/view_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar"
         android:background="@color/bg_search">
 
         <EditText

@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,16 +50,18 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseData;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.response.Denomination;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
+import vn.ecpay.ewallet.ui.firebase.NotificationActivity;
 import vn.ecpay.ewallet.ui.home.module.HomeModule;
 import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
-import vn.ecpay.ewallet.ui.firebase.NotificationActivity;
+import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 
 public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.iv_qr_code)
@@ -105,6 +108,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     RelativeLayout layoutEDong;
     @BindView(R.id.tvNotificationCount)
     TextView tvNotificationCount;
+    @BindView(R.id.tvNumberLixi)
+    TextView tvNumberLixi;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     private long balance;
@@ -141,7 +146,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
+            homePresenter.getCashValues(accountInfo, getActivity());
             updateNotification();
+            updateNumberLixi();
             accountInfo = dbAccountInfo;
             tvHomeAccountName.setText(CommonUtils.getFullName(accountInfo));
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -174,6 +181,18 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 tvNotificationCount.setText(String.valueOf(DatabaseUtil.getSizeNotification(getActivity())));
             } else {
                 tvNotificationCount.setVisibility(View.GONE);
+            }
+        }, 1000);
+    }
+
+    private void updateNumberLixi(){
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            if (DatabaseUtil.getAllLixiUnRead(getActivity()).size() > 0) {
+                tvNumberLixi.setVisibility(View.VISIBLE);
+                tvNumberLixi.setText(String.valueOf(DatabaseUtil.getAllLixiUnRead(getActivity()).size()));
+            } else {
+                tvNumberLixi.setVisibility(View.GONE);
             }
         }, 1000);
     }
@@ -234,20 +253,23 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         dialog.show();
     }
 
-    @OnClick({R.id.layout_eDong, R.id.iv_qr_code, R.id.layout_notification, R.id.layout_account_info, R.id.layout_cash_in, R.id.layout_cash_out, R.id.layout_change_cash, R.id.layout_transfer_cash, R.id.viewElectronPay, R.id.viewWaterPay, R.id.viewShopPay, R.id.viewCablePay, R.id.layout_active_account})
+    @OnClick({R.id.layout_lixi, R.id.layout_eDong, R.id.iv_qr_code, R.id.layout_notification, R.id.layout_account_info, R.id.layout_cash_in, R.id.layout_cash_out, R.id.layout_change_cash, R.id.layout_transfer_cash, R.id.viewElectronPay, R.id.viewWaterPay, R.id.viewShopPay, R.id.viewCablePay, R.id.layout_active_account})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_notification:
                 Intent intentNoti = new Intent(getActivity(), NotificationActivity.class);
-                getActivity().startActivity(intentNoti);
-                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (getActivity() != null) {
+                    getActivity().startActivity(intentNoti);
+                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
                 break;
             case R.id.iv_qr_code:
             case R.id.viewElectronPay:
             case R.id.viewWaterPay:
             case R.id.viewShopPay:
             case R.id.viewCablePay:
-                ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
                 break;
             case R.id.layout_account_info:
                 break;
@@ -255,13 +277,17 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentCashIn = new Intent(getActivity(), CashInActivity.class);
-                        getActivity().startActivity(intentCashIn);
-                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intentCashIn);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
                     } else {
-                        ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
                     }
                 } else {
-                    ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+                    if (getActivity() != null)
+                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
                 }
 
                 break;
@@ -269,39 +295,51 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentCashOut = new Intent(getActivity(), CashOutActivity.class);
-                        getActivity().startActivity(intentCashOut);
-                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intentCashOut);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
                     } else {
-                        ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
                     }
                 } else {
-                    ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+                    if (getActivity() != null)
+                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
                 }
                 break;
             case R.id.layout_change_cash:
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentTransferCash = new Intent(getActivity(), CashChangeActivity.class);
-                        getActivity().startActivity(intentTransferCash);
-                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intentTransferCash);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
                     } else {
-                        ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
                     }
                 } else {
-                    ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+                    if (getActivity() != null)
+                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
                 }
                 break;
             case R.id.layout_transfer_cash:
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
-                        getActivity().startActivity(intentTransferCash);
-                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intentTransferCash);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
                     } else {
-                        ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
                     }
                 } else {
-                    ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+                    if (getActivity() != null)
+                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
                 }
                 break;
 
@@ -319,6 +357,23 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
                 if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
                     startRegisterPassword();
+                }
+                break;
+            case R.id.layout_lixi:
+                if (ECashApplication.getAccountInfo() != null) {
+                    if (dbAccountInfo != null) {
+                        Intent intentTransferCash = new Intent(getActivity(), MyLixiActivity.class);
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intentTransferCash);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
+                    } else {
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+                    }
+                } else {
+                    if (getActivity() != null)
+                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
                 }
                 break;
         }
@@ -398,6 +453,10 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             updateNotification();
         }
 
+        if (event.getData().equals(Constant.EVENT_UPDATE_LIXI)) {
+            updateNumberLixi();
+        }
+
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -427,7 +486,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             }
         }
         addMyContact(mAccountInfo);
-//        ECashApplication.setAccountInfo(mAccountInfo);
+        ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
         Toast.makeText(getActivity(), getString(R.string.str_active_account_success), Toast.LENGTH_LONG).show();
@@ -497,5 +556,20 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 ((AccountActivity) getActivity()).onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void getCashValuesSuccess(List<Denomination> cashValuesList) {
+        if (cashValuesList.size() > 0){
+            DatabaseUtil.deleteAllCashValue(getActivity());
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < cashValuesList.size(); i++) {
+                        DatabaseUtil.saveCashValue(cashValuesList.get(i), getActivity());
+                    }
+                }
+            }, 500);
+        }
     }
 }

@@ -19,6 +19,8 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.CashTemp_Database;
+import vn.ecpay.ewallet.database.table.CashValues_Database;
 import vn.ecpay.ewallet.database.table.Contact_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
 import vn.ecpay.ewallet.database.table.Notification_Database;
@@ -28,7 +30,10 @@ import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.database.table.TransactionTimeOut_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.cashValue.response.Denomination;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
@@ -41,7 +46,9 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         CashInvalid_Database.class,
         TransactionTimeOut_Database.class,
         TransactionLogQR_Database.class,
-        Notification_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
+        Notification_Database.class,
+        CashTemp_Database.class,
+        CashValues_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -117,21 +124,74 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.daoAccess().updateNotificationRead(read, id);
     }
 
-    // todo contact---------------------------------------------------------------------------------------
-    public static void insertContactTask(Contact mContact) {
-        Contact_Database contact = new Contact_Database();
-        contact.setWalletId(mContact.getWalletId());
-        contact.setFullName(mContact.getFullName());
-        contact.setPublicKeyValue(mContact.getPublicKeyValue());
-        contact.setPhone(mContact.getPhone());
-        contact.setStatus(mContact.getStatus());
-        insertContactTask(contact, Constant.STR_EMPTY);
-    }
-
-    private static void insertContactTask(final Contact_Database contact, String fake) {
+    // todo Cash_Value-------------------------------------------------------------------------------
+    public static void insertCashValue(Denomination cashValues) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
+                CashValues_Database cashValues_database = new CashValues_Database();
+                cashValues_database.setParValue(cashValues.getValue());
+                walletDatabase.daoAccess().insertCashValue(cashValues_database);
+                return null;
+            }
+        }.execute();
+    }
+
+    public static void deleteAllCashValue() {
+        walletDatabase.daoAccess().deleteAllCashValue();
+    }
+
+    public static List<CashTotal> getAllCashValues() {
+        return walletDatabase.daoAccess().getAllCashValue();
+    }
+
+    public static List<CashTotal> getAllCashTotal() {
+        return walletDatabase.daoAccess().getAllCashTotal();
+    }
+
+
+    // todo Cash_Temp-------------------------------------------------------------------------------
+
+    public static void insertCashTemp(CashTemp cashTemp) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                CashTemp_Database temp_database = new CashTemp_Database();
+                temp_database.setSenderAccountId(cashTemp.getSenderAccountId());
+                temp_database.setStatus(Constant.CLOSE);
+                temp_database.setContent(cashTemp.getContent());
+                temp_database.setReceiveDate(cashTemp.getReceiveDate());
+                temp_database.setTransactionSignature(cashTemp.getTransactionSignature());
+                temp_database.setReceiveDate(CommonUtils.getCurrentTime());
+                walletDatabase.daoAccess().insertCashTemp(temp_database);
+                return null;
+            }
+        }.execute();
+    }
+
+    public static List<CashTemp> getAllCashTemp() {
+        return walletDatabase.daoAccess().getAllCashTemp();
+    }
+
+    public static List<CashTemp> getAllLixiUnRead() {
+        return walletDatabase.daoAccess().getAllLixiUnRead();
+    }
+
+    public static void updateStatusLixi(String status, int id){
+        walletDatabase.daoAccess().updateStatusLixi(status, id);
+    }
+
+    // todo contact---------------------------------------------------------------------------------------
+    public static void insertContactTask(final Contact mContact) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                Contact_Database contact = new Contact_Database();
+                contact.setWalletId(mContact.getWalletId());
+                contact.setFullName(mContact.getFullName());
+                contact.setPublicKeyValue(mContact.getPublicKeyValue());
+                contact.setPhone(mContact.getPhone());
+                contact.setStatus(mContact.getStatus());
                 walletDatabase.daoAccess().insertOnlySingleContact(contact);
                 return null;
             }
@@ -158,6 +218,9 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.daoAccess().updateStatusContact(status, walletId);
     }
 
+    public static Contact checkContactExit(String strWalletId) {
+        return walletDatabase.daoAccess().checkContactExit(strWalletId);
+    }
 
     // todo cash------------------------------------------------------------------------------------------
     public static void insertCashTask(CashLogs_Database cash, String userName) {
@@ -404,6 +467,10 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().checkTransactionLogExit(transactionSignature);
     }
 
+    public static CashTemp checkCashTempExit(String transactionSignature) {
+        return walletDatabase.daoAccess().checkCashTempExit(transactionSignature);
+    }
+
     public static List<TransactionLog_Database> getAllTransactionLog() {
         return walletDatabase.daoAccess().getAllTransactionLog();
     }
@@ -426,6 +493,10 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static List<TransactionsHistoryModel> getListTransactionHistory() {
         return walletDatabase.daoAccess().getAllTransactionsHistory();
+    }
+
+    public static TransactionsHistoryModel getCurrentTransactionsHistory(String transactionSignature){
+        return walletDatabase.daoAccess().getCurrentTransactionsHistory(transactionSignature);
     }
 
     public static List<TransactionsHistoryModel> getListTransactionHistoryFilter(String filter) {

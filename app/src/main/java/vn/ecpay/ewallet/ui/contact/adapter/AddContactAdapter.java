@@ -61,18 +61,6 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 contact.getFullName(), String.valueOf(contact.getWalletId())));
         itemViewHolder.tvPhone.setText(contact.getPhone());
 
-        itemViewHolder.layoutTransfer.setOnClickListener(v -> {
-            if (contact.getWalletId().equals(accountInfo.getWalletId())) {
-                ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_transfer_conflict));
-            } else {
-                DatabaseUtil.saveOnlySingleContact(context, contact);
-                Intent intentTransferCash = new Intent(context, CashToCashActivity.class);
-                intentTransferCash.putExtra(Constant.CONTACT_TRANSFER_MODEL, contact);
-                context.startActivity(intentTransferCash);
-                ((AddContactActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
-        });
-
         itemViewHolder.layoutAdd.setOnClickListener(v -> {
             if (contact.getWalletId().equals(accountInfo.getWalletId())) {
                 ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_add_contact_conflict));
@@ -100,7 +88,7 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public static class ItemContactContentHolder extends RecyclerView.ViewHolder {
 
         public TextView tvName, tvPhone;
-        public LinearLayout layoutAdd, layoutTransfer;
+        public LinearLayout layoutAdd;
 
 
         public ItemContactContentHolder(View itemView) {
@@ -108,7 +96,6 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             tvName = itemView.findViewById(R.id.tv_name);
             tvPhone = itemView.findViewById(R.id.tv_phone);
             layoutAdd = itemView.findViewById(R.id.layout_add);
-            layoutTransfer = itemView.findViewById(R.id.layout_option_right);
         }
     }
 }

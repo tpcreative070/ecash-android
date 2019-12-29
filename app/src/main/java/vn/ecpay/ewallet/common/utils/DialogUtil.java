@@ -16,14 +16,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.cropImage.CropView;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.language.LanguageObject;
+import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
+import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
+import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
+import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 
 public class DialogUtil {
     private static DialogUtil mInsance;
@@ -64,7 +74,7 @@ public class DialogUtil {
     }
 
     public interface OnResultChoseCash {
-        void OnListenerOk(int sl500, int sl200, int sl100, int sl50, int sl20, int sl10);
+        void OnListenerOk(List<CashTotal> valuesListCashChange);
     }
 
     public interface OnConfirmOTP {
@@ -316,608 +326,120 @@ public class DialogUtil {
         }
     }
 
-
-    int slDatabase500, slDatabase200, slDatabase100, slDatabase50, slDatabase20, slDatabase10;
-    int total500 = 0, total200 = 0, total100 = 0, total50 = 0, total20 = 0, total10 = 0;
-    private long totalMoney = 0;
-
-    public void showDialogChangeCash(boolean isChange, Context pContext, AccountInfo accountInfo, String title, final OnResultChoseCash onResultChoseCash) {
+    public void showDialogCashChange(Context pContext, final OnResultChoseCash onResultChoseCash) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_chose_cash);
+
             Button btnOk;
             TextView tvTotalMoney, tvTitle;
-            RelativeLayout layout500;
-            RelativeLayout layout200;
-            RelativeLayout layout100;
-            RelativeLayout layout50;
-            RelativeLayout layout20;
-            RelativeLayout layout10;
-            TextView tvSl500, tvSl200, tvSl100, tvSl50, tvSl20, tvSl10;
-            TextView tvTotal500, tvTotal200, tvTotal100, tvTotal50, tvTotal20, tvTotal10;
-            ImageView ivDown500, ivDown200, ivDown100, ivDown50, ivDown20, ivDown10;
-            ImageView ivUp500, ivUp200, ivUp100, ivUp50, ivUp20, ivUp10;
+            RecyclerView rv_cash_change;
+            List<CashTotal> valuesList;
 
             tvTitle = mDialog.findViewById(R.id.tv_title);
             tvTotalMoney = mDialog.findViewById(R.id.tv_total_money);
-
-            layout500 = mDialog.findViewById(R.id.layout_500);
-            layout200 = mDialog.findViewById(R.id.layout_200);
-            layout100 = mDialog.findViewById(R.id.layout_100);
-            layout50 = mDialog.findViewById(R.id.layout_50);
-            layout20 = mDialog.findViewById(R.id.layout_20);
-            layout10 = mDialog.findViewById(R.id.layout_10);
-
-            tvTotal500 = mDialog.findViewById(R.id.tv_total_500);
-            tvTotal200 = mDialog.findViewById(R.id.tv_total_200);
-            tvTotal100 = mDialog.findViewById(R.id.tv_total_100);
-            tvTotal50 = mDialog.findViewById(R.id.tv_total_50);
-            tvTotal20 = mDialog.findViewById(R.id.tv_total_20);
-            tvTotal10 = mDialog.findViewById(R.id.tv_total_10);
-
             btnOk = mDialog.findViewById(R.id.btn_confirm);
-            tvSl500 = mDialog.findViewById(R.id.tv_sl_500);
-            tvSl200 = mDialog.findViewById(R.id.tv_sl_200);
-            tvSl100 = mDialog.findViewById(R.id.tv_sl_100);
-            tvSl50 = mDialog.findViewById(R.id.tv_sl_50);
-            tvSl20 = mDialog.findViewById(R.id.tv_sl_20);
-            tvSl10 = mDialog.findViewById(R.id.tv_sl_10);
+            rv_cash_change = mDialog.findViewById(R.id.rv_cash_change);
 
-            ivDown500 = mDialog.findViewById(R.id.iv_down_500);
-            ivDown200 = mDialog.findViewById(R.id.iv_down_200);
-            ivDown100 = mDialog.findViewById(R.id.iv_down_100);
-            ivDown50 = mDialog.findViewById(R.id.iv_down_50);
-            ivDown20 = mDialog.findViewById(R.id.iv_down_20);
-            ivDown10 = mDialog.findViewById(R.id.iv_down_10);
-
-            ivUp500 = mDialog.findViewById(R.id.iv_up_500);
-            ivUp200 = mDialog.findViewById(R.id.iv_up_200);
-            ivUp100 = mDialog.findViewById(R.id.iv_up_100);
-            ivUp50 = mDialog.findViewById(R.id.iv_up_50);
-            ivUp20 = mDialog.findViewById(R.id.iv_up_20);
-            ivUp10 = mDialog.findViewById(R.id.iv_up_10);
-
-
-            WalletDatabase.getINSTANCE(pContext, ECashApplication.masterKey);
-            slDatabase500 = WalletDatabase.getTotalMoney("500000", Constant.STR_CASH_IN);
-            slDatabase200 = WalletDatabase.getTotalMoney("200000", Constant.STR_CASH_IN);
-            slDatabase100 = WalletDatabase.getTotalMoney("100000", Constant.STR_CASH_IN);
-            slDatabase50 = WalletDatabase.getTotalMoney("50000", Constant.STR_CASH_IN);
-            slDatabase20 = WalletDatabase.getTotalMoney("20000", Constant.STR_CASH_IN);
-            slDatabase10 = WalletDatabase.getTotalMoney("10000", Constant.STR_CASH_IN);
-
-            tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-            tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-            tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-            tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-            tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-            tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-
-            tvTotal500.setText(String.valueOf(total500));
-            tvTotal200.setText(String.valueOf(total200));
-            tvTotal100.setText(String.valueOf(total100));
-            tvTotal50.setText(String.valueOf(total50));
-            tvTotal20.setText(String.valueOf(total20));
-            tvTotal10.setText(String.valueOf(total10));
-
-            if (isChange) {
-                tvTitle.setText(pContext.getString(R.string.str_cash_change));
-                if (slDatabase500 > 0) {
-                    layout500.setVisibility(View.VISIBLE);
-                } else {
-                    layout500.setVisibility(View.GONE);
+            tvTitle.setText(pContext.getString(R.string.str_cash_change));
+            valuesList = DatabaseUtil.getAllCashTotal(pContext);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(pContext);
+            rv_cash_change.setLayoutManager(mLayoutManager);
+            rv_cash_change.setAdapter(new CashTotalAdapter(valuesList, pContext, new UpDownMoneyListener() {
+                @Override
+                public void onUpDownMoneyListener() {
+                    tvTotalMoney.setText(CommonUtils.formatPriceVND(CommonUtils.getTotalMoney(valuesList)));
                 }
-
-                if (slDatabase200 > 0) {
-                    layout200.setVisibility(View.VISIBLE);
-                } else {
-                    layout200.setVisibility(View.GONE);
-                }
-
-                if (slDatabase100 > 0) {
-                    layout100.setVisibility(View.VISIBLE);
-                } else {
-                    layout100.setVisibility(View.GONE);
-                }
-
-                if (slDatabase50 > 0) {
-                    layout50.setVisibility(View.VISIBLE);
-                } else {
-                    layout50.setVisibility(View.GONE);
-                }
-
-                if (slDatabase20 > 0) {
-                    layout20.setVisibility(View.VISIBLE);
-                } else {
-                    layout20.setVisibility(View.GONE);
-                }
-
-                if (slDatabase10 > 0) {
-                    layout10.setVisibility(View.VISIBLE);
-                } else {
-                    layout10.setVisibility(View.GONE);
-                }
-            } else {
-                tvTitle.setText(pContext.getString(R.string.str_cash_take));
-                tvSl10.setVisibility(View.GONE);
-                tvSl20.setVisibility(View.GONE);
-                tvSl50.setVisibility(View.GONE);
-                tvSl100.setVisibility(View.GONE);
-                tvSl200.setVisibility(View.GONE);
-                tvSl500.setVisibility(View.GONE);
-
-                layout500.setVisibility(View.VISIBLE);
-                layout200.setVisibility(View.VISIBLE);
-                layout100.setVisibility(View.VISIBLE);
-                layout50.setVisibility(View.VISIBLE);
-                layout20.setVisibility(View.VISIBLE);
-                layout10.setVisibility(View.VISIBLE);
-            }
-
-            ivDown10.setOnClickListener(v -> {
-                if (total10 > 0) {
-                    total10 = total10 - 1;
-                    slDatabase10 = slDatabase10 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-            ivUp10.setOnClickListener(v -> {
-                if (isChange) {
-                    if (slDatabase10 > 0) {
-                        total10 = total10 + 1;
-                        slDatabase10 = slDatabase10 - 1;
-                    }
-                } else {
-                    total10 = total10 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-
-            ivDown20.setOnClickListener(v -> {
-                if (total20 > 0) {
-                    total20 = total20 - 1;
-                    slDatabase20 = slDatabase20 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-            ivUp20.setOnClickListener(v -> {
-                if (isChange) {
-                    if (slDatabase20 > 0) {
-                        total20 = total20 + 1;
-                        slDatabase20 = slDatabase20 - 1;
-                    }
-                } else {
-                    total20 = total20 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-
-            ivDown50.setOnClickListener(v -> {
-                if (total50 > 0) {
-                    total50 = total50 - 1;
-                    slDatabase50 = slDatabase50 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-            ivUp50.setOnClickListener(v -> {
-                if (isChange) {
-                    if (slDatabase50 > 0) {
-                        total50 = total50 + 1;
-                        slDatabase50 = slDatabase50 - 1;
-                    }
-                } else {
-                    total50 = total50 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-
-            ivDown100.setOnClickListener(v -> {
-                if (total100 > 0) {
-                    total100 = total100 - 1;
-                    slDatabase100 = slDatabase100 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-            ivUp100.setOnClickListener(v -> {
-                if (isChange) {
-                    if (slDatabase100 > 0) {
-                        total100 = total100 + 1;
-                        slDatabase100 = slDatabase100 - 1;
-                    }
-                } else {
-                    total100 = total100 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-
-            ivDown200.setOnClickListener(v -> {
-                if (total200 > 0) {
-                    total200 = total200 - 1;
-                    slDatabase200 = slDatabase200 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-            ivUp200.setOnClickListener(v -> {
-                if (isChange) {
-                    if (slDatabase200 > 0) {
-                        total200 = total200 + 1;
-                        slDatabase200 = slDatabase200 - 1;
-                    }
-                } else {
-                    total200 = total200 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-
-            ivDown500.setOnClickListener(v -> {
-                if (total500 > 0) {
-                    total500 = total500 - 1;
-                    slDatabase500 = slDatabase500 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-            ivUp500.setOnClickListener(v -> {
-                if (isChange) {
-                    if (slDatabase500 > 0) {
-                        total500 = total500 + 1;
-                        slDatabase500 = slDatabase500 - 1;
-                    }
-                } else {
-                    total500 = total500 + 1;
-                }
-                totalMoney = total500 * 500000 + total200 * 200000 + total100 * 100000 + total50 * 50000 + total20 * 20000 + total10 * 10000;
-                tvTotalMoney.setText(CommonUtils.formatPriceVND(totalMoney));
-
-                tvTotal500.setText(String.valueOf(total500));
-                tvTotal200.setText(String.valueOf(total200));
-                tvTotal100.setText(String.valueOf(total100));
-                tvTotal50.setText(String.valueOf(total50));
-                tvTotal20.setText(String.valueOf(total20));
-                tvTotal10.setText(String.valueOf(total10));
-
-                tvSl500.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase500)));
-                tvSl200.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase200)));
-                tvSl100.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase100)));
-                tvSl50.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase50)));
-                tvSl20.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase20)));
-                tvSl10.setText(pContext.getString(R.string.str_money, String.valueOf(slDatabase10)));
-            });
-
-
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.setCancelable(false);
-            mDialog.show();
+            }));
             btnOk.setOnClickListener(v -> {
-                dismissDialog();
                 if (onResultChoseCash != null) {
-                    onResultChoseCash.OnListenerOk(total500, total200, total100, total50, total20, total10);
+                    if (CommonUtils.getTotalMoney(valuesList) > 0) {
+                        dismissDialog();
+                        onResultChoseCash.OnListenerOk(valuesList);
+                    } else {
+                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_chose_money_transfer), Toast.LENGTH_LONG).show();
+                    }
                 }
             });
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(true);
+            mDialog.show();
         }
     }
 
-    public void showDialogConfirmChangeCash(int slSend500, int slSend200, int slSend100, int slSend50, int slSend20, int slSend10,
-                                            int slTake500, int slTake200, int slTake100, int slTake50, int slTake20, int slTake10, Context pContext, OnResult onResult) {
+    public void showDialogCashTake(Context pContext, final OnResultChoseCash onResultChoseCash) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_confirm_change_cash);
-            RelativeLayout layout_send_500, layout_send_200, layout_send_100, layout_send_50, layout_send_20, layout_send_10;
-            RelativeLayout layout_take_500, layout_take_200, layout_take_100, layout_take_50, layout_take_20, layout_take_10;
+            mDialog.setContentView(R.layout.dialog_chose_cash);
 
-            TextView tv_number_send_500, tv_number_send_200, tv_number_send_100, tv_number_send_50, tv_number_send_20, tv_number_send_10;
-            TextView tv_number_take_500, tv_number_take_200, tv_number_take_100, tv_number_take_50, tv_number_take_20, tv_number_take_10;
+            Button btnOk;
+            TextView tvTotalMoney, tvTitle;
+            RecyclerView rv_cash_change;
+            List<CashTotal> valuesList;
 
-            TextView tv_total_money_send, tv_total_money_take;
+            tvTitle = mDialog.findViewById(R.id.tv_title);
+            tvTotalMoney = mDialog.findViewById(R.id.tv_total_money);
+            btnOk = mDialog.findViewById(R.id.btn_confirm);
+            rv_cash_change = mDialog.findViewById(R.id.rv_cash_change);
 
-            Button btnConfirm;
-            layout_send_500 = mDialog.findViewById(R.id.layout_send_500);
-            layout_send_200 = mDialog.findViewById(R.id.layout_send_200);
-            layout_send_100 = mDialog.findViewById(R.id.layout_send_100);
-            layout_send_50 = mDialog.findViewById(R.id.layout_send_50);
-            layout_send_20 = mDialog.findViewById(R.id.layout_send_20);
-            layout_send_10 = mDialog.findViewById(R.id.layout_send_10);
-
-            layout_take_500 = mDialog.findViewById(R.id.layout_500);
-            layout_take_200 = mDialog.findViewById(R.id.layout_200);
-            layout_take_100 = mDialog.findViewById(R.id.layout_100);
-            layout_take_50 = mDialog.findViewById(R.id.layout_50);
-            layout_take_20 = mDialog.findViewById(R.id.layout_20);
-            layout_take_10 = mDialog.findViewById(R.id.layout_10);
-
-            tv_number_send_500 = mDialog.findViewById(R.id.tv_number_send_500);
-            tv_number_send_200 = mDialog.findViewById(R.id.tv_number_send_200);
-            tv_number_send_100 = mDialog.findViewById(R.id.tv_number_send_100);
-            tv_number_send_50 = mDialog.findViewById(R.id.tv_number_send_50);
-            tv_number_send_20 = mDialog.findViewById(R.id.tv_number_send_20);
-            tv_number_send_10 = mDialog.findViewById(R.id.tv_number_send_10);
-
-            tv_number_take_500 = mDialog.findViewById(R.id.tv_number_take_500);
-            tv_number_take_200 = mDialog.findViewById(R.id.tv_number_take_200);
-            tv_number_take_100 = mDialog.findViewById(R.id.tv_number_take_100);
-            tv_number_take_50 = mDialog.findViewById(R.id.tv_number_take_50);
-            tv_number_take_20 = mDialog.findViewById(R.id.tv_number_take_20);
-            tv_number_take_10 = mDialog.findViewById(R.id.tv_number_take_10);
-
-            tv_total_money_send = mDialog.findViewById(R.id.tv_total_money_send);
-            tv_total_money_take = mDialog.findViewById(R.id.tv_total_money_take);
-
-            btnConfirm = mDialog.findViewById(R.id.btn_confirm);
-
-            if (slSend500 > 0) {
-                layout_send_500.setVisibility(View.VISIBLE);
-            } else {
-                layout_send_500.setVisibility(View.GONE);
-            }
-
-            if (slSend200 > 0) {
-                layout_send_200.setVisibility(View.VISIBLE);
-            } else {
-                layout_send_200.setVisibility(View.GONE);
-            }
-
-            if (slSend100 > 0) {
-                layout_send_100.setVisibility(View.VISIBLE);
-            } else {
-                layout_send_100.setVisibility(View.GONE);
-            }
-
-            if (slSend50 > 0) {
-                layout_send_50.setVisibility(View.VISIBLE);
-            } else {
-                layout_send_50.setVisibility(View.GONE);
-            }
-
-            if (slSend20 > 0) {
-                layout_send_20.setVisibility(View.VISIBLE);
-            } else {
-                layout_send_20.setVisibility(View.GONE);
-            }
-
-            if (slSend10 > 0) {
-                layout_send_10.setVisibility(View.VISIBLE);
-            } else {
-                layout_send_10.setVisibility(View.GONE);
-            }
-
-
-            if (slTake500 > 0) {
-                layout_take_500.setVisibility(View.VISIBLE);
-            } else {
-                layout_take_500.setVisibility(View.GONE);
-            }
-
-            if (slTake200 > 0) {
-                layout_take_200.setVisibility(View.VISIBLE);
-            } else {
-                layout_take_200.setVisibility(View.GONE);
-            }
-
-            if (slTake100 > 0) {
-                layout_take_100.setVisibility(View.VISIBLE);
-            } else {
-                layout_take_100.setVisibility(View.GONE);
-            }
-
-            if (slTake50 > 0) {
-                layout_take_50.setVisibility(View.VISIBLE);
-            } else {
-                layout_take_50.setVisibility(View.GONE);
-            }
-
-            if (slTake20 > 0) {
-                layout_take_20.setVisibility(View.VISIBLE);
-            } else {
-                layout_take_20.setVisibility(View.GONE);
-            }
-
-            if (slTake10 > 0) {
-                layout_take_10.setVisibility(View.VISIBLE);
-            } else {
-                layout_take_10.setVisibility(View.GONE);
-            }
-
-            tv_number_send_500.setText(String.valueOf(slSend500));
-            tv_number_send_200.setText(String.valueOf(slSend200));
-            tv_number_send_100.setText(String.valueOf(slSend100));
-            tv_number_send_50.setText(String.valueOf(slSend50));
-            tv_number_send_20.setText(String.valueOf(slSend20));
-            tv_number_send_10.setText(String.valueOf(slSend10));
-
-            tv_number_take_500.setText(String.valueOf(slTake500));
-            tv_number_take_200.setText(String.valueOf(slTake200));
-            tv_number_take_100.setText(String.valueOf(slTake100));
-            tv_number_take_50.setText(String.valueOf(slTake50));
-            tv_number_take_20.setText(String.valueOf(slTake20));
-            tv_number_take_10.setText(String.valueOf(slTake10));
-
-            long totalMoneyChange = slSend500 * 500000 + slSend200 * 200000 + slSend100 * 100000 + slSend50 * 50000 + slSend20 * 20000 + slSend10 * 10000;
-            tv_total_money_send.setText(CommonUtils.formatPriceVND(totalMoneyChange));
-
-            long totalMoneyTake = slTake500 * 500000 + slTake200 * 200000 + slTake100 * 100000 + slTake50 * 50000 + slTake20 * 20000 + slTake10 * 10000;
-            tv_total_money_take.setText(CommonUtils.formatPriceVND(totalMoneyTake));
-
-            btnConfirm.setOnClickListener(new View.OnClickListener() {
+            tvTitle.setText(pContext.getString(R.string.str_cash_take));
+            valuesList = DatabaseUtil.getAllCashValues(pContext);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(pContext);
+            rv_cash_change.setLayoutManager(mLayoutManager);
+            rv_cash_change.setAdapter(new CashValueAdapter(valuesList, pContext, new UpDownMoneyListener() {
                 @Override
-                public void onClick(View v) {
-                    dismissDialog();
-                    if (onResult != null) {
-                        onResult.OnListenerOk();
+                public void onUpDownMoneyListener() {
+                    tvTotalMoney.setText(CommonUtils.formatPriceVND(CommonUtils.getTotalMoney(valuesList)));
+                }
+            }));
+            btnOk.setOnClickListener(v -> {
+                if (onResultChoseCash != null) {
+                    if (CommonUtils.getTotalMoney(valuesList) > 0) {
+                        dismissDialog();
+                        onResultChoseCash.OnListenerOk(valuesList);
+                    } else {
+                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_chose_money_transfer), Toast.LENGTH_LONG).show();
                     }
                 }
             });
-
             mDialog.setCanceledOnTouchOutside(false);
-            mDialog.setCancelable(false);
+            mDialog.setCancelable(true);
             mDialog.show();
-        } else {
-            dismissDialog();
-            showDialogConfirmChangeCash(slSend500, slSend200, slSend100, slSend50, slSend20, slSend10,
-                    slTake500, slTake200, slTake100, slTake50, slTake20, slTake10, pContext, onResult);
+        }
+    }
+
+    public void showDialogConfirmChangeCash(List<CashTotal> valuesListCashChange, List<CashTotal> valuesListCashTake, Context pContext, OnResult onResult) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_confirm_change_cash);
+
+            Button btnConfirm;
+            RecyclerView rv_cash_take, rv_cash_change;
+            btnConfirm = mDialog.findViewById(R.id.btn_confirm);
+            TextView tv_total_money_send = mDialog.findViewById(R.id.tv_total_money_send);
+            TextView tv_total_money_take = mDialog.findViewById(R.id.tv_total_money_take);
+            rv_cash_take = mDialog.findViewById(R.id.rv_cash_take);
+            rv_cash_change = mDialog.findViewById(R.id.rv_cash_change);
+
+            tv_total_money_send.setText(CommonUtils.formatPriceVND(CommonUtils.getTotalMoney(valuesListCashChange)));
+            tv_total_money_take.setText(CommonUtils.formatPriceVND(CommonUtils.getTotalMoney(valuesListCashTake)));
+
+            rv_cash_take.setLayoutManager(new LinearLayoutManager(pContext));
+            rv_cash_change.setLayoutManager(new LinearLayoutManager(pContext));
+            rv_cash_change.setAdapter(new CashTotalConfirmAdapter(CommonUtils.getListCashConfirm(valuesListCashChange), pContext));
+            rv_cash_take.setAdapter(new CashTotalConfirmAdapter(CommonUtils.getListCashConfirm(valuesListCashTake), pContext));
+
+
+            btnConfirm.setOnClickListener(v -> {
+                dismissDialog();
+                if (onResult != null) {
+                    onResult.OnListenerOk();
+                }
+            });
+
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
+            mDialog.show();
         }
     }
 

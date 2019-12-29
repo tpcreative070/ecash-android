@@ -23,6 +23,7 @@ import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_FAIL;
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_TO_ECASH;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_LIXI;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_ECASH_TO_EDONG;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
@@ -104,6 +105,19 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 } else {
                     itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_transfer));
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+                    itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                }
+                break;
+            case TYPE_LIXI:
+                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                    itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_lixi));
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+                    itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                } else {
+                    itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_lixi));
                     itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));

@@ -39,31 +39,6 @@
                 android:textSize="@dimen/text_large" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_transfer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@color/blue"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_transfer_white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingTop="3dp"
-                android:text="@string/str_transfer"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_large" />
-        </LinearLayout>
     </LinearLayout>
 
     <RelativeLayout

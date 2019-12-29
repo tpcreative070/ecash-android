@@ -1,74 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipe_item"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_foreground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="1px"
-    android:orientation="vertical">
+    android:background="@color/bg_item_transfer"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/iv_multi_chose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_choose"
+        android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/layout_option_right"
+        android:id="@+id/layout_content"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@color/blue"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_transfer_white" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/iv_account"
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:paddingTop="3dp"
-            android:text="@string/str_transfer"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_large" />
+
+        <TextView
+            android:id="@+id/tv_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_light"
+            android:textSize="@dimen/text_small" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/view_foreground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bg_item_transfer"
-        android:padding="10dp">
-
-        <LinearLayout
-            android:id="@+id/layout_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@+id/iv_account"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_large" />
-
-            <TextView
-                android:id="@+id/tv_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grey_light"
-                android:textSize="@dimen/text_small" />
-        </LinearLayout>
-
-
-        <vn.ecpay.ewallet.common.base.CircleImageView
-            android:id="@+id/iv_account"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_avatar" />
-    </RelativeLayout>
-
-</com.daimajia.swipe.SwipeLayout>
+    <vn.ecpay.ewallet.common.base.CircleImageView
+        android:id="@+id/iv_account"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_avatar" />
+</RelativeLayout>

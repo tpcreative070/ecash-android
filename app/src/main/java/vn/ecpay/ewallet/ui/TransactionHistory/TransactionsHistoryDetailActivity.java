@@ -30,7 +30,6 @@ public class TransactionsHistoryDetailActivity extends ECashBaseActivity {
 
     @Override
     protected void setupActivityComponent() {
-
     }
 
     @Override

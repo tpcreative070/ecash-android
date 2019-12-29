@@ -7,6 +7,15 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/layout_option_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/blue"
+        android:gravity="center"
+        android:orientation="vertical">
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/layout_option_left"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -66,31 +75,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layout_option_right"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@color/blue"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_transfer_white" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:paddingTop="3dp"
-            android:text="@string/str_transfer"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_large" />
-    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/view_foreground"
@@ -98,6 +82,15 @@
         android:layout_height="wrap_content"
         android:background="@color/bg_item_transfer"
         android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_multi_chose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_choose"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/layout_content"
@@ -130,5 +123,4 @@
             android:layout_alignParentStart="true"
             android:src="@drawable/ic_avatar" />
     </RelativeLayout>
-
 </com.daimajia.swipe.SwipeLayout>
