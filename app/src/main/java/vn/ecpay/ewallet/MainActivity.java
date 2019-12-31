@@ -44,8 +44,6 @@ import vn.ecpay.ewallet.webSocket.WebSocketsService;
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
 
 public class MainActivity extends ECashBaseActivity {
-
-
     @BindView(R.id.main_content)
     FrameLayout mainContent;
     @BindView(android.R.id.tabcontent)
