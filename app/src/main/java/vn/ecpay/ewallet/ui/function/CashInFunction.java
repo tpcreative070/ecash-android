@@ -58,9 +58,9 @@ public class CashInFunction {
         this.transactionSignature = responseMessSocket.getId();
     }
 
-    public void handleCashIn(CashInSuccessListener cashInSuccessListener) {
-        this.cashInSuccessListener = cashInSuccessListener;
-        if (DatabaseUtil.checkContactExit(context, responseMessSocket.getSender())) {
+    public void handleCashIn(CashInSuccessListener mCashInSuccessListener) {
+        this.cashInSuccessListener = mCashInSuccessListener;
+        if (!DatabaseUtil.checkContactExit(context, responseMessSocket.getSender())) {
             requestSearchWalletID(accountInfo, responseMessSocket);
         } else {
             getPublicKeyWallet(responseMessSocket);

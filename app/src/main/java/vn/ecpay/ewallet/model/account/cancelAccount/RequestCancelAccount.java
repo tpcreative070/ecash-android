@@ -10,7 +10,8 @@ import vn.ecpay.ewallet.model.BaseObject;
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class RequestCancelAccount extends BaseObject {
-
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
     @SerializedName("channelCode")
     private String mChannelCode;
     @SerializedName("channelSignature")
@@ -19,26 +20,16 @@ public class RequestCancelAccount extends BaseObject {
     private String mFunctionCode;
     @SerializedName("sessionId")
     private String mSessionId;
+    @SerializedName("terminalId")
+    private String mTerminalId;
+    @SerializedName("terminalInfo")
+    private String mTerminalInfo;
     @SerializedName("token")
     private String mToken;
     @SerializedName("username")
     private String mUsername;
     @SerializedName("walletId")
     private String mWalletId;
-    @SerializedName("terminalId")
-    private String mTerminalId;
-    @SerializedName("terminalInfo")
-    private String mTerminalInfo;
-    @SerializedName("auditNumber")
-    private String mAuditNumber;
-
-    public String getAuditNumber() {
-        return mAuditNumber;
-    }
-
-    public void setAuditNumber(String mAuditNumber) {
-        this.mAuditNumber = mAuditNumber;
-    }
 
     public String getChannelCode() {
         return mChannelCode;
@@ -72,6 +63,22 @@ public class RequestCancelAccount extends BaseObject {
         mSessionId = sessionId;
     }
 
+    public String getTerminalId() {
+        return mTerminalId;
+    }
+
+    public void setTerminalId(String terminalId) {
+        mTerminalId = terminalId;
+    }
+
+    public String getTerminalInfo() {
+        return mTerminalInfo;
+    }
+
+    public void setTerminalInfo(String terminalInfo) {
+        mTerminalInfo = terminalInfo;
+    }
+
     public String getToken() {
         return mToken;
     }
@@ -96,20 +103,11 @@ public class RequestCancelAccount extends BaseObject {
         mWalletId = walletId;
     }
 
-
-    public String getTerminalId() {
-        return mTerminalId;
+    public String getAuditNumber() {
+        return mAuditNumber;
     }
 
-    public void setTerminalId(String mTerminalId) {
-        this.mTerminalId = mTerminalId;
-    }
-
-    public String getTerminalInfo() {
-        return mTerminalInfo;
-    }
-
-    public void setTerminalInfo(String mTerminalInfo) {
-        this.mTerminalInfo = mTerminalInfo;
+    public void setAuditNumber(String mAuditNumber) {
+        this.mAuditNumber = mAuditNumber;
     }
 }

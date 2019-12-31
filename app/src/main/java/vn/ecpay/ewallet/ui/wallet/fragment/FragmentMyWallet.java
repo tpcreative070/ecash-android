@@ -14,6 +14,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -26,6 +29,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -151,7 +155,13 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.UPDATE_MONEY)
                 || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
-            updateBalance();
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() == null) return;
+                    getActivity().runOnUiThread(() -> updateBalance());
+                }
+            }, 500);
         }
 
         if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {

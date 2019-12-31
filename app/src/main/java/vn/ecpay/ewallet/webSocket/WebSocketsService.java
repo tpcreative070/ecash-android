@@ -136,6 +136,7 @@ public class WebSocketsService extends Service {
                                 cashTemp.setTransactionSignature(responseMess.getId());
                                 DatabaseUtil.saveCashTemp(cashTemp, getApplicationContext());
                                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_LIXI));
+                                confirmMess(responseMess);
                             }
                         }
                         break;
@@ -148,13 +149,13 @@ public class WebSocketsService extends Service {
                         Gson gson = new Gson();
                         String json = gson.toJson(requestReceived);
                         webSocket.send(json);
-
-                        //SAVE CONTACT TO DATABASE
                         DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
+                        confirmMess(responseMess);
                         break;
                     case Constant.TYPE_CANCEL_CONTACT:
                         String walletIDContactCancel = responseMess.getSender();
                         DatabaseUtil.updateStatusContact(getApplicationContext(), Constant.CONTACT_OFF, Long.valueOf(walletIDContactCancel));
+                        confirmMess(responseMess);
                         break;
                 }
             }
@@ -183,6 +184,7 @@ public class WebSocketsService extends Service {
     };
 
     private void confirmMess(ResponseMessSocket responseMess) {
+        Log.e("confirmMess","confirmMess");
         RequestReceived requestReceived = new RequestReceived();
         requestReceived.setId(responseMess.getId());
         requestReceived.setReceiver(responseMess.getReceiver());

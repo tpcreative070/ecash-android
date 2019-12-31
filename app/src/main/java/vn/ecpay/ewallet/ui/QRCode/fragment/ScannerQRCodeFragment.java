@@ -180,6 +180,11 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         eCashSplit.append(cashMap.get(i));
                     }
                     ResponseMessSocket responseMess = gson.fromJson(eCashSplit.toString(), ResponseMessSocket.class);
+                    if (!responseMess.getReceiver().equals(String.valueOf(accountInfo.getWalletId()))) {
+                        restartScan();
+                        ((QRCodeActivity) getActivity()).showDialogError("Giao dịch được gửi cho tài khoản khác");
+                        return;
+                    }
                     if (responseMess.getType().equals(Constant.TYPE_LIXI)) {
                         if (!DatabaseUtil.isCashTempExit(responseMess, getActivity())) {
                             if (responseMess.getCashEnc() != null) {
@@ -190,7 +195,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                                 cashTemp.setTransactionSignature(responseMess.getId());
                                 DatabaseUtil.saveCashTemp(cashTemp, getActivity());
                                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_LIXI));
-                                dismissProgress();
+                                restartScan();
                                 Toast.makeText(getActivity(), getResources().getString(R.string.str_take_lixi_success), Toast.LENGTH_LONG).show();
                             }
                         } else {
@@ -203,8 +208,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                             CashInFunction cashInFunction = new CashInFunction(accountInfo, getActivity(), responseMess);
                             cashInFunction.handleCashIn(() -> onCashInSuccessListener(responseMess.getId()));
                         } else {
-                            dismissProgress();
-                            eCashSplit.delete(0, eCashSplit.length());
+                            restartScan();
                             if (getActivity() != null) {
                                 ((QRCodeActivity) getActivity()).showDialogError("QR Code đã được nhận");
                             }
@@ -224,11 +228,14 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         }
     }
 
-    private void onCashInSuccessListener(String transactionSignature) {
+    private void restartScan(){
         cashMap.clear();
         eCashSplit.delete(0, eCashSplit.length());
         tvNumberScan.setText(Constant.STR_EMPTY);
         dismissProgress();
+    }
+    private void onCashInSuccessListener(String transactionSignature) {
+        restartScan();
         TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignature);
         if (getActivity() != null)
             ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);

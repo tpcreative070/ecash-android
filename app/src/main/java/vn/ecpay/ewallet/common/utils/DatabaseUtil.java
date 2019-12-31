@@ -155,6 +155,11 @@ public class DatabaseUtil {
         return true;
     }
 
+    public static List<CashLogs_Database> getListCashForMoney(Context context, String value){
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getListCashForMoney(value, Constant.STR_CASH_IN);
+    }
+
     public static boolean SaveCashInvalidToDB(CashLogs_Database cash, Context context, String userName) {
         cash.setPreviousHash(getPreviousHashCash(cash, context));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
@@ -233,6 +238,7 @@ public class DatabaseUtil {
     public static void updateStatusContact(Context context, int status, Long walletId) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.updateStatusContact(status, walletId);
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CONTACT));
     }
 
     public static boolean checkContactExit(Context context, String walletId) {

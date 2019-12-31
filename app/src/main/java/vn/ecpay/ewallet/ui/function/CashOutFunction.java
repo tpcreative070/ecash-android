@@ -5,8 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.firebase.database.annotations.NotNull;
@@ -18,8 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,6 +34,7 @@ import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.ui.interfaceListener.CashOutListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
@@ -48,6 +45,7 @@ public class CashOutFunction {
     private List<Contact> multiTransferList;
     private List<CashTotal> valuesList;
     private String typeSend;
+    private CashOutListener cashOutListener;
 
     public CashOutFunction(Context context, List<CashTotal> valuesList, List<Contact> multiTransferList, String content, String typeSend) {
         this.context = context;
@@ -60,14 +58,15 @@ public class CashOutFunction {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void handleCashOutQRCode() {
+    public void handleCashOutQRCode(CashOutListener mCashOutListener) {
+        this.cashOutListener = mCashOutListener;
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 for (int i = 0; i < multiTransferList.size(); i++) {
                     String currentTime = CommonUtils.getCurrentTime();
                     Gson gson = new Gson();
-                    ResponseMessSocket responseMessSocket = getObjectJsonSend(valuesList, multiTransferList.get(i), contentSendMoney);
+                    ResponseMessSocket responseMessSocket = getObjectJsonSend(valuesList, multiTransferList.get(i), contentSendMoney, i);
                     String jsonCash = gson.toJson(responseMessSocket);
                     Contact contact = multiTransferList.get(i);
                     List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
@@ -114,12 +113,14 @@ public class CashOutFunction {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                cashOutListener.onCashOutSuccess();
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
             }
         }.execute();
     }
 
-    public void handleCashOutSocket() {
+    public void handleCashOutSocket(CashOutListener mCashOutListener) {
+        this.cashOutListener = mCashOutListener;
         OkHttpClient client = new OkHttpClient();
         String url = SocketUtil.getUrl(accountInfo, context);
         Request requestCoinPrice = new Request.Builder().url(url).build();
@@ -133,15 +134,15 @@ public class CashOutFunction {
                     protected Void doInBackground(Void... voids) {
                         Gson gson = new Gson();
                         for (int i = 0; i < multiTransferList.size(); i++) {
-                            String jsonSend = gson.toJson(getObjectJsonSend(valuesList, multiTransferList.get(i), contentSendMoney));
+                            String jsonSend = gson.toJson(getObjectJsonSend(valuesList, multiTransferList.get(i), contentSendMoney, i));
                             webSocket.send(jsonSend);
-                            SystemClock.sleep(5000);
                         }
                         return null;
                     }
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
+                        cashOutListener.onCashOutSuccess();
                         EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
                     }
                 }.execute();
@@ -156,15 +157,21 @@ public class CashOutFunction {
         client.dispatcher().executorService().shutdown();
     }
 
-    private ResponseMessSocket getObjectJsonSend(List<CashTotal> valuesListAdapter, Contact contact, String contentSendMoney) {
+    private ResponseMessSocket getObjectJsonSend(List<CashTotal> valuesListAdapter, Contact contact, String contentSendMoney, int index) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
 
         for (int i = 0; i < valuesListAdapter.size(); i++) {
             if (valuesListAdapter.get(i).getTotal() > 0) {
-                List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valuesListAdapter.get(i).getParValue()), Constant.STR_CASH_IN);
+                List<CashLogs_Database> cashList = DatabaseUtil.getListCashForMoney(context, String.valueOf(valuesListAdapter.get(i).getParValue()));
+                int totalCashSend = valuesListAdapter.get(i).getTotal();
                 for (int j = 0; j < valuesListAdapter.get(i).getTotal(); j++) {
-                    listCashSend.add(cashList.get(j));
+                    if (index > 0) {
+                        int location = j + index * totalCashSend;
+                        listCashSend.add(cashList.get(location));
+                    } else {
+                        listCashSend.add(cashList.get(j));
+                    }
                 }
             }
         }

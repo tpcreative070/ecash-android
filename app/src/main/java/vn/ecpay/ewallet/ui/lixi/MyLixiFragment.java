@@ -77,9 +77,17 @@ public class MyLixiFragment extends ECashBaseFragment {
                     if (responseMess.getCashEnc() != null) {
                         CashInFunction cashInFunction = new CashInFunction(accountInfo, getActivity(), responseMess);
                         cashInFunction.handleCashIn(() -> {
-                            dismissProgress();
-                            DatabaseUtil.updateStattusLixi(getActivity(), Constant.OPEN, cashTemp.getId());
-                            showDialogLixiDetail(cashTemp, responseMess.getContent());
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    if (getActivity() == null) return;
+                                    getActivity().runOnUiThread(() -> {
+                                        dismissProgress();
+                                        DatabaseUtil.updateStattusLixi(getActivity(), Constant.OPEN, cashTemp.getId());
+                                        showDialogLixiDetail(cashTemp, responseMess.getContent());
+                                    });
+                                }
+                            }, 500);
                         });
                     }
                 } else {

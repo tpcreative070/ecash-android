@@ -225,7 +225,7 @@
     <string name="err_update_avatar_fails">"Cập nhật avatar không thành công"</string>
     <string name="err_device_un_support">Thiết bị không hỗ trợ chức năng này.</string>
     <string name="err_un_chose_wallet_send">Chưa chọn tài khoản nhận</string>
-    <string name="err_amount_not_enough_to_transfer">Số tiền trong ví cảu bán không đủ để chuyển khoản</string>
+    <string name="err_amount_not_enough_to_transfer">Số tiền trong ví không đủ để chuyển khoản</string>
 
     //%s
     <string name="str_lixi_sender">Lì xì được gửi từ: %s</string>

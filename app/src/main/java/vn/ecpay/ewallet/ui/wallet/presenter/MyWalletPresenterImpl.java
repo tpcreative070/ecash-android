@@ -128,6 +128,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestCancelAccount));
         requestCancelAccount.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        CommonUtils.logJson(requestCancelAccount);
         Call<ResponseCancelAccount> call = apiService.cancelAccount(requestCancelAccount);
         call.enqueue(new Callback<ResponseCancelAccount>() {
             @Override

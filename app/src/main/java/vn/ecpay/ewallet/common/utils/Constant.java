@@ -88,7 +88,7 @@ public class Constant {
     public static final String FUNCTION_LOGOUT = "GW000001";
     public static final String FUNCTION_GET_OTP = "GW000004";
     public static final String FUNCTION_CHANGE_PASSWORD = "GW000003";
-    public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0010";
+    public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0020";
     public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
     public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
     public static final String FUNCTION_FORGOT_PASS_OTP = "GWEC0024";
