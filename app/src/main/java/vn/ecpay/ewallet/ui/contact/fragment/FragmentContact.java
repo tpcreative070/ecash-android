@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
@@ -35,18 +37,22 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
+import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.contact.adapter.ContactAdapter;
+import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
-public class FragmentContact extends ECashBaseFragment {
+public class FragmentContact extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
     EditText edtSearch;
+    @BindView(R.id.tv_done)
+    TextView tvDone;
     private ContactAdapter mAdapter;
     private List<Contact> mSectionList;
     private AccountInfo accountInfo;
+    private ArrayList<Contact> listContactTransfer;
 
     @Override
     protected int getLayoutResId() {
@@ -59,6 +65,10 @@ public class FragmentContact extends ECashBaseFragment {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        initAdapter();
+    }
+
+    private void initAdapter() {
         List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
 
         setAdapter(transferModelArrayList);
@@ -106,8 +116,19 @@ public class FragmentContact extends ECashBaseFragment {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
             List<Contact> listContactAfterDelete = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
             setAdapter(listContactAfterDelete);
-        });
+        }, this);
         recyclerView.setAdapter(mAdapter);
+    }
+
+
+    @Override
+    public void onMultiTransfer(ArrayList<Contact> contactList) {
+        if (contactList.size() > 0) {
+            listContactTransfer = contactList;
+            tvDone.setVisibility(View.VISIBLE);
+        } else {
+            tvDone.setVisibility(View.GONE);
+        }
     }
 
     private void getHeaderListLatter(List<Contact> usersList) {
@@ -137,7 +158,7 @@ public class FragmentContact extends ECashBaseFragment {
         super.onResume();
     }
 
-    @OnClick({R.id.iv_add_contact, R.id.iv_clear})
+    @OnClick({R.id.iv_add_contact, R.id.iv_clear, R.id.tv_done})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_add_contact:
@@ -147,6 +168,18 @@ public class FragmentContact extends ECashBaseFragment {
                 break;
             case R.id.iv_clear:
                 edtSearch.setText(Constant.STR_EMPTY);
+                break;
+            case R.id.tv_done:
+                Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL, listContactTransfer);
+                intentTransferCash.putExtras(mBundle);
+                if (getActivity() != null) {
+                    ((MainActivity) getActivity()).startActivity(intentTransferCash);
+                    ((MainActivity) getActivity()).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+                initAdapter();
+                tvDone.setVisibility(View.GONE);
                 break;
         }
     }

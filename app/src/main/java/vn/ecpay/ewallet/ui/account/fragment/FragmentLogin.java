@@ -24,6 +24,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -41,6 +43,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
+import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
@@ -344,6 +347,11 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 KeyStoreUtils.getPrivateKey(getActivity()) != null) {
             ECashApplication.masterKey = KeyStoreUtils.getMasterKey(getActivity());
             ECashApplication.privateKey = KeyStoreUtils.getPrivateKey(getActivity());
+        }
+        if (accountInfo != null) {
+            if (null == accountInfo.getLarge()) {
+                WalletDatabase.updateAccountAvatar(mAccountInfo.getLarge(), accountInfo.getUsername());
+            }
         }
     }
 

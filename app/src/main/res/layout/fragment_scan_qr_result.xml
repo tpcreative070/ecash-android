@@ -38,11 +38,12 @@
             android:textStyle="normal" />
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:background="@color/gray_light"
+        android:layout_above="@+id/layout_bottom"
+        android:background="@color/white"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,6 +56,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -75,6 +77,7 @@
                     android:textSize="@dimen/text_header"/>
 
                 <TextView
+                    android:id="@+id/tv_transactions_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -105,12 +108,12 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="@string/str_human_transfer"
+                        android:text="@string/str_history_human_code"
                         android:layout_alignParentStart="true"
                         android:textColor="@color/grey_light"
                         android:layout_height="wrap_content"/>
                     <TextView
-                        android:id="@+id/tv_human_transfer"
+                        android:id="@+id/tv_human_code"
                         android:layout_width="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:textColor="@color/black"
@@ -123,12 +126,12 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="@string/str_phone_number_transfer"
+                        android:text="@string/str_history_name"
                         android:layout_alignParentStart="true"
                         android:textColor="@color/grey_light"
                         android:layout_height="wrap_content"/>
                     <TextView
-                        android:id="@+id/tv_phone_number"
+                        android:id="@+id/tv_history_name"
                         android:layout_width="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:textColor="@color/black"
@@ -141,12 +144,85 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="@string/str_content_transfer"
+                        android:text="@string/str_history_phone"
                         android:layout_alignParentStart="true"
                         android:textColor="@color/grey_light"
                         android:layout_height="wrap_content"/>
                     <TextView
-                        android:id="@+id/tv_content"
+                        android:id="@+id/tv_history_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/str_history_type"
+                        android:layout_alignParentStart="true"
+                        android:textColor="@color/grey_light"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_history_type"
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/str_history_total"
+                        android:layout_alignParentStart="true"
+                        android:textColor="@color/grey_light"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_history_total"
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_history_content_left"
+                        android:layout_width="wrap_content"
+                        android:text="@string/str_history_content"
+                        android:layout_alignParentStart="true"
+                        android:textColor="@color/grey_light"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_history_content"
+                        android:layout_width="wrap_content"
+                        android:layout_toEndOf="@+id/tv_history_content_left"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/black"
+                        android:gravity="right"
+                        android:paddingStart="10dp"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/str_history_date"
+                        android:layout_alignParentStart="true"
+                        android:textColor="@color/grey_light"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_history_date"
                         android:layout_width="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:textColor="@color/black"
@@ -166,8 +242,84 @@
                 android:id="@+id/rv_list_cash_transfer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:id="@+id/layout_qr_code"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:padding="10dp"
+                    android:text="@string/str_qr_code"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_xlarge"
+                    android:background="@color/gray_light"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_list_qr_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"/>
+            </LinearLayout>
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:id="@+id/layout_bottom"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_height="50dp">
+        <View
+            android:background="@color/gray_light"
+            android:layout_width="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_height="1dp"/>
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/layout_share"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <TextView
+                    android:drawableStart="@drawable/ic_share"
+                    android:drawablePadding="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Chia sẻ"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/text_header" />
+            </RelativeLayout>
+            <View
+                android:layout_width="1dp"
+                android:background="@color/gray_light"
+                android:layout_height="match_parent"/>
+
+            <RelativeLayout
+                android:id="@+id/layout_download"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <TextView
+                    android:drawableStart="@drawable/ic_download"
+                    android:drawablePadding="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Lưu về máy"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/text_header" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

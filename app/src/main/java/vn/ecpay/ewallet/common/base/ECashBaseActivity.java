@@ -207,20 +207,17 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         }
 
         if (!progressDialog.isShowing()) {
-            runOnUiThread(() -> progressDialog.show());
+            progressDialog.show();
         }
     }
 
     public void dismissLoading() {
         if (!isFinishing()) {
             if (progressDialog != null && progressDialog.isShowing()) {
-                runOnUiThread(() -> {
-                    progressDialog.dismiss();
-                    progressDialog = null;
-                });
+                progressDialog.dismiss();
+                progressDialog = null;
             }
         }
-
     }
 
     public void addFragment(Fragment pFragment, boolean isAnimation, int resIdContainer) {

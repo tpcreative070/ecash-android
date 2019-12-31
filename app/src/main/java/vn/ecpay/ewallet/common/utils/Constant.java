@@ -11,10 +11,15 @@ public class Constant {
 
     public static final String DATABASE_NAME = "eWallet";
     public static final int DATABASE_VERSION = 1;
+    public static final byte ELEMENT_SPLIT = '$';
 
     //type notification
     public static final String ON = "on";
     public static final String OFF = "off";
+
+    //type Lixi
+    public static final String OPEN = "OPEN";
+    public static final String CLOSE = "CLOSE";
 
     //type QR code
     public static final int IS_SCAN_FAIL = 0;
@@ -25,7 +30,7 @@ public class Constant {
     public static final String USER_NAME = "USER_NAME";
     public static final String FORGOT_PASS_TRANSFER_MODEL = "FORGOT_PASS_TRANSFER_MODEL";
     public static final String CONTACT_TRANSFER_MODEL = "CONTACT_TRANSFER_MODEL";
-    public static final String CONTACT_TRANSFER = "CONTACT_TRANSFER";
+    public static final String CONTACT_MULTI_TRANSFER = "CONTACT_MULTI_TRANSFER";
     public static final String TRANSACTIONS_HISTORY_MODEL = "TRANSACTIONS_HISTORY_MODEL";
     public static final String IS_SESSION_TIMEOUT = "IS_SESSION_TIMEOUT";
     //date
@@ -57,12 +62,13 @@ public class Constant {
     public static final String UPDATE_MONEY = "update_money";
     public static final String UPDATE_MONEY_SOCKET = "update_money_socket";
     public static final String CASH_OUT_MONEY_SUCCESS = "cash_out_money_success";
+    public static final String CASH_OUT_MONEY_FAIL = "cash_out_money_fail";
     public static final String EVENT_CONNECT_SOCKET_FAIL = "EVENT_CONNECT_SOCKET_FAIL";
     public static final String EVENT_VERIFY_CASH_FAIL = "EVENT_VERIFY_CASH_FAIL";
-    public static final String EVENT_QR_CODE_SCAN_CASH_SUCCESS = "EVENT_QR_CODE_SCAN_CASH_SUCCESS";
     public static final String EVENT_UPDATE_CONTACT = "EVENT_UPDATE_CONTACT";
     public static final String EVENT_NETWORK_CHANGE = "EVENT_NETWORK_CHANGE";
     public static final String EVENT_UPDATE_ACCOUNT_INFO = "EVENT_UPDATE_ACCOUNT_INFO";
+    public static final String EVENT_UPDATE_LIXI = "EVENT_UPDATE_LIXI";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
@@ -82,7 +88,7 @@ public class Constant {
     public static final String FUNCTION_LOGOUT = "GW000001";
     public static final String FUNCTION_GET_OTP = "GW000004";
     public static final String FUNCTION_CHANGE_PASSWORD = "GW000003";
-    public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0010";
+    public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0020";
     public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
     public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
     public static final String FUNCTION_FORGOT_PASS_OTP = "GWEC0024";
@@ -90,6 +96,7 @@ public class Constant {
     public static final String FUNCTION_GET_OTP_ACTIVE_ACCOUNT = "GWEC0029";
     public static final String FUNCTION_UPDATE_ACCOUNT_INFO = "GWEC0021";
     public static final String FUNCTION_UPDATE_AVARTAR = "GWEC0022";
+    public static final String FUNCTION_GET_MONEY_VALUE = "GWEC0031";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";
@@ -107,6 +114,7 @@ public class Constant {
     public static final String TYPE_SEND_ECASH_TO_EDONG = "ND";
     public static final String TYPE_CASH_EXCHANGE = "DC";
     public static final String TYPE_ECASH_TO_ECASH = "CT";
+    public static final String TYPE_LIXI = "LX";
     public static final String TYPE_SYNC_CONTACT = "DB";
     public static final String TYPE_CANCEL_CONTACT = "HV";
     public static final int TRANSACTION_SUCCESS = 0;

@@ -47,6 +47,7 @@
     <string name="str_cash_in">eCash In</string>
     <string name="str_cash_out">eCash Out</string>
     <string name="str_change_cash">Change eCash</string>
+    <string name="str_lixi">Lixi</string>
     <string name="str_transfer">Transfer</string>
     <string name="str_payment_service">Payment service</string>
     <string name="str_electron_pay">Payment of EVN</string>
@@ -97,8 +98,19 @@
     <string name="str_input_otp">Enter the OTP code</string>
     <string name="str_change_avatar">Change avatar</string>
     <string name="str_update_avatar_success">Change avatar successfully</string>
+    <string name="str_edit_name">Full name</string>
+    <string name="str_my_lixi">My lixi</string>
+    <string name="str_lixi_open">Has opened</string>
+    <string name="str_lixi_close">Not open yet</string>
+    <string name="str_send_lixi">Send lixi</string>
+    <string name="str_input_wish">Message wishes</string>
+    <string name="str_change_cash_success">Change cash success</string>
+    <string name="str_total_lixi">Total lixi</string>
+    <string name="str_wishes">Wishes</string>
+    <string name="str_take_lixi_success">you receive a pack of Poker, please open the Packet Pack</string>
 
     //chuyển khoản
+    <string name="str_lixi_sender">Lixi is sent from: %s</string>
     <string name="transfer_to_cash">Transfer to eCash account</string>
     <string name="str_input_account_ecash">Enter your eCash account number</string>
     <string name="str_input_money">Enter the amount</string>
@@ -218,7 +230,9 @@
     <string name="err_input_otp_null">You have not entered OTP</string>
     <string name="err_email_validate_fail">The email you entered is not valid</string>
     <string name="err_update_avatar_fails">"Update avatar fail"</string>
-    <string name="device_un_support">Device does not support this function.</string>
+    <string name="err_device_un_support">Device does not support this function.</string>
+    <string name="err_un_chose_wallet_send">No receiving accounts selected</string>
+    <string name="err_amount_not_enough_to_transfer">The amount in the wallet is not enough to transfer</string>
 
     //%s
     <string name="str_type_cash_out">-%S</string>

@@ -243,6 +243,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         arrayAdapter.add(getResources().getString(R.string.str_cash_out));
         arrayAdapter.add(getResources().getString(R.string.str_transfer));
         arrayAdapter.add(getResources().getString(R.string.str_change_cash));
+        arrayAdapter.add(getResources().getString(R.string.str_lixi));
         builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
             typeFilter = getTypeFilter(arrayAdapter.getItem(which));
             tvType.setText(arrayAdapter.getItem(which));
@@ -259,6 +260,8 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
             return Constant.TYPE_ECASH_TO_ECASH;
         } else if (type.equals(getResources().getString(R.string.str_change_cash))) {
             return Constant.TYPE_CASH_EXCHANGE;
+        } else if (type.equals(getResources().getString(R.string.str_lixi))) {
+            return Constant.TYPE_LIXI;
         } else return Constant.STR_EMPTY;
     }
 

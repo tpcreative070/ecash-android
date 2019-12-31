@@ -30,6 +30,8 @@ import vn.ecpay.ewallet.model.account.updateAvartar.response.ResponseUpdateAvart
 import vn.ecpay.ewallet.model.account.updateInfo.request.RequestUpdateAccountInfo;
 import vn.ecpay.ewallet.model.account.updateInfo.response.ResponseUpdateAccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
+import vn.ecpay.ewallet.model.cashValue.request.RequestGetMoneyValue;
+import vn.ecpay.ewallet.model.cashValue.response.ResponseGetMoneyValue;
 import vn.ecpay.ewallet.model.chanel.RequestUpdateChanel;
 import vn.ecpay.ewallet.model.chanel.response.ResponseUpdateChanel;
 import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
@@ -87,7 +89,7 @@ public interface APIService {
     @POST("ecgateway/execute/GWEC0005")
     Call<ResponseGetPublicKeyCash> getPublicKeyCash(@Body RequestGetPublicKeyCash body);
 
-    @POST("ecgateway/execute/GWEC0005")
+    @POST("ecgateway/execute/GWEC0004")
     Call<ResponseEdongToECash> transferMoneyEdongToECash(@Body RequestEdongToECash body);
 
     @POST("ecgateway/execute/GW000001")
@@ -125,4 +127,7 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0022")
     Call<ResponseUpdateAvartar> updateAvartar(@Body RequestUpdateAvartar body);
+
+    @POST("ecgateway/execute/GWEC0031")
+    Call<ResponseGetMoneyValue> getMoneyValue(@Body RequestGetMoneyValue body);
 }

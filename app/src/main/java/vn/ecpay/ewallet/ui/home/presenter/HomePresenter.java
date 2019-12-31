@@ -13,4 +13,6 @@ public interface HomePresenter extends Presenter<HomeView> {
     void syncContact(Context context, AccountInfo accountInfo);
 
     void getOTPActiveAccount(AccountInfo accountInfo, Context context);
+
+    void getCashValues(AccountInfo accountInfo, Context context);
 }

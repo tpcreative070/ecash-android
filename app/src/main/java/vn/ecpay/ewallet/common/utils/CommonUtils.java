@@ -58,8 +58,10 @@ import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CommonUtils {
@@ -513,5 +515,37 @@ public class CommonUtils {
                     .error(R.drawable.ic_avatar);
             Glide.with(mContext).load("data:image/png;base64," + image).apply(requestOptions).into(avatar);
         }
+    }
+
+    public static Long getTotalMoney(List<CashTotal> valuesList) {
+        if (valuesList != null) {
+            long totalMoney = 0;
+            for (int i = 0; i < valuesList.size(); i++) {
+                totalMoney = totalMoney + (valuesList.get(i).getTotal() * valuesList.get(i).getParValue());
+            }
+            return totalMoney;
+        }
+        return 0L;
+    }
+
+    public static Long getTotalMoneyByCashLog(List<CashLogTransaction> listCashLogTransaction) {
+        if (listCashLogTransaction != null) {
+            long totalMoney = 0;
+            for (int i = 0; i < listCashLogTransaction.size(); i++) {
+                totalMoney = totalMoney + (listCashLogTransaction.get(i).getParValue() * listCashLogTransaction.get(i).getValidCount());
+            }
+            return totalMoney;
+        }
+        return 0L;
+    }
+
+    public static List<CashTotal> getListCashConfirm(List<CashTotal> valuesList) {
+        List<CashTotal> cashTotals = new ArrayList<>();
+        for (int i = 0; i < valuesList.size(); i++) {
+            if (valuesList.get(i).getTotal() > 0) {
+                cashTotals.add(valuesList.get(i));
+            }
+        }
+        return cashTotals;
     }
 }

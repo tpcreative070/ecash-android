@@ -21,6 +21,18 @@
             android:src="@drawable/ic_plus_blue" />
 
         <TextView
+            android:id="@+id/tv_done"
+            android:layout_width="wrap_content"
+            android:text="@string/str_done"
+            android:textColor="@color/blue"
+            android:gravity="center_vertical"
+            android:layout_toStartOf="@+id/iv_add_contact"
+            android:textSize="@dimen/text_header"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:layout_height="match_parent"/>
+
+        <TextView
             android:id="@+id/toolbar_center_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

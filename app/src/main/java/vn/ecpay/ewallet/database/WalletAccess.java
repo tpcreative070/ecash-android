@@ -13,6 +13,8 @@ import java.util.List;
 
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.CashTemp_Database;
+import vn.ecpay.ewallet.database.table.CashValues_Database;
 import vn.ecpay.ewallet.database.table.Contact_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
 import vn.ecpay.ewallet.database.table.Notification_Database;
@@ -21,7 +23,9 @@ import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
@@ -47,6 +51,32 @@ public interface WalletAccess {
     @Query("UPDATE NOTIFICATION SET read=:read WHERE id = :id")
     void updateNotificationRead(String read, Long id);
 
+    // todo Cash_Value--------------------------------------------------------------------------------------
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertCashValue(CashValues_Database cashValues);
+
+    @Query("DELETE FROM CASH_VALUES")
+    void deleteAllCashValue();
+
+    @Query("SELECT id, parValue, 0 as total, 0 as totalDatabase FROM CASH_VALUES ORDER BY parValue ASC")
+    List<CashTotal> getAllCashValue();
+
+    // todo Cash_temp--------------------------------------------------------------------------------------
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertCashTemp(CashTemp_Database cashTemp_database);
+
+    @Query("SELECT * FROM CASH_TEMP")
+    List<CashTemp> getAllCashTemp();
+
+    @Query("SELECT * FROM CASH_TEMP WHERE transactionSignature = :transactionSignature")
+    CashTemp checkCashTempExit(String transactionSignature);
+
+    @Query("SELECT *  FROM CASH_TEMP WHERE status = 'CLOSE'")
+    List<CashTemp> getAllLixiUnRead();
+
+    @Query("UPDATE CASH_TEMP SET status=:status WHERE id = :id")
+    void updateStatusLixi(String status, int id);
+
     // todo Contact_Database---------------------------------------------------------------------------------------
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleContact(Contact_Database contact);
@@ -66,6 +96,8 @@ public interface WalletAccess {
     @Query("UPDATE CONTACTS SET status =:status WHERE walletId = :walletId")
     void updateStatusContact(int status, Long walletId);
 
+    @Query("SELECT * FROM CONTACTS WHERE walletId = :strWalletId")
+    Contact checkContactExit(String strWalletId);
 
     // todo Decision_Database--------------------------------------------------------------------------------------
     @Insert
@@ -102,7 +134,10 @@ public interface WalletAccess {
     @Query("SELECT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type =:type AND (id + serialNo) IN (select max(id)+ serialNo from CASH_LOGS  group by serialNo having count(serialNo)%2 <> 0) AND parValue =:money")
     List<CashLogs_Database> getListCashForMoney(String money, String type);
 
-    // todo Cash_Invalid----------------------------------------------------------------------------------
+    @Query("SELECT DISTINCT parValue, count(parValue) as totalDatabase, 0 as total  FROM CASH_LOGS WHERE type ='in' AND (id + serialNo) IN (select max(id)+ serialNo from CASH_LOGS  group by serialNo having count(serialNo)%2 <> 0) group by parValue")
+    List<CashTotal> getAllCashTotal();
+
+    //todo Cash_Invalid----------------------------------------------------------------------------------
     @Insert
     void insertOnlySingleCashInvalid(CashInvalid_Database cash);
 
@@ -202,6 +237,16 @@ public interface WalletAccess {
             "IFNULL((SELECT DISTINCT CASH_LOGS.type FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
             "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
             "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT AS TIMEOUT " +
+            "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) AS transactionStatus FROM TRANSACTIONS_LOGS AS TRAN WHERE TRAN.transactionSignature =:transactionSignature")
+    TransactionsHistoryModel getCurrentTransactionsHistory(String transactionSignature);
+
+    @Query("SELECT 0 as isSection, IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') AS senderName, TRAN.senderAccountId, " +
+            "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverName, TRAN.receiverAccountId, " +
+            "TRAN.type AS transactionType, TRAN.time  AS transactionDate , TRAN.content AS transactionContent,TRAN.transactionSignature, TRAN.cashEnc, " +
+            "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) AS transactionAmount, " +
+            "IFNULL((SELECT DISTINCT CASH_LOGS.type FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
+            "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
+            "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT AS TIMEOUT " +
             "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) AS transactionStatus FROM TRANSACTIONS_LOGS AS TRAN " +
             "WHERE senderName like :key OR receiverName like :key OR TRAN.receiverAccountId like :key OR TRAN.receiverAccountId like :key OR TRAN.content like :key ORDER BY TRAN.id DESC")
     List<TransactionsHistoryModel> getAllTransactionsHistoryOnlyFilter(String key);
@@ -213,5 +258,4 @@ public interface WalletAccess {
 
     @RawQuery
     List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(SimpleSQLiteQuery strQuery);
-
 }

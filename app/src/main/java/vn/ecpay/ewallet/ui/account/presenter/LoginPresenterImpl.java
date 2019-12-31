@@ -146,7 +146,6 @@ public class LoginPresenterImpl implements LoginPresenter {
         requestEdongInfo.setToken(CommonUtils.getToken(accountInfo));
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestEdongInfo);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEdongInfo));
         requestEdongInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
         CommonUtils.logJson(requestEdongInfo);

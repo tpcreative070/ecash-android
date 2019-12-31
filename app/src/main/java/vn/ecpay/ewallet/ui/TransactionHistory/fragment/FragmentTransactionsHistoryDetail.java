@@ -46,6 +46,7 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
+import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.AdapterCashLogTransactionsHistory;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.TransactionQRCodeAdapter;
@@ -55,6 +56,7 @@ import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_FAIL;
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_TO_ECASH;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_LIXI;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_ECASH_TO_EDONG;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
@@ -149,6 +151,17 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 }
                 tvType.setText(getResources().getString(R.string.str_transfer));
                 tvHistoryType.setText(getResources().getString(R.string.str_transfer));
+                break;
+            case TYPE_LIXI:
+                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                    tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                } else {
+                    tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                }
+                tvType.setText(getResources().getString(R.string.str_lixi));
+                tvHistoryType.setText(getResources().getString(R.string.str_lixi));
                 break;
             case TYPE_SEND_EDONG_TO_ECASH:
                 tvType.setText(getResources().getString(R.string.str_cash_in));
@@ -313,7 +326,11 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((TransactionsHistoryDetailActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
+        try {
+            ((TransactionsHistoryDetailActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
+        }catch (ClassCastException e){
+//            ((QRCodeActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
+        }
     }
 
     private void exPortDBFile(Context context) {
