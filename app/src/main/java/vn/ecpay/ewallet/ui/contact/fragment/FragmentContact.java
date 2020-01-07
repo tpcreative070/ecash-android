@@ -132,24 +132,32 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
     }
 
     private void getHeaderListLatter(List<Contact> usersList) {
-        Collections.sort(usersList, (user1, user2) -> String.valueOf(user1.getFullName().charAt(0)).toUpperCase()
-                .compareTo(String.valueOf(user2.getFullName().charAt(0)).toUpperCase()));
-
+        Collections.sort(usersList, (user1, user2) -> getName(user1).toUpperCase()
+                .compareTo(getName(user2).toUpperCase()));
         String lastHeader = "";
-
         int size = usersList.size();
-
         for (int i = 0; i < size; i++) {
-
             Contact user = usersList.get(i);
-            String header = String.valueOf(user.getFullName().charAt(0)).toUpperCase();
+            String header;
+            try {
+                header = String.valueOf(user.getFullName().charAt(0)).toUpperCase();
+            } catch (IndexOutOfBoundsException e) {
+                header = String.valueOf(user.getPhone()).toUpperCase();
+            }
 
             if (!TextUtils.equals(lastHeader, header)) {
                 lastHeader = header;
                 mSectionList.add(new Contact(true, header));
             }
-
             mSectionList.add(user);
+        }
+    }
+
+    private String getName(Contact contact) {
+        try {
+            return String.valueOf(contact.getFullName().charAt(0));
+        } catch (StringIndexOutOfBoundsException e) {
+            return String.valueOf(contact.getPhone().charAt(0));
         }
     }
 

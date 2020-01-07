@@ -161,7 +161,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
                     if (getActivity() == null) return;
                     getActivity().runOnUiThread(() -> updateBalance());
                 }
-            }, 500);
+            }, 1000);
         }
 
         if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {

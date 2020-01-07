@@ -231,7 +231,11 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         MonthYearPickerDialog pd = new MonthYearPickerDialog();
         pd.setListener((view, year, month, dayOfMonth) -> {
             tvDate.setText(getString(R.string.str_history_date_header, String.valueOf(month), String.valueOf(year)));
-            dateFilter = String.valueOf(year) + month;
+            String monthCF = String.valueOf(month);
+            if (month < 10) {
+                monthCF = "0" + month;
+            }
+            dateFilter = year + monthCF;
         });
         pd.show(getChildFragmentManager(), "MonthYearPickerDialog");
     }

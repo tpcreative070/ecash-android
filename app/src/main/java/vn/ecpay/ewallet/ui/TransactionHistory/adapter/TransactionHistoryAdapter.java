@@ -113,12 +113,12 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
             case TYPE_LIXI:
                 if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
                     itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_lixi));
-                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_lixi_gray);
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 } else {
                     itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_lixi));
-                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_lixi_gray);
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 }

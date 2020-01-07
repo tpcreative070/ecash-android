@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,6 +32,7 @@ import vn.ecpay.ewallet.ui.contact.adapter.AddContactAdapter;
 import vn.ecpay.ewallet.ui.contact.module.AddContactModule;
 import vn.ecpay.ewallet.ui.contact.presenter.AddContactPresenter;
 import vn.ecpay.ewallet.ui.contact.view.AddContactView;
+import vn.ecpay.ewallet.ui.interfaceListener.OnItemContactClickListener;
 
 public class FragmentAddContact extends ECashBaseFragment implements AddContactView {
     @BindView(R.id.edt_search)
@@ -136,11 +138,21 @@ public class FragmentAddContact extends ECashBaseFragment implements AddContactV
         setAdapter(listContact);
     }
 
+    @Override
+    public void onSyncContactSuccess() {
+        Toast.makeText(getActivity(), getResources()
+                .getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+    }
+
     private void setAdapter(List<Contact> transferModelArrayList) {
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new AddContactAdapter(transferModelArrayList, getActivity());
+        mAdapter = new AddContactAdapter(transferModelArrayList, getActivity(), contact -> {
+            showProgress();
+            DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+            addContactPresenter.syncContact(getActivity(), accountInfo, contact);
+        });
         recyclerView.setAdapter(mAdapter);
     }
 }

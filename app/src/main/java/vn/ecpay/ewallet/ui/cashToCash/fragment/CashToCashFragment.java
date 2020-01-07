@@ -270,6 +270,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     @Override
     public void onMultiTransfer(ArrayList<Contact> contactList) {
         this.multiTransferList = contactList;
+        setAdapter();
         updateWalletSend();
     }
 
@@ -282,6 +283,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 walletId.append("; ").append(multiTransferList.get(i).getWalletId());
             }
         }
+        cashValueAdapter.setNumberTransfer(multiTransferList.size());
         tvNumberWallet.setText(walletId.toString());
     }
 

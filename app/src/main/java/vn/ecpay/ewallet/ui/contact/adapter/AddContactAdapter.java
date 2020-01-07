@@ -25,15 +25,18 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
+import vn.ecpay.ewallet.ui.interfaceListener.OnItemContactClickListener;
 
 public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final AccountInfo accountInfo;
     List<Contact> mCountriesModelList;
     WeakReference<Context> mContextWeakReference;
+    private OnItemContactClickListener onItemContactClickListener;
 
-    public AddContactAdapter(List<Contact> mCountriesModelList, Context context) {
+    public AddContactAdapter(List<Contact> mCountriesModelList, Context context, OnItemContactClickListener mOnItemContactClickListener) {
         this.mCountriesModelList = mCountriesModelList;
         this.mContextWeakReference = new WeakReference<>(context);
+        this.onItemContactClickListener = mOnItemContactClickListener;
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, context);
 
@@ -67,14 +70,14 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
                 for (int i = 0; i < listContact.size(); i++) {
-                    if(listContact.get(i).getWalletId().equals(contact.getWalletId())){
+                    if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
                         ((AddContactActivity) context).showDialogError(context.getResources().getString(R.string.err_add_contact_duplicate));
                         return;
                     }
                 }
-                DatabaseUtil.saveOnlySingleContact(context, contact);
-                Toast.makeText(context, context.getResources()
-                        .getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+                if (onItemContactClickListener != null) {
+                    onItemContactClickListener.OnclickListener(contact);
+                }
             }
         });
     }

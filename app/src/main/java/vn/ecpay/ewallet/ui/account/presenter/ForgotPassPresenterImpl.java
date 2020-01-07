@@ -25,6 +25,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
     private ForgotPassView forgotPassView;
     @Inject
     ECashApplication eCashApplication;
+
     @Inject
     public ForgotPassPresenterImpl() {
     }
@@ -137,6 +138,9 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             forgotPassView.changePassSuccess();
+                        } else if (response.body().getResponseCode().equals("3014") ||
+                                response.body().getResponseCode().equals("0998")) {
+                            forgotPassView.showDialogError(eCashApplication.getResources().getString(R.string.err_otp_fail));
                         } else {
                             forgotPassView.showDialogError(response.body().getResponseMessage());
                         }
