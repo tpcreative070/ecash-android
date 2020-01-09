@@ -129,7 +129,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestEcashToEdong.setCashEnc(encData);
         requestEcashToEdong.setChannelCode(Constant.CHANNEL_CODE);
         requestEcashToEdong.setContent("");
-        requestEcashToEdong.setCreditAccount(String.valueOf(edongInfo.getAccountIdt()));
+        requestEcashToEdong.setCreditAccount(edongInfo.getAccountIdt());
         requestEcashToEdong.setDebitAccount(Constant.CREDIT_DEBIT_ACCOUNT);
         requestEcashToEdong.setFunctionCode(Constant.FUNCTION_TRANSFER_ECASH_TO_EDONG);
         requestEcashToEdong.setId(idSender);
@@ -145,7 +145,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEcashToEdong));
         requestEcashToEdong.setChannelSignature(CommonUtils.generateSignature(dataSign));
-
+        CommonUtils.logJson(requestEcashToEdong);
         Call<ResponseECashToEdong> call = apiService.transferMoneyECashToEDong(requestEcashToEdong);
         call.enqueue(new Callback<ResponseECashToEdong>() {
             @Override

@@ -132,15 +132,15 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
     }
 
     private void getHeaderListLatter(List<Contact> usersList) {
-        Collections.sort(usersList, (user1, user2) -> getName(user1).toUpperCase()
-                .compareTo(getName(user2).toUpperCase()));
+        Collections.sort(usersList, (user1, user2) -> CommonUtils.getNameHeader(user1).toUpperCase()
+                .compareTo(CommonUtils.getNameHeader(user2).toUpperCase()));
         String lastHeader = "";
         int size = usersList.size();
         for (int i = 0; i < size; i++) {
             Contact user = usersList.get(i);
             String header;
             try {
-                header = String.valueOf(user.getFullName().charAt(0)).toUpperCase();
+                header = CommonUtils.getNameHeader(user).toUpperCase();
             } catch (IndexOutOfBoundsException e) {
                 header = String.valueOf(user.getPhone()).toUpperCase();
             }
@@ -150,14 +150,6 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
                 mSectionList.add(new Contact(true, header));
             }
             mSectionList.add(user);
-        }
-    }
-
-    private String getName(Contact contact) {
-        try {
-            return String.valueOf(contact.getFullName().charAt(0));
-        } catch (StringIndexOutOfBoundsException e) {
-            return String.valueOf(contact.getPhone().charAt(0));
         }
     }
 

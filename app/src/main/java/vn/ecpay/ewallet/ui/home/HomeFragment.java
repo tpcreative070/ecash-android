@@ -139,7 +139,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (null != listEDongInfo) {
             if (listEDongInfo.size() > 0) {
                 eDongInfoCashIn = listEDongInfo.get(0);
-                tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+                tvHomeAccountEdong.setText(listEDongInfo.get(0).getAccountIdt());
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
             }
         }
@@ -185,7 +185,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }, 1000);
     }
 
-    private void updateNumberLixi(){
+    private void updateNumberLixi() {
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             if (DatabaseUtil.getAllLixiUnRead(getActivity()).size() > 0) {
@@ -257,10 +257,15 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_notification:
-                Intent intentNoti = new Intent(getActivity(), NotificationActivity.class);
-                if (getActivity() != null) {
-                    getActivity().startActivity(intentNoti);
-                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (dbAccountInfo != null) {
+                    Intent intentNoti = new Intent(getActivity(), NotificationActivity.class);
+                    if (getActivity() != null) {
+                        getActivity().startActivity(intentNoti);
+                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    }
+                } else {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
                 }
                 break;
             case R.id.iv_qr_code:
@@ -560,7 +565,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void getCashValuesSuccess(List<Denomination> cashValuesList) {
-        if (cashValuesList.size() > 0){
+        if (cashValuesList.size() > 0) {
             DatabaseUtil.deleteAllCashValue(getActivity());
             new Timer().schedule(new TimerTask() {
                 @Override

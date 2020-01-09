@@ -193,6 +193,7 @@ public class CashOutFunction {
             responseMess.setCashEnc(encData);
             responseMess.setId(CommonUtils.getIdSender(responseMess, context));
 
+            CommonUtils.logJson(responseMess);
             DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());
             return responseMess;
         }
