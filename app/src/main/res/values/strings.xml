@@ -4,6 +4,7 @@
 
     <string name="language_english_code" translatable="false">en</string>
     <string name="language_vietnamese_code" translatable="false">vi</string>
+    <string name="string_zero" translatable="false">0</string>
 
 
     <string name="title_home">Home</string>
@@ -284,4 +285,19 @@
 
     <string name="str_chose_image_from_store">Chose image from store</string>
     <string name="str_take_photo">Take photograp</string>
+
+    <string name="str_payment_request">Payment%srequest</string>
+    <string name="str_create_a_bill_of_payment">Create a bill of payment</string>
+    <string name="str_content_billing">Content billing</string>
+    <string name="str_get_an_account_with_qr_code">Get an account with QR code</string>
+    <string name="str_total_payment_ecash">Total payment eCash</string>
+    <string name="str_payment_success">Payment success</string>
+    <string name="str_transaction_success">Successful transaction</string>
+    <string name="str_you_have_paid">You have paid</string>
+    <string name="str_you_jush_had_a_payment">You just had a payment</string>
+    <string name="str_you_have_been_paid">You have been paid</string>
+    <string name="str_from_ecash_account">from eCash account</string>
+    <string name="str_view_info">view thông tin</string>
+    <string name="str_payment_info">Payment info</string>
+    <string name="str_payment_content">Content</string>
 </resources>

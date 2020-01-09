@@ -62,6 +62,7 @@ import vn.ecpay.ewallet.ui.home.module.HomeModule;
 import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
+import vn.ecpay.ewallet.ui.payto.PayToActivity;
 
 public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.iv_qr_code)
@@ -94,9 +95,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     LinearLayout viewElectronPay;
     @BindView(R.id.viewWaterPay)
     LinearLayout viewWaterPay;
-    @BindView(R.id.viewShopPay)
+    @BindView(R.id.viewPaymentRequest)
     LinearLayout viewShopPay;
-    @BindView(R.id.viewCablePay)
+    @BindView(R.id.viewCreateBill)
     LinearLayout viewCablePay;
     @BindView(R.id.layout_active_account)
     RelativeLayout layoutActiveAccount;
@@ -110,6 +111,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     TextView tvNotificationCount;
     @BindView(R.id.tvNumberLixi)
     TextView tvNumberLixi;
+    @BindView(R.id.tvPaymentRequest)
+    TextView tvPaymentRequest;
+
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     private long balance;
@@ -134,6 +138,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     private void updateAccountInfo() {
+        tvPaymentRequest.setText(String.format(getString(R.string.str_payment_request),"\n"));
         accountInfo = ECashApplication.getAccountInfo();
         listEDongInfo = ECashApplication.getListEDongInfo();
         if (null != listEDongInfo) {
@@ -253,7 +258,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         dialog.show();
     }
 
-    @OnClick({R.id.layout_lixi, R.id.layout_eDong, R.id.iv_qr_code, R.id.layout_notification, R.id.layout_account_info, R.id.layout_cash_in, R.id.layout_cash_out, R.id.layout_change_cash, R.id.layout_transfer_cash, R.id.viewElectronPay, R.id.viewWaterPay, R.id.viewShopPay, R.id.viewCablePay, R.id.layout_active_account})
+    @OnClick({R.id.layout_lixi, R.id.layout_eDong, R.id.iv_qr_code, R.id.layout_notification, R.id.layout_account_info, R.id.layout_cash_in, R.id.layout_cash_out, R.id.layout_change_cash, R.id.layout_transfer_cash, R.id.viewElectronPay, R.id.viewWaterPay, R.id.viewPaymentRequest, R.id.viewCreateBill, R.id.layout_active_account})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_notification:
@@ -266,13 +271,30 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             case R.id.iv_qr_code:
             case R.id.viewElectronPay:
             case R.id.viewWaterPay:
-            case R.id.viewShopPay:
-            case R.id.viewCablePay:
+            case R.id.viewCreateBill:
                 if (getActivity() != null)
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
                 break;
             case R.id.layout_account_info:
                 break;
+            case R.id.viewPaymentRequest:
+                if (ECashApplication.getAccountInfo() != null) {
+                    if (dbAccountInfo != null) {
+                        Intent intentPayTo = new Intent(getActivity(), PayToActivity.class);
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intentPayTo);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
+                    } else {
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+                    }
+                } else {
+                    if (getActivity() != null)
+                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+                }
+                break;
+
             case R.id.layout_cash_in:
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
