@@ -279,4 +279,19 @@
 
     <string name="str_chose_image_from_store">Chọn từ thư viện ảnh</string>
     <string name="str_take_photo">Chụp ảnh</string>
+
+    <string name="str_payment_request">Yêu cầu%sthanh toán</string>
+    <string name="str_create_a_bill_of_payment">Tạo hóa đơn thanh toán</string>
+    <string name="str_content_billing">Nội dung thanh toán</string>
+    <string name="str_get_an_account_with_qr_code">Lấy tài khoản bằng QR code</string>
+    <string name="str_total_payment_ecash">Tổng eCash thanh toán</string>
+    <string name="str_payment_success">Thanh toán thành công</string>
+    <string name="str_transaction_success">Giao dịch thành công</string>
+    <string name="str_you_have_paid">Bạn đã thanh toán</string>
+    <string name="str_you_jush_had_a_payment">Bạn vừa có một thanh toán</string>
+    <string name="str_you_have_been_paid">Bạn đã được thanh toán</string>
+    <string name="str_from_ecash_account">từ tài khoản eCash</string>
+    <string name="str_view_info">Xem thông tin</string>
+    <string name="str_payment_info">Thông tin thanh toán</string>
+    <string name="str_payment_content">Nội dung</string>
 </resources>

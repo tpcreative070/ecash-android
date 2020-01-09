@@ -82,7 +82,10 @@
             android:name=".ui.firebase.NotificationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
+        <activity
+            android:name=".ui.payto.PayToActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".ui.lixi.MyLixiActivity"
             android:screenOrientation="portrait"

@@ -628,6 +628,73 @@ public class DialogUtil {
             });
         }
     }
+    public void showDialogPaymentSuccess(Context context,String title,String amount,String eCashID,final OnResult pOnConfirm){
+        if (!isShowing() && context != null) {
+            initDialog(context);
+            mDialog.setContentView(R.layout.dialog_payment_success);
+            Button btnOk;
+            TextView tvTitle=mDialog.findViewById(R.id.tvTitle);
+            TextView tvAmount=mDialog.findViewById(R.id.tv_amount);
+            TextView tvECashID=mDialog.findViewById(R.id.tv_ecash_id);
+            tvTitle.setText(title);
+            tvAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(amount)));
+            tvECashID.setText(eCashID);
+            btnOk = mDialog.findViewById(R.id.btn_main_screen);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerOk();
+                }
+            });
+        }
+    }
+    public void showDialogNewpayment(Context context,String amount,String eCashID,final OnResult pOnConfirm){
+        if (!isShowing() && context != null) {
+            initDialog(context);
+            mDialog.setContentView(R.layout.dialog_new_payment);
+            Button btnOk;
+            TextView tvAmount=mDialog.findViewById(R.id.tv_amount);
+            TextView tvECashID=mDialog.findViewById(R.id.tv_ecash_id);
+            tvAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(amount)));
+            tvECashID.setText(eCashID);
+            btnOk = mDialog.findViewById(R.id.btn_view_info);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerOk();
+                }
+
+            });
+        }
+    }
+    public void showDialogViewPaymentInfo(Context context,String amount,String eCashID,final OnResult pOnConfirm){
+        if (!isShowing() && context != null) {
+            initDialog(context);
+            mDialog.setContentView(R.layout.dialog_view_payment_info);
+            Button btnOk;
+            TextView tvTotalAmount=mDialog.findViewById(R.id.tv_total_payment);
+            TextView tvContent=mDialog.findViewById(R.id.tv_content);
+            tvTotalAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(amount)));
+
+            btnOk = mDialog.findViewById(R.id.btn_confirm);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerOk();
+                }
+
+            });
+        }
+    }
 
     public void dismissDialog() {
         if (mDialog != null) {
