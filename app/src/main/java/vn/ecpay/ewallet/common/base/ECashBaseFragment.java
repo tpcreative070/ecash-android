@@ -1,8 +1,6 @@
 package vn.ecpay.ewallet.common.base;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import butterknife.ButterKnife;
-import vn.ecpay.ewallet.ECashApplication;
-import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.ui.account.AccountActivity;
 
 public abstract class ECashBaseFragment extends Fragment {
     private static final String TAG = "ECashBaseFragment";
@@ -74,15 +68,15 @@ public abstract class ECashBaseFragment extends Fragment {
         }
     }
 
-    public void showDialogPaymentSuccess(String title,String amount,String eCashID){// todo: check Object  input: amount,ecash id
-        DialogUtil.getInstance().showDialogPaymentSuccess(getActivity(),title,amount,eCashID, new DialogUtil.OnResult() {
+    public void showDialogPaymentSuccess(String amount,String eCashID){// todo: check Object  input: amount,ecash id
+        DialogUtil.getInstance().showDialogPaymentSuccess(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
             }
         });
     }
     public void showDialogNewPayment(String amount,String eCashID){// todo: check Object  input: amount,ecash id
-        DialogUtil.getInstance().showDialogNewpayment(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
+        DialogUtil.getInstance().showDialogPaymentRepuest(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
                 showDialogViewPaymentInfo( amount, eCashID);
@@ -94,9 +88,12 @@ public abstract class ECashBaseFragment extends Fragment {
             @Override
             public void OnListenerOk() {
                 // todo: check status
-                showDialogPaymentSuccess(getString(R.string.str_payment_success),"150000","1213244");
+                showDialogPaymentSuccess("150000","1213244");
             }
         });
+    }
+    public void showDialogCannotpayment(){
+        DialogUtil.getInstance().showDialogCannotPayment(getActivity());
     }
     /**
      * Layout Res ID.

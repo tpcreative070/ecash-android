@@ -43,22 +43,20 @@ public class PayToFragment extends ECashBaseFragment {
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
     TextView tvOverEcash;
+    @BindView(R.id.edt_ecash_number)
+    EditText edtEcashNumber;
     @BindView(R.id.edt_content)
     EditText edtContent;
     @BindView(R.id.iv_qr_code)
     ImageView ivQRCode;
-    @BindView(R.id.rv_cash_values)
-    RecyclerView rvCashValues;
-    @BindView(R.id.tv_total_payment)
-    TextView tvTotalPayment;
+
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
 
     private long balance;
     private long totalMoney;
     private AccountInfo accountInfo;
-    private List<CashTotal> valuesListAdapter;
-    private CashValueAdapter cashValueAdapter;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_payto;
@@ -72,28 +70,13 @@ public class PayToFragment extends ECashBaseFragment {
         setData();
     }
     private void setData(){
-        setAdapter();
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
     }
-    private void setAdapter() {
-        valuesListAdapter = DatabaseUtil.getAllCashValues(getActivity());
-        Collections.reverse(valuesListAdapter);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        rvCashValues.setLayoutManager(mLayoutManager);
-        cashValueAdapter = new CashValueAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
-        rvCashValues.setAdapter(cashValueAdapter);
-    }
-    private void updateTotalMoney() {
-        totalMoney = 0;
-        for (int i = 0; i < valuesListAdapter.size(); i++) {
-            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
-        }
-        tvTotalPayment.setText(CommonUtils.formatPriceVND(totalMoney));
-    }
+
     @Override
     public void onResume() {
         ((PayToActivity) getActivity()).updateTitle(String.format(getString(R.string.str_payment_request)," "));
@@ -117,5 +100,6 @@ public class PayToFragment extends ECashBaseFragment {
     }
     private void validateData(){// TODO
         showDialogNewPayment("150000","1213244");
+        //showDialogCannotpayment();
     }
 }

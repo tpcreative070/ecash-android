@@ -294,10 +294,16 @@
     <string name="str_payment_success">Payment success</string>
     <string name="str_transaction_success">Successful transaction</string>
     <string name="str_you_have_paid">You have paid</string>
-    <string name="str_you_jush_had_a_payment">You just had a payment</string>
-    <string name="str_you_have_been_paid">You have been paid</string>
-    <string name="str_from_ecash_account">from eCash account</string>
     <string name="str_view_info">view thông tin</string>
     <string name="str_payment_info">Payment info</string>
     <string name="str_payment_content">Content</string>
+    <string name="str_enter_amount_to_pay">Enter the amount to pay</string>
+    <string name="str_enter_content_payment">Enter the content payment</string>
+    <string name="str_for_wallet_ecash">For eCash wallet account</string>
+    <string name="str_cannot_payment">Cannot payment</string>
+    <string name="str_cannot_payment_content"><![CDATA[There is not enough<br><b>eCash in the wallet</b></br><br>to pay for the transaction]]></string>
+    <string name="str_review_payment_content"><![CDATA[You are paying the amount<b> %s <b>for wallet <b>%s - %s<b> ]]></string>
+    <string name="str_payment">Payment</string>
+    <string name="str_content_payment_request"><![CDATA[ECash wallet account<br><b>%s - %s</b></br><br>ask you to pay</br><br><b>%s</b></br><br>with the payment content as follows:</br><br><b>%s</b>]]></string>
+
 </resources>

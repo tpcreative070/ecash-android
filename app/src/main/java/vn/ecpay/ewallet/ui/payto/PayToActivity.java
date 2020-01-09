@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -29,7 +30,6 @@ public class PayToActivity extends ECashBaseActivity {
 
     @Override
     protected void setupActivityComponent() {
-
     }
 
     @Override

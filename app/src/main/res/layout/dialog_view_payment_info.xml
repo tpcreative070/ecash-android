@@ -17,9 +17,12 @@
         android:textSize="@dimen/text_header"
         android:textStyle="bold" />
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_zero"
+        android:text="@string/app_name"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/grey_light" />
     <RelativeLayout
         android:layout_width="match_parent"
@@ -54,11 +57,11 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_content_payment"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text=""
+        android:text="@string/app_name"
         android:textColor="@color/grey_light" />
     <Button
         android:id="@+id/btn_confirm"

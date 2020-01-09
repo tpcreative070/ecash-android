@@ -288,10 +288,15 @@
     <string name="str_payment_success">Thanh toán thành công</string>
     <string name="str_transaction_success">Giao dịch thành công</string>
     <string name="str_you_have_paid">Bạn đã thanh toán</string>
-    <string name="str_you_jush_had_a_payment">Bạn vừa có một thanh toán</string>
-    <string name="str_you_have_been_paid">Bạn đã được thanh toán</string>
-    <string name="str_from_ecash_account">từ tài khoản eCash</string>
     <string name="str_view_info">Xem thông tin</string>
     <string name="str_payment_info">Thông tin thanh toán</string>
     <string name="str_payment_content">Nội dung</string>
+    <string name="str_enter_amount_to_pay">Nhập số tiền cần thanh toán</string>
+    <string name="str_enter_content_payment">Nhập nội dung thanh toán</string>
+    <string name="str_for_wallet_ecash">Cho tài khoản ví eCash</string>
+    <string name="str_cannot_payment">Không thể thanh toán</string>
+    <string name="str_cannot_payment_content"><![CDATA[Hiện tại trong ví không đủ<br><b>số lượng eCash phù hợp</b></br><br>để thanh toán giao dịch trên]]></string>
+    <string name="str_review_payment_content"><![CDATA[Bạn đang thanh toán số tiền<b> %s <b>cho ví <b>%s - %s<b> ]]></string>
+    <string name="str_payment">Thanh toán</string>
+    <string name="str_content_payment_request"><![CDATA[Tài khoản ví eCash<br><b>%s - %s</b></br><br>yêu cầu bạn thanh toán</br><br><b>%s</b></br><br>với nội dung thanh toán như sau:</br><br><b>%s</b>]]></string>
 </resources>
