@@ -1,8 +1,6 @@
 package vn.ecpay.ewallet.common.base;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +9,12 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
-import vn.ecpay.ewallet.ECashApplication;
-import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.ui.account.AccountActivity;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
 
 public abstract class ECashBaseFragment extends Fragment {
     private static final String TAG = "ECashBaseFragment";
@@ -74,29 +72,50 @@ public abstract class ECashBaseFragment extends Fragment {
         }
     }
 
-    public void showDialogPaymentSuccess(String title,String amount,String eCashID){// todo: check Object  input: amount,ecash id
-        DialogUtil.getInstance().showDialogPaymentSuccess(getActivity(),title,amount,eCashID, new DialogUtil.OnResult() {
+    public void showDialogPaymentSuccess(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
+        DialogUtil.getInstance().showDialogPaymentSuccess(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
             }
         });
     }
-    public void showDialogNewPayment(String amount,String eCashID){// todo: check Object  input: amount,ecash id
-        DialogUtil.getInstance().showDialogNewpayment(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
+    public void showDialogNewPayment(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
+        DialogUtil.getInstance().showDialogPaymentRepuest(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
-                showDialogViewPaymentInfo( amount, eCashID);
+                checkCashInvalidToPaywment();
             }
         });
     }
-    public void showDialogViewPaymentInfo(String amount,String eCashID){// todo: check Object  input: amount,ecash id
-        DialogUtil.getInstance().showDialogViewPaymentInfo(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
+    public void showDialogConfirmPayment(List<CashTotal> valueListCash,String amount, String eCashID){// todo: check Object or input: amount,ecash id
+        DialogUtil.getInstance().showDialogConfirmPayment(getActivity(),valueListCash,amount,eCashID, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
                 // todo: check status
-                showDialogPaymentSuccess(getString(R.string.str_payment_success),"150000","1213244");
+                showDialogPaymentSuccess("150000","1213244");// success
+                // unsuccess: show dialog fail
             }
         });
+    }
+    public void showDialogCannotpayment(){
+        DialogUtil.getInstance().showDialogCannotPayment(getActivity());
+    }
+    public void checkCashInvalidToPaywment(){
+        // todo: Query database
+        // todo: case 1:
+       // showDialogCannotpayment();
+        // todo: case 2:
+         List<CashTotal> valueListCashTake = new ArrayList<>();
+        CashTotal cashTotal = new CashTotal();
+        cashTotal.setParValue(100000);
+        cashTotal.setTotal(100000);
+        cashTotal.setTotalDatabase(1);
+        valueListCashTake.add(cashTotal);
+        cashTotal.setParValue(50000);
+        cashTotal.setTotal(50000);
+        cashTotal.setTotalDatabase(2);
+        valueListCashTake.add(cashTotal);
+        showDialogConfirmPayment(valueListCashTake,"150000","1213244");
     }
     /**
      * Layout Res ID.

@@ -3,8 +3,8 @@ package vn.ecpay.ewallet.common.utils;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,15 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
-import vn.ecpay.ewallet.cropImage.CropView;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.language.LanguageObject;
+import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
 import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
@@ -628,7 +624,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentSuccess(Context context,String title,String amount,String eCashID,final OnResult pOnConfirm){
+    public void showDialogPaymentSuccess(Context context,String amount,String eCashID,final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_success);
@@ -636,9 +632,8 @@ public class DialogUtil {
             TextView tvTitle=mDialog.findViewById(R.id.tvTitle);
             TextView tvAmount=mDialog.findViewById(R.id.tv_amount);
             TextView tvECashID=mDialog.findViewById(R.id.tv_ecash_id);
-            tvTitle.setText(title);
             tvAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(amount)));
-            tvECashID.setText(eCashID);
+            tvECashID.setText(String.format("%s - %s", context.getString(R.string.app_name), eCashID));
             btnOk = mDialog.findViewById(R.id.btn_main_screen);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
@@ -651,16 +646,17 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogNewpayment(Context context,String amount,String eCashID,final OnResult pOnConfirm){
+    public void showDialogPaymentRepuest(Context context, String amount, String eCashID, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
-            mDialog.setContentView(R.layout.dialog_new_payment);
+            mDialog.setContentView(R.layout.dialog_payment_request);
             Button btnOk;
-            TextView tvAmount=mDialog.findViewById(R.id.tv_amount);
-            TextView tvECashID=mDialog.findViewById(R.id.tv_ecash_id);
-            tvAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(amount)));
-            tvECashID.setText(eCashID);
-            btnOk = mDialog.findViewById(R.id.btn_view_info);
+            TextView tvTitle=mDialog.findViewById(R.id.tvTitle);
+            tvTitle.setText(String.format(context.getString(R.string.str_payment_request)," "));
+            TextView tvContent=mDialog.findViewById(R.id.tv_content);
+            tvContent.setText(Html.fromHtml(String.format(context.getString(R.string.str_content_payment_request), "Nguyen van A", eCashID,CommonUtils.formatPriceVND(Long.parseLong(amount)),"Tiền cafe")));
+
+            btnOk = mDialog.findViewById(R.id.btn_payment);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();
@@ -673,13 +669,18 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogViewPaymentInfo(Context context,String amount,String eCashID,final OnResult pOnConfirm){
+    public void showDialogConfirmPayment(Context context,List<CashTotal> valueListCash, String amount, String eCashID, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
-            mDialog.setContentView(R.layout.dialog_view_payment_info);
+            mDialog.setContentView(R.layout.dialog_confirm_payment);
             Button btnOk;
+            TextView tv_title=mDialog.findViewById(R.id.tv_title);
+            RecyclerView rvCashValues=mDialog.findViewById(R.id.rv_cash_values);
+            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash, context);
+            rvCashValues.setAdapter(cashValueAdapter);
             TextView tvTotalAmount=mDialog.findViewById(R.id.tv_total_payment);
-            TextView tvContent=mDialog.findViewById(R.id.tv_content);
+            TextView tvContent=mDialog.findViewById(R.id.tv_content_payment);
+            tv_title.setText(Html.fromHtml(String.format(context.getString(R.string.str_review_payment_content), CommonUtils.formatPriceVND(Long.parseLong(amount))," Nguyen van A", eCashID)));
             tvTotalAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(amount)));
 
             btnOk = mDialog.findViewById(R.id.btn_confirm);
@@ -691,6 +692,24 @@ public class DialogUtil {
                 if (pOnConfirm != null) {
                     pOnConfirm.OnListenerOk();
                 }
+
+            });
+        }
+    }
+
+    public void showDialogCannotPayment(Context context){
+        if (!isShowing() && context != null) {
+            initDialog(context);
+            mDialog.setContentView(R.layout.dialog_cannot_payment);
+            Button btnOk;
+            TextView tv_content=mDialog.findViewById(R.id.tv_content);
+            tv_content.setText(Html.fromHtml(context.getString(R.string.str_cannot_payment_content)));
+            btnOk = mDialog.findViewById(R.id.btn_close);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
 
             });
         }
