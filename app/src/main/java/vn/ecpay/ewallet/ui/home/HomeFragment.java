@@ -272,41 +272,50 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             case R.id.iv_qr_code:
             case R.id.viewElectronPay:
             case R.id.viewWaterPay:
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
+                break;
             case R.id.viewCreateBill:
-                if (ECashApplication.getAccountInfo() != null) {
-                    if (dbAccountInfo != null) {
-                        Intent intentPayTo = new Intent(getActivity(), ToPayActivity.class);
-                        if (getActivity() != null) {
-                            getActivity().startActivity(intentPayTo);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        }
-                    } else {
-                        if (getActivity() != null)
-                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
-                    }
-                } else {
-                    if (getActivity() != null)
-                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
-                }
+//                if (ECashApplication.getAccountInfo() != null) {
+//                    if (dbAccountInfo != null) {
+//                        Intent intentPayTo = new Intent(getActivity(), ToPayActivity.class);
+//                        if (getActivity() != null) {
+//                            getActivity().startActivity(intentPayTo);
+//                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//                        }
+//                    } else {
+//                        if (getActivity() != null)
+//                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+//                    }
+//                } else {
+//                    if (getActivity() != null)
+//                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+//                }
+//                break;
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
                 break;
             case R.id.layout_account_info:
                 break;
             case R.id.viewPaymentRequest:
-                if (ECashApplication.getAccountInfo() != null) {
-                    if (dbAccountInfo != null) {
-                        Intent intentPayTo = new Intent(getActivity(), PayToActivity.class);
-                        if (getActivity() != null) {
-                            getActivity().startActivity(intentPayTo);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        }
-                    } else {
-                        if (getActivity() != null)
-                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
-                    }
-                } else {
-                    if (getActivity() != null)
-                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
-                }
+//                if (ECashApplication.getAccountInfo() != null) {
+//                    if (dbAccountInfo != null) {
+//                        Intent intentPayTo = new Intent(getActivity(), PayToActivity.class);
+//                        if (getActivity() != null) {
+//                            getActivity().startActivity(intentPayTo);
+//                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//                        }
+//                    } else {
+//                        if (getActivity() != null)
+//                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+//                    }
+//                } else {
+//                    if (getActivity() != null)
+//                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+//                }
+//                break;
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
                 break;
 
             case R.id.layout_cash_in:
