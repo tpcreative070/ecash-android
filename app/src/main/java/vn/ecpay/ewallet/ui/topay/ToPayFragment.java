@@ -27,12 +27,19 @@ import vn.ecpay.ewallet.ui.billingQRCode.BillingQRCodeActivity;
 import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
 
 public class ToPayFragment extends ECashBaseFragment {
+    @BindView(R.id.iv_back)
+    ImageView ivBack;
+    @BindView(R.id.toolbar_center_text)
+    TextView toolbarCenterText;
+
     @BindView(R.id.tv_account_name)
     TextView tvAccountName;
     @BindView(R.id.tv_id)
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
     TextView tvOverEcash;
+    @BindView(R.id.view_contact)
+    View viewContact;
     @BindView(R.id.edt_ecash_number)
     EditText edtEcashNumber;
     @BindView(R.id.edt_content)
@@ -41,6 +48,7 @@ public class ToPayFragment extends ECashBaseFragment {
     View viewQRCode;
     @BindView(R.id.iv_qr_code)
     ImageView ivQRCode;
+
 
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
@@ -62,11 +70,11 @@ public class ToPayFragment extends ECashBaseFragment {
     }
     @Override
     public void onResume() {
-        ((ToPayActivity)getActivity()).updateTitle(getString(R.string.str_create_a_bill_of_payment));
+        toolbarCenterText.setText(getString(R.string.str_create_a_bill_of_payment));
         super.onResume();
     }
     private void setData(){
-        edtEcashNumber.setVisibility(View.GONE);
+        viewContact.setVisibility(View.GONE);
         viewQRCode.setVisibility(View.GONE);
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -74,9 +82,12 @@ public class ToPayFragment extends ECashBaseFragment {
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
     }
-    @OnClick({R.id.btn_confirm})
+    @OnClick({R.id.iv_back,R.id.btn_confirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.iv_back:
+                getActivity().onBackPressed();
+                break;
             case R.id.btn_confirm:
                 validateData();
                 break;

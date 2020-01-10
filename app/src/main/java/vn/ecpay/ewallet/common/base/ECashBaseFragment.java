@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
@@ -70,6 +71,17 @@ public abstract class ECashBaseFragment extends Fragment {
         if (getActivity() instanceof ECashBaseActivity) {
             ((ECashBaseActivity) getActivity()).dismissLoading();
         }
+    }
+    protected Fragment getCurrentFragment() {
+        try {
+            return ((ECashBaseActivity)getActivity()).getCurrentFragment();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    protected String getCurrentActivity() {
+        return ((ECashBaseActivity)getActivity()).getCurrentActivity();
     }
 
     public void showDialogPaymentSuccess(String amount,String eCashID){// todo: check Object  or input: amount,ecash id

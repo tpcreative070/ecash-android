@@ -2,6 +2,7 @@ package vn.ecpay.ewallet.ui.payto;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -25,18 +24,20 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
-import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
-import vn.ecpay.ewallet.ui.account.AccountActivity;
-import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
-import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
+import vn.ecpay.ewallet.ui.cashToCash.fragment.CashToCashFragment;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
-import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
+import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
-public class PayToFragment extends ECashBaseFragment {
+public class PayToFragment extends ECashBaseFragment implements MultiTransferListener {
+    @BindView(R.id.iv_back)
+    ImageView ivBack;
+    @BindView(R.id.toolbar_center_text)
+    TextView toolbarCenterText;
+
     @BindView(R.id.tv_account_name)
     TextView tvAccountName;
     @BindView(R.id.tv_id)
@@ -49,14 +50,21 @@ public class PayToFragment extends ECashBaseFragment {
     EditText edtContent;
     @BindView(R.id.iv_qr_code)
     ImageView ivQRCode;
+    @BindView(R.id.iv_contact)
+    ImageView ivContact;
 
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
-
+    private List<Contact> multiTransferList;
     private long balance;
-    private long totalMoney;
     private AccountInfo accountInfo;
-
+    public static PayToFragment newInstance(ArrayList<Contact> listContactTransfer) {
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL, listContactTransfer);
+        PayToFragment fragment = new PayToFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_payto;
@@ -65,6 +73,15 @@ public class PayToFragment extends ECashBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            this.multiTransferList = bundle.getParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL);
+            if (null != multiTransferList) {
+                if (multiTransferList.size() > 0) {
+                    updateWalletSend();
+                }
+            }
+        }
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
@@ -79,14 +96,20 @@ public class PayToFragment extends ECashBaseFragment {
 
     @Override
     public void onResume() {
-        ((PayToActivity) getActivity()).updateTitle(String.format(getString(R.string.str_payment_request)," "));
+        toolbarCenterText.setText(String.format(getString(R.string.str_payment_request)," "));
         super.onResume();
     }
-    @OnClick({R.id.iv_qr_code, R.id.btn_confirm})
+    @OnClick({R.id.iv_back,R.id.iv_qr_code,R.id.iv_contact, R.id.btn_confirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.iv_back:
+                getActivity().onBackPressed();
+                break;
             case R.id.iv_qr_code:
                 gotoScanQRCode();
+                break;
+            case R.id.iv_contact:
+                gotoContact();
                 break;
             case R.id.btn_confirm:
                 validateData();
@@ -100,5 +123,25 @@ public class PayToFragment extends ECashBaseFragment {
     }
     private void validateData(){// TODO
         showDialogNewPayment("150000","1213244");
+    }
+    private void gotoContact(){
+        ((PayToActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this), true);
+    }
+
+    @Override
+    public void onMultiTransfer(ArrayList<Contact> contactList) {
+        multiTransferList =contactList;
+        updateWalletSend();
+    }
+    private void updateWalletSend() {
+        StringBuilder walletId = new StringBuilder();
+        for (int i = 0; i < multiTransferList.size(); i++) {
+            if (i == 0) {
+                walletId.append(multiTransferList.get(i).getWalletId());
+            } else {
+                walletId.append("; ").append(multiTransferList.get(i).getWalletId());
+            }
+        }
+        edtEcashNumber.setText(walletId.toString());
     }
 }
