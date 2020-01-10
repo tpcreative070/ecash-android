@@ -25,6 +25,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.language.LanguageObject;
+import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
 import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
@@ -668,12 +669,15 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogViewPaymentInfo(Context context,String amount,String eCashID,final OnResult pOnConfirm){
+    public void showDialogConfirmPayment(Context context,List<CashTotal> valueListCash, String amount, String eCashID, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
-            mDialog.setContentView(R.layout.dialog_view_payment_info);
+            mDialog.setContentView(R.layout.dialog_confirm_payment);
             Button btnOk;
             TextView tv_title=mDialog.findViewById(R.id.tv_title);
+            RecyclerView rvCashValues=mDialog.findViewById(R.id.rv_cash_values);
+            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash, context);
+            rvCashValues.setAdapter(cashValueAdapter);
             TextView tvTotalAmount=mDialog.findViewById(R.id.tv_total_payment);
             TextView tvContent=mDialog.findViewById(R.id.tv_content_payment);
             tv_title.setText(Html.fromHtml(String.format(context.getString(R.string.str_review_payment_content), CommonUtils.formatPriceVND(Long.parseLong(amount))," Nguyen van A", eCashID)));

@@ -5,6 +5,7 @@
     <string name="language_english_code" translatable="false">en</string>
     <string name="language_vietnamese_code" translatable="false">vi</string>
     <string name="string_zero" translatable="false">0</string>
+    <string name="string_todo" translatable="false">TODO</string>
 
 
     <string name="title_home">Home</string>
@@ -305,5 +306,6 @@
     <string name="str_review_payment_content"><![CDATA[You are paying the amount<b> %s <b>for wallet <b>%s - %s<b> ]]></string>
     <string name="str_payment">Payment</string>
     <string name="str_content_payment_request"><![CDATA[ECash wallet account<br><b>%s - %s</b></br><br>ask you to pay</br><br><b>%s</b></br><br>with the payment content as follows:</br><br><b>%s</b>]]></string>
-
+    <string name="str_scan_qr_to_pay">Scan to pay</string>
+    <string name="str_create_qr_code_success">Successfully created QR</string>
 </resources>

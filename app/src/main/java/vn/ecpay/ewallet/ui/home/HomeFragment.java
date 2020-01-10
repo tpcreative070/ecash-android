@@ -63,6 +63,7 @@ import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.payto.PayToActivity;
+import vn.ecpay.ewallet.ui.topay.ToPayActivity;
 
 public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.iv_qr_code)
@@ -272,8 +273,21 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             case R.id.viewElectronPay:
             case R.id.viewWaterPay:
             case R.id.viewCreateBill:
-                if (getActivity() != null)
-                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
+                if (ECashApplication.getAccountInfo() != null) {
+                    if (dbAccountInfo != null) {
+                        Intent intentPayTo = new Intent(getActivity(), ToPayActivity.class);
+                        if (getActivity() != null) {
+                            getActivity().startActivity(intentPayTo);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        }
+                    } else {
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
+                    }
+                } else {
+                    if (getActivity() != null)
+                        ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
+                }
                 break;
             case R.id.layout_account_info:
                 break;
