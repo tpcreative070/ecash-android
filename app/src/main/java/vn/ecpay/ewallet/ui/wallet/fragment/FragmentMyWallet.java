@@ -50,8 +50,6 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     TextView tvId;
     @BindView(R.id.tv_price)
     TextView tvPrice;
-    @BindView(R.id.layout_change_pass)
-    RelativeLayout layoutChangePass;
     @BindView(R.id.layout_help)
     RelativeLayout layoutHelp;
     @BindView(R.id.layout_cancel_account)
@@ -109,14 +107,9 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
         setData();
     }
 
-    @OnClick({R.id.layout_change_pass, R.id.layout_help, R.id.layout_cancel_account, R.id.layout_logout})
+    @OnClick({R.id.layout_help, R.id.layout_cancel_account, R.id.layout_logout})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.layout_change_pass:
-                Intent intentCashIn = new Intent(getActivity(), ChangePassActivity.class);
-                getActivity().startActivity(intentCashIn);
-                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                break;
             case R.id.layout_help:
                 break;
             case R.id.layout_cancel_account:
@@ -161,7 +154,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
                     if (getActivity() == null) return;
                     getActivity().runOnUiThread(() -> updateBalance());
                 }
-            }, 500);
+            }, 1000);
         }
 
         if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {

@@ -130,7 +130,7 @@ public class HomePresenterImpl implements HomePresenter {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            homeView.onGetOTPActiveAccountSuccess(response.body().getResponseData());
+                            homeView.onGetOTPActiveAccountSuccess(response.body().getResponseData(), publicKeyBase64);
                         } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
@@ -230,6 +230,7 @@ public class HomePresenterImpl implements HomePresenter {
                             AccountInfo mAccountInfo = response.body().getResponseData();
                             mAccountInfo.setTerminalId(CommonUtils.getIMEI(context));
                             mAccountInfo.setTerminalInfo(CommonUtils.getModelName());
+                            mAccountInfo.setEcKeyPublicValue(accountInfo.getEcKeyPublicValue());
                             mAccountInfo.setMasterKey(responseData.getMasterKey());
                             ECashApplication.privateKey = privateKeyBase64;
                             ECashApplication.masterKey = mAccountInfo.getMasterKey();

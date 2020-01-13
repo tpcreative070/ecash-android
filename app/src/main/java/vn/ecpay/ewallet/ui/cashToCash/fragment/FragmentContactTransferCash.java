@@ -113,9 +113,8 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
     }
 
     private void getHeaderListLatter(List<Contact> usersList) {
-
-        Collections.sort(usersList, (user1, user2) -> String.valueOf(user1.getFullName().charAt(0)).toUpperCase()
-                .compareTo(String.valueOf(user2.getFullName().charAt(0)).toUpperCase()));
+        Collections.sort(usersList, (user1, user2) -> CommonUtils.getNameHeader(user1).toUpperCase()
+                .compareTo(CommonUtils.getNameHeader(user2).toUpperCase()));
 
         String lastHeader = "";
 
@@ -124,7 +123,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
         for (int i = 0; i < size; i++) {
 
             Contact user = usersList.get(i);
-            String header = String.valueOf(user.getFullName().charAt(0)).toUpperCase();
+            String header = CommonUtils.getNameHeader(user).toUpperCase();
 
             if (!TextUtils.equals(lastHeader, header)) {
                 lastHeader = header;

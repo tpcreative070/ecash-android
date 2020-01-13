@@ -84,46 +84,6 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/layout_change_pass"
-            android:background="@drawable/item_selector"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/iv_left_change_pass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_change_password" />
-
-            <TextView
-                android:id="@+id/tv_change_pass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/iv_left_change_pass"
-                android:paddingStart="10dp"
-                android:text="@string/str_change_pass"
-                android:textColor="@color/black" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_arrow_right" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_below="@+id/tv_change_pass"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="30dp"
-                android:background="@color/grey_light" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
             android:id="@+id/layout_help"
             android:background="@drawable/item_selector"
             android:layout_width="match_parent"

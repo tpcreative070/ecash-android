@@ -10,4 +10,6 @@ public interface AddContactView extends ViewBase {
     void onSearchByWalletSuccess(ResponseDataGetPublicKeyWallet responseData);
 
     void onSearchByPhoneSuccess(ResponseDataGetWalletByPhone responseData);
+
+    void onSyncContactSuccess();
 }

@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -70,8 +69,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     ImageView ivQrCode;
     @BindView(R.id.iv_bell)
     ImageView ivBell;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.tvHomeAccountName)
     TextView tvHomeAccountName;
     @BindView(R.id.tvHomeAccountId)
@@ -145,7 +142,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (null != listEDongInfo) {
             if (listEDongInfo.size() > 0) {
                 eDongInfoCashIn = listEDongInfo.get(0);
-                tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+                tvHomeAccountEdong.setText(listEDongInfo.get(0).getAccountIdt());
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
             }
         }
@@ -191,7 +188,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }, 1000);
     }
 
-    private void updateNumberLixi(){
+    private void updateNumberLixi() {
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             if (DatabaseUtil.getAllLixiUnRead(getActivity()).size() > 0) {
@@ -263,10 +260,15 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_notification:
-                Intent intentNoti = new Intent(getActivity(), NotificationActivity.class);
-                if (getActivity() != null) {
-                    getActivity().startActivity(intentNoti);
-                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (dbAccountInfo != null) {
+                    Intent intentNoti = new Intent(getActivity(), NotificationActivity.class);
+                    if (getActivity() != null) {
+                        getActivity().startActivity(intentNoti);
+                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    }
+                } else {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.str_dialog_active_acc));
                 }
                 break;
             case R.id.iv_qr_code:
@@ -564,7 +566,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     @Override
-    public void onGetOTPActiveAccountSuccess(ResponseData responseData) {
+    public void onGetOTPActiveAccountSuccess(ResponseData responseData, String publicKeyBase64) {
+        accountInfo.setEcKeyPublicValue(publicKeyBase64);
         Toast.makeText(getActivity(), getResources().getString(R.string.str_send_otp_success), Toast.LENGTH_LONG).show();
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
@@ -605,7 +608,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void getCashValuesSuccess(List<Denomination> cashValuesList) {
-        if (cashValuesList.size() > 0){
+        if (cashValuesList.size() > 0) {
             DatabaseUtil.deleteAllCashValue(getActivity());
             new Timer().schedule(new TimerTask() {
                 @Override

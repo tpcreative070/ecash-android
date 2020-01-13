@@ -83,7 +83,7 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongToECash.setAmount(totalMoney);
         requestEdongToECash.setChannelCode(Constant.CHANNEL_CODE);
         requestEdongToECash.setCreditAccount(Constant.CREDIT_DEBIT_ACCOUNT);
-        requestEdongToECash.setDebitAccount(String.valueOf(eDongInfoCashIn.getAccountIdt()));
+        requestEdongToECash.setDebitAccount(eDongInfoCashIn.getAccountIdt());
         requestEdongToECash.setFunctionCode(Constant.FUNCTION_TRANSFER_EDONG_TO_ECASH);
         requestEdongToECash.setQuantities(listQuality);
         requestEdongToECash.setReceiver(String.valueOf(accountInfo.getWalletId()));

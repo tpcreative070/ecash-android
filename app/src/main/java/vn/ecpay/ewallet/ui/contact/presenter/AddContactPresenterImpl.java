@@ -1,5 +1,10 @@
 package vn.ecpay.ewallet.ui.contact.presenter;
 
+import android.content.Context;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -14,6 +19,9 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.contact.RequestSyncContact;
+import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseGetPublicKeyByPhone;
@@ -157,6 +165,57 @@ public class AddContactPresenterImpl implements AddContactPresenter {
 
             @Override
             public void onFailure(Call<ResponseGetPublicKeyWallet> call, Throwable t) {
+                addContactView.dismissLoading();
+                addContactView.getWalletFail(application.getString(R.string.err_upload));
+            }
+        });
+    }
+
+    @Override
+    public void syncContact(Context context, AccountInfo accountInfo, Contact contact) {
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
+        APIService apiService = retrofit.create(APIService.class);
+
+        List<String> userList = new ArrayList<>();
+        userList.add(contact.getPhone());
+
+        RequestSyncContact requestSyncContact = new RequestSyncContact();
+        requestSyncContact.setChannelCode(Constant.CHANNEL_CODE);
+        requestSyncContact.setFunctionCode(Constant.FUNCTION_SYNC_CONTACT);
+        requestSyncContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestSyncContact.setListContacts(userList);
+        requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
+        requestSyncContact.setUsername(accountInfo.getUsername());
+        requestSyncContact.setWalletId(accountInfo.getWalletId());
+        requestSyncContact.setToken(CommonUtils.getToken(accountInfo));
+        requestSyncContact.setAuditNumber(CommonUtils.getAuditNumber());
+
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
+        requestSyncContact.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Call<ResponseSyncContact> call = apiService.syncContacts(requestSyncContact);
+        call.enqueue(new Callback<ResponseSyncContact>() {
+            @Override
+            public void onResponse(Call<ResponseSyncContact> call, Response<ResponseSyncContact> response) {
+                addContactView.dismissLoading();
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    if (response.body().getResponseCode() != null) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            addContactView.onSyncContactSuccess();
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                        } else {
+                            addContactView.getWalletFail(response.body().getResponseMessage());
+                        }
+                    }
+                } else {
+                    addContactView.getWalletFail(application.getString(R.string.err_upload));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
                 addContactView.dismissLoading();
                 addContactView.getWalletFail(application.getString(R.string.err_upload));
             }

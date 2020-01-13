@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,10 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,28 +26,22 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
-import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
-import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
-import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
-import vn.ecpay.ewallet.database.table.CashTemp_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
-
-import static vn.ecpay.ewallet.common.utils.Constant.ELEMENT_SPLIT;
 
 public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
@@ -90,7 +81,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     private ResponseMessSocket responseMess;
     private ArrayList<CashLogs_Database> listCashSend;
     private List<CashTotal> valuesListAdapter;
-    private CashTotalAdapter cashValueAdapter;
+    private CashOutAdapter cashOutAdapter;
 
     @Inject
     CashOutPresenter cashOutPresenter;
@@ -122,9 +113,9 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
         if (listEDongInfo.size() > 0) {
             edongInfo = listEDongInfo.get(0);
-            tvEDongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+            tvEDongWallet.setText(listEDongInfo.get(0).getAccountIdt());
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
-            tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+            tvEdong.setText(listEDongInfo.get(0).getAccountIdt());
         }
     }
 
@@ -132,8 +123,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvCashValues.setLayoutManager(mLayoutManager);
-        cashValueAdapter = new CashTotalAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
-        rvCashValues.setAdapter(cashValueAdapter);
+        cashOutAdapter = new CashOutAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
+        rvCashValues.setAdapter(cashOutAdapter);
     }
 
     private void updateTotalMoney() {
@@ -149,10 +140,10 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         builder.setTitle(getString(R.string.str_chose_edong_account));
         String[] eDong = new String[listEDongInfo.size()];
         for (int i = 0; i < listEDongInfo.size(); i++) {
-            eDong[i] = String.valueOf(listEDongInfo.get(i).getAccountIdt());
+            eDong[i] = listEDongInfo.get(i).getAccountIdt();
         }
         builder.setItems(eDong, (dialog, which) -> {
-            tvEDongWallet.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
+            tvEDongWallet.setText(listEDongInfo.get(which).getAccountIdt());
             tvOverEdong.setText(String.valueOf(listEDongInfo.get(which).getUsableBalance()));
             edongInfo = listEDongInfo.get(which);
         });
@@ -187,7 +178,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             for (int i = 0; i < listEDongInfo.size(); i++) {
                 if (listEDongInfo.get(i).getAccountIdt().equals(edongInfo.getAccountIdt())) {
                     tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
-                    tvEdong.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
+                    tvEdong.setText(listEDongInfo.get(i).getAccountIdt());
                 }
             }
         } else {

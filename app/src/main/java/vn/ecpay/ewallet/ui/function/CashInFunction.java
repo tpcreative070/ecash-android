@@ -67,6 +67,12 @@ public class CashInFunction {
         }
     }
 
+    public void handleCash(CashInSuccessListener mCashInSuccessListener) {
+        this.cashInSuccessListener = mCashInSuccessListener;
+        deCryptECash = CommonUtils.decrypEcash(eDongToECashResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
+        checkArrayCash();
+    }
+
     private void requestSearchWalletID(AccountInfo accountInfo, ResponseMessSocket responseMess) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(context.getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -161,11 +167,6 @@ public class CashInFunction {
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
             }
         });
-    }
-
-    public void handleCash() {
-        deCryptECash = CommonUtils.decrypEcash(eDongToECashResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
-        checkArrayCash();
     }
 
     private void checkArrayCash() {

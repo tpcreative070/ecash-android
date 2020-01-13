@@ -28,6 +28,7 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -59,6 +60,7 @@ import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
@@ -547,5 +549,13 @@ public class CommonUtils {
             }
         }
         return cashTotals;
+    }
+
+    public static String getNameHeader(Contact contact) {
+        try {
+            return String.valueOf(contact.getFullName().charAt(0));
+        } catch (StringIndexOutOfBoundsException e) {
+            return String.valueOf(contact.getPhone().charAt(0));
+        }
     }
 }

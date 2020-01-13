@@ -33,7 +33,7 @@ public class ECashToEDong {
     @SerializedName("functionId")
     private Long mFunctionId;
     @SerializedName("glAccRefId")
-    private Long mGlAccRefId;
+    private String mGlAccRefId;
     @SerializedName("id")
     private String mId;
     @SerializedName("receiver")
@@ -49,7 +49,7 @@ public class ECashToEDong {
     @SerializedName("token")
     private String mToken;
     @SerializedName("transLockRefId")
-    private Long mTransLockRefId;
+    private String mTransLockRefId;
     @SerializedName("type")
     private String mType;
     @SerializedName("username")
@@ -151,11 +151,11 @@ public class ECashToEDong {
         mFunctionId = functionId;
     }
 
-    public Long getGlAccRefId() {
+    public String getGlAccRefId() {
         return mGlAccRefId;
     }
 
-    public void setGlAccRefId(Long glAccRefId) {
+    public void setGlAccRefId(String glAccRefId) {
         mGlAccRefId = glAccRefId;
     }
 
@@ -215,11 +215,11 @@ public class ECashToEDong {
         mToken = token;
     }
 
-    public Long getTransLockRefId() {
+    public String getTransLockRefId() {
         return mTransLockRefId;
     }
 
-    public void setTransLockRefId(Long transLockRefId) {
+    public void setTransLockRefId(String transLockRefId) {
         mTransLockRefId = transLockRefId;
     }
 

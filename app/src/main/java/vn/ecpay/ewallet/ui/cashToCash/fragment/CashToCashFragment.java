@@ -126,12 +126,14 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         rvCashValues.setLayoutManager(mLayoutManager);
         cashValueAdapter = new CashTotalAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
         rvCashValues.setAdapter(cashValueAdapter);
+        if (null != multiTransferList)
+            cashValueAdapter.setNumberTransfer(multiTransferList.size());
     }
 
     protected void updateTotalMoney() {
         totalMoney = 0;
         for (int i = 0; i < valuesListAdapter.size(); i++) {
-            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
+            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue() * (multiTransferList.size()));
         }
         tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
     }
@@ -270,6 +272,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     @Override
     public void onMultiTransfer(ArrayList<Contact> contactList) {
         this.multiTransferList = contactList;
+        setAdapter();
         updateWalletSend();
     }
 
@@ -281,6 +284,9 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             } else {
                 walletId.append("; ").append(multiTransferList.get(i).getWalletId());
             }
+        }
+        if (null != cashValueAdapter) {
+            cashValueAdapter.setNumberTransfer(multiTransferList.size());
         }
         tvNumberWallet.setText(walletId.toString());
     }

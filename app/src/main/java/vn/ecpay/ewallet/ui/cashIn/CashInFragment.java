@@ -19,6 +19,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -43,6 +45,7 @@ import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashIn.presenter.CashInPresenter;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 
 public class CashInFragment extends ECashBaseFragment implements CashInView {
     @BindView(R.id.tv_account_name)
@@ -234,7 +237,16 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         saveTransactionLogs(eDongToECash);
         cashInPresenter.getEDongInfo(accountInfo);
         CashInFunction cashInFunction = new CashInFunction(eDongToECash, accountInfo, getActivity());
-        cashInFunction.handleCash();
+        cashInFunction.handleCash(() -> new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    dismissProgress();
+                    showDialogCashInOk();
+                });
+            }
+        }, 500));
     }
 
     private void saveTransactionLogs(CashInResponse cashInResponse) {
@@ -247,26 +259,5 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         transactionLog.setTransactionSignature(cashInResponse.getId());
         transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
         DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)) {
-            dismissProgress();
-            showDialogCashInOk();
-        }
-        EventBus.getDefault().removeStickyEvent(event);
-    }
-
-    @Override
-    public void onDetach() {
-        EventBus.getDefault().unregister(this);
-        super.onDetach();
     }
 }

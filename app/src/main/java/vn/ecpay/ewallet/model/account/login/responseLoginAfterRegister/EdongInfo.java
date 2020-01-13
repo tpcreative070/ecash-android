@@ -18,7 +18,7 @@ public class EdongInfo {
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "accountIdt")
     @SerializedName("accountIdt")
-    private Long accountIdt;
+    private String accountIdt;
 
     @ColumnInfo(name = "accBalance")
     @SerializedName("accBalance")
@@ -52,11 +52,11 @@ public class EdongInfo {
     }
 
     @NonNull
-    public Long getAccountIdt() {
+    public String getAccountIdt() {
         return accountIdt;
     }
 
-    public void setAccountIdt(@NonNull Long accountIdt) {
+    public void setAccountIdt(@NonNull String accountIdt) {
         this.accountIdt = accountIdt;
     }
 

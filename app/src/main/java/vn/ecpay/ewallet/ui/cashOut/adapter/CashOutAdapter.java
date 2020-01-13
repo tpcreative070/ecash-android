@@ -1,4 +1,4 @@
-package vn.ecpay.ewallet.ui.lixi.adapter;
+package vn.ecpay.ewallet.ui.cashOut.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,28 +16,22 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
 
-public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CashOutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private List<CashTotal> listCashValue;
     private UpDownMoneyListener upDownMoneyListener;
-    private int numberTransfer;
 
-    public CashTotalAdapter(List<CashTotal> mListCashValue, Context activity, UpDownMoneyListener upDownMoneyListener) {
+    public CashOutAdapter(List<CashTotal> mListCashValue, Context activity, UpDownMoneyListener upDownMoneyListener) {
         this.context = activity;
         this.listCashValue = mListCashValue;
         this.upDownMoneyListener = upDownMoneyListener;
-        numberTransfer = 0;
-    }
-
-    public void setNumberTransfer(int mNumberTransfer) {
-        this.numberTransfer = mNumberTransfer;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_cash_value_total, parent, false);
-        return new ItemValueHolder(view);
+        return new CashOutAdapter.ItemValueHolder(view);
     }
 
     @Override
@@ -46,7 +39,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (context == null) {
             return;
         }
-        ItemValueHolder itemViewHolder = (ItemValueHolder) holder;
+        CashOutAdapter.ItemValueHolder itemViewHolder = (CashOutAdapter.ItemValueHolder) holder;
         CashTotal cashTotal = listCashValue.get(position);
         itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
         itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
@@ -55,7 +48,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         itemViewHolder.iv_down.setOnClickListener(v -> {
             if (cashTotal.getTotal() > 0) {
                 cashTotal.setTotal(cashTotal.getTotal() - 1);
-                cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() + numberTransfer);
+                cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() + 1);
                 itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
                 itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
                         String.valueOf(cashTotal.getTotalDatabase())));
@@ -66,31 +59,17 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         });
 
         itemViewHolder.iv_up.setOnClickListener(v -> {
-            if (numberTransfer == 0) {
-                Toast.makeText(context, context.getResources().getString(R.string.err_not_input_number_username), Toast.LENGTH_LONG).show();
-                return;
-            }
             if (cashTotal.getTotalDatabase() > 0) {
-                if (checkValuesTransfer(cashTotal.getTotal() + 1, cashTotal)) {
-                    cashTotal.setTotal(cashTotal.getTotal() + 1);
-                    cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() - numberTransfer);
-                    itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
-                    itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
-                            String.valueOf(cashTotal.getTotalDatabase())));
-                    if (null != upDownMoneyListener) {
-                        upDownMoneyListener.onUpDownMoneyListener();
-                    }
+                cashTotal.setTotal(cashTotal.getTotal() + 1);
+                cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() - 1);
+                itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
+                itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
+                        String.valueOf(cashTotal.getTotalDatabase())));
+                if (null != upDownMoneyListener) {
+                    upDownMoneyListener.onUpDownMoneyListener();
                 }
             }
         });
-    }
-
-    private boolean checkValuesTransfer(int numberCashTransfer, CashTotal cashTotal) {
-        if (numberCashTransfer > 0) {
-            int slc = numberCashTransfer * numberTransfer;
-            return slc <= cashTotal.getTotal() * numberTransfer + cashTotal.getTotalDatabase();
-        }
-        return true;
     }
 
     @Override

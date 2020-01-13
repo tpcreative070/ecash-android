@@ -8,11 +8,12 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class ResponseMessSocket implements Serializable {
+public class ResponseMessSocket extends BaseObject implements Serializable {
 
     @SerializedName("sender")
     private String mSender;

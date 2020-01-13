@@ -3,7 +3,9 @@ package vn.ecpay.ewallet.model.edongToEcash.response;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
@@ -33,7 +35,7 @@ public class CashInResponse implements Serializable {
     @SerializedName("functionId")
     private Long mFunctionId;
     @SerializedName("glAccRefId")
-    private Long mGlAccRefId;
+    private String mGlAccRefId;
     @SerializedName("id")
     private String mId;
     @SerializedName("quantities")
@@ -53,7 +55,7 @@ public class CashInResponse implements Serializable {
     @SerializedName("token")
     private String mToken;
     @SerializedName("transLockRefId")
-    private Long mTransLockRefId;
+    private String mTransLockRefId;
     @SerializedName("type")
     private String mType;
     @SerializedName("username")
@@ -149,11 +151,11 @@ public class CashInResponse implements Serializable {
         mFunctionId = functionId;
     }
 
-    public Long getGlAccRefId() {
+    public String getGlAccRefId() {
         return mGlAccRefId;
     }
 
-    public void setGlAccRefId(Long glAccRefId) {
+    public void setGlAccRefId(String glAccRefId) {
         mGlAccRefId = glAccRefId;
     }
 
@@ -229,11 +231,11 @@ public class CashInResponse implements Serializable {
         mToken = token;
     }
 
-    public Long getTransLockRefId() {
+    public String getTransLockRefId() {
         return mTransLockRefId;
     }
 
-    public void setTransLockRefId(Long transLockRefId) {
+    public void setTransLockRefId(String transLockRefId) {
         mTransLockRefId = transLockRefId;
     }
 

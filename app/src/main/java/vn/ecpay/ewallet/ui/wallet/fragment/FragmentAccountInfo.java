@@ -42,6 +42,7 @@ import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.ui.wallet.activity.ChangePassActivity;
 import vn.ecpay.ewallet.ui.wallet.activity.EditAccountInfoActivity;
 import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
 import vn.ecpay.ewallet.ui.wallet.module.AccountInfoModule;
@@ -116,7 +117,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         }
     }
 
-    @OnClick({R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
+    @OnClick({R.id.layout_change_pass, R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_change_language:
@@ -167,6 +168,13 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
                 if (PermissionUtils.checkPermissionWriteStore(this, null)) {
                     showProgress();
                     exPortDBFile(getActivity());
+                }
+                break;
+            case R.id.layout_change_pass:
+                if (getActivity() != null) {
+                    Intent intentCashIn = new Intent(getActivity(), ChangePassActivity.class);
+                    getActivity().startActivity(intentCashIn);
+                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }
                 break;
         }

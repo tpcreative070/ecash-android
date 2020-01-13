@@ -28,6 +28,7 @@ import vn.ecpay.ewallet.model.language.LanguageObject;
 import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
 import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
+import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 
@@ -341,7 +342,7 @@ public class DialogUtil {
             valuesList = DatabaseUtil.getAllCashTotal(pContext);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(pContext);
             rv_cash_change.setLayoutManager(mLayoutManager);
-            rv_cash_change.setAdapter(new CashTotalAdapter(valuesList, pContext, new UpDownMoneyListener() {
+            rv_cash_change.setAdapter(new CashOutAdapter(valuesList, pContext, new UpDownMoneyListener() {
                 @Override
                 public void onUpDownMoneyListener() {
                     tvTotalMoney.setText(CommonUtils.formatPriceVND(CommonUtils.getTotalMoney(valuesList)));
