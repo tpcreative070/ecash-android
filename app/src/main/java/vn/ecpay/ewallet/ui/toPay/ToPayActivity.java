@@ -1,12 +1,9 @@
-package vn.ecpay.ewallet.ui.topay;
+package vn.ecpay.ewallet.ui.toPay;
 
 import android.os.Bundle;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import butterknife.BindView;

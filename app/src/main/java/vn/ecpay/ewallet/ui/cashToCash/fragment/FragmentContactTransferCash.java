@@ -7,7 +7,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,8 +32,7 @@ import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
-import vn.ecpay.ewallet.ui.payto.PayToActivity;
-import vn.ecpay.ewallet.ui.payto.PayToFragment;
+import vn.ecpay.ewallet.ui.payTo.PayToActivity;
 
 public class FragmentContactTransferCash extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.recyclerView)

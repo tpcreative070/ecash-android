@@ -1,15 +1,10 @@
-package vn.ecpay.ewallet.ui.payto;
+package vn.ecpay.ewallet.ui.payTo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
@@ -19,7 +14,6 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.ui.cashToCash.fragment.CashToCashFragment;
 
 public class PayToActivity extends ECashBaseActivity {
     private ArrayList<Contact> listContactTransfer;

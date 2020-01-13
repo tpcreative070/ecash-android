@@ -62,8 +62,8 @@ import vn.ecpay.ewallet.ui.home.module.HomeModule;
 import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
-import vn.ecpay.ewallet.ui.payto.PayToActivity;
-import vn.ecpay.ewallet.ui.topay.ToPayActivity;
+import vn.ecpay.ewallet.ui.payTo.PayToActivity;
+import vn.ecpay.ewallet.ui.toPay.ToPayActivity;
 
 public class HomeFragment extends ECashBaseFragment implements HomeView {
     @BindView(R.id.iv_qr_code)

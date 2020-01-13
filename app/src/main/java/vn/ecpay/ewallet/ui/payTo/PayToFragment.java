@@ -1,18 +1,16 @@
-package vn.ecpay.ewallet.ui.payto;
+package vn.ecpay.ewallet.ui.payTo;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +26,10 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
-import vn.ecpay.ewallet.ui.cashToCash.fragment.CashToCashFragment;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
+
+import static androidx.core.provider.FontsContractCompat.FontRequestCallback.RESULT_OK;
 
 public class PayToFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.iv_back)
@@ -48,8 +47,6 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     EditText edtEcashNumber;
     @BindView(R.id.edt_content)
     EditText edtContent;
-    @BindView(R.id.iv_qr_code)
-    ImageView ivQRCode;
     @BindView(R.id.iv_contact)
     ImageView ivContact;
 
@@ -117,9 +114,12 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         }
     }
     private void gotoScanQRCode(){
+       // EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_SCAN_CONTACT_PAYTO));
         Intent intentCashIn = new Intent(getActivity(), QRCodeActivity.class);
-        startActivity(intentCashIn);
+        intentCashIn.putExtra(Constant.EVENT_SCAN_CONTACT_PAYTO,Constant.EVENT_SCAN_CONTACT_PAYTO);
+        startActivityForResult(intentCashIn,Constant.REQUEST_CONTACT_PAYTO);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
     }
     private void validateData(){// TODO
         showDialogNewPayment("150000","1213244");
@@ -143,5 +143,35 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             }
         }
         edtEcashNumber.setText(walletId.toString());
+        setSelection();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    //   super.onActivityResult(requestCode, resultCode, data);
+     //   Log.e("requestCode "+requestCode,"resultCode "+resultCode);
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode ==Constant.REQUEST_CONTACT_PAYTO){
+                try {
+                    Contact contact =(Contact) data.getParcelableExtra(Constant.EVENT_SCAN_CONTACT_PAYTO);
+                    if(contact!=null){
+                        edtEcashNumber.setText(contact.getWalletId().toString());
+                        setSelection();
+                    }
+
+                }catch (Exception e){
+
+                }
+
+           }
+        }else{
+            Log.e("requestCode ","cancel");
+    }
+
+    }
+    private void setSelection(){
+        if(edtEcashNumber.getText()!=null&&edtEcashNumber.getText().length()>0){
+            edtEcashNumber.setSelection(edtEcashNumber.getText().length());
+        }
     }
 }

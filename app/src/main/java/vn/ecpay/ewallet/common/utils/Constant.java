@@ -4,6 +4,7 @@ public class Constant {
     public static final String ACTIVITY_RESULT = "ActivityResult";
     public static final int REQUEST_IMAGE_CAPTURE = 3;
     public static final int REQUEST_TAKE_PHOTO = 2;
+    public static final int REQUEST_CONTACT_PAYTO = 4;
 
     public static final String app_name  = "eCash App";
     public static final String sesion_expid = "3043";
@@ -69,6 +70,7 @@ public class Constant {
     public static final String EVENT_NETWORK_CHANGE = "EVENT_NETWORK_CHANGE";
     public static final String EVENT_UPDATE_ACCOUNT_INFO = "EVENT_UPDATE_ACCOUNT_INFO";
     public static final String EVENT_UPDATE_LIXI = "EVENT_UPDATE_LIXI";
+    public static final String EVENT_SCAN_CONTACT_PAYTO = "EVENT_SCAN_CONTACT_PAYTO";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";

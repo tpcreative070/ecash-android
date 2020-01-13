@@ -1,4 +1,4 @@
-package vn.ecpay.ewallet.ui.topay;
+package vn.ecpay.ewallet.ui.toPay;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -24,7 +21,6 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.billingQRCode.BillingQRCodeActivity;
-import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
 
 public class ToPayFragment extends ECashBaseFragment {
     @BindView(R.id.iv_back)
