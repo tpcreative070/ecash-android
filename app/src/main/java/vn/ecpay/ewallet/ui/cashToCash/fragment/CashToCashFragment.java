@@ -133,7 +133,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     protected void updateTotalMoney() {
         totalMoney = 0;
         for (int i = 0; i < valuesListAdapter.size(); i++) {
-            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
+            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue() * (multiTransferList.size()));
         }
         tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
     }

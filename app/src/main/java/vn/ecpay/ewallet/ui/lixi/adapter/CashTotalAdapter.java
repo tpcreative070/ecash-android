@@ -55,7 +55,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         itemViewHolder.iv_down.setOnClickListener(v -> {
             if (cashTotal.getTotal() > 0) {
                 cashTotal.setTotal(cashTotal.getTotal() - 1);
-                cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() + 1);
+                cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() + numberTransfer);
                 itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
                 itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
                         String.valueOf(cashTotal.getTotalDatabase())));
@@ -73,7 +73,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if (cashTotal.getTotalDatabase() > 0) {
                 if (checkValuesTransfer(cashTotal.getTotal() + 1, cashTotal)) {
                     cashTotal.setTotal(cashTotal.getTotal() + 1);
-                    cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() - 1);
+                    cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() - numberTransfer);
                     itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
                     itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
                             String.valueOf(cashTotal.getTotalDatabase())));
@@ -88,7 +88,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private boolean checkValuesTransfer(int numberCashTransfer, CashTotal cashTotal) {
         if (numberCashTransfer > 0) {
             int slc = numberCashTransfer * numberTransfer;
-            return slc <= cashTotal.getTotal() + cashTotal.getTotalDatabase();
+            return slc <= cashTotal.getTotal() * numberTransfer + cashTotal.getTotalDatabase();
         }
         return true;
     }

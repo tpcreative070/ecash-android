@@ -50,6 +50,7 @@ import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 
@@ -322,7 +323,16 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 //start service
                 //startService(cashInResponse);
                 CashInFunction cashInFunction = new CashInFunction(cashInResponse, accountInfo, getActivity());
-                cashInFunction.handleCash();
+                cashInFunction.handleCash(() -> new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> {
+                            dismissProgress();
+                            showDialogCashChangeOk();
+                        });
+                    }
+                }, 500));
                 return null;
             }
         }.execute();
@@ -380,11 +390,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)) {
-            dismissProgress();
-            showDialogCashChangeOk();
-        }
-
         if (event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
             new Timer().schedule(new TimerTask() {
                 @Override

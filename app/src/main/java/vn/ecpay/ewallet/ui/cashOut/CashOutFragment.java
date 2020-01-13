@@ -113,9 +113,9 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
         if (listEDongInfo.size() > 0) {
             edongInfo = listEDongInfo.get(0);
-            tvEDongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+            tvEDongWallet.setText(listEDongInfo.get(0).getAccountIdt());
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
-            tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+            tvEdong.setText(listEDongInfo.get(0).getAccountIdt());
         }
     }
 
@@ -140,10 +140,10 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         builder.setTitle(getString(R.string.str_chose_edong_account));
         String[] eDong = new String[listEDongInfo.size()];
         for (int i = 0; i < listEDongInfo.size(); i++) {
-            eDong[i] = String.valueOf(listEDongInfo.get(i).getAccountIdt());
+            eDong[i] = listEDongInfo.get(i).getAccountIdt();
         }
         builder.setItems(eDong, (dialog, which) -> {
-            tvEDongWallet.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
+            tvEDongWallet.setText(listEDongInfo.get(which).getAccountIdt());
             tvOverEdong.setText(String.valueOf(listEDongInfo.get(which).getUsableBalance()));
             edongInfo = listEDongInfo.get(which);
         });
@@ -178,7 +178,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             for (int i = 0; i < listEDongInfo.size(); i++) {
                 if (listEDongInfo.get(i).getAccountIdt().equals(edongInfo.getAccountIdt())) {
                     tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
-                    tvEdong.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
+                    tvEdong.setText(listEDongInfo.get(i).getAccountIdt());
                 }
             }
         } else {

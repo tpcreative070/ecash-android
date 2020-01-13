@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,8 +67,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     ImageView ivQrCode;
     @BindView(R.id.iv_bell)
     ImageView ivBell;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.tvHomeAccountName)
     TextView tvHomeAccountName;
     @BindView(R.id.tvHomeAccountId)
@@ -524,7 +521,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     @Override
-    public void onGetOTPActiveAccountSuccess(ResponseData responseData) {
+    public void onGetOTPActiveAccountSuccess(ResponseData responseData, String publicKeyBase64) {
+        accountInfo.setEcKeyPublicValue(publicKeyBase64);
         Toast.makeText(getActivity(), getResources().getString(R.string.str_send_otp_success), Toast.LENGTH_LONG).show();
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
