@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
+        <include layout="@layout/toolbar_lixi"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -119,17 +120,33 @@
             android:textColor="@color/blue"
             android:textSize="@dimen/text_header"
             android:textStyle="bold" />
-        <EditText
-            android:id="@+id/edt_ecash_number"
+        <RelativeLayout
+            android:id="@+id/view_contact"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/bg_edit_text"
-            android:drawableEnd="@drawable/ic_contact_blue"
-            android:drawablePadding="15dp"
-            android:maxLength="20"
-            android:hint="@string/str_input_account_ecash"
-            android:inputType="number" />
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/edt_ecash_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:background="@drawable/bg_edit_text"
+                android:maxLength="20"
+                android:layout_toStartOf="@+id/iv_contact"
+                android:hint="@string/str_input_account_ecash"
+                android:inputType="number" />
+            <ImageView
+                android:id="@+id/iv_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_contact_blue"
+                android:drawablePadding="15dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/string_todo" />
+        </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/view_qr_code"
             android:layout_width="match_parent"

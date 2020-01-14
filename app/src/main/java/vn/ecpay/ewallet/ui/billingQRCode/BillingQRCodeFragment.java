@@ -2,14 +2,13 @@ package vn.ecpay.ewallet.ui.billingQRCode;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-
-import vn.ecpay.ewallet.ECashApplication;
+import butterknife.BindView;
+import butterknife.OnClick;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
-import vn.ecpay.ewallet.ui.payto.PayToActivity;
 
 public class BillingQRCodeFragment extends ECashBaseFragment {
     @Override
@@ -25,6 +24,20 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
     public void onResume() {
         ((BillingQRCodeActivity) getActivity()).updateTitle(getString(R.string.str_create_a_bill_of_payment));
         super.onResume();
+    }
+    @OnClick({R.id.view_share,R.id.view_download})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.view_share:
+                showToas();
+                break;
+            case R.id.view_download:
+                showToas();
+                break;
+        }
+    }
+    private void showToas(){
+        Toast.makeText(getActivity(),"Đang xử lý",Toast.LENGTH_LONG).show();
     }
 }
 

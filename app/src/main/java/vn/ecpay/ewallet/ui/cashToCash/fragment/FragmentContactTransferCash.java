@@ -32,6 +32,7 @@ import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
+import vn.ecpay.ewallet.ui.payTo.PayToActivity;
 
 public class FragmentContactTransferCash extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.recyclerView)
@@ -138,25 +139,41 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                try {
-                    if (getActivity() != null)
-                        ((CashToCashActivity) getActivity()).onBackPressed();
-                } catch (ClassCastException e) {
-                    if (getActivity() != null)
-                        ((MyLixiActivity) getActivity()).onBackPressed();
-                }
+                    if (getActivity() != null&&getCurrentActivity()!=null){
+                        //Toast.makeText(getActivity(),getCurrentActivity(),Toast.LENGTH_LONG).show();
+                        if(getCurrentActivity().equals((CashToCashActivity.class.getName()))){
+                            (getActivity()).onBackPressed();
+                        }else if(getCurrentActivity().equals((PayToActivity.class.getName()))){
+                            getActivity().onBackPressed();
+                        }
+                        else if(getCurrentActivity().equals((MyLixiActivity.class.getName()))){
+                            (getActivity()).onBackPressed();
+                        }
+                    }
+
                 break;
             case R.id.tv_done:
                 if (multiTransferList != null) {
                     if (multiTransferList.size() > 0) {
                         multiTransferListener.onMultiTransfer(multiTransferList);
-                        try {
-                            if (getActivity() != null)
-                                ((CashToCashActivity) getActivity()).onBackPressed();
-                        } catch (ClassCastException e) {
-                            if (getActivity() != null)
-                                ((MyLixiActivity) getActivity()).onBackPressed();
+                        if (getActivity() != null&&getCurrentActivity()!=null){
+                            //Toast.makeText(getActivity(),getCurrentActivity(),Toast.LENGTH_LONG).show();
+                            if(getCurrentActivity().equals((CashToCashActivity.class.getName()))){
+                                (getActivity()).onBackPressed();
+                            }else if(getCurrentActivity().equals((PayToActivity.class.getName()))){
+                                getActivity().onBackPressed();
+                            }
+                            else if(getCurrentActivity().equals((MyLixiActivity.class.getName()))){
+                                (getActivity()).onBackPressed();
+                            }
                         }
+//                        try {
+//                            if (getActivity() != null)
+//                                ((CashToCashActivity) getActivity()).onBackPressed();
+//                        } catch (ClassCastException e) {
+//                            if (getActivity() != null)
+//                                ((MyLixiActivity) getActivity()).onBackPressed();
+//                        }
                     } else {
                         DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_un_chose_wallet_send));
                     }
