@@ -186,12 +186,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 showDialogErr(R.string.err_not_input_number_username);
             return;
         }
-        if (!checkTotalMoneySend()) {
-            dismissProgress();
-            if (getActivity() != null)
-                showDialogErr(R.string.err_amount_not_enough_to_transfer);
-            return;
-        }
 
         if (edtContent.getText().toString().isEmpty()) {
             dismissProgress();
@@ -238,18 +232,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         }, 500);
         showDialogSendOk();
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
-    }
-
-    private boolean checkTotalMoneySend() {
-        for (int i = 0; i < valuesListAdapter.size(); i++) {
-            if (valuesListAdapter.get(i).getTotal() > 0) {
-                int slc = valuesListAdapter.get(i).getTotal() * (multiTransferList.size());
-                if (slc > valuesListAdapter.get(i).getTotal() + valuesListAdapter.get(i).getTotalDatabase()) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     @Override
