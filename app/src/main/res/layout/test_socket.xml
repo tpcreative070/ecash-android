@@ -10,113 +10,28 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/add_pass_private"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:text="add pass !"
-            android:textSize="17sp" />
-        <Button
-            android:id="@+id/add_pass_master"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:text="add pass !"
-            android:textSize="17sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/get_pass_private"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:text="get pass!"
-            android:textSize="17sp" />
-
-        <Button
-            android:id="@+id/get_pass_master"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:text="change key"
-            android:textSize="17sp" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="save account"
-        android:textSize="17sp" />
-
     <Button
         android:id="@+id/add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/save"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="get Acc !"
+        android:text="add"
         android:textSize="17sp" />
-
 
     <Button
-        android:id="@+id/change_pass"
+        android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/add"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="changePass !"
+        android:text="delete"
         android:textSize="17sp" />
 
-    <TextView
-        android:id="@+id/output"
+    <Button
+        android:id="@+id/get"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/save"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:textSize="16sp" />
+        android:layout_marginTop="40dp"
+        android:text="get index 0"
+        android:textSize="17sp" />
 
-
-    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:background="@drawable/bg_green_circle"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true">
-
-        <LinearLayout
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/bg_green_circle"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_cash_in" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 </LinearLayout>

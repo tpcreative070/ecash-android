@@ -243,10 +243,12 @@ public class DatabaseUtil {
 
     public static boolean checkContactExit(Context context, String walletId) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        if (null != WalletDatabase.checkContactExit(walletId)) {
-            return true;
-        }
-        return false;
+        return null != WalletDatabase.checkContactExit(walletId);
+    }
+
+    public static Contact getCurrentContact(Context context, String walletId) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.checkContactExit(walletId);
     }
 
     public static List<NotificationObj> getAllNotification(Context context) {

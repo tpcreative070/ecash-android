@@ -299,7 +299,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();
-            showDialogErr(R.string.err_connect_socket_fail);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

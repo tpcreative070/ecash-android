@@ -168,7 +168,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                         setAdapter(transactionsHistoryModelList);
                     });
                 }
-            }, 1000);
+            }, 2000);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
