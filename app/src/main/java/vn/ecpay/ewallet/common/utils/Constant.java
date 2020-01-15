@@ -5,6 +5,7 @@ public class Constant {
     public static final int REQUEST_IMAGE_CAPTURE = 3;
     public static final int REQUEST_TAKE_PHOTO = 2;
     public static final int REQUEST_CONTACT_PAYTO = 4;
+    public static final int REQUEST_QR_CODE = 5;
 
     public static final String app_name  = "eCash App";
     public static final String sesion_expid = "3043";
@@ -37,7 +38,7 @@ public class Constant {
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
-
+    public static String FORMAT_DATE_TOPAY = "yyyyMMdd HH:mm:ss";
     //type and key
     public static final String STR_CASH_IN = "in";
     public static final String STR_CASH_OUT = "out";
@@ -71,6 +72,8 @@ public class Constant {
     public static final String EVENT_UPDATE_ACCOUNT_INFO = "EVENT_UPDATE_ACCOUNT_INFO";
     public static final String EVENT_UPDATE_LIXI = "EVENT_UPDATE_LIXI";
     public static final String EVENT_SCAN_CONTACT_PAYTO = "EVENT_SCAN_CONTACT_PAYTO";
+    public static final String SCAN_QR_TOPAY = "SCAN_QR_TOPAY";
+    public static final String PAYTO_SUCCESS = "PAYTO_SUCCESS";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
@@ -121,4 +124,9 @@ public class Constant {
     public static final String TYPE_CANCEL_CONTACT = "HV";
     public static final int TRANSACTION_SUCCESS = 0;
     public static final int TRANSACTION_FAIL = 1;
+
+    public static final String TYPE_PAYTO = "TT";
+    public static final String TYPE_TOPAY = "YT";
+    public static final String QR_CODE_TOPAY_MODEL = "QR_CODE_TOPAY_MODEL";
+
 }

@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -20,16 +21,22 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.common.base.CustomFragmentTabHost;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
+import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -96,7 +103,7 @@ public class MainActivity extends ECashBaseActivity {
         });
         tabHost.getTabWidget().getChildAt(2).setOnClickListener(v -> {
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);
-            startActivity(intentCashIn);
+            startActivityForResult(intentCashIn, Constant.REQUEST_QR_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
@@ -314,5 +321,22 @@ public class MainActivity extends ECashBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode,this,  resultCode, data));
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode==Constant.REQUEST_QR_CODE){
+                handleDataToPayResult(data);
+
+
+            }
+        }
+    }
+
+    private void handleDataToPayResult(Intent data){
+        if(data!=null){
+            String amount = (String) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
+            Log.e("amount ",amount);
+            if(amount!=null){
+                checkAmountValidate(Long.valueOf(amount));
+            }
+        }
     }
 }

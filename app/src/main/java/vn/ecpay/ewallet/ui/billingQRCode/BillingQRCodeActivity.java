@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.billingQRCode;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.model.QRCode.QRToPay;
 
 public class BillingQRCodeActivity extends ECashBaseActivity {
     @BindView(R.id.iv_back)
@@ -39,7 +42,8 @@ public class BillingQRCodeActivity extends ECashBaseActivity {
             ivBack.setOnClickListener(v -> onBackPressed());
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        addFragment(new BillingQRCodeFragment(), false);
+        getIntentData();
+       //
     }
     public void addFragment(Fragment pFragment, boolean isAnimation) {
         addFragment(pFragment, isAnimation, R.id.fragment_layout);
@@ -47,5 +51,14 @@ public class BillingQRCodeActivity extends ECashBaseActivity {
 
     public void updateTitle(String title) {
         toolbarCenterText.setText(title);
+    }
+    private void getIntentData(){
+        Intent intent = getIntent();
+        if(intent!=null){
+            QRToPay qrToPay = (QRToPay) intent.getSerializableExtra(Constant.QR_CODE_TOPAY_MODEL);
+            if(qrToPay!=null){
+                addFragment( BillingQRCodeFragment.newInstance(qrToPay), false);
+            }
+        }
     }
 }

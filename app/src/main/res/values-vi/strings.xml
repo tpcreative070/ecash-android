@@ -302,6 +302,6 @@
     <string name="str_scan_qr_to_pay">Quét mã để thanh toán</string>
     <string name="str_create_qr_code_success">Đã tạo thành công mã QR</string>
     <string name="str_share">Chia sẽ</string>
-
+    <string name="err_anount_null">bạn chưa nhập số tiền</string>
 </resources>
 

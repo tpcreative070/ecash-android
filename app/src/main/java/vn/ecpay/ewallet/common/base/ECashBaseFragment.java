@@ -1,20 +1,33 @@
 package vn.ecpay.ewallet.common.base;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import butterknife.ButterKnife;
+import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
+import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.PermissionUtils;
+import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 
 public abstract class ECashBaseFragment extends Fragment {
@@ -72,6 +85,11 @@ public abstract class ECashBaseFragment extends Fragment {
             ((ECashBaseActivity) getActivity()).dismissLoading();
         }
     }
+    protected void showDialogError(String msg) {
+        if (getActivity() instanceof ECashBaseActivity) {
+            DialogUtil.getInstance().showDialogWarning(getActivity(), msg);
+        }
+    }
     protected Fragment getCurrentFragment() {
         try {
             return ((ECashBaseActivity)getActivity()).getCurrentFragment();
@@ -84,50 +102,44 @@ public abstract class ECashBaseFragment extends Fragment {
         return ((ECashBaseActivity)getActivity()).getCurrentActivity();
     }
 
-    public void showDialogPaymentSuccess(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
-        DialogUtil.getInstance().showDialogPaymentSuccess(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-            }
-        });
-    }
-    public void showDialogNewPayment(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
-        DialogUtil.getInstance().showDialogPaymentRepuest(getActivity(),amount,eCashID, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                checkCashInvalidToPaywment();
-            }
-        });
-    }
-    public void showDialogConfirmPayment(List<CashTotal> valueListCash,String amount, String eCashID){// todo: check Object or input: amount,ecash id
-        DialogUtil.getInstance().showDialogConfirmPayment(getActivity(),valueListCash,amount,eCashID, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                // todo: check status
-                showDialogPaymentSuccess("150000","1213244");// success
-                // unsuccess: show dialog fail
-            }
-        });
-    }
-    public void showDialogCannotpayment(){
-        DialogUtil.getInstance().showDialogCannotPayment(getActivity());
-    }
-    public void checkCashInvalidToPaywment(){
-        // todo: Query database
-        // todo: case 1:
-       // showDialogCannotpayment();
-        // todo: case 2:
-         List<CashTotal> valueListCashTake = new ArrayList<>();
-        CashTotal cashTotal = new CashTotal();
-        cashTotal.setParValue(100000);
-        cashTotal.setTotal(100000);
-        cashTotal.setTotalDatabase(1);
-        valueListCashTake.add(cashTotal);
-        cashTotal.setParValue(50000);
-        cashTotal.setTotal(50000);
-        cashTotal.setTotalDatabase(2);
-        valueListCashTake.add(cashTotal);
-        showDialogConfirmPayment(valueListCashTake,"150000","1213244");
+    @SuppressLint("StaticFieldLeak")
+    public void saveImageQRCode(Bitmap bitmap, String name){
+        if (PermissionUtils.checkPermissionWriteStore(this, null)) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected void onPreExecute() {
+                }
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    String root = Environment.getExternalStorageDirectory().toString();
+                    File mFolder = new File(root + "/qr_my_account");
+                    if (!mFolder.exists()) {
+                        mFolder.mkdir();
+                    }
+                    String imageName = name + ".jpg";
+                    File file = new File(mFolder, imageName);
+                    if (file.exists())
+                        file.delete();
+                    try {
+                        FileOutputStream out = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                        out.flush();
+                        out.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    dismissProgress();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+                }
+            }.execute();
+        }
+
     }
     /**
      * Layout Res ID.

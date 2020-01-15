@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.payTo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,16 +10,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -26,8 +37,11 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
+import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
+import vn.ecpay.ewallet.ui.function.PayToFuntion;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
+import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 
 import static androidx.core.provider.FontsContractCompat.FontRequestCallback.RESULT_OK;
 
@@ -45,6 +59,8 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     TextView tvOverEcash;
     @BindView(R.id.edt_ecash_number)
     EditText edtEcashNumber;
+    @BindView(R.id.edt_amount)
+    EditText edtAmount;
     @BindView(R.id.edt_content)
     EditText edtContent;
     @BindView(R.id.iv_contact)
@@ -122,12 +138,71 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
 
     }
     private void validateData(){// TODO
-        showDialogNewPayment("150000","1213244");
+      //  showDialogNewPayment("150000","1213244");
+        if (multiTransferList != null) {
+            if (multiTransferList.size() == 0) {
+                if (getActivity() != null)
+                    showDialogError(getString(R.string.err_not_input_number_username));
+                return;
+            }
+        } else if(edtEcashNumber.getText().toString().length()>0){
+            multiTransferList = new ArrayList<>();
+            Contact contact = new Contact();
+            contact.setWalletId(Long.parseLong(edtEcashNumber.getText().toString()));
+            multiTransferList.add(contact);
+        }
+        else {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_not_input_number_username));
+            return;
+        }
+        if (edtAmount.getText().toString().isEmpty()) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_anount_null));
+            return;
+        }
+        if (edtContent.getText().toString().isEmpty()) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_dit_not_content));
+            return;
+        }
+        showProgress();///
+        PayToFuntion payToFuntion = new PayToFuntion(getActivity(),Long.parseLong(edtAmount.getText().toString()),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
+        payToFuntion.handlePayToSocket(this::PayToSuccess);
+    }
+    private void PayToSuccess() {
+        dismissProgress();
+        //EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
     private void gotoContact(){
         ((PayToActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this), true);
     }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
 
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().unregister(this);
+        super.onDetach();
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateData(EventDataChange event) {
+
+        if (event.getData().equals(Constant.PAYTO_SUCCESS)) {
+            dismissProgress();
+            Toast.makeText(getActivity(),"Event payto Success",Toast.LENGTH_LONG).show();
+        }
+
+        if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
+            dismissProgress();
+            showDialogError(getString(R.string.err_connect_socket_fail));
+        }
+
+        EventBus.getDefault().removeStickyEvent(event);
+    }
     @Override
     public void onMultiTransfer(ArrayList<Contact> contactList) {
         multiTransferList =contactList;
@@ -156,6 +231,10 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                     Contact contact =(Contact) data.getParcelableExtra(Constant.EVENT_SCAN_CONTACT_PAYTO);
                     if(contact!=null){
                         edtEcashNumber.setText(contact.getWalletId().toString());
+                        if(multiTransferList!=null&&multiTransferList.size()>0){
+                            multiTransferList.clear();
+                        }
+                        multiTransferList.add(contact);
                         setSelection();
                     }
 

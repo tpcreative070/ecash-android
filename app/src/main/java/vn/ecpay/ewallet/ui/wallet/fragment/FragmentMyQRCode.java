@@ -113,9 +113,8 @@ public class FragmentMyQRCode extends ECashBaseFragment {
 
     @OnClick(R.id.tv_download)
     public void onViewClicked() {
-        if (PermissionUtils.checkPermissionWriteStore(this, null)) {
-            showProgress();
-            saveImageQRCode();
+        if(bitmap!=null){
+            saveImageQRCode(bitmap,String.valueOf(accountInfo.getWalletId()));
         }
     }
 

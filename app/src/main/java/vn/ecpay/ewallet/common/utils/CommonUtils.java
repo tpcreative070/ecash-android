@@ -6,9 +6,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 
@@ -271,7 +273,11 @@ public class CommonUtils {
         SimpleDateFormat df = new SimpleDateFormat(Constant.FORMAT_DATE_SEND_CASH);
         return df.format(c.getTime());
     }
-
+    public static String getCurrentTime(String format) {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        return df.format(c.getTime());
+    }
     public static String getCurrentTimeNotification() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat(Constant.FORMAT_DATE_NOTIFICATION);
@@ -557,5 +563,12 @@ public class CommonUtils {
         } catch (StringIndexOutOfBoundsException e) {
             return String.valueOf(contact.getPhone().charAt(0));
         }
+    }
+
+    public static Uri getBitmapUri(Context context, Bitmap bitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap,context.getString(R.string.app_name) , null);
+        return Uri.parse(path);
     }
 }

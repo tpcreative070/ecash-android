@@ -180,6 +180,7 @@
             android:maxLength="15"
             android:hint="@string/str_enter_amount_to_pay"
             android:inputType="number" />
+
         <EditText
             android:id="@+id/edt_content"
             android:layout_width="match_parent"
@@ -187,9 +188,9 @@
             android:layout_marginTop="15dp"
             android:background="@drawable/bg_edit_text"
             android:drawablePadding="15dp"
-            android:maxLength="15"
             android:hint="@string/str_enter_content_payment"
-            android:inputType="number" />
+           />
+
         <Button
             android:id="@+id/btn_confirm"
             android:layout_height="wrap_content"

@@ -2,11 +2,13 @@ package vn.ecpay.ewallet.ui.toPay;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -15,11 +17,14 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
+import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.QRCode.QRToPay;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.toPay.RequestToPay;
 import vn.ecpay.ewallet.ui.billingQRCode.BillingQRCodeActivity;
 
 public class ToPayFragment extends ECashBaseFragment {
@@ -38,6 +43,8 @@ public class ToPayFragment extends ECashBaseFragment {
     View viewContact;
     @BindView(R.id.edt_ecash_number)
     EditText edtEcashNumber;
+    @BindView(R.id.edt_amount)
+    EditText edtAmount;
     @BindView(R.id.edt_content)
     EditText edtContent;
     @BindView(R.id.view_qr_code)
@@ -90,12 +97,43 @@ public class ToPayFragment extends ECashBaseFragment {
         }
     }
     private void validateData(){
-        //TODO:
-        crateQRCode();
+        if (edtAmount.getText().toString().isEmpty()) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_anount_null));
+            return;
+        }
+        if (edtContent.getText().toString().isEmpty()) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_dit_not_content));
+            return;
+        }
+        String userName = ECashApplication.getAccountInfo().getUsername();
+        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        QRToPay qrToPay =new QRToPay();
+        qrToPay.setSender(String.valueOf(accountInfo.getWalletId()));
+        qrToPay.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
+        qrToPay.setType(Constant.TYPE_TOPAY);
+        qrToPay.setContent(edtContent.getText().toString());
+        qrToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
+        qrToPay.setTotalAmount(edtAmount.getText().toString());
+
+        RequestToPay requestToPay = new RequestToPay();
+        requestToPay.setContent(edtContent.getText().toString());
+        requestToPay.setSender(String.valueOf(accountInfo.getWalletId()));
+        requestToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
+        requestToPay.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
+        requestToPay.setTimtotalAmount(edtAmount.getText().toString());
+        requestToPay.setType(Constant.TYPE_TOPAY);
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestToPay));
+
+        qrToPay.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        crateQRCode(qrToPay);
     }
-    private void crateQRCode(){// todo: push object
+    private void crateQRCode(QRToPay qrToPay){
         if (getActivity() != null) {
             Intent intent = new Intent(getActivity(), BillingQRCodeActivity.class);
+            intent.putExtra(Constant.QR_CODE_TOPAY_MODEL,qrToPay);
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }

@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.LayoutRes;
@@ -35,6 +36,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Stack;
@@ -48,6 +50,8 @@ import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
+import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.language.LanguageObject;
 
 public abstract class ECashBaseActivity extends AppCompatActivity implements BaseView {
@@ -286,6 +290,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             return null;
         }
     }
+
     protected String getCurrentActivity() {
         return this.getClass().getName();
     }
@@ -331,5 +336,62 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         configuration.locale = locale;
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         return context;
+    }
+    //------------------
+    public void checkAmountValidate(Long amount){
+        Long balance = (long) (WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT));
+        if(balance<amount){
+            showDialogCannotpayment();
+        }else{
+            Toast.makeText(this, "toto check money", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private void showDialogCannotpayment(){
+        DialogUtil.getInstance().showDialogCannotPayment(this);
+    }
+
+    public void showDialogPaymentSuccess(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
+        DialogUtil.getInstance().showDialogPaymentSuccess(this,amount,eCashID, new DialogUtil.OnResult() {
+            @Override
+            public void OnListenerOk() {
+            }
+        });
+    }
+    public void showDialogNewPayment(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
+        DialogUtil.getInstance().showDialogPaymentRepuest(this,amount,eCashID, new DialogUtil.OnResult() {
+            @Override
+            public void OnListenerOk() {
+                checkCashInvalidToPaywment();
+            }
+        });
+    }
+    public void showDialogConfirmPayment(List<CashTotal> valueListCash, String amount, String eCashID){// todo: check Object or input: amount,ecash id
+        DialogUtil.getInstance().showDialogConfirmPayment(this,valueListCash,amount,eCashID, new DialogUtil.OnResult() {
+            @Override
+            public void OnListenerOk() {
+                // todo: check status
+                showDialogPaymentSuccess("150000","1213244");// success
+                // unsuccess: show dialog fail
+            }
+        });
+    }
+
+    public void checkCashInvalidToPaywment(){
+        // todo: Query database
+        // todo: case 1:
+        // showDialogCannotpayment();
+        // todo: case 2:
+        List<CashTotal> valueListCashTake = new ArrayList<>();
+        CashTotal cashTotal = new CashTotal();
+        cashTotal.setParValue(100000);
+        cashTotal.setTotal(100000);
+        cashTotal.setTotalDatabase(1);
+        valueListCashTake.add(cashTotal);
+        cashTotal.setParValue(50000);
+        cashTotal.setTotal(50000);
+        cashTotal.setTotalDatabase(2);
+        valueListCashTake.add(cashTotal);
+        showDialogConfirmPayment(valueListCashTake,"150000","1213244");
     }
 }

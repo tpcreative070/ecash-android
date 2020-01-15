@@ -1,9 +1,12 @@
 package vn.ecpay.ewallet.ui.QRCode.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -42,6 +45,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
+import vn.ecpay.ewallet.model.QRCode.QRToPay;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contact.QRContact;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -122,7 +126,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             } else if (CommonUtils.getTypeScan(qrScanBase) == Constant.IS_SCAN_CONTACT) {
                 if(((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()){
                     handleContactPayTo(result.getText());
-                }else{
+                }else {
                     handleContact(result.getText());
                 }
 
@@ -155,6 +159,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 if (contact.getWalletId().equals(accountInfo.getWalletId())) {
                     ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_conflict));
                 } else {
+                    // todo: can using funtion checkContactExist(contact)
                     List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
                     for (int i = 0; i < listContact.size(); i++) {
                         if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
@@ -174,10 +179,15 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
+        //Log.e("result",result);
         Gson gson = new Gson();
         try {
-            QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
-            if (qrCodeSender != null) {
+            QRCodeSender qrCodeSender = new QRCodeSender();
+            QRToPay qrToPay =new QRToPay();
+           // QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
+          //  Log.e("scan_qr_code",qrCodeSender.toString());
+            if (qrCodeSender.validate(result)) {
+                qrCodeSender =gson.fromJson(result, QRCodeSender.class);
                 cashMap.put(qrCodeSender.getCycle(), qrCodeSender.getContent());
                 String numberScan = cashMap.size() + "/" + qrCodeSender.getTotal();
                 tvNumberScan.setText(getResources().getString(R.string.str_number_scan_qr_code, numberScan));
@@ -225,7 +235,21 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         }
                     }
                 }
-            } else {
+            } else if(qrToPay.validate(result)){
+                dismissProgress();
+                qrToPay =gson.fromJson(result, QRToPay.class);
+                if(qrToPay.getTotalAmount()==null){
+                    showDialogError(getString(R.string.str_have_warning));
+                    return;
+                }
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(Constant.SCAN_QR_TOPAY, qrToPay.getTotalAmount());
+                getActivity().setResult(Activity.RESULT_OK, resultIntent);
+                getActivity().finish();
+               // checkAmountValidate(amount);
+
+            }
+            else {
                 dismissProgress();
                 if (null != getActivity())
                     ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ");
@@ -246,6 +270,9 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 contact.setPhone(qrContact.getPersonMobiPhone());
                 contact.setTerminalInfo(qrContact.getTerminalInfo());
                 contact.setWalletId(qrContact.getWalletId());
+                if(!checkContactExist(contact)){
+                    DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+                }
                 ((QRCodeActivity) getActivity()).checkPayTo(contact);
             } else {
                 ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
@@ -253,6 +280,18 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         } catch (JsonSyntaxException e) {
             ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
         }
+    }
+    private boolean checkContactExist(Contact contact){
+        boolean contactExist =false;
+        List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+        if(listContact!=null&&listContact.size()>0){
+            for (int i = 0; i < listContact.size(); i++) {
+                if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
+                    return  true;
+                }
+            }
+        }
+       return contactExist;
     }
 
     private void restartScan() {
