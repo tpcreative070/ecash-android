@@ -15,6 +15,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -27,6 +31,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
@@ -35,6 +40,8 @@ public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
     private boolean isConnectSuccess;
     private WebSocket webSocketLocal;
+    private ArrayList<ResponseMessSocket> listResponseMessSockets;
+    private boolean isRunning = false;
 
     @Override
     public void onCreate() {
@@ -64,10 +71,12 @@ public class WebSocketsService extends Service {
             Log.e("event", "service_UPDATE_ACCOUNT_LOGIN");
             Handler handler = new Handler();
             handler.postDelayed(() -> {
-                if (ECashApplication.getAccountInfo() != null) {
-                    AccountInfo dbAccountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), getApplicationContext());
-                    if (dbAccountInfo != null) {
-                        startSocket();
+                if (!isConnectSuccess) {
+                    if (ECashApplication.getAccountInfo() != null) {
+                        AccountInfo dbAccountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), getApplicationContext());
+                        if (dbAccountInfo != null) {
+                            startSocket();
+                        }
                     }
                 }
             }, 500);
@@ -85,12 +94,14 @@ public class WebSocketsService extends Service {
                         }
                     }
                 }
-            }, 2000);
+            }, 5000);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
     public void startSocket() {
+        listResponseMessSockets = new ArrayList<>();
+        isRunning = false;
         Log.e("start_SK", "start_SK");
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
@@ -100,7 +111,6 @@ public class WebSocketsService extends Service {
         webSocketLocal = client.newWebSocket(requestCoinPrice, webSocketListener);
         client.dispatcher().executorService().shutdown();
     }
-
 
     WebSocketListener webSocketListener = new WebSocketListener() {
         @Override
@@ -116,12 +126,15 @@ public class WebSocketsService extends Service {
             if (responseMess != null) {
                 switch (responseMess.getType()) {
                     case Constant.TYPE_ECASH_TO_ECASH:
-                        if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
-                            if (responseMess.getCashEnc() != null) {
-                                //check thông tin ví chuyển
-                                CashInFunction cashInFunction = new CashInFunction(accountInfo, getApplicationContext(), responseMess);
-                                cashInFunction.handleCashIn(() -> confirmMess(responseMess));
-                            }
+                        listResponseMessSockets.add(responseMess);
+                        if (!isRunning) {
+                            isRunning = true;
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    handleListResponse();
+                                }
+                            }, 3000);
                         }
                         break;
                     case Constant.TYPE_LIXI:
@@ -183,8 +196,33 @@ public class WebSocketsService extends Service {
         }
     };
 
+    private void handleListResponse() {
+        if (listResponseMessSockets.size() > 0) {
+            if (!DatabaseUtil.isTransactionLogExit(listResponseMessSockets.get(0), getApplicationContext())) {
+                if (listResponseMessSockets.get(0).getCashEnc() != null) {
+                    CashInFunction cashInFunction = new CashInFunction(accountInfo, getApplicationContext(), listResponseMessSockets.get(0));
+                    cashInFunction.handleCashIn(() -> {
+                        confirmMess(listResponseMessSockets.get(0));
+                        listResponseMessSockets.remove(0);
+                        handleListResponse();
+                    });
+                } else {
+                    listResponseMessSockets.remove(0);
+                    handleListResponse();
+                }
+            } else {
+                listResponseMessSockets.remove(0);
+                confirmMess(listResponseMessSockets.get(0));
+                handleListResponse();
+            }
+        } else {
+            isRunning = false;
+        }
+
+    }
+
     private void confirmMess(ResponseMessSocket responseMess) {
-        Log.e("confirmMess","confirmMess");
+        Log.e("confirmMess", "confirmMess");
         RequestReceived requestReceived = new RequestReceived();
         requestReceived.setId(responseMess.getId());
         requestReceived.setReceiver(responseMess.getReceiver());

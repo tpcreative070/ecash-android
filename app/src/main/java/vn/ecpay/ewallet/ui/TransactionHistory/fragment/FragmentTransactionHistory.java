@@ -162,17 +162,13 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    try {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> {
-                            List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
-                            setAdapter(transactionsHistoryModelList);
-                        });
-                    } catch (NullPointerException e) {
-                        return;
-                    }
+                    if (getActivity() == null) return;
+                    getActivity().runOnUiThread(() -> {
+                        List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
+                        setAdapter(transactionsHistoryModelList);
+                    });
                 }
-            }, 500);
+            }, 2000);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

@@ -119,10 +119,10 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.daoAccess().deleteNotification(id);
     }
 
-
     public static void updateNotificationRead(String read, Long id) {
         walletDatabase.daoAccess().updateNotificationRead(read, id);
     }
+
 
     // todo Cash_Value-------------------------------------------------------------------------------
     public static void insertCashValue(Denomination cashValues) {
@@ -177,9 +177,10 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getAllLixiUnRead();
     }
 
-    public static void updateStatusLixi(String status, int id){
+    public static void updateStatusLixi(String status, int id) {
         walletDatabase.daoAccess().updateStatusLixi(status, id);
     }
+
 
     // todo contact---------------------------------------------------------------------------------------
     public static void insertContactTask(final Contact mContact) {
@@ -221,6 +222,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     public static Contact checkContactExit(String strWalletId) {
         return walletDatabase.daoAccess().checkContactExit(strWalletId);
     }
+
 
     // todo cash------------------------------------------------------------------------------------------
     public static void insertCashTask(CashLogs_Database cash, String userName) {
@@ -284,10 +286,6 @@ public abstract class WalletDatabase extends RoomDatabase {
         }
     }
 
-    public static int getTotalMoney(String money, String type) {
-        return walletDatabase.daoAccess().getListCashForMoney(money, type).size();
-    }
-
     public static List<CashLogs_Database> getListCashForMoney(String money, String type) {
         return walletDatabase.daoAccess().getListCashForMoney(money, type);
     }
@@ -332,13 +330,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     private static void insertDecisionTask(final Decision_Database decision, String fake) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                walletDatabase.daoAccess().insertOnlySingleDecision(decision);
-                return null;
-            }
-        }.execute();
+        walletDatabase.daoAccess().insertOnlySingleDecision(decision);
     }
 
     public static Decision_Database getDecisionNo(String decisionNo) {
@@ -414,15 +406,6 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     // todo transaction_log_QR_code-------------------------------------------------------------------------------
-    public static void insertTransactionLogQRTask(TransactionLogQR_Database transactionLog) {
-        TransactionLogQR_Database mTransactionLog = new TransactionLogQR_Database();
-        mTransactionLog.setSequence(transactionLog.getSequence());
-        mTransactionLog.setTotal(transactionLog.getTotal());
-        mTransactionLog.setTransactionSignature(transactionLog.getTransactionSignature());
-        mTransactionLog.setTransactionSignature(transactionLog.getTransactionSignature());
-        insertTransactionLogQRTask(mTransactionLog, Constant.STR_EMPTY);
-    }
-
     public static void insertTransactionLogQRTask(final TransactionLogQR_Database transactionLog, String fake) {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -495,7 +478,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getAllTransactionsHistory();
     }
 
-    public static TransactionsHistoryModel getCurrentTransactionsHistory(String transactionSignature){
+    public static TransactionsHistoryModel getCurrentTransactionsHistory(String transactionSignature) {
         return walletDatabase.daoAccess().getCurrentTransactionsHistory(transactionSignature);
     }
 

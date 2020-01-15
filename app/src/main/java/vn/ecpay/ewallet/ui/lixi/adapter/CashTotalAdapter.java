@@ -80,7 +80,11 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (null != upDownMoneyListener) {
                         upDownMoneyListener.onUpDownMoneyListener();
                     }
+                } else {
+                    Toast.makeText(context, context.getResources().getString(R.string.err_amount_not_enough_to_transfer), Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Toast.makeText(context, context.getResources().getString(R.string.err_amount_not_enough_to_transfer), Toast.LENGTH_LONG).show();
             }
         });
     }

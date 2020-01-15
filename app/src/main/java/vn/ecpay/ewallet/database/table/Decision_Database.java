@@ -5,20 +5,16 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "DECISIONS_DIARY")
+@Entity(tableName = "DECISIONS")
 public class Decision_Database {
     @NonNull
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id;
+    @PrimaryKey()
+    @ColumnInfo(name = "decisionNo")
+    private String decisionNo;
 
     @NonNull
     @ColumnInfo(name = "accountPublicKeyValue")
     private String accountPublicKeyValue;
-
-    @NonNull
-    @ColumnInfo(name = "decisionNo")
-    private String decisionNo;
 
     @NonNull
     @ColumnInfo(name = "treasurePublicKeyValue")
@@ -40,14 +36,6 @@ public class Decision_Database {
 
     public void setTreasurePublicKeyValue(@NonNull String treasurePublicKeyValue) {
         this.treasurePublicKeyValue = treasurePublicKeyValue;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     @NonNull

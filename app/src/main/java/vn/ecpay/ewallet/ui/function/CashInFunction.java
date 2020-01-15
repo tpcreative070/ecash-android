@@ -63,7 +63,18 @@ public class CashInFunction {
         if (!DatabaseUtil.checkContactExit(context, responseMessSocket.getSender())) {
             requestSearchWalletID(accountInfo, responseMessSocket);
         } else {
-            getPublicKeyWallet(responseMessSocket);
+            Contact contact = DatabaseUtil.getCurrentContact(context, responseMessSocket.getSender());
+            if (contact.getPublicKeyValue().isEmpty()) {
+                getPublicKeyWallet(responseMessSocket);
+            } else {
+                if (CommonUtils.verifyData(responseMessSocket, DatabaseUtil.getCurrentContact(context, responseMessSocket.getSender()).getPublicKeyValue())) {
+                    DatabaseUtil.saveTransactionLog(responseMessSocket, context);
+                    deCryptECash = CommonUtils.decrypEcash(responseMessSocket.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
+                    checkArrayCash();
+                } else {
+                    EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
+                }
+            }
         }
     }
 

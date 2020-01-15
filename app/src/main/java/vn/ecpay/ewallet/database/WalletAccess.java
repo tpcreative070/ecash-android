@@ -100,10 +100,10 @@ public interface WalletAccess {
     Contact checkContactExit(String strWalletId);
 
     // todo Decision_Database--------------------------------------------------------------------------------------
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleDecision(Decision_Database decision);
 
-    @Query("SELECT * FROM DECISIONS_DIARY WHERE decisionNo LIKE :decisionNo")
+    @Query("SELECT * FROM DECISIONS WHERE decisionNo LIKE :decisionNo")
     Decision_Database getDecisionNo(String decisionNo);
 
     // todo CashLogs_Database------------------------------------------------------------------------------------------

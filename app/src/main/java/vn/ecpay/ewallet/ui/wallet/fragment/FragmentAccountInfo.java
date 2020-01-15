@@ -1,5 +1,7 @@
 package vn.ecpay.ewallet.ui.wallet.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -34,6 +36,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
@@ -69,6 +72,8 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     TextView tvLanguage;
     @BindView(R.id.tv_address)
     TextView tvAddress;
+    @BindView(R.id.tv_master_key)
+    TextView tvMasterKey;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     @Inject
@@ -100,6 +105,8 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             tvEmail.setText(accountInfo.getPersonEmail());
             tvCmnd.setText(accountInfo.getIdNumber());
             tvAddress.setText(accountInfo.getPersonCurrentAddress());
+
+            tvMasterKey.setText(KeyStoreUtils.getMasterKey(getActivity()));
         }
         if (LanguageUtils.getCurrentLanguage().getCode().equals(getActivity().getResources().getString(R.string.language_english_code))) {
             tvLanguage.setText(getActivity().getResources().getString(R.string.language_english));
@@ -117,7 +124,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         }
     }
 
-    @OnClick({R.id.layout_change_pass, R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
+    @OnClick({R.id.layout_master_key, R.id.layout_change_pass, R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_change_language:
@@ -175,6 +182,15 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
                     Intent intentCashIn = new Intent(getActivity(), ChangePassActivity.class);
                     getActivity().startActivity(intentCashIn);
                     getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+                break;
+            case R.id.layout_master_key:
+                if (getActivity() != null) {
+                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    String text = tvMasterKey.getText().toString();
+                    ClipData myClip = ClipData.newPlainText("text", text);
+                    clipboard.setPrimaryClip(myClip);
+                    Toast.makeText(getActivity(), "copy master key thành công", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
