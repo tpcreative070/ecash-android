@@ -4,7 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class PayToRequest implements Serializable {
+import vn.ecpay.ewallet.model.BaseObject;
+
+public class PayToRequest extends BaseObject implements Serializable {
     @SerializedName("sender")
     private String sender;
 
@@ -17,7 +19,7 @@ public class PayToRequest implements Serializable {
     @SerializedName("type")
     private String type;
 
-    @SerializedName("contents")
+    @SerializedName("content")
     private String content;
 
     @SerializedName("senderPublicKey")

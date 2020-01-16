@@ -8,6 +8,9 @@ public class RequestToPay extends BaseObject {
     @SerializedName("content")
     private String content ;
 
+    @SerializedName("receiver ")
+    private String receiver ;
+
     @SerializedName("sender")
     private String sender;
 
@@ -18,7 +21,7 @@ public class RequestToPay extends BaseObject {
     private String time;
 
     @SerializedName("totalAmount")
-    private String timtotalAmount;
+    private String totalAmount;
 
     @SerializedName("type")
     private String type;
@@ -29,6 +32,14 @@ public class RequestToPay extends BaseObject {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     public String getSender() {
@@ -55,12 +66,12 @@ public class RequestToPay extends BaseObject {
         this.time = time;
     }
 
-    public String getTimtotalAmount() {
-        return timtotalAmount;
+    public String getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTimtotalAmount(String timtotalAmount) {
-        this.timtotalAmount = timtotalAmount;
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public String getType() {
