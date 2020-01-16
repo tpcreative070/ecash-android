@@ -21,8 +21,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -37,13 +35,9 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
-import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
 import vn.ecpay.ewallet.ui.function.PayToFuntion;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
-import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
-
-import static androidx.core.provider.FontsContractCompat.FontRequestCallback.RESULT_OK;
 
 public class PayToFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.iv_back)
@@ -57,8 +51,8 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
     TextView tvOverEcash;
-    @BindView(R.id.edt_ecash_number)
-    EditText edtEcashNumber;
+    @BindView(R.id.tv_ecash_number)
+    TextView tvEcashNumber;
     @BindView(R.id.edt_amount)
     EditText edtAmount;
     @BindView(R.id.edt_content)
@@ -145,12 +139,13 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                     showDialogError(getString(R.string.err_not_input_number_username));
                 return;
             }
-        } else if(edtEcashNumber.getText().toString().length()>0){
-            multiTransferList = new ArrayList<>();
-            Contact contact = new Contact();
-            contact.setWalletId(Long.parseLong(edtEcashNumber.getText().toString()));
-            multiTransferList.add(contact);
         }
+//        else if(tvEcashNumber.getText().toString().length()>0){
+//            multiTransferList = new ArrayList<>();
+//            Contact contact = new Contact();
+//            contact.setWalletId(Long.parseLong(tvEcashNumber.getText().toString()));
+//            multiTransferList.add(contact);
+//        }
         else {
             if (getActivity() != null)
                 showDialogError(getString(R.string.err_not_input_number_username));
@@ -160,6 +155,14 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             if (getActivity() != null)
                 showDialogError(getString(R.string.err_anount_null));
             return;
+        }
+        if(edtAmount.getText().toString().length()>0){
+            Long money =Long.parseLong(edtAmount.getText().toString());
+           // Log.e("money%1000 ",money%1000+"");
+            if(money<1000||money%1000!=0){
+                showDialogError(getString(R.string.err_amount_validate));
+                return;
+            }
         }
         if (edtContent.getText().toString().isEmpty()) {
             if (getActivity() != null)
@@ -217,8 +220,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                 walletId.append("; ").append(multiTransferList.get(i).getWalletId());
             }
         }
-        edtEcashNumber.setText(walletId.toString());
-        setSelection();
+        tvEcashNumber.setText(walletId.toString());
     }
 
     @Override
@@ -230,12 +232,11 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                 try {
                     Contact contact =(Contact) data.getParcelableExtra(Constant.EVENT_SCAN_CONTACT_PAYTO);
                     if(contact!=null){
-                        edtEcashNumber.setText(contact.getWalletId().toString());
+                        tvEcashNumber.setText(contact.getWalletId().toString());
                         if(multiTransferList!=null&&multiTransferList.size()>0){
                             multiTransferList.clear();
                         }
                         multiTransferList.add(contact);
-                        setSelection();
                     }
 
                 }catch (Exception e){
@@ -248,9 +249,5 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     }
 
     }
-    private void setSelection(){
-        if(edtEcashNumber.getText()!=null&&edtEcashNumber.getText().length()>0){
-            edtEcashNumber.setSelection(edtEcashNumber.getText().length());
-        }
-    }
+
 }

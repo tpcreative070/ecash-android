@@ -303,5 +303,6 @@
     <string name="str_create_qr_code_success">Đã tạo thành công mã QR</string>
     <string name="str_share">Chia sẽ</string>
     <string name="err_anount_null">bạn chưa nhập số tiền</string>
+    <string name="err_amount_validate">Số tiền không hợp lệ</string>
 </resources>
 

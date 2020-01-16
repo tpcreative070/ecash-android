@@ -2,13 +2,11 @@ package vn.ecpay.ewallet.ui.toPay;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -41,8 +39,8 @@ public class ToPayFragment extends ECashBaseFragment {
     TextView tvOverEcash;
     @BindView(R.id.view_contact)
     View viewContact;
-    @BindView(R.id.edt_ecash_number)
-    EditText edtEcashNumber;
+    @BindView(R.id.tv_ecash_number)
+    TextView edtEcashNumber;
     @BindView(R.id.edt_amount)
     EditText edtAmount;
     @BindView(R.id.edt_content)
@@ -122,7 +120,7 @@ public class ToPayFragment extends ECashBaseFragment {
         requestToPay.setSender(String.valueOf(accountInfo.getWalletId()));
         requestToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
         requestToPay.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
-        requestToPay.setTimtotalAmount(edtAmount.getText().toString());
+        requestToPay.setTotalAmount(edtAmount.getText().toString());
         requestToPay.setType(Constant.TYPE_TOPAY);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestToPay));
 

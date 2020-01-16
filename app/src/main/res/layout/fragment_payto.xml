@@ -125,16 +125,15 @@
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/edt_ecash_number"
+            <TextView
+                android:id="@+id/tv_ecash_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:background="@drawable/bg_edit_text"
-                android:maxLength="20"
+                android:textSize="@dimen/text_large"
                 android:layout_toStartOf="@+id/iv_contact"
                 android:hint="@string/str_input_account_ecash"
-                android:inputType="number" />
+                 />
             <ImageView
                 android:id="@+id/iv_contact"
                 android:layout_width="wrap_content"

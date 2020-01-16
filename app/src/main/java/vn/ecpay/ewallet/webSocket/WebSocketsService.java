@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -169,6 +170,9 @@ public class WebSocketsService extends Service {
                         String walletIDContactCancel = responseMess.getSender();
                         DatabaseUtil.updateStatusContact(getApplicationContext(), Constant.CONTACT_OFF, Long.valueOf(walletIDContactCancel));
                         confirmMess(responseMess);
+                        break;
+                    case Constant.TYPE_PAYTO:
+                        Toast.makeText(getApplicationContext(),"payto",Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
