@@ -3,6 +3,11 @@ package vn.ecpay.ewallet.model.QRCode;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Field;
+
 import javax.annotation.Generated;
 
 @Generated("net.hexar.json2pojo")
@@ -39,4 +44,31 @@ public class QRCodeSender {
         mTotal = total;
     }
 
+    @Override
+    public String toString() {
+        return "QRCodeSender{" +
+                "mContent='" + mContent + '\'' +
+                ", mCycle=" + mCycle +
+                ", mTotal=" + mTotal +
+                '}';
+    }
+
+    public boolean validate(String json) {
+        JSONObject object;
+        try {
+            object = new JSONObject(json);
+            for (Field f : this.getClass().getDeclaredFields()) {
+                SerializedName serializedName = f.getAnnotation(SerializedName.class);
+                if (serializedName != null) {
+                    if (!object.has(serializedName.value())) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

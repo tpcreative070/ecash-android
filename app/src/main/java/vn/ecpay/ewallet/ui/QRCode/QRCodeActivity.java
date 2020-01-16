@@ -67,9 +67,11 @@ public class QRCodeActivity extends ECashBaseActivity {
         Intent intent = getIntent();
         if(intent!=null){
             String data=intent.getStringExtra(Constant.EVENT_SCAN_CONTACT_PAYTO);
-            if(data.equals(Constant.EVENT_SCAN_CONTACT_PAYTO)){
-                //EventBus.getDefault().post(new EventDataChange(Constant.EVENT_SCAN_CONTACT_PAYTO));
-                setScanQRCodePayTo(true);
+            if(data!=null){
+                if(data.equals(Constant.EVENT_SCAN_CONTACT_PAYTO)){
+                    //EventBus.getDefault().post(new EventDataChange(Constant.EVENT_SCAN_CONTACT_PAYTO));
+                    setScanQRCodePayTo(true);
+                }
             }
         }
     }

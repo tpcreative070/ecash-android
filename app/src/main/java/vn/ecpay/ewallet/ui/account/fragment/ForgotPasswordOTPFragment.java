@@ -147,7 +147,7 @@ public class ForgotPasswordOTPFragment extends ECashBaseFragment {
         ((ForgotPasswordActivity) getActivity()).addFragment(ForgotChangePassFragment.newInstance(forgotPassResponseData, userName), true);
     }
 
-    private void showDialogError(String err) {
-        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
-    }
+//    private void showDialogError(String err) {
+//        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
+//    }
 }

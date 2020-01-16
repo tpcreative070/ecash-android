@@ -309,4 +309,5 @@
     <string name="str_scan_qr_to_pay">Scan to pay</string>
     <string name="str_create_qr_code_success">Successfully created QR</string>
     <string name="str_share">Share</string>
+    <string name="err_anount_null">You have not entered the amount</string>
 </resources>
