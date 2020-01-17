@@ -140,6 +140,8 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_cash_change:
+                if (valuesListAdapter.size() == 0)
+                    return;
                 DialogUtil.getInstance().showDialogCashChange(getActivity(), valuesListCash -> {
                     valueListCashChange = valuesListCash;
                     layoutChange.setVisibility(View.VISIBLE);

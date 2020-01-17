@@ -23,6 +23,10 @@ import vn.ecpay.ewallet.database.table.CashTemp_Database;
 import vn.ecpay.ewallet.database.table.CashValues_Database;
 import vn.ecpay.ewallet.database.table.Contact_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
+import vn.ecpay.ewallet.database.table.IssuersDiary_Database;
+import vn.ecpay.ewallet.database.table.Issuers_Database;
+import vn.ecpay.ewallet.database.table.MerchantsDiary_Database;
+import vn.ecpay.ewallet.database.table.Merchants_Database;
 import vn.ecpay.ewallet.database.table.Notification_Database;
 import vn.ecpay.ewallet.database.table.Profile_Database;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
@@ -48,7 +52,11 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         TransactionLogQR_Database.class,
         Notification_Database.class,
         CashTemp_Database.class,
-        CashValues_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
+        CashValues_Database.class,
+        Issuers_Database.class,
+        IssuersDiary_Database.class,
+        Merchants_Database.class,
+        MerchantsDiary_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;

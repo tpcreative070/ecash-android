@@ -31,14 +31,13 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
 public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
-    private boolean isConnectSuccess;
+    private boolean isConnectSuccess = false;
     private WebSocket webSocketLocal;
     private ArrayList<ResponseMessSocket> listResponseMessSockets;
     private boolean isRunning = false;
@@ -234,10 +233,10 @@ public class WebSocketsService extends Service {
         webSocketLocal.send(json);
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("stopService", "WebSocketsService");
         EventBus.getDefault().unregister(this);
     }
 }

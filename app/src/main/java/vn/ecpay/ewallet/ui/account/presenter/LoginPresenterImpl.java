@@ -153,7 +153,6 @@ public class LoginPresenterImpl implements LoginPresenter {
         call.enqueue(new Callback<ResponseEdongInfo>() {
             @Override
             public void onResponse(Call<ResponseEdongInfo> call, Response<ResponseEdongInfo> response) {
-                loginView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
@@ -162,12 +161,15 @@ public class LoginPresenterImpl implements LoginPresenter {
                             accountInfo.setWalletId(responseDataEdong.getWaletId());
                             loginView.requestGetEDongInfoSuccess(responseDataEdong, accountInfo);
                         } else {
+                            loginView.dismissLoading();
                             loginView.showDialogError(response.body().getResponseMessage());
                         }
                     } else {
+                        loginView.dismissLoading();
                         loginView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
+                    loginView.dismissLoading();
                     loginView.showDialogError(application.getString(R.string.err_upload));
                 }
             }

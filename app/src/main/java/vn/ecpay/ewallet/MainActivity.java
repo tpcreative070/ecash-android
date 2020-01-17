@@ -39,7 +39,6 @@ import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistor
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
-import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
 
@@ -301,9 +300,6 @@ public class MainActivity extends ECashBaseActivity {
 
     @Override
     protected void onDestroy() {
-        Log.e("stopService", "WebSocketsService");
-        Intent webSocketService = new Intent(MainActivity.this, WebSocketsService.class);
-        stopService(webSocketService);
         if (networkChangeReceiver != null) {
             unregisterReceiver(networkChangeReceiver);
         }

@@ -106,7 +106,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
         if (listEDongInfo.size() > 0) {
             eDongInfoCashIn = listEDongInfo.get(0);
-            tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+            tvEdongWallet.setText(listEDongInfo.get(0).getAccountIdt());
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
         }
     }
@@ -136,7 +136,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             for (int i = 0; i < listEDongInfo.size(); i++) {
                 if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
                     tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
-                    tvEdongWallet.setText(String.valueOf(listEDongInfo.get(i).getAccountIdt()));
+                    tvEdongWallet.setText(listEDongInfo.get(i).getAccountIdt());
                 }
             }
         } else {

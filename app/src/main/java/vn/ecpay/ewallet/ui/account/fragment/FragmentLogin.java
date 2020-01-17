@@ -282,11 +282,13 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         }
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
         if (isTimeOut) {
+            dismissProgress();
             if (getActivity() != null)
                 getActivity().finish();
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
+            dismissProgress();
             if (getActivity() != null)
                 getActivity().finish();
         }
