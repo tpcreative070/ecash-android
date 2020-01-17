@@ -22,7 +22,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRToPay;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.toPay.RequestToPay;
+import vn.ecpay.ewallet.model.toPay.ToPayChannelSignature;
 import vn.ecpay.ewallet.ui.billingQRCode.BillingQRCodeActivity;
 
 public class ToPayFragment extends ECashBaseFragment {
@@ -115,7 +115,7 @@ public class ToPayFragment extends ECashBaseFragment {
         qrToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
         qrToPay.setTotalAmount(edtAmount.getText().toString());
 
-        RequestToPay requestToPay = new RequestToPay();
+        ToPayChannelSignature requestToPay = new ToPayChannelSignature();
         requestToPay.setContent(edtContent.getText().toString());
         requestToPay.setSender(String.valueOf(accountInfo.getWalletId()));
         requestToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());

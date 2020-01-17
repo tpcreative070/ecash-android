@@ -2,7 +2,11 @@ package vn.ecpay.ewallet.model.payTo;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 import vn.ecpay.ewallet.model.BaseObject;
 
@@ -30,6 +34,15 @@ public class PayToRequest extends BaseObject implements Serializable {
 
     @SerializedName("channelSignature")
     private String channelSignature;
+
+    @SerializedName("fullName")
+    private String fullName;
+
+    @SerializedName("requireConfirm")
+    private String requireConfirm;
+
+    @SerializedName("refId")
+    private String refId;
 
     public String getSender() {
         return sender;
@@ -93,6 +106,48 @@ public class PayToRequest extends BaseObject implements Serializable {
 
     public void setChannelSignature(String channelSignature) {
         this.channelSignature = channelSignature;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getRequireConfirm() {
+        return requireConfirm;
+    }
+
+    public void setRequireConfirm(String requireConfirm) {
+        this.requireConfirm = requireConfirm;
+    }
+
+    public String getRefId() {
+        return refId;
+    }
+
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+    public boolean validate(String json) {
+        JSONObject object;
+        try {
+            object = new JSONObject(json);
+            for (Field f : this.getClass().getDeclaredFields()) {
+                SerializedName serializedName = f.getAnnotation(SerializedName.class);
+                if (serializedName != null) {
+                    if (!object.has(serializedName.value())) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
 

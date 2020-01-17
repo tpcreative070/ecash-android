@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -26,13 +25,14 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
+import vn.ecpay.ewallet.model.payTo.PayToRequest;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
@@ -123,59 +123,65 @@ public class WebSocketsService extends Service {
         @Override
         public void onMessage(WebSocket webSocket, String data) {
             Log.e("onMessage", data);
+            //ResponseMessSocket responseMess =new ResponseMessSocket();
+           // PayToRequest topayResponse =new PayToRequest();
             ResponseMessSocket responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
-            if (responseMess != null) {
-                switch (responseMess.getType()) {
-                    case Constant.TYPE_ECASH_TO_ECASH:
-                        listResponseMessSockets.add(responseMess);
-                        if (!isRunning) {
-                            isRunning = true;
-                            new Timer().schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    handleListResponse();
-                                }
-                            }, 3000);
-                        }
-                        break;
-                    case Constant.TYPE_LIXI:
-                        if (!DatabaseUtil.isCashTempExit(responseMess, getApplicationContext())) {
-                            if (responseMess.getCashEnc() != null) {
-                                Gson gson = new Gson();
-                                String json = gson.toJson(responseMess);
-
-                                CashTemp cashTemp = new CashTemp();
-                                cashTemp.setContent(json);
-                                cashTemp.setSenderAccountId(responseMess.getSender());
-                                cashTemp.setTransactionSignature(responseMess.getId());
-                                DatabaseUtil.saveCashTemp(cashTemp, getApplicationContext());
-                                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_LIXI));
-                                confirmMess(responseMess);
+           // if(responseMess.validate(data)){
+              //  responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
+                if (responseMess != null) {
+                    switch (responseMess.getType()) {
+                        case Constant.TYPE_ECASH_TO_ECASH:
+                            listResponseMessSockets.add(responseMess);
+                            if (!isRunning) {
+                                isRunning = true;
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        handleListResponse();
+                                    }
+                                }, 3000);
                             }
-                        }
-                        break;
-                    case Constant.TYPE_SYNC_CONTACT:
-                        RequestReceived requestReceived = new RequestReceived();
-                        requestReceived.setReceiver(responseMess.getReceiver());
-                        requestReceived.setRefId(responseMess.getRefId());
-                        requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+                            break;
+                        case Constant.TYPE_LIXI:
+                            if (!DatabaseUtil.isCashTempExit(responseMess, getApplicationContext())) {
+                                if (responseMess.getCashEnc() != null) {
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(responseMess);
 
-                        Gson gson = new Gson();
-                        String json = gson.toJson(requestReceived);
-                        webSocket.send(json);
-                        DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
-                        confirmMess(responseMess);
-                        break;
-                    case Constant.TYPE_CANCEL_CONTACT:
-                        String walletIDContactCancel = responseMess.getSender();
-                        DatabaseUtil.updateStatusContact(getApplicationContext(), Constant.CONTACT_OFF, Long.valueOf(walletIDContactCancel));
-                        confirmMess(responseMess);
-                        break;
-                    case Constant.TYPE_PAYTO:
-                        Toast.makeText(getApplicationContext(),"payto",Toast.LENGTH_SHORT).show();
-                        break;
+                                    CashTemp cashTemp = new CashTemp();
+                                    cashTemp.setContent(json);
+                                    cashTemp.setSenderAccountId(responseMess.getSender());
+                                    cashTemp.setTransactionSignature(responseMess.getId());
+                                    DatabaseUtil.saveCashTemp(cashTemp, getApplicationContext());
+                                    EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_LIXI));
+                                    confirmMess(responseMess);
+                                }
+                            }
+                            break;
+                        case Constant.TYPE_SYNC_CONTACT:
+                            RequestReceived requestReceived = new RequestReceived();
+                            requestReceived.setReceiver(responseMess.getReceiver());
+                            requestReceived.setRefId(responseMess.getRefId());
+                            requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+
+                            Gson gson = new Gson();
+                            String json = gson.toJson(requestReceived);
+                            webSocket.send(json);
+                            DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
+                            confirmMess(responseMess);
+                            break;
+                        case Constant.TYPE_CANCEL_CONTACT:
+                            String walletIDContactCancel = responseMess.getSender();
+                            DatabaseUtil.updateStatusContact(getApplicationContext(), Constant.CONTACT_OFF, Long.valueOf(walletIDContactCancel));
+                            confirmMess(responseMess);
+                            break;
+                        case Constant.TYPE_TOPAY:
+                            PayToRequest  topayResponse =new Gson().fromJson(data, PayToRequest.class);
+                            handlePaymentRequest(topayResponse);
+                            break;
+                    }
                 }
-            }
+
         }
 
         @Override
@@ -238,6 +244,21 @@ public class WebSocketsService extends Service {
         webSocketLocal.send(json);
     }
 
+    private void handlePaymentRequest(PayToRequest payToRequest){
+       // Log.e("responseMess",responseMess.toString());
+        if(ECashApplication.getActivity()!=null){
+            if(ECashApplication.getActivity() instanceof ECashBaseActivity){
+                ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.showDialogNewhandlePaymentRequest(payToRequest);
+                    }
+                });
+
+            }
+        }
+    }
 
     @Override
     public void onDestroy() {

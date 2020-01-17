@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import vn.ecpay.ewallet.model.BaseObject;
 
-public class RequestToPay extends BaseObject {
+public class ToPayChannelSignature extends BaseObject {
     @SerializedName("content")
     private String content ;
 

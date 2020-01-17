@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -81,9 +83,9 @@ public class ECashApplication extends Application {
                 .build();
     }
 
-    Activity activity;
+    static AppCompatActivity activity;
 
-    public Activity getActivity() {
+    public static Activity getActivity() {
         return activity;
     }
 
@@ -97,7 +99,7 @@ public class ECashApplication extends Application {
         isRunning = running;
     }
 
-    public void setActivity(Activity activity) {
+    public void setActivity(AppCompatActivity activity) {
         this.activity = activity;
     }
 
