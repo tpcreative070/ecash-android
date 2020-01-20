@@ -53,6 +53,7 @@ import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.language.LanguageObject;
+import vn.ecpay.ewallet.model.payTo.PayToRequest;
 
 public abstract class ECashBaseActivity extends AppCompatActivity implements BaseView {
     private static final String TAG = "BaseActivity";
@@ -358,8 +359,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             }
         });
     }
-    public void showDialogNewPayment(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
-        DialogUtil.getInstance().showDialogPaymentRepuest(this,amount,eCashID, new DialogUtil.OnResult() {
+    public void showDialogNewhandlePaymentRequest(PayToRequest payToRequest){// todo: check Object  or input: amount,ecash id
+        DialogUtil.getInstance().showDialogPaymentRepuest(this,payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
                 checkCashInvalidToPaywment();

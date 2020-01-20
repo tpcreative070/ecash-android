@@ -132,7 +132,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
 
     }
     private void validateData(){// TODO
-      //  showDialogNewPayment("150000","1213244");
+      //  showDialogNewhandlePaymentRequest("150000","1213244");
         if (multiTransferList != null) {
             if (multiTransferList.size() == 0) {
                 if (getActivity() != null)
@@ -140,17 +140,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                 return;
             }
         }
-//        else if(tvEcashNumber.getText().toString().length()>0){
-//            multiTransferList = new ArrayList<>();
-//            Contact contact = new Contact();
-//            contact.setWalletId(Long.parseLong(tvEcashNumber.getText().toString()));
-//            multiTransferList.add(contact);
-//        }
-        else {
-            if (getActivity() != null)
-                showDialogError(getString(R.string.err_not_input_number_username));
-            return;
-        }
+
         if (edtAmount.getText().toString().isEmpty()) {
             if (getActivity() != null)
                 showDialogError(getString(R.string.err_anount_null));
@@ -233,10 +223,9 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                     Contact contact =(Contact) data.getParcelableExtra(Constant.EVENT_SCAN_CONTACT_PAYTO);
                     if(contact!=null){
                         tvEcashNumber.setText(contact.getWalletId().toString());
-                        if(multiTransferList!=null&&multiTransferList.size()>0){
-                            multiTransferList.clear();
-                        }
+                        multiTransferList = new ArrayList<>();
                         multiTransferList.add(contact);
+                        Log.e("multiTransferList ",multiTransferList.size()+"");
                     }
 
                 }catch (Exception e){

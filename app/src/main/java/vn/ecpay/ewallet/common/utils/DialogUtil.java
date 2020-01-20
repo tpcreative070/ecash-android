@@ -25,6 +25,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.language.LanguageObject;
+import vn.ecpay.ewallet.model.payTo.PayToRequest;
 import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
 import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
@@ -647,7 +648,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentRepuest(Context context, String amount, String eCashID, final OnResult pOnConfirm){
+    public void showDialogPaymentRepuest(Context context, PayToRequest payToRequest, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_request);
@@ -655,7 +656,7 @@ public class DialogUtil {
             TextView tvTitle=mDialog.findViewById(R.id.tvTitle);
             tvTitle.setText(String.format(context.getString(R.string.str_payment_request)," "));
             TextView tvContent=mDialog.findViewById(R.id.tv_content);
-            tvContent.setText(Html.fromHtml(String.format(context.getString(R.string.str_content_payment_request), "Nguyen van A", eCashID,CommonUtils.formatPriceVND(Long.parseLong(amount)),"Tiền cafe")));
+            tvContent.setText(Html.fromHtml(String.format(context.getString(R.string.str_content_payment_request), payToRequest.getFullName(), payToRequest.getSender(),CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())),payToRequest.getContent())));
 
             btnOk = mDialog.findViewById(R.id.btn_payment);
             mDialog.setCanceledOnTouchOutside(false);

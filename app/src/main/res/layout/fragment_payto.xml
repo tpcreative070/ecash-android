@@ -177,6 +177,7 @@
             android:background="@drawable/bg_edit_text"
             android:drawablePadding="15dp"
             android:maxLength="15"
+            android:textSize="@dimen/text_normal"
             android:hint="@string/str_enter_amount_to_pay"
             android:inputType="number" />
 
@@ -188,6 +189,7 @@
             android:background="@drawable/bg_edit_text"
             android:drawablePadding="15dp"
             android:hint="@string/str_enter_content_payment"
+            android:textSize="@dimen/text_normal"
            />
 
         <Button

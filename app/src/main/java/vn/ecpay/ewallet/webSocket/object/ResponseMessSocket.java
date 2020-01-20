@@ -5,7 +5,11 @@ import javax.annotation.Generated;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import vn.ecpay.ewallet.model.BaseObject;
@@ -114,5 +118,24 @@ public class ResponseMessSocket extends BaseObject implements Serializable {
 
     public void setContacts(ArrayList<Contact> contactSyncSockets) {
         this.contactSyncSockets = contactSyncSockets;
+    }
+
+    public boolean validate(String json) {
+        JSONObject object;
+        try {
+            object = new JSONObject(json);
+            for (Field f : this.getClass().getDeclaredFields()) {
+                SerializedName serializedName = f.getAnnotation(SerializedName.class);
+                if (serializedName != null) {
+                    if (!object.has(serializedName.value())) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
