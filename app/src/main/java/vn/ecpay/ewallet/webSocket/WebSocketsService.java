@@ -159,14 +159,15 @@ public class WebSocketsService extends Service {
                             }
                             break;
                         case Constant.TYPE_SYNC_CONTACT:
-                            RequestReceived requestReceived = new RequestReceived();
-                            requestReceived.setReceiver(responseMess.getReceiver());
-                            requestReceived.setRefId(responseMess.getRefId());
-                            requestReceived.setType(Constant.TYPE_SEN_SOCKET);
-
-                            Gson gson = new Gson();
-                            String json = gson.toJson(requestReceived);
-                            webSocket.send(json);
+//                            RequestReceived requestReceived = new RequestReceived();
+//                            requestReceived.setReceiver(responseMess.getReceiver());
+//                            requestReceived.setRefId(responseMess.getRefId());
+//                            requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+//
+//                            Gson gson = new Gson();
+//                            String json = gson.toJson(requestReceived);
+//                            webSocket.send(json);
+                            webSocket.send(getJsonSend(responseMess));
                             DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
                             confirmMess(responseMess);
                             break;
@@ -178,7 +179,13 @@ public class WebSocketsService extends Service {
                         case Constant.TYPE_TOPAY:
                             PayToRequest  topayResponse =new Gson().fromJson(data, PayToRequest.class);
                             handlePaymentRequest(topayResponse);
+
+                            webSocket.send(getJsonSend(responseMess));
+                            confirmMess(responseMess);
                             break;
+//                        case Constant.TYPE_PAYTO:
+//
+//                            break;
                     }
                 }
 
@@ -205,6 +212,17 @@ public class WebSocketsService extends Service {
             t.printStackTrace();
         }
     };
+
+    private String getJsonSend(ResponseMessSocket responseMess){
+        RequestReceived requestReceived = new RequestReceived();
+        requestReceived.setReceiver(responseMess.getReceiver());
+        requestReceived.setRefId(responseMess.getRefId());
+        requestReceived.setType(Constant.TYPE_SEN_SOCKET);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(requestReceived);
+        return json;
+    }
 
     private void handleListResponse() {
         if (listResponseMessSockets.size() > 0) {
@@ -244,6 +262,7 @@ public class WebSocketsService extends Service {
         webSocketLocal.send(json);
     }
 
+
     private void handlePaymentRequest(PayToRequest payToRequest){
        // Log.e("responseMess",responseMess.toString());
         if(ECashApplication.getActivity()!=null){
@@ -252,7 +271,7 @@ public class WebSocketsService extends Service {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        activity.showDialogNewhandlePaymentRequest(payToRequest);
+                        activity.showDialogNewPaymentRequest(payToRequest);
                     }
                 });
 

@@ -341,6 +341,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingTop="5dp"
                             android:src="@drawable/ic_payto" />
 
                         <TextView
@@ -365,14 +366,12 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingTop="5dp"
                             android:src="@drawable/ic_topay" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:paddingTop="5dp"
                             android:text="@string/str_create_a_bill_of_payment" />
                     </LinearLayout>
                     <View

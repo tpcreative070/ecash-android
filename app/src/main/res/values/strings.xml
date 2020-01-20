@@ -311,4 +311,6 @@
     <string name="str_share">Share</string>
     <string name="err_anount_null">You have not entered the amount</string>
     <string name="err_amount_validate">The amount is not valid</string>
+    <string name="str_send_request_success">Send request successful</string>
+    <string name="str_transfer_money_success">Transfer money successful</string>
 </resources>

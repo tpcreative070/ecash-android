@@ -68,8 +68,6 @@ public class PayToFuntion {
                         Gson gson = new Gson();
                         for (int i = 0; i < multiTransferList.size(); i++) {
                             String jsonSend = gson.toJson(getObjectJsonSend(multiTransferList.get(i), i));
-                        //  String jsonSend = "{\"cashEnc\":\"BIvmEiduhswp0R0AlPzaEqupTn7hD4+SmTUmpj89aPVYaHJX28wC7zPLiXizTMepIiMgl1K28Icu5bWECT/9vv8\\u003d$BDTalEsI1OzxIPp5aXzW7yKpPOmZYi5r8PtUsIZsDkBJX8Cdz623fRu/UWXMao0tM902npUSSvj+WRgBCfjy8X8\\u003d$c1830M69ysBKcCqiz2tCxJUmpKczrtVqrUjGaOYaKX77ch7XgQeseS0QpuV/O4sMPf5VCV7QzdzZVZ8/AMyAMfh4t5HUMonJRB8KhMxxg/kmEZffpkdJ47TWHEByDn+rAbBkU3UZVl70yg7uDdPYqbdYQAum6wYm5hVCu0HZmKpqn6IiL55IsYX5egu2ItFVIks+nPbjeW+KgYL9Wf0zgKb/FW7pIviH6zf7jFq2Pbb8eEga3COoyisdFZBfWWl8jNgKAs2VEtifFYd1KIuWQg\\u003d\\u003d\",\"content\":\"ccc\",\"id\":\"MEQCIGgZoeeKKW852v5+5c8S1Eh3skttCWXNedslzyDM5gHpAiAxubAxdWsgaKsDiqA79Q7dH0vhYx0lDX2AxX4ovpExrw\\u003d\\u003d\",\"receiver\":\"8347724315\",\"sender\":\"8344937050\",\"time\":\"20200117130748\",\"type\":\"YT\"}";
-                          // String jsonSend = "{\"channelSignature\":\"MEUCIQCWTNLqKbXyoqQJo29shr4V+DhNzM5wSyeWpw+n5zHF3QIgIc28R/NteIXhsBV1MQvFUPQZYTXPunzG3i5Lj+IHnCw\\u003d\",\"content\":\"qqqq\",\"receiver\":\"8347724315\",\"sender\":\"8344937050\",\"senderPublicKey\":\"BNgnkABeFITGUGZj8DBlPRyJ3ttnVw6q+UbYD/Du/a5QWNO+nUXEGeuTNubfpOrAphIpNaGDtWimSO+pFmpy3KM\\u003d\",\"time\":\"20200117 11:11:47\",\"totalAmount\":\"4000\",\"type\":\"CT\"}}";
                             webSocket.send(jsonSend);
                         }
                         return null;
@@ -77,6 +75,8 @@ public class PayToFuntion {
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
+//                        Log.e("response ",response.toString());
+//                        Log.e("response ",response.body().);
                         payToListener.onPayToSuccess();
                         EventBus.getDefault().postSticky(new EventDataChange(Constant.PAYTO_SUCCESS));
                     }
