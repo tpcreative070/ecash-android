@@ -311,4 +311,10 @@ public class MainActivity extends ECashBaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode,this,  resultCode, data));
     }
+
+    private void syncData(){
+        if(DatabaseUtil.getAllCacheData(this).size()>0){
+
+        }
+    }
 }

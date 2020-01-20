@@ -17,6 +17,7 @@ import java.util.List;
 
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.CashTemp_Database;
@@ -33,6 +34,7 @@ import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.database.table.TransactionTimeOut_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.cashValue.response.Denomination;
@@ -56,7 +58,8 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         Issuers_Database.class,
         IssuersDiary_Database.class,
         Merchants_Database.class,
-        MerchantsDiary_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
+        MerchantsDiary_Database.class,
+        CacheData_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -98,6 +101,25 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static void clearAllTable() {
         walletDatabase.clearAllTables();
+    }
+
+    // todo notification---------------------------------------------------------------------------------------
+    public static void insertOnlySingleCacheData(final CacheData_Database cacheData, String fake) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                walletDatabase.daoAccess().insertOnlySingleCacheData(cacheData);
+                return null;
+            }
+        }.execute();
+    }
+
+    public static List<CacheData> getAllCacheData() {
+        return walletDatabase.daoAccess().getAllCacheData();
+    }
+
+    public static void deleteCacheData(String transactionSignature) {
+        walletDatabase.daoAccess().deleteCacheData(transactionSignature);
     }
 
     // todo notification---------------------------------------------------------------------------------------

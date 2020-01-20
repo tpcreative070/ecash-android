@@ -18,7 +18,9 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
+import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.cashValue.response.Denomination;
@@ -155,7 +157,7 @@ public class DatabaseUtil {
         return true;
     }
 
-    public static List<CashLogs_Database> getListCashForMoney(Context context, String value){
+    public static List<CashLogs_Database> getListCashForMoney(Context context, String value) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         return WalletDatabase.getListCashForMoney(value, Constant.STR_CASH_IN);
     }
@@ -176,7 +178,7 @@ public class DatabaseUtil {
     }
 
     public static void updateTransactionsLogAndCashOutDatabase(ArrayList<CashLogs_Database> listCashSend, ResponseMessSocket responseMess, Context context, String userName) {
-        for(CashLogs_Database cashLogsDatabase:listCashSend){
+        for (CashLogs_Database cashLogsDatabase : listCashSend) {
             cashLogsDatabase.setType(Constant.STR_CASH_OUT);
             cashLogsDatabase.setTransactionSignature(responseMess.getId());
             saveCashToDB(cashLogsDatabase, context, userName);
@@ -202,8 +204,7 @@ public class DatabaseUtil {
         EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CONTACT));
     }
 
-
-    public static String getNameContact(Context context, String phoneInput) {
+    private static String getNameContact(Context context, String phoneInput) {
         String[] projection = new String[]{ContactsContract.Data.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER};
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
         assert phones != null;
@@ -301,7 +302,7 @@ public class DatabaseUtil {
         return WalletDatabase.getAllLixiUnRead();
     }
 
-    public static void updateStattusLixi(Context context, String status, int id) {
+    public static void updateStatusLixi(Context context, String status, int id) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.updateStatusLixi(status, id);
     }
@@ -319,5 +320,10 @@ public class DatabaseUtil {
     public static TransactionsHistoryModel getCurrentTransactionsHistory(Context context, String transactionSignature) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         return WalletDatabase.getCurrentTransactionsHistory(transactionSignature);
+    }
+
+    public static List<CacheData> getAllCacheData(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllCacheData();
     }
 }
