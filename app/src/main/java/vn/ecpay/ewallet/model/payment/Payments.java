@@ -1,4 +1,4 @@
-package vn.ecpay.ewallet.model.QRCode;
+package vn.ecpay.ewallet.model.payment;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -8,34 +8,47 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
-public class QRToPay implements Serializable {
-    @SerializedName("sender")
-    private String sender;
+import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
 
-    @SerializedName("time")
-    private String time;
+public class Payments extends QRCodePayment implements Serializable {
 
-    @SerializedName("type")
-    private String type;
+    @SerializedName("receiver")
+    private String receiver;
 
-    @SerializedName("content")
-    private String content;
+    @SerializedName("requireConfirm")
+    private String requireConfirm;
 
-    @SerializedName("senderPublicKey")
-    private String senderPublicKey;
-
-    @SerializedName("totalAmount")
-    private String totalAmount;
-
-    @SerializedName("channelSignature")
-    private String channelSignature;
+    @SerializedName("refId")
+    private String refId;
 
     public String getSender() {
         return sender;
     }
 
+    public Payments() {
+    }
+
+    public Payments(QRCodePayment qrCodePayment) {
+        this.sender =qrCodePayment.sender;
+        this.time =qrCodePayment.time;
+        this.type =qrCodePayment.type;
+        this.content =qrCodePayment.content;
+        this.senderPublicKey =qrCodePayment.senderPublicKey;
+        this.totalAmount =qrCodePayment.totalAmount;
+        this.channelSignature =qrCodePayment.channelSignature;
+        this.fullName =qrCodePayment.fullName;
+    }
+
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     public String getTime() {
@@ -86,23 +99,35 @@ public class QRToPay implements Serializable {
         this.channelSignature = channelSignature;
     }
 
-    @Override
-    public String toString() {
-        return "QRToPay{" +
-                "sender='" + sender + '\'' +
-                ", time='" + time + '\'' +
-                ", type='" + type + '\'' +
-                ", content='" + content + '\'' +
-                ", senderPublicKey='" + senderPublicKey + '\'' +
-                ", totalAmount='" + totalAmount + '\'' +
-                ", channelSignature='" + channelSignature + '\'' +
-                '}';
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getRequireConfirm() {
+        return requireConfirm;
+    }
+
+    public void setRequireConfirm(String requireConfirm) {
+        this.requireConfirm = requireConfirm;
+    }
+
+    public String getRefId() {
+        return refId;
+    }
+
+    public void setRefId(String refId) {
+        this.refId = refId;
     }
 
     public boolean validate(String json) {
         JSONObject object;
         try {
             object = new JSONObject(json);
+           // Log.e("object ",object.toString());
             for (Field f : this.getClass().getDeclaredFields()) {
                 SerializedName serializedName = f.getAnnotation(SerializedName.class);
                 if (serializedName != null) {
@@ -117,4 +142,6 @@ public class QRToPay implements Serializable {
             return false;
         }
     }
+
 }
+

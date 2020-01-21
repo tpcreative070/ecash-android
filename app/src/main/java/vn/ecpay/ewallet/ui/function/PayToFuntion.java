@@ -27,8 +27,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.model.payTo.PayToRequest;
-import vn.ecpay.ewallet.model.toPay.ToPayChannelSignature;
+import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.interfaceListener.PayToListener;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
@@ -92,10 +91,10 @@ public class PayToFuntion {
         client.dispatcher().executorService().shutdown();
     }
 
-    private PayToRequest getObjectJsonSend( Contact contact, int index) {
+    private Payments getObjectJsonSend(Contact contact, int index) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
 
-        PayToRequest payToRequest = new PayToRequest();
+        Payments payToRequest = new Payments();
         payToRequest.setSender(String.valueOf(accountInfo.getWalletId()));
         payToRequest.setReceiver(String.valueOf(contact.getWalletId()));
         payToRequest.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
@@ -105,15 +104,15 @@ public class PayToFuntion {
         payToRequest.setTotalAmount(String.valueOf(totalAmount));
         payToRequest.setFullName(CommonUtils.getFullName(accountInfo));
 
-        ToPayChannelSignature requestToPay = new ToPayChannelSignature();
-        requestToPay.setContent(content);
-        requestToPay.setReceiver(String.valueOf(contact.getWalletId()));
-        requestToPay.setSender(String.valueOf(accountInfo.getWalletId()));
-        requestToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
-        requestToPay.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
-        requestToPay.setTotalAmount(String.valueOf(totalAmount));
-        requestToPay.setType(type);
-        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestToPay));
+        Payments channelSignature = new Payments();
+        channelSignature.setContent(content);
+        channelSignature.setReceiver(String.valueOf(contact.getWalletId()));
+        channelSignature.setSender(String.valueOf(accountInfo.getWalletId()));
+        channelSignature.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
+        channelSignature.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
+        channelSignature.setTotalAmount(String.valueOf(totalAmount));
+        channelSignature.setType(type);
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(channelSignature));
 
         payToRequest.setChannelSignature(CommonUtils.generateSignature(dataSign));
 

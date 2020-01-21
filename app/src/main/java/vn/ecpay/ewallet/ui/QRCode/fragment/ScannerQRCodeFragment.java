@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -43,19 +42,19 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
-import vn.ecpay.ewallet.model.QRCode.QRToPay;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contact.QRContact;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
+import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
-import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
@@ -179,11 +178,11 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
-        //Log.e("result",result);
+       // Log.e("result",result);
         Gson gson = new Gson();
         try {
             QRCodeSender qrCodeSender = new QRCodeSender();
-            QRToPay qrToPay =new QRToPay();
+            QRCodePayment qrCodePayment =new QRCodePayment();
            // QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
           //  Log.e("scan_qr_code",qrCodeSender.toString());
             if (qrCodeSender.validate(result)) {
@@ -235,18 +234,19 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         }
                     }
                 }
-            } else if(qrToPay.validate(result)){
+            } else if(qrCodePayment.validate(result)){
                 dismissProgress();
-                qrToPay =gson.fromJson(result, QRToPay.class);
-                if(qrToPay.getTotalAmount()==null){
+                qrCodePayment =gson.fromJson(result, QRCodePayment.class);
+                if(qrCodePayment.getTotalAmount()==null){
                     showDialogError(getString(R.string.str_have_warning));
                     return;
                 }
+                Payments payment = new Payments(qrCodePayment);
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(Constant.SCAN_QR_TOPAY, qrToPay.getTotalAmount());
+                resultIntent.putExtra(Constant.SCAN_QR_TOPAY, payment);
                 getActivity().setResult(Activity.RESULT_OK, resultIntent);
                 getActivity().finish();
-               // checkAmountValidate(amount);
+               // validateQRCodePayment(amount);
 
             }
             else {

@@ -25,13 +25,12 @@ import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.language.LanguageObject;
-import vn.ecpay.ewallet.model.payTo.PayToRequest;
+import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
 import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
-import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 
 public class DialogUtil {
     private static DialogUtil mInsance;
@@ -626,7 +625,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentSuccess(Context context,PayToRequest payToRequest,final OnResult pOnConfirm){
+    public void showDialogPaymentSuccess(Context context, Payments payToRequest, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_success);
@@ -648,7 +647,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentRepuest(Context context, PayToRequest payToRequest, final OnResult pOnConfirm){
+    public void showDialogPaymentRepuest(Context context, Payments payToRequest, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_request);
@@ -671,7 +670,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogConfirmPayment(Context context,List<CashTotal> valueListCash, PayToRequest payToRequest, final OnResult pOnConfirm){
+    public void showDialogConfirmPayment(Context context, List<CashTotal> valueListCash, Payments payToRequest, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_confirm_payment);

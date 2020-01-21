@@ -19,7 +19,6 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
-import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
@@ -29,10 +28,7 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
-import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.model.payTo.PayToRequest;
-import vn.ecpay.ewallet.model.toPay.ToPayChannelSignature;
-import vn.ecpay.ewallet.ui.interfaceListener.PayToListener;
+import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
@@ -41,9 +37,9 @@ public class ToPayFuntion {
     private AccountInfo accountInfo;
     private Context context;
     private ToPayListener toPayListener;
-    private PayToRequest payToRequest;
+    private Payments payToRequest;
     private List<CashTotal> valuesList;
-    public ToPayFuntion(Context context,List<CashTotal> mValuesList, PayToRequest payToRequest) {
+    public ToPayFuntion(Context context,List<CashTotal> mValuesList, Payments payToRequest) {
         this.context = context;
         this.valuesList = mValuesList;
         this.payToRequest = payToRequest;

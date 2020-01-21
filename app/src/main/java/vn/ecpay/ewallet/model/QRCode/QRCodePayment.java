@@ -1,4 +1,4 @@
-package vn.ecpay.ewallet.model.payTo;
+package vn.ecpay.ewallet.model.QRCode;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -10,39 +10,30 @@ import java.lang.reflect.Field;
 
 import vn.ecpay.ewallet.model.BaseObject;
 
-public class PayToRequest extends BaseObject implements Serializable {
+public class QRCodePayment extends BaseObject implements Serializable {
     @SerializedName("sender")
-    private String sender;
-
-    @SerializedName("receiver")
-    private String receiver;
+    public String sender;
 
     @SerializedName("time")
-    private String time;
+    public String time;
 
     @SerializedName("type")
-    private String type;
+    public String type;
 
     @SerializedName("content")
-    private String content;
+    public String content;
 
     @SerializedName("senderPublicKey")
-    private String senderPublicKey;
+    public String senderPublicKey;
 
     @SerializedName("totalAmount")
-    private String totalAmount;
+    public String totalAmount;
 
     @SerializedName("channelSignature")
-    private String channelSignature;
+    public String channelSignature;
 
     @SerializedName("fullName")
-    private String fullName;
-
-    @SerializedName("requireConfirm")
-    private String requireConfirm;
-
-    @SerializedName("refId")
-    private String refId;
+    public String fullName;
 
     public String getSender() {
         return sender;
@@ -50,14 +41,6 @@ public class PayToRequest extends BaseObject implements Serializable {
 
     public void setSender(String sender) {
         this.sender = sender;
-    }
-
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
     }
 
     public String getTime() {
@@ -116,21 +99,19 @@ public class PayToRequest extends BaseObject implements Serializable {
         this.fullName = fullName;
     }
 
-    public String getRequireConfirm() {
-        return requireConfirm;
+    @Override
+    public String toString() {
+        return "QRCodePayment{" +
+                "sender='" + sender + '\'' +
+                ", time='" + time + '\'' +
+                ", type='" + type + '\'' +
+                ", content='" + content + '\'' +
+                ", senderPublicKey='" + senderPublicKey + '\'' +
+                ", totalAmount='" + totalAmount + '\'' +
+                ", channelSignature='" + channelSignature + '\'' +
+                '}';
     }
 
-    public void setRequireConfirm(String requireConfirm) {
-        this.requireConfirm = requireConfirm;
-    }
-
-    public String getRefId() {
-        return refId;
-    }
-
-    public void setRefId(String refId) {
-        this.refId = refId;
-    }
     public boolean validate(String json) {
         JSONObject object;
         try {
@@ -150,4 +131,3 @@ public class PayToRequest extends BaseObject implements Serializable {
         }
     }
 }
-

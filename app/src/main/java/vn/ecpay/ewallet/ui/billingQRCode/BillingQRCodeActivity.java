@@ -13,7 +13,7 @@ import butterknife.BindView;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.model.QRCode.QRToPay;
+import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
 
 public class BillingQRCodeActivity extends ECashBaseActivity {
     @BindView(R.id.iv_back)
@@ -55,9 +55,9 @@ public class BillingQRCodeActivity extends ECashBaseActivity {
     private void getIntentData(){
         Intent intent = getIntent();
         if(intent!=null){
-            QRToPay qrToPay = (QRToPay) intent.getSerializableExtra(Constant.QR_CODE_TOPAY_MODEL);
-            if(qrToPay!=null){
-                addFragment( BillingQRCodeFragment.newInstance(qrToPay), false);
+            QRCodePayment qrCodePayment = (QRCodePayment) intent.getSerializableExtra(Constant.QR_CODE_TOPAY_MODEL);
+            if(qrCodePayment!=null){
+                addFragment( BillingQRCodeFragment.newInstance(qrCodePayment), false);
             }
         }
     }

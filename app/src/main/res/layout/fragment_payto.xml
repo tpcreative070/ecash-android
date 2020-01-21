@@ -176,7 +176,7 @@
             android:layout_marginTop="15dp"
             android:background="@drawable/bg_edit_text"
             android:drawablePadding="15dp"
-            android:maxLength="15"
+            android:maxLength="16"
             android:textSize="@dimen/text_normal"
             android:hint="@string/str_enter_amount_to_pay"
             android:inputType="number" />

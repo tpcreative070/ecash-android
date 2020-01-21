@@ -31,7 +31,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
-import vn.ecpay.ewallet.model.payTo.PayToRequest;
+import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
@@ -124,13 +124,15 @@ public class WebSocketsService extends Service {
         public void onMessage(WebSocket webSocket, String data) {
             Log.e("onMessage", data);
             //ResponseMessSocket responseMess =new ResponseMessSocket();
-           // PayToRequest topayResponse =new PayToRequest();
+           // Payments topayResponse =new Payments();
             ResponseMessSocket responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
            // if(responseMess.validate(data)){
               //  responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
                 if (responseMess != null) {
                     switch (responseMess.getType()) {
                         case Constant.TYPE_ECASH_TO_ECASH:
+//                            webSocket.send(getJsonSend(responseMess));
+//                            confirmMess(responseMess);
                             listResponseMessSockets.add(responseMess);
                             if (!isRunning) {
                                 isRunning = true;
@@ -177,15 +179,23 @@ public class WebSocketsService extends Service {
                             confirmMess(responseMess);
                             break;
                         case Constant.TYPE_TOPAY:
-                            PayToRequest  topayResponse =new Gson().fromJson(data, PayToRequest.class);
+                            Payments topayResponse =new Gson().fromJson(data, Payments.class);
                             handlePaymentRequest(topayResponse);
-
                             webSocket.send(getJsonSend(responseMess));
                             confirmMess(responseMess);
                             break;
-//                        case Constant.TYPE_PAYTO:
-//
-//                            break;
+                        case Constant.TYPE_PAYTO:
+                            listResponseMessSockets.add(responseMess);
+                            if (!isRunning) {
+                                isRunning = true;
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        handleListResponse();
+                                    }
+                                }, 3000);
+                            }
+                            break;
                     }
                 }
 
@@ -263,7 +273,7 @@ public class WebSocketsService extends Service {
     }
 
 
-    private void handlePaymentRequest(PayToRequest payToRequest){
+    private void handlePaymentRequest(Payments payToRequest){
        // Log.e("responseMess",responseMess.toString());
         if(ECashApplication.getActivity()!=null){
             if(ECashApplication.getActivity() instanceof ECashBaseActivity){

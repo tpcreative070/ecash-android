@@ -32,6 +32,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.NumberTextWatcher;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -93,6 +94,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
+        edtAmount.addTextChangedListener(new NumberTextWatcher(edtAmount));
     }
     private void setData(){
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
@@ -134,12 +136,15 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     }
     private void validateData(){// TODO
       //  showDialogNewPaymentRequest("150000","1213244");
-        if (multiTransferList != null) {
-            if (multiTransferList.size() == 0) {
-                if (getActivity() != null)
-                    showDialogError(getString(R.string.err_not_input_number_username));
-                return;
-            }
+        if (multiTransferList == null) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_not_input_number_username));
+            return;
+        }
+        if (multiTransferList.size() == 0) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_not_input_number_username));
+            return;
         }
 
         if (edtAmount.getText().toString().isEmpty()) {
@@ -148,7 +153,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         if(edtAmount.getText().toString().length()>0){
-            Long money =Long.parseLong(edtAmount.getText().toString());
+            Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
            // Log.e("money%1000 ",money%1000+"");
             if(money<1000||money%1000!=0){
                 showDialogError(getString(R.string.err_amount_validate));
@@ -161,7 +166,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         showProgress();///
-        PayToFuntion payToFuntion = new PayToFuntion(getActivity(),Long.parseLong(edtAmount.getText().toString()),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
+        PayToFuntion payToFuntion = new PayToFuntion(getActivity(),Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",","")),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
         payToFuntion.handlePayToSocket(this::PayToSuccess);
     }
     private void PayToSuccess() {
