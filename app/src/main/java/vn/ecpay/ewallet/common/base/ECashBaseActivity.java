@@ -8,34 +8,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -44,16 +35,20 @@ import java.util.Stack;
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.common.keystore.KSDeCrypt;
-import vn.ecpay.ewallet.common.keystore.KSEnCrypt;
-import vn.ecpay.ewallet.common.language.SharedPrefs;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
-import vn.ecpay.ewallet.model.language.LanguageObject;
-import vn.ecpay.ewallet.model.payTo.PayToRequest;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.payment.Payments;
+import vn.ecpay.ewallet.ui.function.ToPayFuntion;
+import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
+
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 public abstract class ECashBaseActivity extends AppCompatActivity implements BaseView {
     private static final String TAG = "BaseActivity";
@@ -339,60 +334,139 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         return context;
     }
     //------------------
-    public void checkAmountValidate(Long amount){
-        Long balance = (long) (WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT));
-        if(balance<amount){
-            showDialogCannotpayment();
-        }else{
-            Toast.makeText(this, "toto check money", Toast.LENGTH_SHORT).show();
-        }
 
-    }
-    private void showDialogCannotpayment(){
+    private void showDialogCannotPayment() {
         DialogUtil.getInstance().showDialogCannotPayment(this);
     }
 
-    public void showDialogPaymentSuccess(String amount,String eCashID){// todo: check Object  or input: amount,ecash id
-        DialogUtil.getInstance().showDialogPaymentSuccess(this,amount,eCashID, new DialogUtil.OnResult() {
+    public void showDialogPaymentSuccess(Payments payToRequest) {
+        DialogUtil.getInstance().showDialogPaymentSuccess(this, payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
-            }
-        });
-    }
-    public void showDialogNewhandlePaymentRequest(PayToRequest payToRequest){// todo: check Object  or input: amount,ecash id
-        DialogUtil.getInstance().showDialogPaymentRepuest(this,payToRequest, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                checkCashInvalidToPaywment();
-            }
-        });
-    }
-    public void showDialogConfirmPayment(List<CashTotal> valueListCash, String amount, String eCashID){// todo: check Object or input: amount,ecash id
-        DialogUtil.getInstance().showDialogConfirmPayment(this,valueListCash,amount,eCashID, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                // todo: check status
-                showDialogPaymentSuccess("150000","1213244");// success
-                // unsuccess: show dialog fail
             }
         });
     }
 
-    public void checkCashInvalidToPaywment(){
-        // todo: Query database
-        // todo: case 1:
-        // showDialogCannotpayment();
-        // todo: case 2:
-        List<CashTotal> valueListCashTake = new ArrayList<>();
-        CashTotal cashTotal = new CashTotal();
-        cashTotal.setParValue(100000);
-        cashTotal.setTotal(100000);
-        cashTotal.setTotalDatabase(1);
-        valueListCashTake.add(cashTotal);
-        cashTotal.setParValue(50000);
-        cashTotal.setTotal(50000);
-        cashTotal.setTotalDatabase(2);
-        valueListCashTake.add(cashTotal);
-        showDialogConfirmPayment(valueListCashTake,"150000","1213244");
+    public void showDialogNewPaymentRequest(Payments payment) {
+        DialogUtil.getInstance().showDialogPaymentRepuest(this, payment, new DialogUtil.OnResult() {
+            @Override
+            public void OnListenerOk() {
+                validatePayment(payment);
+            }
+        });
     }
+
+    public void showDialogConfirmPayment(List<CashTotal> valueListCash, Payments payToRequest) {
+        DialogUtil.getInstance().showDialogConfirmPayment(this, valueListCash, payToRequest, new DialogUtil.OnResult() {
+            @Override
+            public void OnListenerOk() {
+                handleToPay(valueListCash, payToRequest);
+            }
+        });
+    }
+
+    public void validatePayment(Payments payment) {
+        long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+        long balanceEdong = 0;
+
+        ArrayList<EdongInfo> listEDongInfo = ECashApplication.getListEDongInfo();
+        if (null != listEDongInfo) {
+            if (listEDongInfo.size() > 0) {
+                balanceEdong = CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance());
+            }
+        }
+        long totalAmount = Long.parseLong(payment.getTotalAmount());
+
+        //-------
+        if (balanceEcash >= totalAmount) {
+            //Log.e("case 1","hop le, check list money");
+            if (checkListECashInvalidate(totalAmount) != null && checkListECashInvalidate(totalAmount).size() > 0) {
+                showDialogConfirmPayment(checkListECashInvalidate(totalAmount), payment);
+            } else {
+                Log.e("case 1.1", "đổi ecash");
+                showDialogError("đổi ecash");
+            }
+        } else if (balanceEcash < totalAmount) {
+            if (balanceEdong + balanceEcash < totalAmount) {
+                Log.e("case 2", "case 2");
+                showDialogCannotPayment();
+            } else if (balanceEdong + balanceEcash >= totalAmount) {
+                // Log.e("case 3","nạp ecash");
+                showDialogError("nạp ecash");
+                //checkListECashInvalidate(totalAmount);
+            }
+        } else if (balanceEdong + balanceEcash < totalAmount) {
+            Log.e("case 4", "case 4");
+            showDialogCannotPayment();
+        }
+        //
+
+
+    }
+
+    private List<CashTotal> checkListECashInvalidate(long totalAmount) {
+        List<CashTotal> cashTotalList = DatabaseUtil.getAllCashTotal(getActivity());
+        List<CashTotal> list = new ArrayList<>();
+        Collections.reverse(cashTotalList);
+        long sumCash = 0;
+        for (CashTotal cashTotal : cashTotalList) {
+            Log.e("cashTotal getParValue()", cashTotal.getParValue() + "");
+            Log.e("cashTotal getTotal()", cashTotal.getTotal() + "");
+            Log.e("cashTotal getTotalDatabase()", cashTotal.getTotalDatabase() + "");
+            //Log.e("div ",cashTotal.getParValue()* cashTotal.getTotalDatabase()%totalAmount+"");
+            if (cashTotal.getParValue() == totalAmount) {
+                cashTotal.setTotal(1);
+                cashTotal.setTotalDatabase(1);
+                list.add(cashTotal);
+                return list;
+            } else if (totalAmount / cashTotal.getParValue() > 0) {
+                int total = (int) (totalAmount / cashTotal.getParValue());
+                if (total <= cashTotal.getTotalDatabase()) {
+                    cashTotal.setTotal(total);
+                    cashTotal.setTotalDatabase(total);
+                    list.add(cashTotal);
+                    return list;
+                }
+            }
+            else if (cashTotal.getParValue() < totalAmount) {//todo" working here
+                sumCash += (long) cashTotal.getParValue();
+                list.add(cashTotal);
+                if (sumCash == totalAmount) {
+                    return list;
+                }
+            } else if ((cashTotal.getParValue() * cashTotal.getTotalDatabase()) % totalAmount == 0) {
+                for (int j = 1; j <= cashTotal.getTotalDatabase(); j++) {
+                    if (cashTotal.getParValue() * j == totalAmount) {
+                        CashTotal cash = new CashTotal();
+                        cash.setParValue(cashTotal.getParValue());
+                        // cash.setTotalDatabase(cashTotal.getTotalDatabase());
+                        cash.setTotal(j);
+                        cash.setTotalDatabase(j);
+                        list.add(cash);
+                        return list;
+                    }
+                }
+
+            }
+
+        }
+        return null;
+    }
+
+    private void handleToPay(List<CashTotal> listCash, Payments payToRequest) {
+        showLoading();
+        ArrayList<Contact> listContact = new ArrayList<>();
+        Contact contact = new Contact();
+        contact.setWalletId(Long.parseLong(payToRequest.getSender()));
+        listContact.add(contact);
+        ToPayFuntion toPayFuntion = new ToPayFuntion(getActivity(), listCash, contact, payToRequest);
+        toPayFuntion.handlePayToSocket(new ToPayListener() {
+            @Override
+            public void onToPaySuccess() {
+                dismissLoading();
+                showDialogPaymentSuccess(payToRequest);
+            }
+        });
+    }
+
 }

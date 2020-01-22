@@ -21,18 +21,13 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.common.base.CustomFragmentTabHost;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
-import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
@@ -40,6 +35,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
@@ -324,18 +320,15 @@ public class MainActivity extends ECashBaseActivity {
         if(resultCode == Activity.RESULT_OK){
             if(requestCode==Constant.REQUEST_QR_CODE){
                 handleDataToPayResult(data);
-
-
             }
         }
     }
 
     private void handleDataToPayResult(Intent data){
         if(data!=null){
-            String amount = (String) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
-            Log.e("amount ",amount);
-            if(amount!=null){
-                checkAmountValidate(Long.valueOf(amount));
+            Payments qrToPay = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
+            if(qrToPay!=null){
+                validatePayment(qrToPay);
             }
         }
     }

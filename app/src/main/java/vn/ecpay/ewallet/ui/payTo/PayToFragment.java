@@ -31,6 +31,8 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.NumberTextWatcher;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -92,6 +94,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
+        edtAmount.addTextChangedListener(new NumberTextWatcher(edtAmount));
     }
     private void setData(){
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
@@ -132,13 +135,16 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
 
     }
     private void validateData(){// TODO
-      //  showDialogNewhandlePaymentRequest("150000","1213244");
-        if (multiTransferList != null) {
-            if (multiTransferList.size() == 0) {
-                if (getActivity() != null)
-                    showDialogError(getString(R.string.err_not_input_number_username));
-                return;
-            }
+      //  showDialogNewPaymentRequest("150000","1213244");
+        if (multiTransferList == null) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_not_input_number_username));
+            return;
+        }
+        if (multiTransferList.size() == 0) {
+            if (getActivity() != null)
+                showDialogError(getString(R.string.err_not_input_number_username));
+            return;
         }
 
         if (edtAmount.getText().toString().isEmpty()) {
@@ -147,7 +153,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         if(edtAmount.getText().toString().length()>0){
-            Long money =Long.parseLong(edtAmount.getText().toString());
+            Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
            // Log.e("money%1000 ",money%1000+"");
             if(money<1000||money%1000!=0){
                 showDialogError(getString(R.string.err_amount_validate));
@@ -160,13 +166,33 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         showProgress();///
-        PayToFuntion payToFuntion = new PayToFuntion(getActivity(),Long.parseLong(edtAmount.getText().toString()),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
+        PayToFuntion payToFuntion = new PayToFuntion(getActivity(),Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",","")),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
         payToFuntion.handlePayToSocket(this::PayToSuccess);
     }
     private void PayToSuccess() {
         dismissProgress();
+        tvEcashNumber.setText("");
+        edtContent.setText("");
+        edtAmount.setText("");
+        showDialogSendRequestOk();
+
         //EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
+    protected void showDialogSendRequestOk() {
+        DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
+                getString(R.string.str_send_request_success), new DialogUtil.OnConfirm() {
+                    @Override
+                    public void OnListenerOk() {
+
+                    }
+
+                    @Override
+                    public void OnListenerCancel() {
+                        getActivity().finish();
+                    }
+                });
+    }
+
     private void gotoContact(){
         ((PayToActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this), true);
     }
@@ -183,11 +209,9 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-
-        if (event.getData().equals(Constant.PAYTO_SUCCESS)) {
-            dismissProgress();
-            Toast.makeText(getActivity(),"Event payto Success",Toast.LENGTH_LONG).show();
-        }
+//        if (event.getData().equals(Constant.PAYTO_SUCCESS)) {
+//            dismissProgress();
+//        }
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();

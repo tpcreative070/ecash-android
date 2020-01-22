@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -14,28 +13,23 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.PermissionUtils;
-import vn.ecpay.ewallet.model.QRCode.QRToPay;
-import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.ui.payTo.PayToFragment;
+import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
 
 public class BillingQRCodeFragment extends ECashBaseFragment {
 
     @BindView(R.id.iv_qr_code)
     ImageView ivQRCode;
-    private  QRToPay qrToPay;
+    private QRCodePayment qrCodePayment;
     private Bitmap bitmap;
-    public static BillingQRCodeFragment newInstance(QRToPay qrToPay) {
+    public static BillingQRCodeFragment newInstance(QRCodePayment qrCodePayment) {
         Bundle args = new Bundle();
-        args.putSerializable(Constant.QR_CODE_TOPAY_MODEL, qrToPay);
+        args.putSerializable(Constant.QR_CODE_TOPAY_MODEL, qrCodePayment);
         BillingQRCodeFragment fragment = new BillingQRCodeFragment();
         fragment.setArguments(args);
         return fragment;
@@ -49,7 +43,7 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-           qrToPay = (QRToPay) bundle.getSerializable(Constant.QR_CODE_TOPAY_MODEL);
+            qrCodePayment = (QRCodePayment) bundle.getSerializable(Constant.QR_CODE_TOPAY_MODEL);
             generateQRCode();
         }
     }
@@ -71,17 +65,17 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
         }
     }
     private void generateQRCode(){
-        if(qrToPay!=null){
-            Log.e("qrToPay",qrToPay.toString());
+        if(qrCodePayment!=null){
+            Log.e("qrToPay",qrCodePayment.toString());
             Gson gson = new Gson();
-            bitmap = CommonUtils.generateQRCode(gson.toJson(qrToPay));
+            bitmap = CommonUtils.generateQRCode(gson.toJson(qrCodePayment));
             ivQRCode.setImageBitmap(bitmap);
         }else{
             ivQRCode.setVisibility(View.GONE);
         }
     }
     private void handleSave(){
-        if(bitmap!=null&&qrToPay!=null){
+        if(bitmap!=null&&qrCodePayment!=null){
             saveImageQRCode(bitmap,CommonUtils.getCurrentTime(Constant.FORMAT_DATE_SEND_CASH));
         }
     }

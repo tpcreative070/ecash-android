@@ -19,10 +19,10 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.NumberTextWatcher;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.model.QRCode.QRToPay;
+import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.toPay.ToPayChannelSignature;
 import vn.ecpay.ewallet.ui.billingQRCode.BillingQRCodeActivity;
 
 public class ToPayFragment extends ECashBaseFragment {
@@ -68,6 +68,7 @@ public class ToPayFragment extends ECashBaseFragment {
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
+        edtAmount.addTextChangedListener(new NumberTextWatcher(edtAmount));
     }
     @Override
     public void onResume() {
@@ -106,32 +107,34 @@ public class ToPayFragment extends ECashBaseFragment {
             return;
         }
         String userName = ECashApplication.getAccountInfo().getUsername();
+        String amount =edtAmount.getText().toString().replace(".","").replace(",","");
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        QRToPay qrToPay =new QRToPay();
-        qrToPay.setSender(String.valueOf(accountInfo.getWalletId()));
-        qrToPay.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
-        qrToPay.setType(Constant.TYPE_TOPAY);
-        qrToPay.setContent(edtContent.getText().toString());
-        qrToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
-        qrToPay.setTotalAmount(edtAmount.getText().toString());
+        QRCodePayment qrPayment =new QRCodePayment();
+        qrPayment.setSender(String.valueOf(accountInfo.getWalletId()));
+        qrPayment.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
+        qrPayment.setType(Constant.TYPE_TOPAY);
+        qrPayment.setContent(edtContent.getText().toString());
+        qrPayment.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
+        qrPayment.setTotalAmount(amount);
+        qrPayment.setFullName(CommonUtils.getFullName(accountInfo));
 
-        ToPayChannelSignature requestToPay = new ToPayChannelSignature();
-        requestToPay.setContent(edtContent.getText().toString());
-        requestToPay.setSender(String.valueOf(accountInfo.getWalletId()));
-        requestToPay.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
-        requestToPay.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
-        requestToPay.setTotalAmount(edtAmount.getText().toString());
-        requestToPay.setType(Constant.TYPE_TOPAY);
-        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestToPay));
+        QRCodePayment channelSignature = new QRCodePayment();
+        channelSignature.setContent(edtContent.getText().toString());
+        channelSignature.setSender(String.valueOf(accountInfo.getWalletId()));
+        channelSignature.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
+        channelSignature.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
+        channelSignature.setTotalAmount(amount);
+        channelSignature.setType(Constant.TYPE_TOPAY);
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(channelSignature));
 
-        qrToPay.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        qrPayment.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
-        crateQRCode(qrToPay);
+        crateQRCode(qrPayment);
     }
-    private void crateQRCode(QRToPay qrToPay){
+    private void crateQRCode(QRCodePayment qrCodePayment){
         if (getActivity() != null) {
             Intent intent = new Intent(getActivity(), BillingQRCodeActivity.class);
-            intent.putExtra(Constant.QR_CODE_TOPAY_MODEL,qrToPay);
+            intent.putExtra(Constant.QR_CODE_TOPAY_MODEL,qrCodePayment);
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }

@@ -304,5 +304,8 @@
     <string name="str_share">Chia sẽ</string>
     <string name="err_anount_null">bạn chưa nhập số tiền</string>
     <string name="err_amount_validate">Số tiền không hợp lệ</string>
+    <string name="str_send_request_success">Gửi yêu cầu thành công</string>
+    <string name="str_transfer_money_success">chuyển tiền thành công</string>
 </resources>
+
 

@@ -503,6 +503,13 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (event.getData().equals(Constant.EVENT_UPDATE_LIXI)) {
             updateNumberLixi();
         }
+        if (event.getData().equals(Constant.PAYTO_SUCCESS)) {
+            updateAccountInfo();
+        }
+        if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
+            dismissLoading();
+        }
+
         EventBus.getDefault().removeStickyEvent(event);
     }
 
