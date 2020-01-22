@@ -335,118 +335,131 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     }
     //------------------
 
-    private void showDialogCannotPayment(){
+    private void showDialogCannotPayment() {
         DialogUtil.getInstance().showDialogCannotPayment(this);
     }
 
-    public void showDialogPaymentSuccess(Payments payToRequest){
+    public void showDialogPaymentSuccess(Payments payToRequest) {
         DialogUtil.getInstance().showDialogPaymentSuccess(this, payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
             }
         });
     }
-    public void showDialogNewPaymentRequest(Payments payment){
-        DialogUtil.getInstance().showDialogPaymentRepuest(this,payment, new DialogUtil.OnResult() {
+
+    public void showDialogNewPaymentRequest(Payments payment) {
+        DialogUtil.getInstance().showDialogPaymentRepuest(this, payment, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
                 validatePayment(payment);
             }
         });
     }
-    public void showDialogConfirmPayment(List<CashTotal> valueListCash, Payments payToRequest){
-        DialogUtil.getInstance().showDialogConfirmPayment(this,valueListCash,payToRequest, new DialogUtil.OnResult() {
+
+    public void showDialogConfirmPayment(List<CashTotal> valueListCash, Payments payToRequest) {
+        DialogUtil.getInstance().showDialogConfirmPayment(this, valueListCash, payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
-                handleToPay(valueListCash,payToRequest);
+                handleToPay(valueListCash, payToRequest);
             }
         });
     }
 
-    public void validatePayment(Payments payment){
-       long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        long balanceEdong=0;
+    public void validatePayment(Payments payment) {
+        long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+        long balanceEdong = 0;
 
-        ArrayList<EdongInfo>  listEDongInfo = ECashApplication.getListEDongInfo();
+        ArrayList<EdongInfo> listEDongInfo = ECashApplication.getListEDongInfo();
         if (null != listEDongInfo) {
             if (listEDongInfo.size() > 0) {
-                balanceEdong =CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance());
+                balanceEdong = CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance());
             }
         }
-        long  totalAmount =Long.parseLong(payment.getTotalAmount());
+        long totalAmount = Long.parseLong(payment.getTotalAmount());
 
         //-------
-        if(balanceEcash>=totalAmount){
+        if (balanceEcash >= totalAmount) {
             //Log.e("case 1","hop le, check list money");
-            if(checkListECashInvalidate(totalAmount)!=null&&checkListECashInvalidate(totalAmount).size()>0){
-                showDialogConfirmPayment(checkListECashInvalidate(totalAmount),payment);
-            }else{
-                Log.e("case 1.1","đổi ecash");
+            if (checkListECashInvalidate(totalAmount) != null && checkListECashInvalidate(totalAmount).size() > 0) {
+                showDialogConfirmPayment(checkListECashInvalidate(totalAmount), payment);
+            } else {
+                Log.e("case 1.1", "đổi ecash");
                 showDialogError("đổi ecash");
             }
-        }
-        else if(balanceEcash<totalAmount){
-            if(balanceEdong+balanceEcash<totalAmount){
-                Log.e("case 2","case 2");
+        } else if (balanceEcash < totalAmount) {
+            if (balanceEdong + balanceEcash < totalAmount) {
+                Log.e("case 2", "case 2");
                 showDialogCannotPayment();
-            }
-            else if(balanceEdong+balanceEcash>=totalAmount){
+            } else if (balanceEdong + balanceEcash >= totalAmount) {
                 // Log.e("case 3","nạp ecash");
                 showDialogError("nạp ecash");
                 //checkListECashInvalidate(totalAmount);
             }
-        }
-        else if(balanceEdong+balanceEcash<totalAmount){
-            Log.e("case 4","case 4");
+        } else if (balanceEdong + balanceEcash < totalAmount) {
+            Log.e("case 4", "case 4");
             showDialogCannotPayment();
         }
         //
 
 
     }
-    private List<CashTotal> checkListECashInvalidate(long totalAmount){
+
+    private List<CashTotal> checkListECashInvalidate(long totalAmount) {
         List<CashTotal> cashTotalList = DatabaseUtil.getAllCashTotal(getActivity());
         List<CashTotal> list = new ArrayList<>();
         Collections.reverse(cashTotalList);
-        long sumCash =0;
-        for(CashTotal cashTotal: cashTotalList){
-//            Log.e("cashTotal getParValue()",cashTotal.getParValue()+"");
-//            Log.e("cashTotal getTotal()",cashTotal.getTotal()+"");
-//            Log.e("cashTotal getTotalDatabase()",cashTotal.getTotalDatabase()+"");
-           //Log.e("div ",cashTotal.getParValue()* cashTotal.getTotalDatabase()%totalAmount+"");
-            if(cashTotal.getParValue()==totalAmount){
+        long sumCash = 0;
+        for (CashTotal cashTotal : cashTotalList) {
+            Log.e("cashTotal getParValue()", cashTotal.getParValue() + "");
+            Log.e("cashTotal getTotal()", cashTotal.getTotal() + "");
+            Log.e("cashTotal getTotalDatabase()", cashTotal.getTotalDatabase() + "");
+            //Log.e("div ",cashTotal.getParValue()* cashTotal.getTotalDatabase()%totalAmount+"");
+            if (cashTotal.getParValue() == totalAmount) {
                 cashTotal.setTotal(1);
+                cashTotal.setTotalDatabase(1);
                 list.add(cashTotal);
                 return list;
-            }else if((cashTotal.getParValue()* cashTotal.getTotalDatabase())%totalAmount==0){
-                for(int j=1;j<=cashTotal.getTotalDatabase();j++){
-                    if(cashTotal.getParValue()*j==totalAmount){ CashTotal cash = new CashTotal();
-                       // cash.setParValue(cashTotal.getParValue());
-                       // cash.setTotalDatabase(cashTotal.getTotalDatabase());
+            } else if (totalAmount / cashTotal.getParValue() > 0) {
+                int total = (int) (totalAmount / cashTotal.getParValue());
+                if (total <= cashTotal.getTotalDatabase()) {
+                    cashTotal.setTotal(total);
+                    cashTotal.setTotalDatabase(total);
+                    list.add(cashTotal);
+                    return list;
+                }
+            }
+            else if (cashTotal.getParValue() < totalAmount) {//todo" working here
+                sumCash += (long) cashTotal.getParValue();
+                list.add(cashTotal);
+                if (sumCash == totalAmount) {
+                    return list;
+                }
+            } else if ((cashTotal.getParValue() * cashTotal.getTotalDatabase()) % totalAmount == 0) {
+                for (int j = 1; j <= cashTotal.getTotalDatabase(); j++) {
+                    if (cashTotal.getParValue() * j == totalAmount) {
+                        CashTotal cash = new CashTotal();
+                        cash.setParValue(cashTotal.getParValue());
+                        // cash.setTotalDatabase(cashTotal.getTotalDatabase());
                         cash.setTotal(j);
+                        cash.setTotalDatabase(j);
                         list.add(cash);
                         return list;
                     }
                 }
 
             }
-//            else if(cashTotal.getParValue()<totalAmount){
-//                sumCash+=(long)cashTotal.getParValue();
-//                list.add(cashTotal);
-//                if(sumCash==totalAmount){
-//                    return list;
-//                }
-//            }
+
         }
         return null;
     }
-    private void handleToPay(List<CashTotal> listCash, Payments payToRequest){
+
+    private void handleToPay(List<CashTotal> listCash, Payments payToRequest) {
         showLoading();
         ArrayList<Contact> listContact = new ArrayList<>();
         Contact contact = new Contact();
         contact.setWalletId(Long.parseLong(payToRequest.getSender()));
         listContact.add(contact);
-        ToPayFuntion toPayFuntion =new ToPayFuntion(getActivity(),listCash,payToRequest);
+        ToPayFuntion toPayFuntion = new ToPayFuntion(getActivity(), listCash, contact, payToRequest);
         toPayFuntion.handlePayToSocket(new ToPayListener() {
             @Override
             public void onToPaySuccess() {

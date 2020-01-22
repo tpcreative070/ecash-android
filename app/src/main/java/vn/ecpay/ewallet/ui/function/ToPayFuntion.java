@@ -28,6 +28,7 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
@@ -39,9 +40,11 @@ public class ToPayFuntion {
     private ToPayListener toPayListener;
     private Payments payToRequest;
     private List<CashTotal> valuesList;
-    public ToPayFuntion(Context context,List<CashTotal> mValuesList, Payments payToRequest) {
+    private Contact contact;
+    public ToPayFuntion(Context context, List<CashTotal> mValuesList, Contact contact, Payments payToRequest) {
         this.context = context;
         this.valuesList = mValuesList;
+        this.contact = contact;
         this.payToRequest = payToRequest;
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, context);
@@ -94,7 +97,7 @@ public class ToPayFuntion {
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         for (int i = 0; i < valuesList.size(); i++) {
-           // Log.e("valuesListAdapter i ",valuesList.get(i).getTotal()+"");
+           Log.e("valuesListAdapter i ",valuesList.get(i).getTotal()+"");
             if (valuesList.get(i).getTotal() > 0) {
                 List<CashLogs_Database> cashList = DatabaseUtil.getListCashForMoney(context, String.valueOf(valuesList.get(i).getParValue()));
                 for (int j = 0; j < valuesList.get(i).getTotal(); j++) {
