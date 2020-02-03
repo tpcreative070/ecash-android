@@ -406,51 +406,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     private List<CashTotal> checkListECashInvalidate(long totalAmount) {
         List<CashTotal> cashTotalList = DatabaseUtil.getAllCashTotal(getActivity());
-        List<CashTotal> list = new ArrayList<>();
         Collections.reverse(cashTotalList);
-        long sumCash = 0;
-        for (CashTotal cashTotal : cashTotalList) {
-            Log.e("cashTotal getParValue()", cashTotal.getParValue() + "");
-            Log.e("cashTotal getTotal()", cashTotal.getTotal() + "");
-            Log.e("cashTotal getTotalDatabase()", cashTotal.getTotalDatabase() + "");
-            //Log.e("div ",cashTotal.getParValue()* cashTotal.getTotalDatabase()%totalAmount+"");
-            if (cashTotal.getParValue() == totalAmount) {
-                cashTotal.setTotal(1);
-                cashTotal.setTotalDatabase(1);
-                list.add(cashTotal);
-                return list;
-            } else if (totalAmount / cashTotal.getParValue() > 0) {
-                int total = (int) (totalAmount / cashTotal.getParValue());
-                if (total <= cashTotal.getTotalDatabase()) {
-                    cashTotal.setTotal(total);
-                    cashTotal.setTotalDatabase(total);
-                    list.add(cashTotal);
-                    return list;
-                }
-            }
-            else if (cashTotal.getParValue() < totalAmount) {//todo" working here
-                sumCash += (long) cashTotal.getParValue();
-                list.add(cashTotal);
-                if (sumCash == totalAmount) {
-                    return list;
-                }
-            } else if ((cashTotal.getParValue() * cashTotal.getTotalDatabase()) % totalAmount == 0) {
-                for (int j = 1; j <= cashTotal.getTotalDatabase(); j++) {
-                    if (cashTotal.getParValue() * j == totalAmount) {
-                        CashTotal cash = new CashTotal();
-                        cash.setParValue(cashTotal.getParValue());
-                        // cash.setTotalDatabase(cashTotal.getTotalDatabase());
-                        cash.setTotal(j);
-                        cash.setTotalDatabase(j);
-                        list.add(cash);
-                        return list;
-                    }
-                }
-
-            }
-
-        }
-        return null;
+        //CommonUtils.handleGetCash(cashTotalList);
+        return CommonUtils.getCashForPayament(cashTotalList,totalAmount);
     }
 
     private void handleToPay(List<CashTotal> listCash, Payments payToRequest) {

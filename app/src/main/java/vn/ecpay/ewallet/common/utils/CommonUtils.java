@@ -38,6 +38,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -273,11 +274,13 @@ public class CommonUtils {
         SimpleDateFormat df = new SimpleDateFormat(Constant.FORMAT_DATE_SEND_CASH);
         return df.format(c.getTime());
     }
+
     public static String getCurrentTime(String format) {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat(format);
         return df.format(c.getTime());
     }
+
     public static String getCurrentTimeNotification() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat(Constant.FORMAT_DATE_NOTIFICATION);
@@ -568,7 +571,189 @@ public class CommonUtils {
     public static Uri getBitmapUri(Context context, Bitmap bitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap,context.getString(R.string.app_name) , null);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, context.getString(R.string.app_name), null);
         return Uri.parse(path);
+    }
+
+    public static List<CashTotal> getCashForPayament(List<CashTotal> cashDatabase, long totalAmount) {
+        List<CashTotal> list = new ArrayList<>();
+        List<CashTotal> listTemp = new ArrayList<>();
+        for (CashTotal cashTotal : cashDatabase) {
+            // 20000 : 2
+//            Log.e("cashTotal getParValue()", cashTotal.getParValue() + "");// 20000
+//            Log.e("cashTotal getTotal()", cashTotal.getTotal() + "");// 0
+//            Log.e("cashTotal getTotalDatabase()", cashTotal.getTotalDatabase() + "");// 2
+            //Log.e("div ",cashTotal.getParValue()* cashTotal.getTotalDatabase()%totalAmount+"");
+            if (cashTotal.getParValue() == totalAmount) {
+                Log.e("checkListECash", "1");
+                cashTotal.setTotal(1);
+                cashTotal.setTotalDatabase(1);
+                list.add(cashTotal);
+                return list;
+            } else if (cashTotal.getParValue() < totalAmount && (cashTotal.getParValue() * cashTotal.getTotalDatabase()) % totalAmount == 0) {
+                Log.e("checkListECash", "2");
+                return getCashByTotal(cashTotal, (int) totalAmount);
+            } else if (cashTotal.getParValue() < totalAmount) {
+                //todo" working here
+                Log.e("checkListECash", "4");
+                    int a = (int) totalAmount / cashTotal.getParValue();
+                    int b = (int) totalAmount % cashTotal.getParValue();
+                    Log.e("a", a+"");
+                    Log.e("b", b+"");
+                    if (a > 0 && b == 0) {
+                        cashTotal.setTotal(a);
+                        cashTotal.setTotalDatabase(a);
+                        list.add(cashTotal);
+                       // Log.e("checkListECash", "4.1");
+                        return list;
+                    } else if (a > 0 && b > 0) {
+                        if (cashTotal.getTotalDatabase() >= a) {
+                            Log.e("checkListECash", "4.11");
+                            cashTotal.setTotal(a);
+                            cashTotal.setTotalDatabase(a);
+                            list.add(cashTotal);
+                        } else if (cashTotal.getTotalDatabase() < a) {
+                            Log.e("checkListECash", "4.12");
+                           cashTotal.setTotal(cashTotal.getTotalDatabase());
+                            list.add(cashTotal);
+                        }
+                        listTemp = getCashTemp(cashDatabase, b);
+                        if (listTemp.size() > 0) {
+                            list.addAll(listTemp);
+//                            if(checkTotalListCash(listTemp,totalAmount)){
+//                                return list;
+//                            }else{
+//                                return null;
+//                            }
+                            return list;
+                           // Log.e("checkListECash", "4.2");
+
+                        } else {
+                            Log.e("checkListECash", "4.3");
+                            return null;
+                        }
+                    }
+//                    else if (a == 0 & b > 0) {
+//                        for (CashTotal cashTotalTemp : cashDatabase) {
+//                            if (b == cashTotalTemp.getParValue()) {
+//                                cashTotalTemp.setTotal(1);
+//                                cashTotalTemp.setTotalDatabase(1);
+//                                listTemp.add(cashTotalTemp);
+//                            } else if (cashTotalTemp.getParValue() < b && (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase()) % b == 0) {
+//                                listTemp.addAll(getCashByTotal(cashTotalTemp, b));
+//                            }
+//                        }
+//                        if (listTemp.size() > 0) {
+//                            list.addAll(listTemp);
+//                            Log.e("checkListECash", "4.4");
+//                            return list;
+//                        } else {
+//                            Log.e("checkListECash", "4.5");
+//                            return null;
+//                        }
+//                    }
+//                    Log.e("checkListECash", "4.6");
+//                    return list;
+
+
+            }
+
+        }
+        return list;
+    }
+
+    private static List<CashTotal> getCashByTotal(CashTotal cashTotal, int totalAmount) {
+        List<CashTotal> list = new ArrayList<>();
+        for (int i = 1; i <= cashTotal.getTotalDatabase(); i++) {
+            if (cashTotal.getParValue() * i == totalAmount) {
+                cashTotal.setTotal(i);
+                cashTotal.setTotalDatabase(i);
+                list.add(cashTotal);
+                return list;
+            }
+        }
+        return list;
+    }
+
+
+    private static List<CashTotal> getCashTemp(List<CashTotal> cashDatabase, int b) {
+        List<CashTotal> list = new ArrayList<>();
+      //  Collections.reverse(cashDatabase);
+        for (CashTotal cashTotalTemp : cashDatabase) {
+        //    Log.e("cashTotalTemp ",  cashTotalTemp.getParValue()+"");
+            if (b == cashTotalTemp.getParValue()) {
+                cashTotalTemp.setTotal(1);
+                cashTotalTemp.setTotalDatabase(1);
+                list.add(cashTotalTemp);
+            }
+//            else if (cashTotalTemp.getParValue() < b && (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase()) % b == 0) {
+//                Log.e("cashTotalTemp ....","cashTotalTemp");
+//                list.addAll(getCashByTotal(cashTotalTemp, b));
+//            }
+            else if (b > cashTotalTemp.getParValue()) {
+                int c = b / cashTotalTemp.getParValue();
+                int d = b % cashTotalTemp.getParValue();
+                Log.e("c ",  c+"");
+                Log.e("d ",  d+"");
+                if(c>0){
+                    if (cashTotalTemp.getTotalDatabase() >= c) {
+                        cashTotalTemp.setTotal(c);
+                        cashTotalTemp.setTotalDatabase(c);
+                        list.add(cashTotalTemp);
+                    }
+//                    else if (cashTotalTemp.getTotalDatabase() < c) {
+//                        cashTotalTemp.setTotal(cashTotalTemp.getTotalDatabase());
+//                      //  cashTotalTemp.setTotalDatabase(cashTotalTemp.getTotalDatabase());
+//                        list.add(cashTotalTemp);
+//                    }
+                }
+
+                if (d > 0) {
+                    Log.e("t 2.0",  d+"");
+
+                    list.addAll(getCashByList(cashDatabase,d));
+                }
+
+            }
+        }
+        return list;
+    }
+    private static List<CashTotal> getCashByList( List<CashTotal> cashDatabase, int values) {
+        Log.e("values ",values+"");
+        List<CashTotal> list = new ArrayList<>();
+        for (CashTotal cashTotalTemp : cashDatabase) {
+            if(cashTotalTemp.getParValue()==values){
+                cashTotalTemp.setTotal(1);
+                cashTotalTemp.setTotalDatabase(1);
+                list.add(cashTotalTemp);
+                Log.e("values 0 ",values+"");
+               // return list;
+            }
+            if(values/cashTotalTemp.getParValue()>0){
+                Log.e("values 1 ",values+"");
+                list.addAll(getCashByTotal(cashTotalTemp,values));
+            }
+            if(values%cashTotalTemp.getParValue()>0){
+                Log.e("values 2 ",values+"");
+                for(CashTotal cash : cashDatabase){
+                    if(cash.getParValue()==values){
+                        cash.setTotal(1);
+                        cash.setTotalDatabase(1);
+                        list.add(cash);
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
+    private static boolean checkTotalListCash(List<CashTotal> cashDatabase,long total){
+        long sum =0;
+        for(CashTotal cashTotal:cashDatabase){
+            sum+=cashTotal.getParValue()*cashTotal.getTotal();
+        }
+        if(sum==total)
+            return true;
+      return false;
     }
 }
