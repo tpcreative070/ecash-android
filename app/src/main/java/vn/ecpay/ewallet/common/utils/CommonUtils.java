@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -30,7 +29,6 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -38,7 +36,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,6 +63,7 @@ import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
@@ -575,9 +573,10 @@ public class CommonUtils {
         return Uri.parse(path);
     }
 
-    public static List<CashTotal> getCashForPayament(List<CashTotal> cashDatabase, long totalAmount) {
+    public static CashValid getCashForPayment(List<CashTotal> cashDatabase, long totalAmount) {
         List<CashTotal> list = new ArrayList<>();
         List<CashTotal> listTemp = new ArrayList<>();
+        CashValid cashValid = new CashValid();
         for (CashTotal cashTotal : cashDatabase) {
             // 20000 : 2
 //            Log.e("cashTotal getParValue()", cashTotal.getParValue() + "");// 20000
@@ -589,77 +588,70 @@ public class CommonUtils {
                 cashTotal.setTotal(1);
                 cashTotal.setTotalDatabase(1);
                 list.add(cashTotal);
-                return list;
-            } else if (cashTotal.getParValue() < totalAmount && (cashTotal.getParValue() * cashTotal.getTotalDatabase()) % totalAmount == 0) {
-                Log.e("checkListECash", "2");
-                return getCashByTotal(cashTotal, (int) totalAmount);
-            } else if (cashTotal.getParValue() < totalAmount) {
-                //todo" working here
-                Log.e("checkListECash", "4");
-                    int a = (int) totalAmount / cashTotal.getParValue();
-                    int b = (int) totalAmount % cashTotal.getParValue();
-                    Log.e("a", a+"");
-                    Log.e("b", b+"");
-                    if (a > 0 && b == 0) {
-                        cashTotal.setTotal(a);
-                        cashTotal.setTotalDatabase(a);
-                        list.add(cashTotal);
-                       // Log.e("checkListECash", "4.1");
-                        return list;
-                    } else if (a > 0 && b > 0) {
-                        if (cashTotal.getTotalDatabase() >= a) {
-                            Log.e("checkListECash", "4.11");
-                            cashTotal.setTotal(a);
-                            cashTotal.setTotalDatabase(a);
-                            list.add(cashTotal);
-                        } else if (cashTotal.getTotalDatabase() < a) {
-                            Log.e("checkListECash", "4.12");
-                           cashTotal.setTotal(cashTotal.getTotalDatabase());
-                            list.add(cashTotal);
-                        }
-                        listTemp = getCashTemp(cashDatabase, b);
-                        if (listTemp.size() > 0) {
-                            list.addAll(listTemp);
-//                            if(checkTotalListCash(listTemp,totalAmount)){
-//                                return list;
-//                            }else{
-//                                return null;
-//                            }
-                            return list;
-                           // Log.e("checkListECash", "4.2");
 
-                        } else {
-                            Log.e("checkListECash", "4.3");
-                            return null;
-                        }
+                cashValid.getListCashValid().addAll(list);
+                cashValid.setCashLeft(0);
+                // return list;
+                return cashValid;
+            }
+//            else if (cashTotal.getParValue() < totalAmount && (cashTotal.getParValue() * cashTotal.getTotalDatabase()) % totalAmount == 0) {
+//                Log.e("checkListECash", "2");
+//                return getCashByTotal(cashTotal, (int) totalAmount);
+//            }
+            else if (cashTotal.getParValue() < totalAmount) {
+                //todo" working here
+                //Log.e("checkListECash", "4");
+                int cash = (int) totalAmount / cashTotal.getParValue();
+                int moneyLeft = (int) totalAmount % cashTotal.getParValue();
+//                    Log.e("cash", cash+"");
+//                    Log.e("moneyLeft", moneyLeft+"");
+                if (cash > 0 && moneyLeft == 0) {
+                    cashTotal.setTotal(cash);
+                    cashTotal.setTotalDatabase(cash);
+                    list.add(cashTotal);
+                    Log.e("checkListECash", "4.1");
+                    cashValid.getListCashValid().addAll(list);
+                    cashValid.setCashLeft(0);
+                    return cashValid;
+                } else if (cash > 0 && moneyLeft > 0) {
+                    if (cashTotal.getTotalDatabase() >= cash) {
+                        //Log.e("checkListECash", "4.11");
+                        cashTotal.setTotal(cash);
+                        cashTotal.setTotalDatabase(cash);
+                        list.add(cashTotal);
+                        cashValid.getListCashValid().addAll(list);
+                    } else if (cashTotal.getTotalDatabase() < cash) {
+                        //Log.e("checkListECash", "4.12");
+                        cashTotal.setTotal(cashTotal.getTotalDatabase());
+                        cashValid.getListCashValid().addAll(list);
+                        list.add(cashTotal);
                     }
-//                    else if (a == 0 & b > 0) {
-//                        for (CashTotal cashTotalTemp : cashDatabase) {
-//                            if (b == cashTotalTemp.getParValue()) {
-//                                cashTotalTemp.setTotal(1);
-//                                cashTotalTemp.setTotalDatabase(1);
-//                                listTemp.add(cashTotalTemp);
-//                            } else if (cashTotalTemp.getParValue() < b && (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase()) % b == 0) {
-//                                listTemp.addAll(getCashByTotal(cashTotalTemp, b));
-//                            }
-//                        }
-//                        if (listTemp.size() > 0) {
+                    CashValid cashV = getCashValid(cashDatabase, moneyLeft);
+                    if (cashV != null) {
+                        if (cashV.getListCashValid() != null) {
+                            cashValid.getListCashValid().addAll(cashV.getListCashValid());
+                        }
+                        cashValid.setCashLeft(cashV.getCashLeft());
+                        return cashValid;
+                    }
+                    // listTemp =getCashValid(cashDatabase, moneyLeft);
+//                        if(listTemp!=null&&listTemp.size()>0){
 //                            list.addAll(listTemp);
-//                            Log.e("checkListECash", "4.4");
 //                            return list;
-//                        } else {
-//                            Log.e("checkListECash", "4.5");
+//                        }else{
 //                            return null;
 //                        }
-//                    }
-//                    Log.e("checkListECash", "4.6");
-//                    return list;
 
 
+                } else if (cash == 0 && moneyLeft > 0) {
+                    Log.e("checkListECash", "cash==0&&b>moneyLeft");
+                } else if (cash == 0 && moneyLeft == 0) {
+                    Log.e("checkListECash", "cash==0&&b==moneyLeft");
+                }
             }
 
         }
-        return list;
+        return cashValid;
     }
 
     private static List<CashTotal> getCashByTotal(CashTotal cashTotal, int totalAmount) {
@@ -676,84 +668,90 @@ public class CommonUtils {
     }
 
 
-    private static List<CashTotal> getCashTemp(List<CashTotal> cashDatabase, int b) {
+    private static CashValid getCashValid(List<CashTotal> cashDatabase, int money) {// b: so tien con du
         List<CashTotal> list = new ArrayList<>();
-      //  Collections.reverse(cashDatabase);
+        CashValid cashValid = new CashValid();
+        //  Collections.reverse(cashDatabase);
+        int moneyLeft = money;
+        cashValid.setCashLeft(moneyLeft);
         for (CashTotal cashTotalTemp : cashDatabase) {
-        //    Log.e("cashTotalTemp ",  cashTotalTemp.getParValue()+"");
-            if (b == cashTotalTemp.getParValue()) {
+            //  Log.e("moneyLeft " + cashTotalTemp.getParValue(), moneyLeft + "");
+            if (cashValid.getCashLeft() == 0) {
+                // Log.e("moneyLeft =0 ","return ");
+                return cashValid;
+            }
+            if (moneyLeft == cashTotalTemp.getParValue()) {
                 cashTotalTemp.setTotal(1);
                 cashTotalTemp.setTotalDatabase(1);
-                list.add(cashTotalTemp);
-            }
-//            else if (cashTotalTemp.getParValue() < b && (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase()) % b == 0) {
-//                Log.e("cashTotalTemp ....","cashTotalTemp");
-//                list.addAll(getCashByTotal(cashTotalTemp, b));
-//            }
-            else if (b > cashTotalTemp.getParValue()) {
-                int c = b / cashTotalTemp.getParValue();
-                int d = b % cashTotalTemp.getParValue();
-                Log.e("c ",  c+"");
-                Log.e("d ",  d+"");
-                if(c>0){
-                    if (cashTotalTemp.getTotalDatabase() >= c) {
-                        cashTotalTemp.setTotal(c);
-                        cashTotalTemp.setTotalDatabase(c);
-                        list.add(cashTotalTemp);
+                // list.add(cashTotalTemp);
+                cashValid.getListCashValid().add(cashTotalTemp);
+                cashValid.setCashLeft(0);
+                return cashValid;
+            } else if (moneyLeft > cashTotalTemp.getParValue() && cashTotalTemp.getTotal() == 0) {
+                if (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase() == moneyLeft) {
+                    //list.add(cashTotalTemp);
+                    moneyLeft = moneyLeft - (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase());
+                    cashValid.getListCashValid().add(cashTotalTemp);
+                    cashValid.setCashLeft(moneyLeft);
+
+                } else if (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase() % moneyLeft == 0) {
+                    Log.e("here 1", cashTotalTemp.getParValue() + "");
+                    boolean checklist=false;
+
+                    for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
+                        if (moneyLeft == cashTotalTemp.getParValue() * i) {
+                            cashTotalTemp.setTotal(i);
+                            cashTotalTemp.setTotalDatabase(i);
+                            //  list.add(cashTotalTemp);
+                            moneyLeft = moneyLeft - (cashTotalTemp.getParValue() * i);
+                            cashValid.getListCashValid().add(cashTotalTemp);
+                            cashValid.setCashLeft(moneyLeft);
+                        //    Log.e("moneyLeft 0", moneyLeft + "");
+                            checklist =true;
+                        }
                     }
-//                    else if (cashTotalTemp.getTotalDatabase() < c) {
-//                        cashTotalTemp.setTotal(cashTotalTemp.getTotalDatabase());
-//                      //  cashTotalTemp.setTotalDatabase(cashTotalTemp.getTotalDatabase());
-//                        list.add(cashTotalTemp);
-//                    }
-                }
+                    if(!checklist){
+                        cashTotalTemp.setTotal(1);
+                        cashTotalTemp.setTotalDatabase(1);
+                        // list.add(cashTotalTemp);
+                        moneyLeft = moneyLeft - cashTotalTemp.getParValue();
+                        cashValid.getListCashValid().add(cashTotalTemp);
+                        cashValid.setCashLeft(moneyLeft);
+                    }
+                } else {
+                  //  Log.e("cashTotalTemp", cashTotalTemp.getParValue() + "");
+                    boolean checklist=false;
+                    for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
+                        if (moneyLeft == cashTotalTemp.getParValue() * i) {
+                            cashTotalTemp.setTotal(i);
+                            cashTotalTemp.setTotalDatabase(i);
+                            //  list.add(cashTotalTemp);
+                            moneyLeft = moneyLeft - (cashTotalTemp.getParValue() * i);
+                            cashValid.getListCashValid().add(cashTotalTemp);
+                            cashValid.setCashLeft(moneyLeft);
+                           // Log.e("moneyLeft 1.1", moneyLeft + "");
+                            checklist = true;
+                        }
+                    }
 
-                if (d > 0) {
-                    Log.e("t 2.0",  d+"");
+                    if (!checklist) {
+                        cashTotalTemp.setTotal(1);
+                        cashTotalTemp.setTotalDatabase(1);
+                        // list.add(cashTotalTemp);
 
-                    list.addAll(getCashByList(cashDatabase,d));
-                }
+                       // Log.e("moneyLeft 2", moneyLeft + "");
+                        moneyLeft = moneyLeft - cashTotalTemp.getParValue();
+                        cashValid.getListCashValid().add(cashTotalTemp);
+                        cashValid.setCashLeft(moneyLeft);
+                      //  Log.e("moneyLeft 2.1", moneyLeft + "");
 
-            }
-        }
-        return list;
-    }
-    private static List<CashTotal> getCashByList( List<CashTotal> cashDatabase, int values) {
-        Log.e("values ",values+"");
-        List<CashTotal> list = new ArrayList<>();
-        for (CashTotal cashTotalTemp : cashDatabase) {
-            if(cashTotalTemp.getParValue()==values){
-                cashTotalTemp.setTotal(1);
-                cashTotalTemp.setTotalDatabase(1);
-                list.add(cashTotalTemp);
-                Log.e("values 0 ",values+"");
-               // return list;
-            }
-            if(values/cashTotalTemp.getParValue()>0){
-                Log.e("values 1 ",values+"");
-                list.addAll(getCashByTotal(cashTotalTemp,values));
-            }
-            if(values%cashTotalTemp.getParValue()>0){
-                Log.e("values 2 ",values+"");
-                for(CashTotal cash : cashDatabase){
-                    if(cash.getParValue()==values){
-                        cash.setTotal(1);
-                        cash.setTotalDatabase(1);
-                        list.add(cash);
                     }
                 }
             }
         }
+        //  Log.e("moneyLeft ",cashValid.getCashLeft()+"");
+        return cashValid;
+    }
 
-        return list;
-    }
-    private static boolean checkTotalListCash(List<CashTotal> cashDatabase,long total){
-        long sum =0;
-        for(CashTotal cashTotal:cashDatabase){
-            sum+=cashTotal.getParValue()*cashTotal.getTotal();
-        }
-        if(sum==total)
-            return true;
-      return false;
-    }
+
 }

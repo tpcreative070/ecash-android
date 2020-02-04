@@ -101,6 +101,14 @@ public class ToPayFragment extends ECashBaseFragment {
                 showDialogError(getString(R.string.err_anount_null));
             return;
         }
+        if(edtAmount.getText().toString().length()>0){
+            Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
+            // Log.e("money%1000 ",money%1000+"");
+            if(money<1000||money%1000!=0){
+                showDialogError(getString(R.string.err_amount_validate));
+                return;
+            }
+        }
         if (edtContent.getText().toString().isEmpty()) {
             if (getActivity() != null)
                 showDialogError(getString(R.string.err_dit_not_content));

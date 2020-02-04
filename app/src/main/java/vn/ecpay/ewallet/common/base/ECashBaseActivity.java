@@ -44,6 +44,7 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.function.ToPayFuntion;
 import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
@@ -380,12 +381,22 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         //-------
         if (balanceEcash >= totalAmount) {
             //Log.e("case 1","hop le, check list money");
-            if (checkListECashInvalidate(totalAmount) != null && checkListECashInvalidate(totalAmount).size() > 0) {
-                showDialogConfirmPayment(checkListECashInvalidate(totalAmount), payment);
-            } else {
-                Log.e("case 1.1", "đổi ecash");
-                showDialogError("đổi ecash");
+            CashValid cashValid =checkListECashInvalidate(totalAmount);
+            if(cashValid!=null){
+                if(cashValid.getListCashValid().size()>0&&cashValid.getCashLeft()==0){
+                    showDialogConfirmPayment(cashValid.getListCashValid(),payment);
+                }else if(cashValid.getListCashValid().size()>0&&cashValid.getCashLeft()>0){
+                    showDialogError("đổi ecash" +cashValid.getCashLeft()+"");
+                }
+            }else{
+                showDialogError(getActivity().getString(R.string.str_have_warning));
             }
+//            if (checkListECashInvalidate(totalAmount) != null && checkListECashInvalidate(totalAmount).getListCashValid().size() > 0) {
+//                showDialogConfirmPayment(checkListECashInvalidate(totalAmount).getListCashValid(), payment);
+//            } else {
+//                Log.e("case 1.1", "đổi ecash");
+//                showDialogError("đổi ecash");
+//            }
         } else if (balanceEcash < totalAmount) {
             if (balanceEdong + balanceEcash < totalAmount) {
                 Log.e("case 2", "case 2");
@@ -400,15 +411,13 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             showDialogCannotPayment();
         }
         //
-
-
     }
 
-    private List<CashTotal> checkListECashInvalidate(long totalAmount) {
+    private CashValid checkListECashInvalidate(long totalAmount) {
         List<CashTotal> cashTotalList = DatabaseUtil.getAllCashTotal(getActivity());
         Collections.reverse(cashTotalList);
         //CommonUtils.handleGetCash(cashTotalList);
-        return CommonUtils.getCashForPayament(cashTotalList,totalAmount);
+        return CommonUtils.getCashForPayment(cashTotalList,totalAmount);
     }
 
     private void handleToPay(List<CashTotal> listCash, Payments payToRequest) {
