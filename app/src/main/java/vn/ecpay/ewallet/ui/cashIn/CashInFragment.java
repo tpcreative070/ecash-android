@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -35,7 +37,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.TransactionLog_Database;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
@@ -44,8 +46,8 @@ import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashIn.presenter.CashInPresenter;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
+
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
 public class CashInFragment extends ECashBaseFragment implements CashInView {
     @BindView(R.id.tv_account_name)
@@ -150,11 +152,11 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         builder.setTitle("Chọn tài khoản Edong");
         String[] eDong = new String[listEDongInfo.size()];
         for (int i = 0; i < listEDongInfo.size(); i++) {
-            eDong[i] = String.valueOf(listEDongInfo.get(i).getAccountIdt());
+            eDong[i] = listEDongInfo.get(i).getAccountIdt();
         }
 
         builder.setItems(eDong, (dialog, which) -> {
-            tvEdongWallet.setText(String.valueOf(listEDongInfo.get(which).getAccountIdt()));
+            tvEdongWallet.setText(listEDongInfo.get(which).getAccountIdt());
             tvOverEdong.setText(String.valueOf(listEDongInfo.get(which).getUsableBalance()));
             eDongInfoCashIn = listEDongInfo.get(which);
         });
@@ -233,31 +235,43 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     }
 
     @Override
-    public void transferMoneySuccess(CashInResponse eDongToECash) {
-        saveTransactionLogs(eDongToECash);
+    public void transferMoneySuccess(CashInResponse cashInResponse) {
+        Gson gson = new Gson();
+        String jsonCashInResponse = gson.toJson(cashInResponse);
+        CacheData_Database cacheData_database = new CacheData_Database();
+        cacheData_database.setTransactionSignature(cashInResponse.getId());
+        cacheData_database.setResponseData(jsonCashInResponse);
+        cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
+        DatabaseUtil.saveCacheData(cacheData_database, getActivity());
         cashInPresenter.getEDongInfo(accountInfo);
-        CashInFunction cashInFunction = new CashInFunction(eDongToECash, accountInfo, getActivity());
-        cashInFunction.handleCash(() -> new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (getActivity() == null) return;
-                getActivity().runOnUiThread(() -> {
-                    dismissProgress();
-                    showDialogCashInOk();
-                });
-            }
-        }, 500));
     }
 
-    private void saveTransactionLogs(CashInResponse cashInResponse) {
-        TransactionLog_Database transactionLog = new TransactionLog_Database();
-        transactionLog.setSenderAccountId(cashInResponse.getSender());
-        transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
-        transactionLog.setType(cashInResponse.getType());
-        transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
-        transactionLog.setCashEnc(cashInResponse.getCashEnc());
-        transactionLog.setTransactionSignature(cashInResponse.getId());
-        transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
-        DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateData(EventDataChange event) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() == null) return;
+                    getActivity().runOnUiThread(() -> {
+                        dismissProgress();
+                        showDialogCashInOk();
+                    });
+                }
+            }, 500);
+        }
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().unregister(this);
+        super.onDetach();
     }
 }

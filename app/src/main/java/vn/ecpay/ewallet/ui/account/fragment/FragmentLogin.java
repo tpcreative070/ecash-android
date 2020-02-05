@@ -23,9 +23,6 @@ import androidx.annotation.Nullable;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -51,6 +48,7 @@ import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.presenter.LoginPresenter;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
+import vn.ecpay.ewallet.ui.function.CashInService;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class FragmentLogin extends ECashBaseFragment implements LoginView {
@@ -340,8 +338,10 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void requestLoginSuccess(AccountInfo mAccountInfo) {
-        if (getActivity() != null)
+        if (getActivity() != null) {
             getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
+            getActivity().startService(new Intent(getActivity(), CashInService.class));
+        }
         mAccountInfo.setUsername(userName);
         mAccountInfo.setToken(mAccountInfo.getToken());
         loginPresenter.getEDongInfo(mAccountInfo);

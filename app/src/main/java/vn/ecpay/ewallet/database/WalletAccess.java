@@ -9,6 +9,7 @@ import androidx.room.RawQuery;
 import androidx.room.Update;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.ecpay.ewallet.database.table.CacheData_Database;

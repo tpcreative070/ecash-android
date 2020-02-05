@@ -2,6 +2,8 @@ package vn.ecpay.ewallet.ui.cashOut.presenter;
 
 import android.content.Context;
 
+import org.greenrobot.eventbus.EventBus;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -13,6 +15,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
@@ -205,19 +208,15 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                             if (response.body().getResponseData().getListAcc().size() > 0) {
                                 ECashApplication.setListEDongInfo(response.body().getResponseData().getListAcc());
                             }
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            cashOutView.dismissLoading();
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
-                        } else {
-                            cashOutView.dismissLoading();
-                            cashOutView.showDialogError(response.body().getResponseMessage());
                         }
                     }
                 }
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
             }
 
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
             }
         });
     }

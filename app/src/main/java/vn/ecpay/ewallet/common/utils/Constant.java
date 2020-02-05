@@ -5,7 +5,7 @@ public class Constant {
     public static final int REQUEST_IMAGE_CAPTURE = 3;
     public static final int REQUEST_TAKE_PHOTO = 2;
 
-    public static final String app_name  = "eCash App";
+    public static final String app_name = "eCash App";
     public static final String sesion_expid = "3043";
     public static final int DEFAULT_LANGUAGE_ID = 0;
 
@@ -42,7 +42,7 @@ public class Constant {
     public static final String STR_CASH_OUT = "out";
     public static final int CONTACT_ON = 1;
     public static final int CONTACT_OFF = 0;
-//    public static final String STR_PRIVATE_KEY_CHANEL = "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
+    //    public static final String STR_PRIVATE_KEY_CHANEL = "AO6scDS+DBCtzmHVaQGnMM28Ir+kBJpQjOhPkc/fQeJb";
 //    public static final String STR_SERVER_KEY_CHANEL = "BJ/wxgRRdijU/YaJCmJ/jUera8SduNDqJdKra4Iph7ErEsvNQgNu7tpmwD+XLbxXTPpY9MBP08H5GS54Wb7XmB0=";
     public static final String STR_EMPTY = "";
     public static final String DEVICE_IMEI = "DEVICE_IMEI";
@@ -55,7 +55,7 @@ public class Constant {
     public static final String WALLET_ALIAS_MASTER_KEY = "WALLET_ALIAS_PUB_KEY";
 
     //vent bus
-    public static final String EVENT_UPDATE_AVARTAR= "EVENT_UPDATE_AVARTAR";
+    public static final String EVENT_UPDATE_AVARTAR = "EVENT_UPDATE_AVARTAR";
     public static final String EVENT_CHOSE_IMAGE = "EVENT_CHOSE_IMAGE";
     public static final String UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION";
     public static final String UPDATE_ACCOUNT_LOGIN = "update_account_login";
@@ -69,6 +69,9 @@ public class Constant {
     public static final String EVENT_NETWORK_CHANGE = "EVENT_NETWORK_CHANGE";
     public static final String EVENT_UPDATE_ACCOUNT_INFO = "EVENT_UPDATE_ACCOUNT_INFO";
     public static final String EVENT_UPDATE_LIXI = "EVENT_UPDATE_LIXI";
+
+    public static final String EVENT_UPDATE_CASH_IN = "EVENT_UPDATE_CASH_IN";
+    public static final String EVENT_CASH_IN_SUCCESS = "EVENT_CASH_IN_SUCCESS";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
@@ -103,9 +106,6 @@ public class Constant {
     public static final String TYPE_SEN_SOCKET = "CF";
     public static final String CREDIT_DEBIT_ACCOUNT = "1238161606";
     public static final String ISSUER_CODE = "ECPAY";
-
-    //cashin
-    public static final String LIST_CASH_RESULT = "LIST_CASH_RESULT";
 
     //error code
     public static final String CODE_SUCCESS = "0000";

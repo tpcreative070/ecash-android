@@ -217,7 +217,6 @@ public class WebSocketsService extends Service {
         } else {
             isRunning = false;
         }
-
     }
 
     private void confirmMess(ResponseMessSocket responseMess) {

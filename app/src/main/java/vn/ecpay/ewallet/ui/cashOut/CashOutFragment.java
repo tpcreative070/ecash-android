@@ -303,7 +303,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             @Override
             protected Void doInBackground(Void... voids) {
                 DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
                 cashOutPresenter.getEDongInfo(accountInfo);
                 return null;
             }

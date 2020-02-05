@@ -416,6 +416,12 @@
                     android:text="Xuất file Database (Phục vụ Test)"
                     android:textColor="@color/grey_light" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/tv_export"
+                    android:background="@color/grey_light" />
+
             </RelativeLayout>
 
             <RelativeLayout

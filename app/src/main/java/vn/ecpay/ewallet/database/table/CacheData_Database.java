@@ -16,7 +16,6 @@ public class CacheData_Database {
     @ColumnInfo(name = "responseData")
     private String responseData;
 
-    @NonNull
     @ColumnInfo(name = "type")
     private String type;
 

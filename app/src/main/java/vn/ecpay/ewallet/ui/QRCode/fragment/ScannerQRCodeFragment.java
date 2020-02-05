@@ -24,6 +24,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -38,6 +40,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -50,8 +53,9 @@ import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
+
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
 public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingScannerView.ResultHandler, QRCodeView {
     @BindView(R.id.layout_scan_qr)
@@ -207,8 +211,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         }
                     } else {
                         if (!DatabaseUtil.isTransactionLogExit(responseMess, getActivity())) {
-                            CashInFunction cashInFunction = new CashInFunction(accountInfo, getActivity(), responseMess);
-                            cashInFunction.handleCashIn(() -> onCashInSuccessListener(responseMess.getId()));
+                            handleCashIn(responseMess);
                         } else {
                             restartScan();
                             if (getActivity() != null) {
@@ -230,18 +233,25 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         }
     }
 
+    private String transactionSignatureCashInQR;
+
+    private void handleCashIn(ResponseMessSocket responseMess) {
+        transactionSignatureCashInQR = responseMess.getId();
+        Gson gson = new Gson();
+        String jsonCashInResponse = gson.toJson(responseMess);
+        CacheData_Database cacheData_database = new CacheData_Database();
+        cacheData_database.setTransactionSignature(responseMess.getId());
+        cacheData_database.setResponseData(jsonCashInResponse);
+        cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
+        DatabaseUtil.saveCacheData(cacheData_database, getActivity());
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
+    }
+
     private void restartScan() {
         cashMap.clear();
         eCashSplit.delete(0, eCashSplit.length());
         tvNumberScan.setText(Constant.STR_EMPTY);
         dismissProgress();
-    }
-
-    private void onCashInSuccessListener(String transactionSignature) {
-        restartScan();
-        TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignature);
-        if (getActivity() != null)
-            ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
     }
 
     @OnClick({R.id.layout_scan_qr, R.id.layout_qr_code, R.id.layout_flash, R.id.layout_image})
@@ -280,7 +290,23 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             dismissProgress();
             ((QRCodeActivity) getActivity()).showDialogError("Giao dịch được gửi cho tài khoản khác");
         }
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() == null) return;
+                    getActivity().runOnUiThread(() -> onCashInSuccessListener());
+                }
+            }, 500);
+        }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private void onCashInSuccessListener() {
+        restartScan();
+        TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignatureCashInQR);
+        if (getActivity() != null)
+            ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
     }
 
     @Override
