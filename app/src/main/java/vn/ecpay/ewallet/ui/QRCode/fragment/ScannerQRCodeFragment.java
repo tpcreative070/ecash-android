@@ -28,6 +28,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -42,6 +44,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
@@ -56,7 +59,10 @@ import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
+
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
 public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingScannerView.ResultHandler, QRCodeView {
     @BindView(R.id.layout_scan_qr)
@@ -123,9 +129,9 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             if (CommonUtils.getTypeScan(qrScanBase) == Constant.IS_SCAN_CASH) {
                 handleCash(result.getText());
             } else if (CommonUtils.getTypeScan(qrScanBase) == Constant.IS_SCAN_CONTACT) {
-                if(((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()){
+                if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
                     handleContactPayTo(result.getText());
-                }else {
+                } else {
                     handleContact(result.getText());
                 }
 
@@ -178,15 +184,15 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
-       // Log.e("result",result);
+        // Log.e("result",result);
         Gson gson = new Gson();
         try {
             QRCodeSender qrCodeSender = new QRCodeSender();
-            QRCodePayment qrCodePayment =new QRCodePayment();
-           // QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
-          //  Log.e("scan_qr_code",qrCodeSender.toString());
+            QRCodePayment qrCodePayment = new QRCodePayment();
+            // QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
+            //  Log.e("scan_qr_code",qrCodeSender.toString());
             if (qrCodeSender.validate(result)) {
-                qrCodeSender =gson.fromJson(result, QRCodeSender.class);
+                qrCodeSender = gson.fromJson(result, QRCodeSender.class);
                 cashMap.put(qrCodeSender.getCycle(), qrCodeSender.getContent());
                 String numberScan = cashMap.size() + "/" + qrCodeSender.getTotal();
                 tvNumberScan.setText(getResources().getString(R.string.str_number_scan_qr_code, numberScan));
@@ -223,8 +229,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         }
                     } else {
                         if (!DatabaseUtil.isTransactionLogExit(responseMess, getActivity())) {
-                            CashInFunction cashInFunction = new CashInFunction(accountInfo, getActivity(), responseMess);
-                            cashInFunction.handleCashIn(() -> onCashInSuccessListener(responseMess.getId()));
+                            handleCashIn(responseMess);
                         } else {
                             restartScan();
                             if (getActivity() != null) {
@@ -234,10 +239,10 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         }
                     }
                 }
-            } else if(qrCodePayment.validate(result)){
+            } else if (qrCodePayment.validate(result)) {
                 dismissProgress();
-                qrCodePayment =gson.fromJson(result, QRCodePayment.class);
-                if(qrCodePayment.getTotalAmount()==null){
+                qrCodePayment = gson.fromJson(result, QRCodePayment.class);
+                if (qrCodePayment.getTotalAmount() == null) {
                     showDialogError(getString(R.string.str_have_warning));
                     return;
                 }
@@ -246,10 +251,9 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 resultIntent.putExtra(Constant.SCAN_QR_TOPAY, payment);
                 getActivity().setResult(Activity.RESULT_OK, resultIntent);
                 getActivity().finish();
-               // validateQRCodePayment(amount);
+                // validateQRCodePayment(amount);
 
-            }
-            else {
+            } else {
                 dismissProgress();
                 if (null != getActivity())
                     ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ");
@@ -260,17 +264,19 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ");
         }
     }
-    private void handleContactPayTo(String result){
+
+    private void handleContactPayTo(String result) {
         Gson gson = new Gson();
         try {
             QRContact qrContact = gson.fromJson(result, QRContact.class);
-            if (qrContact != null) {Contact contact = new Contact();
+            if (qrContact != null) {
+                Contact contact = new Contact();
                 contact.setPublicKeyValue(qrContact.getPublicKey());
                 contact.setFullName(qrContact.getFullname());
                 contact.setPhone(qrContact.getPersonMobiPhone());
                 contact.setTerminalInfo(qrContact.getTerminalInfo());
                 contact.setWalletId(qrContact.getWalletId());
-                if(!checkContactExist(contact)){
+                if (!checkContactExist(contact)) {
                     DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
                 }
                 ((QRCodeActivity) getActivity()).checkPayTo(contact);
@@ -281,17 +287,32 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
         }
     }
-    private boolean checkContactExist(Contact contact){
-        boolean contactExist =false;
+
+    private boolean checkContactExist(Contact contact) {
+        boolean contactExist = false;
         List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
-        if(listContact!=null&&listContact.size()>0){
+        if (listContact != null && listContact.size() > 0) {
             for (int i = 0; i < listContact.size(); i++) {
                 if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
-                    return  true;
+                    return true;
                 }
             }
         }
-       return contactExist;
+        return contactExist;
+    }
+
+    private String transactionSignatureCashInQR;
+
+    private void handleCashIn(ResponseMessSocket responseMess) {
+        transactionSignatureCashInQR = responseMess.getId();
+        Gson gson = new Gson();
+        String jsonCashInResponse = gson.toJson(responseMess);
+        CacheData_Database cacheData_database = new CacheData_Database();
+        cacheData_database.setTransactionSignature(responseMess.getId());
+        cacheData_database.setResponseData(jsonCashInResponse);
+        cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
+        DatabaseUtil.saveCacheData(cacheData_database, getActivity());
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
     }
 
     private void restartScan() {
@@ -299,13 +320,6 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         eCashSplit.delete(0, eCashSplit.length());
         tvNumberScan.setText(Constant.STR_EMPTY);
         dismissProgress();
-    }
-
-    private void onCashInSuccessListener(String transactionSignature) {
-        restartScan();
-        TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignature);
-        if (getActivity() != null)
-            ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
     }
 
     @OnClick({R.id.layout_scan_qr, R.id.layout_qr_code, R.id.layout_flash, R.id.layout_image})
@@ -344,10 +358,23 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             dismissProgress();
             ((QRCodeActivity) getActivity()).showDialogError("Giao dịch được gửi cho tài khoản khác");
         }
-//        if(event.getData().equals(Constant.EVENT_SCAN_CONTACT_PAYTO)){
-//            scanContactPayTo =true;
-//        }
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() == null) return;
+                    getActivity().runOnUiThread(() -> onCashInSuccessListener());
+                }
+            }, 500);
+        }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private void onCashInSuccessListener() {
+        restartScan();
+        TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignatureCashInQR);
+        if (getActivity() != null)
+            ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
     }
 
     @Override

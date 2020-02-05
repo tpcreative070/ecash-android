@@ -8,15 +8,15 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class ResponseData {
 
-    @SerializedName("walletId")
-    private Long mWalletId;
+  @SerializedName("walletId")
+  private Long mWalletId;
 
-    public Long getWalletId() {
-        return mWalletId;
-    }
+  public Long getWalletId() {
+    return mWalletId;
+  }
 
-    public void setWalletId(Long walletId) {
-        mWalletId = walletId;
-    }
+  public void setWalletId(Long walletId) {
+    mWalletId = walletId;
+  }
 
 }

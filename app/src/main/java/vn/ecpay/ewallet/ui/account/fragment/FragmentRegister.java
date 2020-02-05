@@ -21,7 +21,6 @@ import androidx.annotation.RequiresApi;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,16 +36,15 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.account.module.RegisterModule;
 import vn.ecpay.ewallet.ui.account.presenter.RegisterPresenter;
 import vn.ecpay.ewallet.ui.account.view.RegisterView;
-import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class FragmentRegister extends ECashBaseFragment implements RegisterView {
     @BindView(R.id.edt_user_name)
@@ -394,7 +392,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             }
         }
         registerPresenter.getEDongInfo(accountInfo);
-        getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
+//        getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
     }
 
     @Override

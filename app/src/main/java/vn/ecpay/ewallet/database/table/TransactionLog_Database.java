@@ -12,6 +12,10 @@ public class TransactionLog_Database {
     @ColumnInfo(name = "id")
     private int id;
 
+    @NonNull
+    @ColumnInfo(name = "transactionSignature")
+    private String transactionSignature;
+
     @ColumnInfo(name = "senderAccountId")
     private String senderAccountId;
 
@@ -32,9 +36,6 @@ public class TransactionLog_Database {
 
     @ColumnInfo(name = "refId")
     private String refId;
-
-    @ColumnInfo(name = "transactionSignature")
-    private String transactionSignature;
 
     @ColumnInfo(name = "previousHash")
     private String previousHash;
@@ -104,19 +105,20 @@ public class TransactionLog_Database {
         this.refId = refId;
     }
 
-    public String getTransactionSignature() {
-        return transactionSignature;
-    }
-
-    public void setTransactionSignature(String transactionSignature) {
-        this.transactionSignature = transactionSignature;
-    }
-
     public String getPreviousHash() {
         return previousHash;
     }
 
     public void setPreviousHash(String previousHash) {
         this.previousHash = previousHash;
+    }
+
+    @NonNull
+    public String getTransactionSignature() {
+        return transactionSignature;
+    }
+
+    public void setTransactionSignature(@NonNull String transactionSignature) {
+        this.transactionSignature = transactionSignature;
     }
 }

@@ -9,8 +9,10 @@ import androidx.room.RawQuery;
 import androidx.room.Update;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.CashTemp_Database;
@@ -22,6 +24,7 @@ import vn.ecpay.ewallet.database.table.Profile_Database;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -32,6 +35,16 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
 @Dao
 public interface WalletAccess {
+    // todo Data_cache---------------------------------------------------------------------------------------
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOnlySingleCacheData(CacheData_Database cacheData_database);
+
+    @Query("SELECT *  FROM CACHE_DATA")
+    List<CacheData> getAllCacheData();
+
+    @Query("DELETE From CACHE_DATA WHERE transactionSignature = :mTransactionSignature")
+    void deleteCacheData(String mTransactionSignature);
+
     // todo Notification_Database---------------------------------------------------------------------------------------
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleNotification(Notification_Database notification);
