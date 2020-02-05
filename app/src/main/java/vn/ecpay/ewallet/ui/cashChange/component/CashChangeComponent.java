@@ -6,5 +6,5 @@ import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 
 @Subcomponent(modules = CashChangeModule.class)
 public interface CashChangeComponent {
-    void inject(CashChangeFragment cashChangeFragment);
+  void inject(CashChangeFragment cashChangeFragment);
 }

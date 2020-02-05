@@ -35,8 +35,11 @@ import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.Resp
 import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
+
 public class CashInFunction {
-    private CashInResponse eDongToECashResponse;
+    private CashInResponse cashInResponse;
     private AccountInfo accountInfo;
     private String[][] deCryptECash;
     private Context context;
@@ -44,11 +47,11 @@ public class CashInFunction {
     private String transactionSignature;
     private CashInSuccessListener cashInSuccessListener;
 
-    public CashInFunction(CashInResponse eDongToECashResponse, AccountInfo accountInfo, Context context) {
-        this.eDongToECashResponse = eDongToECashResponse;
+    public CashInFunction(CashInResponse cashInResponse, AccountInfo accountInfo, Context context) {
+        this.cashInResponse = cashInResponse;
         this.accountInfo = accountInfo;
         this.context = context;
-        this.transactionSignature = eDongToECashResponse.getId();
+        this.transactionSignature = cashInResponse.getId();
     }
 
     public CashInFunction(AccountInfo accountInfo, Context context, ResponseMessSocket responseMessSocket) {
@@ -80,7 +83,8 @@ public class CashInFunction {
 
     public void handleCash(CashInSuccessListener mCashInSuccessListener) {
         this.cashInSuccessListener = mCashInSuccessListener;
-        deCryptECash = CommonUtils.decrypEcash(eDongToECashResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
+        deCryptECash = CommonUtils.decrypEcash(cashInResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
+        DatabaseUtil.saveTransactionLog(cashInResponse, context);
         checkArrayCash();
     }
 

@@ -8,85 +8,85 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class ResponseData {
 
-    @SerializedName("channelCode")
-    private String mChannelCode;
-    @SerializedName("channelId")
-    private Long mChannelId;
-    @SerializedName("channelSignature")
-    private String mChannelSignature;
-    @SerializedName("customerId")
-    private Long mCustomerId;
-    @SerializedName("functionCode")
-    private String mFunctionCode;
-    @SerializedName("functionId")
-    private Long mFunctionId;
-    @SerializedName("token")
-    private String mToken;
-    @SerializedName("username")
-    private String mUsername;
+  @SerializedName("channelCode")
+  private String mChannelCode;
+  @SerializedName("channelId")
+  private Long mChannelId;
+  @SerializedName("channelSignature")
+  private String mChannelSignature;
+  @SerializedName("customerId")
+  private Long mCustomerId;
+  @SerializedName("functionCode")
+  private String mFunctionCode;
+  @SerializedName("functionId")
+  private Long mFunctionId;
+  @SerializedName("token")
+  private String mToken;
+  @SerializedName("username")
+  private String mUsername;
 
-    public String getChannelCode() {
-        return mChannelCode;
-    }
+  public String getChannelCode() {
+    return mChannelCode;
+  }
 
-    public void setChannelCode(String channelCode) {
-        mChannelCode = channelCode;
-    }
+  public void setChannelCode(String channelCode) {
+    mChannelCode = channelCode;
+  }
 
-    public Long getChannelId() {
-        return mChannelId;
-    }
+  public Long getChannelId() {
+    return mChannelId;
+  }
 
-    public void setChannelId(Long channelId) {
-        mChannelId = channelId;
-    }
+  public void setChannelId(Long channelId) {
+    mChannelId = channelId;
+  }
 
-    public String getChannelSignature() {
-        return mChannelSignature;
-    }
+  public String getChannelSignature() {
+    return mChannelSignature;
+  }
 
-    public void setChannelSignature(String channelSignature) {
-        mChannelSignature = channelSignature;
-    }
+  public void setChannelSignature(String channelSignature) {
+    mChannelSignature = channelSignature;
+  }
 
-    public Long getCustomerId() {
-        return mCustomerId;
-    }
+  public Long getCustomerId() {
+    return mCustomerId;
+  }
 
-    public void setCustomerId(Long customerId) {
-        mCustomerId = customerId;
-    }
+  public void setCustomerId(Long customerId) {
+    mCustomerId = customerId;
+  }
 
-    public String getFunctionCode() {
-        return mFunctionCode;
-    }
+  public String getFunctionCode() {
+    return mFunctionCode;
+  }
 
-    public void setFunctionCode(String functionCode) {
-        mFunctionCode = functionCode;
-    }
+  public void setFunctionCode(String functionCode) {
+    mFunctionCode = functionCode;
+  }
 
-    public Long getFunctionId() {
-        return mFunctionId;
-    }
+  public Long getFunctionId() {
+    return mFunctionId;
+  }
 
-    public void setFunctionId(Long functionId) {
-        mFunctionId = functionId;
-    }
+  public void setFunctionId(Long functionId) {
+    mFunctionId = functionId;
+  }
 
-    public String getToken() {
-        return mToken;
-    }
+  public String getToken() {
+    return mToken;
+  }
 
-    public void setToken(String token) {
-        mToken = token;
-    }
+  public void setToken(String token) {
+    mToken = token;
+  }
 
-    public String getUsername() {
-        return mUsername;
-    }
+  public String getUsername() {
+    return mUsername;
+  }
 
-    public void setUsername(String username) {
-        mUsername = username;
-    }
+  public void setUsername(String username) {
+    mUsername = username;
+  }
 
 }

@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -37,8 +39,8 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
-import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -50,9 +52,9 @@ import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class CashChangeFragment extends ECashBaseFragment implements CashChangeView {
     @BindView(R.id.tv_account_name)
@@ -140,6 +142,8 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_cash_change:
+                if (valuesListAdapter.size() == 0)
+                    return;
                 DialogUtil.getInstance().showDialogCashChange(getActivity(), valuesListCash -> {
                     valueListCashChange = valuesListCash;
                     layoutChange.setVisibility(View.VISIBLE);
@@ -314,49 +318,15 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @SuppressLint("StaticFieldLeak")
     @Override
     public void changeCashSuccess(CashInResponse cashInResponse) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                saveTransactionLogs(cashInResponse);
-                //update money send
-                saveCashChangeSend(cashInResponse);
-                //start service
-                //startService(cashInResponse);
-                CashInFunction cashInFunction = new CashInFunction(cashInResponse, accountInfo, getActivity());
-                cashInFunction.handleCash(() -> new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> {
-                            dismissProgress();
-                            showDialogCashChangeOk();
-                        });
-                    }
-                }, 500));
-                return null;
-            }
-        }.execute();
-    }
-
-    private void saveCashChangeSend(CashInResponse cashInResponse) {
-        for (int i = 0; i < listCashSend.size(); i++) {
-            CashLogs_Database cashLogs = listCashSend.get(i);
-            cashLogs.setTransactionSignature(cashInResponse.getId());
-            cashLogs.setType(Constant.STR_CASH_OUT);
-            DatabaseUtil.saveCashToDB(cashLogs, getActivity(), accountInfo.getUsername());
-        }
-    }
-
-    private void saveTransactionLogs(CashInResponse cashInResponse) {
-        TransactionLog_Database transactionLog = new TransactionLog_Database();
-        transactionLog.setSenderAccountId(cashInResponse.getSender());
-        transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
-        transactionLog.setType(cashInResponse.getType());
-        transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
-        transactionLog.setCashEnc(cashInResponse.getCashEnc());
-        transactionLog.setTransactionSignature(cashInResponse.getId());
-        transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
-        DatabaseUtil.saveTransactionLog(transactionLog, getActivity());
+        DatabaseUtil.saveCashOut(cashInResponse.getId(), listCashSend, getActivity(), accountInfo.getUsername());
+        Gson gson = new Gson();
+        String jsonCashInResponse = gson.toJson(cashInResponse);
+        CacheData_Database cacheData_database = new CacheData_Database();
+        cacheData_database.setTransactionSignature(cashInResponse.getId());
+        cacheData_database.setResponseData(jsonCashInResponse);
+        cacheData_database.setType(TYPE_CASH_EXCHANGE);
+        DatabaseUtil.saveCacheData(cacheData_database, getActivity());
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
     }
 
     private void showDialogCashChangeOk() {
@@ -396,11 +366,24 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 public void run() {
                     try {
                         if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> setData());
+                    } catch (NullPointerException ignored) {
+                    }
+                }
+            }, 500);
+        }
+
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
                         getActivity().runOnUiThread(() -> {
-                            setData();
+                            dismissProgress();
+                            showDialogCashChangeOk();
                         });
-                    } catch (NullPointerException e) {
-                        return;
+                    } catch (NullPointerException ignored) {
                     }
                 }
             }, 500);

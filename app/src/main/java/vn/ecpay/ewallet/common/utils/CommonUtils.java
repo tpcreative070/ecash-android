@@ -571,4 +571,16 @@ public class CommonUtils {
         String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap,context.getString(R.string.app_name) , null);
         return Uri.parse(path);
     }
+
+    public static boolean isAccountExit(Context context) {
+        if (KeyStoreUtils.getMasterKey(context) != null) {
+            List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(context);
+            if (listAccount != null) {
+                return listAccount.size() <= 0;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
 }

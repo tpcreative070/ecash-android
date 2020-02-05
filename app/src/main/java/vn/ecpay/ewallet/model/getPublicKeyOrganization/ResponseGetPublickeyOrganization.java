@@ -8,35 +8,35 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class ResponseGetPublickeyOrganization {
 
-    @SerializedName("responseCode")
-    private String mResponseCode;
-    @SerializedName("responseData")
-    private ResponseData mResponseData;
-    @SerializedName("responseMessage")
-    private String mResponseMessage;
+  @SerializedName("responseCode")
+  private String mResponseCode;
+  @SerializedName("responseData")
+  private ResponseData mResponseData;
+  @SerializedName("responseMessage")
+  private String mResponseMessage;
 
-    public String getResponseCode() {
-        return mResponseCode;
-    }
+  public String getResponseCode() {
+    return mResponseCode;
+  }
 
-    public void setResponseCode(String responseCode) {
-        mResponseCode = responseCode;
-    }
+  public void setResponseCode(String responseCode) {
+    mResponseCode = responseCode;
+  }
 
-    public ResponseData getResponseData() {
-        return mResponseData;
-    }
+  public ResponseData getResponseData() {
+    return mResponseData;
+  }
 
-    public void setResponseData(ResponseData responseData) {
-        mResponseData = responseData;
-    }
+  public void setResponseData(ResponseData responseData) {
+    mResponseData = responseData;
+  }
 
-    public String getResponseMessage() {
-        return mResponseMessage;
-    }
+  public String getResponseMessage() {
+    return mResponseMessage;
+  }
 
-    public void setResponseMessage(String responseMessage) {
-        mResponseMessage = responseMessage;
-    }
+  public void setResponseMessage(String responseMessage) {
+    mResponseMessage = responseMessage;
+  }
 
 }
