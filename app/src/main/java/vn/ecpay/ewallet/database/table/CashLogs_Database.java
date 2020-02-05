@@ -13,10 +13,6 @@ public class CashLogs_Database {
     private int id;
 
     @NonNull
-    @ColumnInfo(name = "userName")
-    private String userName;
-
-    @NonNull
     @ColumnInfo(name = "countryCode")
     private String countryCode;
 
@@ -66,15 +62,6 @@ public class CashLogs_Database {
     @NonNull
     @ColumnInfo(name = "previousHash")
     private String previousHash;
-
-    @NonNull
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(@NonNull String userName) {
-        this.userName = userName;
-    }
 
     @NonNull
     public String getCountryCode() {
