@@ -7,14 +7,15 @@ import vn.ecpay.ewallet.model.cashValue.CashTotal;
 
 public class CashValid {
     private List<CashTotal> listCashValid = new ArrayList<>();
-    private int cashLeft;
+    private List<CashTotal> listCashRemain = new ArrayList<>();
+    private int cashRemain;
 
     public CashValid() {
     }
 
-    public CashValid(List<CashTotal> listCashValid, int cashLeft) {
+    public CashValid(List<CashTotal> listCashValid, int cashRemain) {
         this.listCashValid = listCashValid;
-        this.cashLeft = cashLeft;
+        this.cashRemain = cashRemain;
     }
 
     public List<CashTotal> getListCashValid() {
@@ -25,11 +26,19 @@ public class CashValid {
         this.listCashValid = listCashValid;
     }
 
-    public int getCashLeft() {
-        return cashLeft;
+    public List<CashTotal> getListCashRemain() {
+        return listCashRemain;
     }
 
-    public void setCashLeft(int cashLeft) {
-        this.cashLeft = cashLeft;
+    public void setListCashRemain(List<CashTotal> listCashRemain) {
+        this.listCashRemain = listCashRemain;
+    }
+
+    public int getCashRemain() {
+        return cashRemain;
+    }
+
+    public void setCashRemain(int cashRemain) {
+        this.cashRemain = cashRemain;
     }
 }

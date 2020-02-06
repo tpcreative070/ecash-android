@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Stack;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.ECashApplication;
@@ -41,15 +46,26 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
+import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.payment.Payments;
+import vn.ecpay.ewallet.ui.cashChange.CashChangeHandler;
+import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
+import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
+import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
+import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
+import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
+import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.ui.function.ToPayFuntion;
 import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
+import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 
 public abstract class ECashBaseActivity extends AppCompatActivity implements BaseView {
     private static final String TAG = "BaseActivity";
@@ -89,6 +105,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         setFmgr(getSupportFragmentManager());
         initFragmentStack();
         injectViews();
+
     }
 
     protected void showAnimationStartActivity() {
@@ -383,20 +400,14 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             //Log.e("case 1","hop le, check list money");
             CashValid cashValid =checkListECashInvalidate(totalAmount);
             if(cashValid!=null){
-                if(cashValid.getListCashValid().size()>0&&cashValid.getCashLeft()==0){
+                if(cashValid.getListCashValid().size()>0&&cashValid.getCashRemain()==0){
                     showDialogConfirmPayment(cashValid.getListCashValid(),payment);
-                }else if(cashValid.getListCashValid().size()>0&&cashValid.getCashLeft()>0){
-                    showDialogError("đổi ecash" +cashValid.getCashLeft()+"");
+                }else if(cashValid.getCashRemain()>0){
+                    getPublicKeyOrganization(payment,cashValid);
                 }
             }else{
                 showDialogError(getActivity().getString(R.string.str_have_warning));
             }
-//            if (checkListECashInvalidate(totalAmount) != null && checkListECashInvalidate(totalAmount).getListCashValid().size() > 0) {
-//                showDialogConfirmPayment(checkListECashInvalidate(totalAmount).getListCashValid(), payment);
-//            } else {
-//                Log.e("case 1.1", "đổi ecash");
-//                showDialogError("đổi ecash");
-//            }
         } else if (balanceEcash < totalAmount) {
             if (balanceEdong + balanceEcash < totalAmount) {
                 Log.e("case 2", "case 2");
@@ -411,6 +422,106 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             showDialogCannotPayment();
         }
         //
+    }
+
+    private void getPublicKeyOrganization(Payments payments, CashValid cashValid){
+        String userName = ECashApplication.getAccountInfo().getUsername();
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        CashChangeHandler cashChangeHandler = new CashChangeHandler(ECashApplication.getInstance(),this);
+        cashChangeHandler.getPublicKeyOrganization(accountInfo, new PublicKeyOrganization() {
+            @Override
+            public void getPublicKeyOrganization(String publicKey) {
+                Log.e("publicKey ",publicKey);
+                if(publicKey!=null&&publicKey.length()>0){
+                    getCashConvert(accountInfo,cashChangeHandler, payments,  cashValid, publicKey);
+                }
+            }
+        });
+    }
+    private void getCashConvert(AccountInfo accountInfo,CashChangeHandler cashChangeHandler,Payments payments, CashValid cashValid,String PublicKeyOrganization){
+
+                List<Integer> listQualitySend = new ArrayList<>();
+                List<Integer> listValueSend =new ArrayList<>();
+
+                List<Integer> listQualityTake= new ArrayList<>();
+                List<Integer> listValueTake= new ArrayList<>();
+
+                List<CashTotal> valueListCashChange = new ArrayList<>();
+                List<CashTotal>  valueListCashTake = new ArrayList<>();
+
+                if(cashValid.getListCashRemain().size()>0){
+                    Collections.reverse(cashValid.getListCashRemain());
+                    int castRemain =cashValid.getCashRemain();
+                    for(CashTotal cashTotal:cashValid.getListCashRemain()){
+                        if(castRemain<cashTotal.getParValue()&&cashTotal.getTotal()<cashTotal.getTotalDatabase()){
+                            if(cashTotal.getParValue()%castRemain==0){
+                                int total =cashTotal.getParValue()/castRemain;
+
+                                listQualitySend.add(1);
+                                listValueSend.add(castRemain);
+
+                                listQualityTake.add(total);
+                                listValueTake.add(cashTotal.getParValue());
+
+
+                                cashTotal.setTotal(1);
+                                valueListCashChange.add(cashTotal);
+                                CashTotal cash = new CashTotal();
+
+                                cash.setParValue(castRemain);
+                                cash.setTotalDatabase(total);
+                                valueListCashTake.add(cash);
+
+                                convertCash(cashChangeHandler,valueListCashChange,listQualityTake,listValueTake, PublicKeyOrganization,accountInfo,payments);
+                                return;
+                            }
+                        }
+                    }
+                }else{
+                    showDialogError(getActivity().getString(R.string.str_have_warning) +cashValid.getCashRemain()+"");
+                }
+
+
+        showDialogError("đổi ecash " +cashValid.getCashRemain()+"");
+
+    }
+
+    private void convertCash(CashChangeHandler cashChangeHandler,List<CashTotal> valueListCashChange,List<Integer> listValueTake,List<Integer> listQualityTake,String keyPublicReceiver,AccountInfo accountInfo,Payments payments){
+        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+        ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
+
+        for (int i = 0; i < valueListCashChange.size(); i++) {
+            if (valueListCashChange.get(i).getTotal() > 0) {
+                List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
+                for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
+                    listCashSend.add(cashList.get(j));
+                    Log.e("cashList.get(j) ",cashList.get(j).getParValue()+" - ");
+                }
+            }
+        }
+
+        String[][] cashSendArray = new String[listCashSend.size()][3];
+
+        for (int i = 0; i < listCashSend.size(); i++) {
+            CashLogs_Database cash = listCashSend.get(i);
+            String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
+            cashSendArray[i] = moneyItem;
+        }
+        String encData = getEncrypData(cashSendArray, keyPublicReceiver);
+        if (encData.isEmpty()) {
+            dismissLoading();
+            if (getActivity() != null)
+                showDialogError("không lấy được endCrypt data và ID");
+            return;
+        }
+        cashChangeHandler.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake, new CashChangeSuccess() {
+            @Override
+            public void changeCashSuccess(CashInResponse cashInResponse) {
+                CommonUtils.changeCashSuccess(ECashBaseActivity.this,cashInResponse,listCashSend,accountInfo);
+                validatePayment(payments);
+            }
+        });
+
     }
 
     private CashValid checkListECashInvalidate(long totalAmount) {
