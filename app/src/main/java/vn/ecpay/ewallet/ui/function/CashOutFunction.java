@@ -123,7 +123,7 @@ public class CashOutFunction {
         this.cashOutListener = mCashOutListener;
         OkHttpClient client = new OkHttpClient();
         String url = SocketUtil.getUrl(accountInfo, context);
-        Log.e("cashout url ",url);
+        Log.e("cashout url ", url);
         Request requestCoinPrice = new Request.Builder().url(url).build();
         client.newWebSocket(requestCoinPrice, new WebSocketListener() {
             @SuppressLint("StaticFieldLeak")

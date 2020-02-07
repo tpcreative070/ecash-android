@@ -108,6 +108,7 @@ public class CashInPresenterImpl implements CashInPresenter {
         call.enqueue(new Callback<ResponseEdongToECash>() {
             @Override
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
+                Log.e("done","skdhghjk");
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {

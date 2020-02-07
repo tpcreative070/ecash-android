@@ -278,6 +278,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
+
                 walletDatabase.daoAccess().insertOnlySingleCash(cash);
                 return null;
             }

@@ -23,11 +23,6 @@ public class Constant {
     public static final String OPEN = "OPEN";
     public static final String CLOSE = "CLOSE";
 
-    //type QR code
-    public static final int IS_SCAN_FAIL = 0;
-    public static final int IS_SCAN_CONTACT = 1;
-    public static final int IS_SCAN_CASH = 2;
-
     //object transfer
     public static final String USER_NAME = "USER_NAME";
     public static final String FORGOT_PASS_TRANSFER_MODEL = "FORGOT_PASS_TRANSFER_MODEL";
@@ -129,4 +124,7 @@ public class Constant {
     public static final String TYPE_TOPAY = "YT";
     public static final String QR_CODE_TOPAY_MODEL = "QR_CODE_TOPAY_MODEL";
 
+    // todo Qr code
+    public static final String QR_CONTACT = "MC";
+    public static final String QR_TO_PAY = "TP";
 }

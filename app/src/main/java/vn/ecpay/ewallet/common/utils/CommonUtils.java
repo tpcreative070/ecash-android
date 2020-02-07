@@ -450,16 +450,6 @@ public class CommonUtils {
         return userList;
     }
 
-    public static int getTypeScan(QRScanBase qrScanBase) {
-        if (null != qrScanBase.getContent()) {
-            return Constant.IS_SCAN_CASH;
-        } else if (null != qrScanBase.getWalletId() && null != qrScanBase.getPublicKey()) {
-            return Constant.IS_SCAN_CONTACT;
-        } else {
-            return Constant.IS_SCAN_FAIL;
-        }
-    }
-
     public static Long getMoneyEdong(Long money) {
         if (money > 0) {
             return money;
