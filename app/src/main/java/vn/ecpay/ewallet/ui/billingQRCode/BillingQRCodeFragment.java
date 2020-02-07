@@ -19,15 +19,15 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
+import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 
 public class BillingQRCodeFragment extends ECashBaseFragment {
 
     @BindView(R.id.iv_qr_code)
     ImageView ivQRCode;
-    private QRCodePayment qrCodePayment;
+    private QRScanBase qrScanBase;
     private Bitmap bitmap;
-    public static BillingQRCodeFragment newInstance(QRCodePayment qrCodePayment) {
+    public static BillingQRCodeFragment newInstance(QRScanBase qrCodePayment) {
         Bundle args = new Bundle();
         args.putSerializable(Constant.QR_CODE_TOPAY_MODEL, qrCodePayment);
         BillingQRCodeFragment fragment = new BillingQRCodeFragment();
@@ -43,7 +43,7 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            qrCodePayment = (QRCodePayment) bundle.getSerializable(Constant.QR_CODE_TOPAY_MODEL);
+            qrScanBase = (QRScanBase) bundle.getSerializable(Constant.QR_CODE_TOPAY_MODEL);
             generateQRCode();
         }
     }
@@ -65,17 +65,17 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
         }
     }
     private void generateQRCode(){
-        if(qrCodePayment!=null){
-            Log.e("qrToPay",qrCodePayment.toString());
+        if(qrScanBase !=null){
+            Log.e("qrToPay", qrScanBase.toString());
             Gson gson = new Gson();
-            bitmap = CommonUtils.generateQRCode(gson.toJson(qrCodePayment));
+            bitmap = CommonUtils.generateQRCode(gson.toJson(qrScanBase));
             ivQRCode.setImageBitmap(bitmap);
         }else{
             ivQRCode.setVisibility(View.GONE);
         }
     }
     private void handleSave(){
-        if(bitmap!=null&&qrCodePayment!=null){
+        if(bitmap!=null&& qrScanBase !=null){
             saveImageQRCode(bitmap,CommonUtils.getCurrentTime(Constant.FORMAT_DATE_SEND_CASH));
         }
     }

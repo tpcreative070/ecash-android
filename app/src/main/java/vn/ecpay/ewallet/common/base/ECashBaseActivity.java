@@ -488,12 +488,12 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                     getListCashSend();
                     getListCashTake();
 
-                    convertCash(cashChangeHandler, PublicKeyOrganization,accountInfo,payments);
+                    convertCash(cashChangeHandler,PublicKeyOrganization,accountInfo,payments);
 
                 }
 
 
-        showDialogError("đổi ecash " +cashValid.getCashRemain()+"");
+      //  showDialogError("đổi ecash " +cashValid.getCashRemain()+"");
 
     }
     private void getListCashSend() {

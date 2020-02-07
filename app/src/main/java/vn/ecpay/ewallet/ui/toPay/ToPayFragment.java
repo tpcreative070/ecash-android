@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
@@ -22,8 +24,11 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.NumberTextWatcher;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
+import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.billingQRCode.BillingQRCodeActivity;
+
+import static vn.ecpay.ewallet.common.utils.Constant.QR_TO_PAY;
 
 public class ToPayFragment extends ECashBaseFragment {
     @BindView(R.id.iv_back)
@@ -141,8 +146,12 @@ public class ToPayFragment extends ECashBaseFragment {
     }
     private void crateQRCode(QRCodePayment qrCodePayment){
         if (getActivity() != null) {
+            Gson gson = new Gson();
+            QRScanBase qrScanBase = new QRScanBase();
+            qrScanBase.setType(QR_TO_PAY);
+            qrScanBase.setContent(gson.toJson(qrCodePayment));
             Intent intent = new Intent(getActivity(), BillingQRCodeActivity.class);
-            intent.putExtra(Constant.QR_CODE_TOPAY_MODEL,qrCodePayment);
+            intent.putExtra(Constant.QR_CODE_TOPAY_MODEL,qrScanBase);
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }

@@ -28,6 +28,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contact.QRContact;
 import vn.ecpay.ewallet.ui.wallet.activity.MyQRCodeActivity;
@@ -70,9 +71,12 @@ public class FragmentMyQRCode extends ECashBaseFragment {
             qrContact.setPersonMobiPhone(accountInfo.getPersonMobilePhone());
             qrContact.setPublicKey(accountInfo.getEcKeyPublicValue());
             qrContact.setTerminalInfo(accountInfo.getTerminalInfo());
-            qrContact.setType(QR_CONTACT);
             Gson gson = new Gson();
-            bitmap = CommonUtils.generateQRCode(gson.toJson(qrContact));
+            QRScanBase qrScanBase = new QRScanBase();
+            qrScanBase.setType(QR_CONTACT);
+            qrScanBase.setContent(gson.toJson(qrContact));
+
+            bitmap = CommonUtils.generateQRCode(gson.toJson(qrScanBase));
             ivQrCode.setImageBitmap(bitmap);
         }
     }

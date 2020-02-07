@@ -18,16 +18,6 @@ public class QRContact {
     private String mTerminalInfo;
     @SerializedName("walletId")
     private Long mWalletId;
-    @SerializedName("type")
-    private String type;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public String getFullname() {
         return mFullname;
