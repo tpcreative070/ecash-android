@@ -258,7 +258,6 @@ public abstract class WalletDatabase extends RoomDatabase {
     // todo cash------------------------------------------------------------------------------------------
     public static void insertCashTask(CashLogs_Database cash, String userName) {
         CashLogs_Database mCash = new CashLogs_Database();
-        mCash.setUserName(userName);
         mCash.setCountryCode(cash.getCountryCode());
         mCash.setIssuerCode(cash.getIssuerCode());
         mCash.setDecisionNo(cash.getDecisionNo());

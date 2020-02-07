@@ -488,7 +488,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         return;
                     }
                 }
-            }, 2000);
+            }, 3000);
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
