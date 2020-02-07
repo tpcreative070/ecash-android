@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -40,7 +39,6 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
@@ -58,10 +56,10 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
+import static vn.ecpay.ewallet.common.utils.Constant.QR_CONTACT;
+import static vn.ecpay.ewallet.common.utils.Constant.QR_TO_PAY;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
 public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingScannerView.ResultHandler, QRCodeView {
@@ -126,19 +124,32 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         Gson gson = new Gson();
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
-            if (CommonUtils.getTypeScan(qrScanBase) == Constant.IS_SCAN_CASH) {
-                handleCash(result.getText());
-            } else if (CommonUtils.getTypeScan(qrScanBase) == Constant.IS_SCAN_CONTACT) {
-                if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
-                    handleContactPayTo(result.getText());
-                } else {
-                    handleContact(result.getText());
+            if (qrScanBase.getType() != null) {
+                switch (qrScanBase.getType()) {
+                    case QR_CONTACT:
+                        if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
+                            handleContactPayTo(result.getText());
+                        } else {
+                            handleContact(result.getText());
+                        }
+                        break;
+                    case QR_TO_PAY:
+                        //todo ...
+                        break;
+                    default:
+                        dismissProgress();
+                        if (getActivity() != null)
+                            ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                        break;
                 }
-
             } else {
-                dismissProgress();
-                if (getActivity() != null)
-                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                if (null != qrScanBase.getContent()) {
+                    handleCash(result.getText());
+                } else {
+                    dismissProgress();
+                    if (getActivity() != null)
+                        ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                }
             }
         } catch (JsonSyntaxException e) {
             dismissProgress();

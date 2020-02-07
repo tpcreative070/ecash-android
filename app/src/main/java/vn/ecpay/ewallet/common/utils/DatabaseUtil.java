@@ -356,4 +356,56 @@ public class DatabaseUtil {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.deleteCacheData(transactionSignature);
     }
+
+    public static boolean checkTransactionsLogs(Context context) {
+        boolean isValid = true;
+        TransactionLog_Database previousRecord;
+        String mPreviousHash;
+
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        List<TransactionLog_Database> transactionsList = WalletDatabase.getAllTransactionLog();
+        if (transactionsList == null) return true;
+        for (int i = 0; i < transactionsList.size(); i++) {
+            if (i == 0) {//bản ghi đầu tiên
+                previousRecord = transactionsList.get(transactionsList.size() - 1);
+                mPreviousHash = getSignTransactionLog(previousRecord);
+            } else {
+                previousRecord = transactionsList.get(i - 1);
+                mPreviousHash = getSignTransactionLog(previousRecord);
+            }
+
+            if (transactionsList.get(i).getPreviousHash().compareTo(mPreviousHash) != 0) {
+                isValid = false;
+                break;
+            }
+        }
+
+        return isValid;
+    }
+
+    public static boolean checkCashLogs(Context context) {
+        boolean isValid = true;
+        CashLogs_Database previousRecord;
+        String mPreviousHash;
+
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        List<CashLogs_Database> cashList = WalletDatabase.getAllCash();
+        if (cashList == null) return true;
+        for (int i = 0; i < cashList.size(); i++) {
+            if (i == 0) {//bản ghi đầu tiên
+                previousRecord = cashList.get(cashList.size() - 1);
+                mPreviousHash = getSignCash(previousRecord);
+            } else {
+                previousRecord = cashList.get(i - 1);
+                mPreviousHash = getSignCash(previousRecord);
+            }
+
+            if (cashList.get(i).getPreviousHash().compareTo(mPreviousHash) != 0) {
+                isValid = false;
+                break;
+            }
+        }
+
+        return isValid;
+    }
 }

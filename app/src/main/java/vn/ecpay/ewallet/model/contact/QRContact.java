@@ -1,13 +1,13 @@
 
 package vn.ecpay.ewallet.model.contact;
 
-import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
+
+import javax.annotation.Generated;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class QRContact {
-
     @SerializedName("fullname")
     private String mFullname;
     @SerializedName("personMobiPhone")
@@ -18,6 +18,16 @@ public class QRContact {
     private String mTerminalInfo;
     @SerializedName("walletId")
     private Long mWalletId;
+    @SerializedName("type")
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getFullname() {
         return mFullname;

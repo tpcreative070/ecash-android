@@ -529,6 +529,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         if (PermissionUtils.isReadContact(getActivity())) {
             if (getActivity() != null) {
                 if (CommonUtils.getListPhoneNumber(getActivity()).size() > 0) {
+                    accountInfo.setWalletId(mAccountInfo.getWalletId());
                     homePresenter.syncContact(getActivity(), accountInfo);
                 }
             }
