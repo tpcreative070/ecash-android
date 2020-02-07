@@ -232,6 +232,7 @@ public class HomePresenterImpl implements HomePresenter {
                             mAccountInfo.setTerminalInfo(CommonUtils.getModelName());
                             mAccountInfo.setEcKeyPublicValue(accountInfo.getEcKeyPublicValue());
                             mAccountInfo.setMasterKey(responseData.getMasterKey());
+                            mAccountInfo.setWalletId(responseData.getWalletId());
                             ECashApplication.privateKey = privateKeyBase64;
                             ECashApplication.masterKey = mAccountInfo.getMasterKey();
 
