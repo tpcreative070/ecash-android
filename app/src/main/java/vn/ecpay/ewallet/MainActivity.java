@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -28,7 +29,9 @@ import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
+import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
@@ -91,7 +94,7 @@ public class MainActivity extends ECashBaseActivity {
         });
         tabHost.getTabWidget().getChildAt(2).setOnClickListener(v -> {
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);
-            startActivity(intentCashIn);
+            startActivityForResult(intentCashIn, Constant.REQUEST_QR_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
@@ -282,8 +285,21 @@ public class MainActivity extends ECashBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode, this, resultCode, data));
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode==Constant.REQUEST_QR_CODE){
+                handleDataToPayResult(data);
+            }
+        }
     }
 
+    private void handleDataToPayResult(Intent data){
+        if(data!=null){
+            Payments qrToPay = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
+            if(qrToPay!=null){
+                validatePayment(qrToPay);
+            }
+        }
+    }
     @Override
     protected void onDestroy() {
         if (networkChangeReceiver != null) {

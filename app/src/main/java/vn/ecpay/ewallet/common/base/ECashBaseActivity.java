@@ -388,6 +388,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     }
 
     public void validatePayment(Payments payment) {
+        showProgressDialog();
         long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         long balanceEdong = 0;
 
@@ -405,14 +406,17 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             CashValid cashValid =checkListECashInvalidate(totalAmount);
             if(cashValid!=null){
                 if(cashValid.getListCashValid().size()>0&&cashValid.getCashRemain()==0){
+                    dismissLoading();
                     showDialogConfirmPayment(cashValid.getListCashValid(),payment);
                 }else if(cashValid.getCashRemain()>0){
                     getPublicKeyOrganization(payment,cashValid);
                 }
             }else{
+                dismissLoading();
                 showDialogError(getActivity().getString(R.string.str_have_warning));
             }
         } else if (balanceEcash < totalAmount) {
+            dismissLoading();
             if (balanceEdong + balanceEcash < totalAmount) {
                 Log.e("case 2", "case 2");
                 showDialogCannotPayment();
@@ -423,6 +427,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             }
         } else if (balanceEdong + balanceEcash < totalAmount) {
             Log.e("case 4", "case 4");
+            dismissLoading();
             showDialogCannotPayment();
         }
         //
@@ -438,20 +443,22 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 Log.e("publicKey ",publicKey);
                 if(publicKey!=null&&publicKey.length()>0){
                     getCashConvert(accountInfo,cashChangeHandler, payments,  cashValid, publicKey);
+                }else{
+                    dismissLoading();
                 }
             }
         });
     }
+    private List<Integer> listQualitySend = new ArrayList<>();
+    private List<Integer> listValueSend =new ArrayList<>();
+
+    private List<Integer> listQualityTake= new ArrayList<>();
+    private List<Integer> listValueTake= new ArrayList<>();
+
+    private List<CashTotal> valueListCashChange = new ArrayList<>();
+    private List<CashTotal>  valueListCashTake = new ArrayList<>();
+
     private void getCashConvert(AccountInfo accountInfo,CashChangeHandler cashChangeHandler,Payments payments, CashValid cashValid,String PublicKeyOrganization){
-
-                List<Integer> listQualitySend = new ArrayList<>();
-                List<Integer> listValueSend =new ArrayList<>();
-
-                List<Integer> listQualityTake= new ArrayList<>();
-                List<Integer> listValueTake= new ArrayList<>();
-
-                List<CashTotal> valueListCashChange = new ArrayList<>();
-                List<CashTotal>  valueListCashTake = new ArrayList<>();
 
                 if(cashValid.getListCashRemain().size()>0){
                     Collections.reverse(cashValid.getListCashRemain());
@@ -461,45 +468,65 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                             if(cashTotal.getParValue()%castRemain==0){
                                 int total =cashTotal.getParValue()/castRemain;
 
-                                listQualitySend.add(1);
-                                listValueSend.add(castRemain);
+                                cashTotal.setTotal(cashTotal.getTotal()+1);
 
-                                listQualityTake.add(total);
-                                listValueTake.add(cashTotal.getParValue());
-
-
-                                cashTotal.setTotal(1);
                                 valueListCashChange.add(cashTotal);
+
                                 CashTotal cash = new CashTotal();
-
                                 cash.setParValue(castRemain);
-                                cash.setTotalDatabase(total);
+                                cash.setTotal(total);
                                 valueListCashTake.add(cash);
-
-                                convertCash(cashChangeHandler,valueListCashChange,listQualityTake,listValueTake, PublicKeyOrganization,accountInfo,payments);
-                                return;
+                               // valueListCashTake.add(cashTotal);
+                                break;
                             }
                         }
                     }
                 }else{
                     showDialogError(getActivity().getString(R.string.str_have_warning) +cashValid.getCashRemain()+"");
                 }
+                if(valueListCashChange.size()>0&&valueListCashTake.size()>0){
+                    getListCashSend();
+                    getListCashTake();
+
+                    convertCash(cashChangeHandler, PublicKeyOrganization,accountInfo,payments);
+
+                }
 
 
         showDialogError("đổi ecash " +cashValid.getCashRemain()+"");
 
     }
+    private void getListCashSend() {
+        listQualitySend = new ArrayList<>();
+        listValueSend = new ArrayList<>();
+        for (int i = 0; i < valueListCashChange.size(); i++) {
+            if (valueListCashChange.get(i).getTotal() > 0) {
+                listQualitySend.add(valueListCashChange.get(i).getTotal());
+                listValueSend.add(valueListCashChange.get(i).getParValue());
+            }
+        }
+    }
 
-    private void convertCash(CashChangeHandler cashChangeHandler,List<CashTotal> valueListCashChange,List<Integer> listValueTake,List<Integer> listQualityTake,String keyPublicReceiver,AccountInfo accountInfo,Payments payments){
+    private void getListCashTake() {
+        listQualityTake = new ArrayList<>();
+        listValueTake = new ArrayList<>();
+        for (int i = 0; i < valueListCashTake.size(); i++) {
+            if (valueListCashTake.get(i).getTotal() > 0) {
+                listQualityTake.add(valueListCashTake.get(i).getTotal());
+                listValueTake.add(valueListCashTake.get(i).getParValue());
+            }
+        }
+    }
+    private void convertCash(CashChangeHandler cashChangeHandler,String keyPublicReceiver,AccountInfo accountInfo,Payments payments){
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
 
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
+                Log.e("valueListCashChange.",valueListCashChange.get(i).getParValue()+" - ");
                 List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
                 for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
                     listCashSend.add(cashList.get(j));
-                    Log.e("cashList.get(j) ",cashList.get(j).getParValue()+" - ");
                 }
             }
         }
@@ -517,6 +544,14 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             if (getActivity() != null)
                 showDialogError("không lấy được endCrypt data và ID");
             return;
+        }
+        // listQualityTake =5
+        // listValueTake =2000
+        for(int i=0;i<listQualityTake.size();i++){
+            Log.e("listQualityTake. ",listQualityTake.get(i).toString()+"");//10000
+        }
+        for(int i=0;i<listValueTake.size();i++){
+            Log.e("listValueTake. ",listValueTake.get(i).toString()+"");//5
         }
         cashChangeHandler.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake, new CashChangeSuccess() {
             @Override

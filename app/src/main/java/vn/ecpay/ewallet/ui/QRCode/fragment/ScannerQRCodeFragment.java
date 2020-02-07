@@ -184,7 +184,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
-        // Log.e("result",result);
+         Log.e("result",result);
         Gson gson = new Gson();
         try {
             QRCodeSender qrCodeSender = new QRCodeSender();
@@ -239,7 +239,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         }
                     }
                 }
-            } else if (qrCodePayment.validate(result)) {
+            }
+            else if (qrCodePayment.validate(result)) {
                 dismissProgress();
                 qrCodePayment = gson.fromJson(result, QRCodePayment.class);
                 if (qrCodePayment.getTotalAmount() == null) {
@@ -251,7 +252,6 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 resultIntent.putExtra(Constant.SCAN_QR_TOPAY, payment);
                 getActivity().setResult(Activity.RESULT_OK, resultIntent);
                 getActivity().finish();
-                // validateQRCodePayment(amount);
 
             } else {
                 dismissProgress();
