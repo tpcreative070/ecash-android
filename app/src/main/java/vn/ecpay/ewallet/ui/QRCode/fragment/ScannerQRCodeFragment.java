@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -121,6 +122,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
 
     @Override
     public void handleResult(Result result) {
+        Log.e("result ",result.toString());
         Gson gson = new Gson();
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
@@ -128,13 +130,13 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 switch (qrScanBase.getType()) {
                     case QR_CONTACT:
                         if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
-                            handleContactPayTo(result.getText());
+                            handleContactWithPayTo(result.getText());
                         } else {
                             handleContact(result.getText());
                         }
                         break;
                     case QR_TO_PAY:
-                        //todo ...
+                        handleQRCodeToPay(result.getText());
                         break;
                     default:
                         dismissProgress();
@@ -162,31 +164,39 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
 
     private void handleContact(String result) {
         Gson gson = new Gson();
-        try {
-            QRContact qrContact = gson.fromJson(result, QRContact.class);
-            if (qrContact != null) {
-                Contact contact = new Contact();
-                contact.setPublicKeyValue(qrContact.getPublicKey());
-                contact.setFullName(qrContact.getFullname());
-                contact.setPhone(qrContact.getPersonMobiPhone());
-                contact.setTerminalInfo(qrContact.getTerminalInfo());
-                contact.setWalletId(qrContact.getWalletId());
 
-                if (contact.getWalletId().equals(accountInfo.getWalletId())) {
-                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_conflict));
-                } else {
-                    // todo: can using funtion checkContactExist(contact)
-                    List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
-                    for (int i = 0; i < listContact.size(); i++) {
-                        if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
-                            ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_duplicate));
-                            return;
+        try {
+            QRScanBase qrScanBase = gson.fromJson(result, QRScanBase.class);
+            if(qrScanBase!=null&&qrScanBase.getContent()!=null){
+               // QRContact qrContact = gson.fromJson(result, QRContact.class);
+                QRContact qrContact = gson.fromJson(qrScanBase.getContent(), QRContact.class);
+                if (qrContact != null) {
+                    Contact contact = new Contact();
+                    contact.setPublicKeyValue(qrContact.getPublicKey());
+                    contact.setFullName(qrContact.getFullname());
+                    contact.setPhone(qrContact.getPersonMobiPhone());
+                    contact.setTerminalInfo(qrContact.getTerminalInfo());
+                    contact.setWalletId(qrContact.getWalletId());
+
+                    if (contact.getWalletId().equals(accountInfo.getWalletId())) {
+                        ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_conflict));
+                    } else {
+                        // todo: can using funtion checkContactExist(contact)
+                        List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+                        for (int i = 0; i < listContact.size(); i++) {
+                            if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
+                                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_duplicate));
+                                return;
+                            }
                         }
+                        DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+                        Toast.makeText(getActivity(), getResources().getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
                     }
-                    DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
-                    Toast.makeText(getActivity(), getResources().getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+                } else {
+                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
                 }
-            } else {
+            }
+            else {
                 ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
             }
         } catch (JsonSyntaxException e) {
@@ -195,7 +205,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
-        // Log.e("result",result);
+     //    Log.e("result",result);
         Gson gson = new Gson();
         try {
             QRCodeSender qrCodeSender = new QRCodeSender();
@@ -250,7 +260,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         }
                     }
                 }
-            } else if (qrCodePayment.validate(result)) {
+            }
+            else if (qrCodePayment.validate(result)) {
                 dismissProgress();
                 qrCodePayment = gson.fromJson(result, QRCodePayment.class);
                 if (qrCodePayment.getTotalAmount() == null) {
@@ -262,7 +273,6 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 resultIntent.putExtra(Constant.SCAN_QR_TOPAY, payment);
                 getActivity().setResult(Activity.RESULT_OK, resultIntent);
                 getActivity().finish();
-                // validateQRCodePayment(amount);
 
             } else {
                 dismissProgress();
@@ -276,24 +286,53 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         }
     }
 
-    private void handleContactPayTo(String result) {
-        Gson gson = new Gson();
+    private void handleQRCodeToPay(String result){
         try {
-            QRContact qrContact = gson.fromJson(result, QRContact.class);
-            if (qrContact != null) {
-                Contact contact = new Contact();
-                contact.setPublicKeyValue(qrContact.getPublicKey());
-                contact.setFullName(qrContact.getFullname());
-                contact.setPhone(qrContact.getPersonMobiPhone());
-                contact.setTerminalInfo(qrContact.getTerminalInfo());
-                contact.setWalletId(qrContact.getWalletId());
-                if (!checkContactExist(contact)) {
-                    DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+            Gson gson = new Gson();
+            QRScanBase qrScanBase = gson.fromJson(result, QRScanBase.class);
+            if(qrScanBase!=null&&qrScanBase.getContent()!=null){
+                QRCodePayment qrCodePayment=gson.fromJson(qrScanBase.getContent(), QRCodePayment.class);
+                if(qrCodePayment!=null){
+                    Payments payment = new Payments(qrCodePayment);
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra(Constant.SCAN_QR_TOPAY, payment);
+                    getActivity().setResult(Activity.RESULT_OK, resultIntent);
+                    getActivity().finish();
+                    dismissLoading();
+                }else{
+                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
                 }
-                ((QRCodeActivity) getActivity()).checkPayTo(contact);
-            } else {
+            }else {
                 ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
             }
+        }catch (Exception e){
+            ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+        }
+
+    }
+    private void handleContactWithPayTo(String result) {
+        try {
+            Gson gson = new Gson();
+            QRScanBase qrScanBase = gson.fromJson(result, QRScanBase.class);
+            if(qrScanBase!=null&&qrScanBase.getContent()!=null){
+                // QRContact qrContact = gson.fromJson(result, QRContact.class);
+                QRContact qrContact = gson.fromJson(qrScanBase.getContent(), QRContact.class);
+                if (qrContact != null) {
+                    Contact contact = new Contact();
+                    contact.setPublicKeyValue(qrContact.getPublicKey());
+                    contact.setFullName(qrContact.getFullname());
+                    contact.setPhone(qrContact.getPersonMobiPhone());
+                    contact.setTerminalInfo(qrContact.getTerminalInfo());
+                    contact.setWalletId(qrContact.getWalletId());
+                    if (!checkContactExist(contact)) {
+                        DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+                    }
+                    ((QRCodeActivity) getActivity()).checkPayTo(contact);
+                } else {
+                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                }
+            }
+
         } catch (JsonSyntaxException e) {
             ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
         }

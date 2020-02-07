@@ -2,7 +2,9 @@ package vn.ecpay.ewallet.model.QRCode;
 
 import com.google.gson.annotations.SerializedName;
 
-public class QRScanBase {
+import java.io.Serializable;
+
+public class QRScanBase implements Serializable {
     @SerializedName("content")
     private String mContent;
     @SerializedName("cycle")
