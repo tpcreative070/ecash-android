@@ -9,8 +9,10 @@ import androidx.room.RawQuery;
 import androidx.room.Update;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.CashTemp_Database;
@@ -22,6 +24,7 @@ import vn.ecpay.ewallet.database.table.Profile_Database;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -32,6 +35,16 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 
 @Dao
 public interface WalletAccess {
+    // todo Data_cache---------------------------------------------------------------------------------------
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOnlySingleCacheData(CacheData_Database cacheData_database);
+
+    @Query("SELECT *  FROM CACHE_DATA")
+    List<CacheData> getAllCacheData();
+
+    @Query("DELETE From CACHE_DATA WHERE transactionSignature = :mTransactionSignature")
+    void deleteCacheData(String mTransactionSignature);
+
     // todo Notification_Database---------------------------------------------------------------------------------------
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleNotification(Notification_Database notification);
@@ -131,7 +144,7 @@ public interface WalletAccess {
     @Query("SELECT SUM(parValue) FROM CASH_LOGS WHERE type LIKE :input")
     int getTotalCash(String input);
 
-    @Query("SELECT id,userName,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type =:type AND (id + serialNo) IN (select max(id)+ serialNo from CASH_LOGS  group by serialNo having count(serialNo)%2 <> 0) AND parValue =:money")
+    @Query("SELECT id,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type =:type AND (id + serialNo) IN (select max(id)+ serialNo from CASH_LOGS  group by serialNo having count(serialNo)%2 <> 0) AND parValue =:money")
     List<CashLogs_Database> getListCashForMoney(String money, String type);
 
     @Query("SELECT DISTINCT parValue, count(parValue) as totalDatabase, 0 as total  FROM CASH_LOGS WHERE type ='in' AND (id + serialNo) IN (select max(id)+ serialNo from CASH_LOGS  group by serialNo having count(serialNo)%2 <> 0) group by parValue")

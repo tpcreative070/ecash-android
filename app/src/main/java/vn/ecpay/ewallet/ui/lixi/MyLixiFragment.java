@@ -82,7 +82,7 @@ public class MyLixiFragment extends ECashBaseFragment {
                                 if (getActivity() == null) return;
                                 getActivity().runOnUiThread(() -> {
                                     dismissProgress();
-                                    DatabaseUtil.updateStattusLixi(getActivity(), Constant.OPEN, cashTemp.getId());
+                                    DatabaseUtil.updateStatusLixi(getActivity(), Constant.OPEN, cashTemp.getId());
                                     showDialogLixiDetail(cashTemp, responseMess.getContent());
                                 });
                             }

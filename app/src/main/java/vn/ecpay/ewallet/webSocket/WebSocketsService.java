@@ -39,7 +39,7 @@ import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
 public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
-    private boolean isConnectSuccess;
+    private boolean isConnectSuccess = false;
     private WebSocket webSocketLocal;
     private ArrayList<ResponseMessSocket> listResponseMessSockets;
     private boolean isRunning = false;
@@ -123,32 +123,26 @@ public class WebSocketsService extends Service {
         @Override
         public void onMessage(WebSocket webSocket, String data) {
             Log.e("onMessage", data);
-            //ResponseMessSocket responseMess =new ResponseMessSocket();
-           // Payments topayResponse =new Payments();
             ResponseMessSocket responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
-           // if(responseMess.validate(data)){
-              //  responseMess = new Gson().fromJson(data, ResponseMessSocket.class);
-                if (responseMess != null) {
-                    switch (responseMess.getType()) {
-                        case Constant.TYPE_ECASH_TO_ECASH:
-//                            webSocket.send(getJsonSend(responseMess));
-//                            confirmMess(responseMess);
-                            listResponseMessSockets.add(responseMess);
-                            if (!isRunning) {
-                                isRunning = true;
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        handleListResponse();
-                                    }
-                                }, 3000);
-                            }
-                            break;
-                        case Constant.TYPE_LIXI:
-                            if (!DatabaseUtil.isCashTempExit(responseMess, getApplicationContext())) {
-                                if (responseMess.getCashEnc() != null) {
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(responseMess);
+            if (responseMess != null) {
+                switch (responseMess.getType()) {
+                    case Constant.TYPE_ECASH_TO_ECASH:
+                        listResponseMessSockets.add(responseMess);
+                        if (!isRunning) {
+                            isRunning = true;
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    handleListResponse();
+                                }
+                            }, 3000);
+                        }
+                        break;
+                    case Constant.TYPE_LIXI:
+                        if (!DatabaseUtil.isCashTempExit(responseMess, getApplicationContext())) {
+                            if (responseMess.getCashEnc() != null) {
+                                Gson gson = new Gson();
+                                String json = gson.toJson(responseMess);
 
                                     CashTemp cashTemp = new CashTemp();
                                     cashTemp.setContent(json);
@@ -161,14 +155,6 @@ public class WebSocketsService extends Service {
                             }
                             break;
                         case Constant.TYPE_SYNC_CONTACT:
-//                            RequestReceived requestReceived = new RequestReceived();
-//                            requestReceived.setReceiver(responseMess.getReceiver());
-//                            requestReceived.setRefId(responseMess.getRefId());
-//                            requestReceived.setType(Constant.TYPE_SEN_SOCKET);
-//
-//                            Gson gson = new Gson();
-//                            String json = gson.toJson(requestReceived);
-//                            webSocket.send(json);
                             webSocket.send(getJsonSend(responseMess));
                             DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
                             confirmMess(responseMess);
@@ -256,7 +242,6 @@ public class WebSocketsService extends Service {
         } else {
             isRunning = false;
         }
-
     }
 
     private void confirmMess(ResponseMessSocket responseMess) {

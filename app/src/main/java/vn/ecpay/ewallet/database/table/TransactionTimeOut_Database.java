@@ -7,60 +7,60 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "TRANSACTIONS_TIMEOUT")
 public class TransactionTimeOut_Database {
-    @NonNull
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id;
+  @NonNull
+  @PrimaryKey(autoGenerate = true)
+  @ColumnInfo(name = "id")
+  private int id;
 
-    @ColumnInfo(name = "transactionSignature")
-    private String transactionSignature;
+  @ColumnInfo(name = "transactionSignature")
+  private String transactionSignature;
 
-    @ColumnInfo(name = "transactionTime")
-    private String transactionTime;
+  @ColumnInfo(name = "transactionTime")
+  private String transactionTime;
 
-    @ColumnInfo(name = "status")
-    private String status;
+  @ColumnInfo(name = "status")
+  private String status;
 
-    @ColumnInfo(name = "confirmedTime")
-    private String confirmedTime;
+  @ColumnInfo(name = "confirmedTime")
+  private String confirmedTime;
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getTransactionSignature() {
-        return transactionSignature;
-    }
+  public String getTransactionSignature() {
+    return transactionSignature;
+  }
 
-    public void setTransactionSignature(String transactionSignature) {
-        this.transactionSignature = transactionSignature;
-    }
+  public void setTransactionSignature(String transactionSignature) {
+    this.transactionSignature = transactionSignature;
+  }
 
-    public String getTransactionTime() {
-        return transactionTime;
-    }
+  public String getTransactionTime() {
+    return transactionTime;
+  }
 
-    public void setTransactionTime(String transactionTime) {
-        this.transactionTime = transactionTime;
-    }
+  public void setTransactionTime(String transactionTime) {
+    this.transactionTime = transactionTime;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public String getConfirmedTime() {
-        return confirmedTime;
-    }
+  public String getConfirmedTime() {
+    return confirmedTime;
+  }
 
-    public void setConfirmedTime(String confirmedTime) {
-        this.confirmedTime = confirmedTime;
-    }
+  public void setConfirmedTime(String confirmedTime) {
+    this.confirmedTime = confirmedTime;
+  }
 }

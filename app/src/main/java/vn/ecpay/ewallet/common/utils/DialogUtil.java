@@ -358,7 +358,7 @@ public class DialogUtil {
                     }
                 }
             });
-            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCanceledOnTouchOutside(true);
             mDialog.setCancelable(true);
             mDialog.show();
         }

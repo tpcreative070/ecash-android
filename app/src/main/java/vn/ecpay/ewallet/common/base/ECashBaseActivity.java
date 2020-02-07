@@ -26,6 +26,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +48,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -66,6 +69,7 @@ import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public abstract class ECashBaseActivity extends AppCompatActivity implements BaseView {
     private static final String TAG = "BaseActivity";
@@ -517,7 +521,14 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         cashChangeHandler.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake, new CashChangeSuccess() {
             @Override
             public void changeCashSuccess(CashInResponse cashInResponse) {
-                CommonUtils.changeCashSuccess(ECashBaseActivity.this,cashInResponse,listCashSend,accountInfo);
+                DatabaseUtil.saveCashOut(cashInResponse.getId(), listCashSend, getActivity(), accountInfo.getUsername());
+                Gson gson = new Gson();
+                String jsonCashInResponse = gson.toJson(cashInResponse);
+                CacheData_Database cacheData_database = new CacheData_Database();
+                cacheData_database.setTransactionSignature(cashInResponse.getId());
+                cacheData_database.setResponseData(jsonCashInResponse);
+                cacheData_database.setType(TYPE_CASH_EXCHANGE);
+                DatabaseUtil.saveCacheData(cacheData_database, getActivity());
                 validatePayment(payments);
             }
         });

@@ -41,14 +41,14 @@ import java.util.ArrayList;
  * to complete the initialization of the tab host.
  *
  * <p>Here is a simple example of using a FragmentTabHost in an Activity:
- *
+ * <p>
  * {@sample development/samples/Support4Demos/src/com/example/android/supportv4/app/FragmentTabs.java
- *      complete}
+ * complete}
  *
  * <p>This can also be used inside of a fragment through fragment nesting:
- *
+ * <p>
  * {@sample development/samples/Support4Demos/src/com/example/android/supportv4/app/FragmentTabsFragmentSupport.java
- *      complete}
+ * complete}
  */
 public class CustomFragmentTabHost extends TabHost
         implements TabHost.OnTabChangeListener {
@@ -141,7 +141,7 @@ public class CustomFragmentTabHost extends TabHost
 
     private void initFragmentTabHost(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs,
-                new int[] { android.R.attr.inflatedId }, 0, 0);
+                new int[]{android.R.attr.inflatedId}, 0, 0);
         mContainerId = a.getResourceId(0, 0);
         a.recycle();
 
@@ -182,7 +182,8 @@ public class CustomFragmentTabHost extends TabHost
      * call {@link #setup(Context, FragmentManager)} or
      * {@link #setup(Context, FragmentManager, int)}.
      */
-    @Override @Deprecated
+    @Override
+    @Deprecated
     public void setup() {
         throw new IllegalStateException(
                 "Must call setup() that takes a Context and FragmentManager");
@@ -260,7 +261,7 @@ public class CustomFragmentTabHost extends TabHost
         // Go through all tabs and make sure their fragments match
         // the correct state.
         FragmentTransaction ft = null;
-        for (int i=0; i<mTabs.size(); i++) {
+        for (int i = 0; i < mTabs.size(); i++) {
             TabInfo tab = mTabs.get(i);
             tab.fragment = mFragmentManager.findFragmentByTag(tab.tag);
 //            if (tab.fragment != null && !tab.fragment.isDetached()) {
@@ -287,8 +288,8 @@ public class CustomFragmentTabHost extends TabHost
         mAttached = true;
         ft = doTabChanged(currentTab, ft);
         if (ft != null) {
-                ft.commitAllowingStateLoss();
-                mFragmentManager.executePendingTransactions();
+            ft.commitAllowingStateLoss();
+            mFragmentManager.executePendingTransactions();
 
         }
     }
@@ -309,7 +310,7 @@ public class CustomFragmentTabHost extends TabHost
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        SavedState ss = (SavedState)state;
+        SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         setCurrentTabByTag(ss.curTab);
     }
@@ -329,7 +330,7 @@ public class CustomFragmentTabHost extends TabHost
 
     private FragmentTransaction doTabChanged(String tabId, FragmentTransaction ft) {
         TabInfo newTab = null;
-        for (int i=0; i<mTabs.size(); i++) {
+        for (int i = 0; i < mTabs.size(); i++) {
             TabInfo tab = mTabs.get(i);
             if (tab.tag.equals(tabId)) {
                 newTab = tab;

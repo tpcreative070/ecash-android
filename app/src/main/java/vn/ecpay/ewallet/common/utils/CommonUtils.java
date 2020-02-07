@@ -61,6 +61,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eccrypto.Test;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.language.SharedPrefs;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.BaseObject;
@@ -78,6 +79,7 @@ import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class CommonUtils {
     public static String getModelName() {
@@ -585,6 +587,18 @@ public class CommonUtils {
         return Uri.parse(path);
     }
 
+    public static boolean isAccountExit(Context context) {
+        if (KeyStoreUtils.getMasterKey(context) != null) {
+            List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(context);
+            if (listAccount != null) {
+                return listAccount.size() <= 0;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
     public static CashValid getCashForPayment(List<CashTotal> cashDatabase, long totalAmount) {
         List<CashTotal> list = new ArrayList<>();
         CashValid cashValid = new CashValid();
@@ -790,47 +804,4 @@ public class CommonUtils {
         return cashValid;
     }
 
-    public static void changeCashSuccess(ECashBaseActivity activity, CashInResponse cashInResponse, ArrayList<CashLogs_Database> listCashSend, AccountInfo accountInfo){
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                CommonUtils.saveTransactionLogs(getActivity(),cashInResponse);
-                //update money send
-                CommonUtils.saveCashChangeSend(getActivity(),cashInResponse,listCashSend,accountInfo);
-                //start service
-                //startService(cashInResponse);
-                CashInFunction cashInFunction = new CashInFunction(cashInResponse, accountInfo, getActivity());
-                cashInFunction.handleCash(() -> new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> {
-                            activity.dismissLoading();
-
-                        });
-                    }
-                }, 500));
-                return null;
-            }
-        }.execute();
-    }
-    public static void saveTransactionLogs(Context activity,CashInResponse cashInResponse) {
-        TransactionLog_Database transactionLog = new TransactionLog_Database();
-        transactionLog.setSenderAccountId(cashInResponse.getSender());
-        transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
-        transactionLog.setType(cashInResponse.getType());
-        transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
-        transactionLog.setCashEnc(cashInResponse.getCashEnc());
-        transactionLog.setTransactionSignature(cashInResponse.getId());
-        transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
-        DatabaseUtil.saveTransactionLog(transactionLog, activity);
-    }
-    public static void saveCashChangeSend(Context activity,CashInResponse cashInResponse,ArrayList<CashLogs_Database> listCashSend,AccountInfo accountInfo) {
-        for (int i = 0; i < listCashSend.size(); i++) {
-            CashLogs_Database cashLogs = listCashSend.get(i);
-            cashLogs.setTransactionSignature(cashInResponse.getId());
-            cashLogs.setType(Constant.STR_CASH_OUT);
-            DatabaseUtil.saveCashToDB(cashLogs,activity, accountInfo.getUsername());
-        }
-    }
 }

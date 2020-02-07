@@ -13,22 +13,29 @@ import androidx.sqlite.db.SimpleSQLiteQuery;
 import com.commonsware.cwac.saferoom.SafeHelperFactory;
 import com.google.firebase.database.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.CashTemp_Database;
 import vn.ecpay.ewallet.database.table.CashValues_Database;
 import vn.ecpay.ewallet.database.table.Contact_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
+import vn.ecpay.ewallet.database.table.IssuersDiary_Database;
+import vn.ecpay.ewallet.database.table.Issuers_Database;
+import vn.ecpay.ewallet.database.table.MerchantsDiary_Database;
+import vn.ecpay.ewallet.database.table.Merchants_Database;
 import vn.ecpay.ewallet.database.table.Notification_Database;
 import vn.ecpay.ewallet.database.table.Profile_Database;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.database.table.TransactionTimeOut_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.cashValue.response.Denomination;
@@ -48,7 +55,12 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         TransactionLogQR_Database.class,
         Notification_Database.class,
         CashTemp_Database.class,
-        CashValues_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
+        CashValues_Database.class,
+        Issuers_Database.class,
+        IssuersDiary_Database.class,
+        Merchants_Database.class,
+        MerchantsDiary_Database.class,
+        CacheData_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -90,6 +102,25 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static void clearAllTable() {
         walletDatabase.clearAllTables();
+    }
+
+    // todo notification---------------------------------------------------------------------------------------
+    public static void insertOnlySingleCacheData(final CacheData_Database cacheData, String fake) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                walletDatabase.daoAccess().insertOnlySingleCacheData(cacheData);
+                return null;
+            }
+        }.execute();
+    }
+
+    public static List<CacheData> getAllCacheData() {
+        return walletDatabase.daoAccess().getAllCacheData();
+    }
+
+    public static void deleteCacheData(String transactionSignature) {
+        walletDatabase.daoAccess().deleteCacheData(transactionSignature);
     }
 
     // todo notification---------------------------------------------------------------------------------------
@@ -227,7 +258,6 @@ public abstract class WalletDatabase extends RoomDatabase {
     // todo cash------------------------------------------------------------------------------------------
     public static void insertCashTask(CashLogs_Database cash, String userName) {
         CashLogs_Database mCash = new CashLogs_Database();
-        mCash.setUserName(userName);
         mCash.setCountryCode(cash.getCountryCode());
         mCash.setIssuerCode(cash.getIssuerCode());
         mCash.setDecisionNo(cash.getDecisionNo());

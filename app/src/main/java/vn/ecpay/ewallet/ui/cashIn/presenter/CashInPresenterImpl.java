@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,6 +19,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
@@ -156,7 +159,6 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongInfo.setToken(CommonUtils.getToken());
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
-        String alb = CommonUtils.getStringAlphabe(requestEdongInfo);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEdongInfo));
         requestEdongInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
@@ -171,21 +173,15 @@ public class CashInPresenterImpl implements CashInPresenter {
                             if (response.body().getResponseData().getListAcc().size() > 0) {
                                 ECashApplication.setListEDongInfo(response.body().getResponseData().getListAcc());
                             }
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            cashInView.dismissLoading();
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
-                        } else {
-                            cashInView.dismissLoading();
-                            cashInView.showDialogError(response.body().getResponseMessage());
                         }
                     }
                 }
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
             }
 
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
-                cashInView.dismissLoading();
-                cashInView.showDialogError(application.getString(R.string.err_upload));
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
             }
         });
     }

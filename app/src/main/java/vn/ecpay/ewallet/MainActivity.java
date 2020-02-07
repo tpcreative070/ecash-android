@@ -1,6 +1,5 @@
 package vn.ecpay.ewallet;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -22,27 +21,20 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.common.base.CustomFragmentTabHost;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
-import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
-import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
 
@@ -75,7 +67,7 @@ public class MainActivity extends ECashBaseActivity {
         setupTabs();
         tabHost.setOnTabChangedListener(this::onChange);
         tabHost.getTabWidget().getChildAt(1).setOnClickListener(v -> {
-            if (!isAccountExit()) {
+            if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
                 tabHost.setCurrentTab(1);
@@ -83,7 +75,7 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(3).setOnClickListener(v -> {
-            if (!isAccountExit()) {
+            if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
                 tabHost.setCurrentTab(3);
@@ -91,7 +83,7 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(4).setOnClickListener(v -> {
-            if (!isAccountExit()) {
+            if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
                 tabHost.setCurrentTab(4);
@@ -99,7 +91,7 @@ public class MainActivity extends ECashBaseActivity {
         });
         tabHost.getTabWidget().getChildAt(2).setOnClickListener(v -> {
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);
-            startActivityForResult(intentCashIn, Constant.REQUEST_QR_CODE);
+            startActivity(intentCashIn);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
@@ -108,22 +100,6 @@ public class MainActivity extends ECashBaseActivity {
 
         networkChangeReceiver = new NetworkChangeReceiver();
         registerReceiver(networkChangeReceiver, filter);
-    }
-
-    private boolean isAccountExit() {
-        if (KeyStoreUtils.getMasterKey(this) != null) {
-            List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(this);
-            if (listAccount != null) {
-                if (listAccount.size() > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -145,7 +121,7 @@ public class MainActivity extends ECashBaseActivity {
         @BindView(R.id.tab_name)
         public TextView nameView;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             ButterKnife.bind(this, view);
             this.view = view;
         }
@@ -157,7 +133,7 @@ public class MainActivity extends ECashBaseActivity {
         @BindView(R.id.tab_image)
         public ImageView imageView;
 
-        public ViewHolderQRCode(View view) {
+        ViewHolderQRCode(View view) {
             ButterKnife.bind(this, view);
             this.view = view;
         }
@@ -303,10 +279,13 @@ public class MainActivity extends ECashBaseActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode, this, resultCode, data));
+    }
+
+    @Override
     protected void onDestroy() {
-        Log.e("stopService", "WebSocketsService");
-        Intent webSocketService = new Intent(MainActivity.this, WebSocketsService.class);
-        stopService(webSocketService);
         if (networkChangeReceiver != null) {
             unregisterReceiver(networkChangeReceiver);
         }
@@ -314,22 +293,8 @@ public class MainActivity extends ECashBaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode,this,  resultCode, data));
-        if(resultCode == Activity.RESULT_OK){
-            if(requestCode==Constant.REQUEST_QR_CODE){
-                handleDataToPayResult(data);
-            }
-        }
-    }
+    protected void onResume() {
+        super.onResume();
 
-    private void handleDataToPayResult(Intent data){
-        if(data!=null){
-            Payments qrToPay = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
-            if(qrToPay!=null){
-                validatePayment(qrToPay);
-            }
-        }
     }
 }
