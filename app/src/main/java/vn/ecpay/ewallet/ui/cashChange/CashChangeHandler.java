@@ -1,8 +1,11 @@
 package vn.ecpay.ewallet.ui.cashChange;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -16,8 +19,12 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.RequestGetAccountWalletInfo;
+import vn.ecpay.ewallet.model.account.getAccountWalletInfo.ResponseGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -25,6 +32,7 @@ import vn.ecpay.ewallet.model.edongToEcash.response.ResponseEdongToECash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
+import vn.ecpay.ewallet.ui.cashChange.component.GetFullNameAccountRequest;
 import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
 
 public class CashChangeHandler {
@@ -57,7 +65,6 @@ public class CashChangeHandler {
         call.enqueue(new Callback<ResponseGetPublickeyOrganization>() {
             @Override
             public void onResponse(Call<ResponseGetPublickeyOrganization> call, Response<ResponseGetPublickeyOrganization> response) {
-                activity.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
@@ -71,12 +78,14 @@ public class CashChangeHandler {
                         }
                     }
                 } else {
+                    activity.dismissLoading();
                     activity.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseGetPublickeyOrganization> call, Throwable t) {
+                activity.dismissLoading();
                 activity.showDialogError(application.getString(R.string.err_upload));
             }
         });
@@ -131,8 +140,60 @@ public class CashChangeHandler {
 
             @Override
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
+                activity.dismissLoading();
                 activity.showDialogError(application.getString(R.string.err_upload));
             }
         });
+    }
+
+    public void getWalletAccountInfo(AccountInfo accountInfo, long walletID, GetFullNameAccountRequest listener){
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
+        APIService apiService = retrofit.create(APIService.class);
+
+        RequestGetAccountWalletInfo requestGetAccountWalletInfo = new RequestGetAccountWalletInfo();
+        requestGetAccountWalletInfo.setChannelCode(Constant.CHANNEL_CODE);
+        requestGetAccountWalletInfo.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_WALLET);
+        requestGetAccountWalletInfo.setSessionId(accountInfo.getSessionId());
+        requestGetAccountWalletInfo.setTerminalId(CommonUtils.getIMEI(activity));
+        requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
+        requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());
+        requestGetAccountWalletInfo.setWalletId(walletID);
+
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetAccountWalletInfo));
+        requestGetAccountWalletInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        Gson gson = new Gson();
+        String json = gson.toJson(requestGetAccountWalletInfo);
+        Log.e("json", json);
+
+        Call<ResponseGetAccountWalletInfo> call = apiService.getWalletInfo(requestGetAccountWalletInfo);
+        call.enqueue(new Callback<ResponseGetAccountWalletInfo>() {
+            @Override
+            public void onResponse(Call<ResponseGetAccountWalletInfo> call, Response<ResponseGetAccountWalletInfo> response) {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    if (response.body().getResponseCode() != null) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            AccountInfo mAccountInfo = response.body().getResponseData();
+                            if(mAccountInfo!=null){
+                                listener.getFullName(mAccountInfo.getPersonFirstName() + " " + mAccountInfo.getPersonMiddleName() + " " + mAccountInfo.getPersonLastName());
+                            }else{
+                                listener.getFullName("");
+                            }
+                        }else{
+                            listener.getFullName("");
+                        }
+                    }
+                }
+                else{
+                    listener.getFullName("");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseGetAccountWalletInfo> call, Throwable t) {
+                listener.getFullName("");
+            }
+        });
+
     }
 }

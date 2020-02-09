@@ -102,7 +102,7 @@ public class PayToFuntion {
         payToRequest.setContent(content);
         payToRequest.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
         payToRequest.setTotalAmount(String.valueOf(totalAmount));
-        payToRequest.setFullName(CommonUtils.getFullName(accountInfo));
+       // payToRequest.setFullName(CommonUtils.getFullName(accountInfo));
 
         Payments channelSignature = new Payments();
         channelSignature.setContent(content);
