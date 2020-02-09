@@ -34,8 +34,8 @@ public class CashInResponse implements Serializable {
     private String mFunctionCode;
     @SerializedName("functionId")
     private Long mFunctionId;
-    @SerializedName("glAccRefId")
-    private Long mGlAccRefId;
+//    @SerializedName("glAccRefId")
+//    private Long mGlAccRefId;
     @SerializedName("id")
     private String mId;
     @SerializedName("quantities")
@@ -54,8 +54,8 @@ public class CashInResponse implements Serializable {
     private String mTime;
     @SerializedName("token")
     private String mToken;
-    @SerializedName("transLockRefId")
-    private Long mTransLockRefId;
+//    @SerializedName("transLockRefId")
+//    private Long mTransLockRefId;
     @SerializedName("type")
     private String mType;
     @SerializedName("username")
@@ -151,13 +151,13 @@ public class CashInResponse implements Serializable {
         mFunctionId = functionId;
     }
 
-    public Long getGlAccRefId() {
-        return mGlAccRefId;
-    }
-
-    public void setGlAccRefId(Long glAccRefId) {
-        mGlAccRefId = glAccRefId;
-    }
+//    public Long getGlAccRefId() {
+//        return mGlAccRefId;
+//    }
+//
+//    public void setGlAccRefId(Long glAccRefId) {
+//        mGlAccRefId = glAccRefId;
+//    }
 
     public String getId() {
         return mId;
@@ -231,13 +231,13 @@ public class CashInResponse implements Serializable {
         mToken = token;
     }
 
-    public Long getTransLockRefId() {
-        return mTransLockRefId;
-    }
-
-    public void setTransLockRefId(Long transLockRefId) {
-        mTransLockRefId = transLockRefId;
-    }
+//    public Long getTransLockRefId() {
+//        return mTransLockRefId;
+//    }
+//
+//    public void setTransLockRefId(Long transLockRefId) {
+//        mTransLockRefId = transLockRefId;
+//    }
 
     public String getType() {
         return mType;

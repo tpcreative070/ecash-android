@@ -19,8 +19,17 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,16 +39,34 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.CacheData_Database;
+import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
+import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
+import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
+import vn.ecpay.ewallet.ui.cashChange.CashChangeHandler;
+import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
+import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
+import vn.ecpay.ewallet.ui.function.ToPayFuntion;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
+import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
 
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
+import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class MainActivity extends ECashBaseActivity {
     @BindView(R.id.main_content)
@@ -291,12 +318,11 @@ public class MainActivity extends ECashBaseActivity {
             }
         }
     }
-
     private void handleDataToPayResult(Intent data){
         if(data!=null){
-            Payments qrToPay = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
-            if(qrToPay!=null){
-                validatePayment(qrToPay);
+            Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
+            if(payment!=null){
+                validatePayment(payment);
             }
         }
     }
@@ -308,9 +334,5 @@ public class MainActivity extends ECashBaseActivity {
         super.onDestroy();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-    }
 }

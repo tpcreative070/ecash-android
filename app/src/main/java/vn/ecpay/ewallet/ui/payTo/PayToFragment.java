@@ -175,8 +175,6 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         edtContent.setText("");
         edtAmount.setText("");
         showDialogSendRequestOk();
-
-        //EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
     protected void showDialogSendRequestOk() {
         DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),

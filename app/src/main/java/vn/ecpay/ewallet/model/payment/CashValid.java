@@ -41,4 +41,28 @@ public class CashValid {
     public void setCashRemain(int cashRemain) {
         this.cashRemain = cashRemain;
     }
+
+    public List<Integer> listCash(){
+        List<Integer> list = new ArrayList<>();
+        list.add(1000);
+        list.add(2000);
+        list.add(5000);
+        list.add(10000);
+        list.add(20000);
+        list.add(50000);
+        list.add(100000);
+        list.add(200000);
+        list.add(500000);
+        return list;
+    }
+
+    public CashConvert mapCash(CashConvert cashSend,CashTotal cashTotal,int cashRemain) {//30000
+        int cash =cashTotal.getParValue() - cashRemain;
+        for(int i=0;i<listCash().size();i++){
+            if(cashRemain<=listCash().get(i)){
+
+            }
+        }
+        return cashSend;
+    }
 }
