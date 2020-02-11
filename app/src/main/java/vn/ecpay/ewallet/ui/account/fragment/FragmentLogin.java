@@ -340,7 +340,6 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     public void requestLoginSuccess(AccountInfo mAccountInfo) {
         if (getActivity() != null) {
             getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
-            getActivity().startService(new Intent(getActivity(), CashInService.class));
         }
         mAccountInfo.setUsername(userName);
         mAccountInfo.setToken(mAccountInfo.getToken());

@@ -2,6 +2,7 @@ package vn.ecpay.ewallet.ui.cashIn;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,6 +47,7 @@ import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashIn.presenter.CashInPresenter;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
+import vn.ecpay.ewallet.ui.function.CashInService;
 
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
@@ -89,7 +91,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashInModule(this)).inject(this);
+        if (null != getActivity()) {
+            getActivity().startService(new Intent(getActivity(), CashInService.class));
+            ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashInModule(this)).inject(this);
+        }
         cashInPresenter.setView(this);
         cashInPresenter.onViewCreate();
         String userName = ECashApplication.getAccountInfo().getUsername();
@@ -203,7 +208,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     private void showDialogCashInOk() {
         DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
-                getString(R.string.str_dialog_cash_in_success, CommonUtils.formatPriceVND(totalMoney), String.valueOf(eDongInfoCashIn.getAccountIdt())), new DialogUtil.OnConfirm() {
+                getString(R.string.str_dialog_cash_in_success, CommonUtils.formatPriceVND(totalMoney), eDongInfoCashIn.getAccountIdt()), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();
@@ -243,7 +248,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         cacheData_database.setResponseData(jsonCashInResponse);
         cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
         DatabaseUtil.saveCacheData(cacheData_database, getActivity());
-        cashInPresenter.getEDongInfo(accountInfo);
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
     }
 
     @Override

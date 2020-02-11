@@ -12,31 +12,42 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/layout_image_account"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_gravity="center">
-
-            <vn.ecpay.ewallet.common.base.CircleImageView
-                android:id="@+id/iv_account"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_avatar" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/ic_edit_picture" />
-        </RelativeLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="vertical">
+
+            <RelativeLayout
+                android:background="@drawable/item_selector"
+                android:id="@+id/layout_image_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/avatar"
+                    android:textColor="@color/grey_light" />
+
+                <vn.ecpay.ewallet.common.base.CircleImageView
+                    android:id="@+id/iv_account"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_avatar" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/iv_account"
+                    android:layout_marginTop="30dp"
+                    android:background="@color/grey_light" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:background="@drawable/item_selector"

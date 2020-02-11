@@ -133,8 +133,7 @@ public class DatabaseUtil {
     }
 
     //ma hoa mat xich dong tien
-    public static String getPreviousHashCash(CashLogs_Database cash, Context context) {
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+    public static String getPreviousHashCash(CashLogs_Database cash) {
         List<CashLogs_Database> cashList = WalletDatabase.getAllCash();
         if (cashList.size() > 0) {
             //get cash max id
@@ -167,7 +166,6 @@ public class DatabaseUtil {
     }
 
     public static boolean saveCashToDB(CashLogs_Database cash, Context context, String userName) {
-        cash.setPreviousHash(getPreviousHashCash(cash, context));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertCashTask(cash, userName);
         return true;
@@ -179,7 +177,6 @@ public class DatabaseUtil {
     }
 
     public static boolean SaveCashInvalidToDB(CashLogs_Database cash, Context context, String userName) {
-        cash.setPreviousHash(getPreviousHashCash(cash, context));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertCashInvalidTask(cash, userName);
         return true;

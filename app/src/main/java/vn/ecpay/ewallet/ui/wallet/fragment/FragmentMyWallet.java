@@ -146,15 +146,19 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
                 || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> updateBalance());
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> updateBalance());
+                    } catch (NullPointerException e) {
+                        return;
+                    }
                 }
-            }, 1000);
+            }, 3000);
         }
 
         if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {
