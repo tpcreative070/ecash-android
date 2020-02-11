@@ -86,6 +86,9 @@ public interface APIService {
     @POST("ecgateway/execute/FU00012")
     Call<ResponseGetAccountWalletInfo> getWalletInfo(@Body RequestGetAccountWalletInfo body);
 
+    @POST("ecgateway/execute/GWEC0007")
+    Call<ResponseGetAccountWalletInfo> getWalletAccountInfo(@Body RequestGetAccountWalletInfo body);
+
     @POST("ecgateway/execute/GWEC0005")
     Call<ResponseGetPublicKeyCash> getPublicKeyCash(@Body RequestGetPublicKeyCash body);
 

@@ -246,12 +246,16 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
         mDialog.show();
     }
-
+//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashChange: 10000
+//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashTake: 1000
+//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashTake: 2000
+//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashTake: 5000
     private void getListCashSend() {
         listQualitySend = new ArrayList<>();
         listValueSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
+               // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
                 listQualitySend.add(valueListCashChange.get(i).getTotal());
                 listValueSend.add(valueListCashChange.get(i).getParValue());
             }
@@ -263,6 +267,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         listValueTake = new ArrayList<>();
         for (int i = 0; i < valueListCashTake.size(); i++) {
             if (valueListCashTake.get(i).getTotal() > 0) {
+                Log.e("valueListCashTake ",valueListCashTake.get(i).getParValue()+"");
                 listQualityTake.add(valueListCashTake.get(i).getTotal());
                 listValueTake.add(valueListCashTake.get(i).getParValue());
             }
@@ -299,12 +304,12 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         // valueListCashChange =10000
         // listQualityTake =5
         // listValueTake =2000
-        for(int i=0;i<listQualityTake.size();i++){
-            Log.e("listQualityTake ",listQualityTake.get(i).toString()+"");
-        }
-        for(int i=0;i<listValueTake.size();i++){
-            Log.e("listValueTake ",listValueTake.get(i).toString()+"");
-        }
+//        for(int i=0;i<listQualityTake.size();i++){
+//            Log.e("listQualityTake ",listQualityTake.get(i).toString()+"");
+//        }
+//        for(int i=0;i<listValueTake.size();i++){
+//            Log.e("listValueTake ",listValueTake.get(i).toString()+"");
+//        }
         cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
     }
 

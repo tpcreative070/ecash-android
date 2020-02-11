@@ -32,6 +32,8 @@ public class CashInService extends Service {
     private List<CacheData> listResponseMessSockets;
     private AccountInfo accountInfo;
 
+    private String EVENT_CASH_IN_PAYTO ="";
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -55,6 +57,8 @@ public class CashInService extends Service {
                 accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
                 syncData();
             }
+        } if(event.getData().equals(Constant.EVENT_CASH_IN_PAYTO)){
+            EVENT_CASH_IN_PAYTO ="EVENT_CASH_IN_PAYTO";
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
@@ -91,7 +95,14 @@ public class CashInService extends Service {
             }
         } else {
             isRunning = false;
-            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
+            if(EVENT_CASH_IN_PAYTO.length()==0){
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
+
+            }else{
+                EVENT_CASH_IN_PAYTO="";
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
+            }
+
         }
     }
 
