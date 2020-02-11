@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -273,6 +274,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         listCashSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
+                Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
                 List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
                 for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
                     listCashSend.add(cashList.get(j));
@@ -293,6 +295,15 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             if (getActivity() != null)
                 ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
             return;
+        }
+        // valueListCashChange =10000
+        // listQualityTake =5
+        // listValueTake =2000
+        for(int i=0;i<listQualityTake.size();i++){
+            Log.e("listQualityTake ",listQualityTake.get(i).toString()+"");
+        }
+        for(int i=0;i<listValueTake.size();i++){
+            Log.e("listValueTake ",listValueTake.get(i).toString()+"");
         }
         cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
     }

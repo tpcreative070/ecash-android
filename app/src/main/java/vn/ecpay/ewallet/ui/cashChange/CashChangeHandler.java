@@ -37,7 +37,6 @@ public class CashChangeHandler {
     }
     public String getPublicKeyOrganization(AccountInfo accountInfo, PublicKeyOrganization publicKey){
         publicKeyOrganization ="";
-        activity.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(activity.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
         RequestGetPublicKeyOrganizetion requestGetPublicKeyOrganizetion = new RequestGetPublicKeyOrganizetion();
@@ -78,7 +77,6 @@ public class CashChangeHandler {
 
             @Override
             public void onFailure(Call<ResponseGetPublickeyOrganization> call, Throwable t) {
-                activity.dismissLoading();
                 activity.showDialogError(application.getString(R.string.err_upload));
             }
         });
@@ -127,14 +125,12 @@ public class CashChangeHandler {
                         }
                     }
                 } else {
-                    activity.dismissLoading();
                     activity.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
-                activity.dismissLoading();
                 activity.showDialogError(application.getString(R.string.err_upload));
             }
         });

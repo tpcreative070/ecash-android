@@ -14,6 +14,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
+import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 
 public class BillingQRCodeActivity extends ECashBaseActivity {
     @BindView(R.id.iv_back)
@@ -55,7 +56,7 @@ public class BillingQRCodeActivity extends ECashBaseActivity {
     private void getIntentData(){
         Intent intent = getIntent();
         if(intent!=null){
-            QRCodePayment qrCodePayment = (QRCodePayment) intent.getSerializableExtra(Constant.QR_CODE_TOPAY_MODEL);
+            QRScanBase qrCodePayment = (QRScanBase) intent.getSerializableExtra(Constant.QR_CODE_TOPAY_MODEL);
             if(qrCodePayment!=null){
                 addFragment( BillingQRCodeFragment.newInstance(qrCodePayment), false);
             }
