@@ -266,7 +266,7 @@ public class WebSocketsService extends Service {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        activity.showDialogNewPaymentRequest(payToRequest);
+                        activity.showDialogNewPaymentRequest(payToRequest,true);
                     }
                 });
 

@@ -156,8 +156,9 @@ public class CashChangeHandler {
         requestGetAccountWalletInfo.setSessionId(accountInfo.getSessionId());
         requestGetAccountWalletInfo.setTerminalId(CommonUtils.getIMEI(activity));
         requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
-        requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());
+        requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());//auditNumber
         requestGetAccountWalletInfo.setWalletId(walletID);
+        requestGetAccountWalletInfo.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetAccountWalletInfo));
         requestGetAccountWalletInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -165,7 +166,7 @@ public class CashChangeHandler {
         String json = gson.toJson(requestGetAccountWalletInfo);
         Log.e("json", json);
 
-        Call<ResponseGetAccountWalletInfo> call = apiService.getWalletInfo(requestGetAccountWalletInfo);
+        Call<ResponseGetAccountWalletInfo> call = apiService.getWalletAccountInfo(requestGetAccountWalletInfo);
         call.enqueue(new Callback<ResponseGetAccountWalletInfo>() {
             @Override
             public void onResponse(Call<ResponseGetAccountWalletInfo> call, Response<ResponseGetAccountWalletInfo> response) {
@@ -185,13 +186,16 @@ public class CashChangeHandler {
                     }
                 }
                 else{
+
                     listener.getFullName("");
                 }
+                activity.dismissLoading();
             }
 
             @Override
             public void onFailure(Call<ResponseGetAccountWalletInfo> call, Throwable t) {
                 listener.getFullName("");
+                activity.dismissLoading();
             }
         });
 

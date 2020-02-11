@@ -322,7 +322,8 @@ public class MainActivity extends ECashBaseActivity {
         if(data!=null){
             Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
             if(payment!=null){
-                validatePayment(payment);
+                //validatePayment(payment);
+                showDialogNewPaymentRequest(payment,false);
             }
         }
     }

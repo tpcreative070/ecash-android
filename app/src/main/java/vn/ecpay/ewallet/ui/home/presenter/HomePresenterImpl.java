@@ -217,7 +217,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestGetAccountWalletInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
         Gson gson = new Gson();
         String json = gson.toJson(requestGetAccountWalletInfo);
-        Log.e("json", json);
+        Log.e("json.", json);
 
         Call<ResponseGetAccountWalletInfo> call = apiService.getWalletInfo(requestGetAccountWalletInfo);
         call.enqueue(new Callback<ResponseGetAccountWalletInfo>() {
