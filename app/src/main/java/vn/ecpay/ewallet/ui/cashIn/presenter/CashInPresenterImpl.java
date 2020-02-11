@@ -177,12 +177,10 @@ public class CashInPresenterImpl implements CashInPresenter {
                         }
                     }
                 }
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
             }
 
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
             }
         });
     }

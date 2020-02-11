@@ -56,6 +56,7 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
+import vn.ecpay.ewallet.ui.function.CashInService;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.common.utils.Constant.QR_CONTACT;
@@ -124,7 +125,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         Gson gson = new Gson();
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
-            if (qrScanBase.getType() != null) {
+            if (qrScanBase.getType() != null && !qrScanBase.getType().isEmpty()) {
                 switch (qrScanBase.getType()) {
                     case QR_CONTACT:
                         if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
@@ -300,7 +301,6 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private boolean checkContactExist(Contact contact) {
-        boolean contactExist = false;
         List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
         if (listContact != null && listContact.size() > 0) {
             for (int i = 0; i < listContact.size(); i++) {
@@ -309,12 +309,14 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 }
             }
         }
-        return contactExist;
+        return false;
     }
 
     private String transactionSignatureCashInQR;
 
     private void handleCashIn(ResponseMessSocket responseMess) {
+        if (null != getActivity())
+            getActivity().startService(new Intent(getActivity(), CashInService.class));
         transactionSignatureCashInQR = responseMess.getId();
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(responseMess);

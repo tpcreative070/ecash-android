@@ -242,7 +242,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
             setData();
         }
 

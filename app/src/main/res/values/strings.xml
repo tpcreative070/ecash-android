@@ -7,7 +7,7 @@
     <string name="string_zero" translatable="false">0</string>
     <string name="string_todo" translatable="false">TODO</string>
 
-
+    <string name="avatar">Avatar</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
