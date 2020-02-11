@@ -56,8 +56,6 @@ public class Constant {
     public static final String EVENT_CHOSE_IMAGE = "EVENT_CHOSE_IMAGE";
     public static final String UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION";
     public static final String UPDATE_ACCOUNT_LOGIN = "update_account_login";
-    public static final String UPDATE_MONEY = "update_money";
-    public static final String UPDATE_MONEY_SOCKET = "update_money_socket";
     public static final String CASH_OUT_MONEY_SUCCESS = "cash_out_money_success";
     public static final String CASH_OUT_MONEY_FAIL = "cash_out_money_fail";
     public static final String EVENT_CONNECT_SOCKET_FAIL = "EVENT_CONNECT_SOCKET_FAIL";
@@ -74,6 +72,7 @@ public class Constant {
     public static final String EVENT_CASH_IN_SUCCESS = "EVENT_CASH_IN_SUCCESS";
     public static final String EVENT_CASH_IN_PAYTO = "EVENT_CASH_IN_PAYTO";
     public static final String EVENT_CASH_IN_CHANGE = "EVENT_CASH_IN_CHANGE";
+    public static final String EVENT_PAYMEMT_SUCCESS = "EVENT_PAYMEMT_SUCCESS";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";

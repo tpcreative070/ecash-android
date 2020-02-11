@@ -406,7 +406,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     public void showDialogPaymentSuccess(Payments payToRequest) {
         this.payment =null;
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMEMT_SUCCESS));
         DialogUtil.getInstance().showDialogPaymentSuccess(this, payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
@@ -686,7 +686,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 cacheData_database.setType(TYPE_CASH_EXCHANGE);
                 DatabaseUtil.saveCacheData(cacheData_database, getActivity());
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
+              //  EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
                 //validatePayment(payments);
                 dismissLoading();
             }

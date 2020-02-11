@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -15,10 +17,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
@@ -48,9 +51,12 @@ public class CashInService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        Log.e("event 1 ",event.toString());
+        //Log.e("event 1 ",event.toString());
         if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
             if (!isRunning) {
+                isRunning = true;
+                String userName = ECashApplication.getAccountInfo().getUsername();
+                accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
                 syncData();
             }
         } if(event.getData().equals(Constant.EVENT_CASH_IN_CHANGE)){
@@ -60,11 +66,12 @@ public class CashInService extends Service {
     }
 
     private void syncData() {
-        isRunning = true;
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
         listResponseMessSockets = DatabaseUtil.getAllCacheData(getApplicationContext());
-        handleListResponse();
+        if (listResponseMessSockets.size() > 0) {
+            handleListResponse();
+        } else {
+            syncData();
+        }
     }
 
     private void handleListResponse() {
@@ -95,8 +102,7 @@ public class CashInService extends Service {
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
 
             }else{
-
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMEMT_SUCCESS));
                 EVENT_CASH_IN_CHANGE="";
             }
 

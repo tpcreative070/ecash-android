@@ -280,8 +280,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             Toast.makeText(getActivity(), getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
         }
 
-        if (event.getData().equals(Constant.UPDATE_MONEY) ||
-                event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMEMT_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {

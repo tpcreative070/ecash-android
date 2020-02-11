@@ -156,9 +156,8 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
-                || event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {

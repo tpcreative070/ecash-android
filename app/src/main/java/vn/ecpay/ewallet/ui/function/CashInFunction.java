@@ -227,7 +227,6 @@ public class CashInFunction {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_MONEY));
             if (null != cashInSuccessListener) {
                 cashInSuccessListener.onCashInSuccess();
             }
