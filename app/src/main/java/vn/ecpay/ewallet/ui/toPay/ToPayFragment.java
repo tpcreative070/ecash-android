@@ -129,7 +129,7 @@ public class ToPayFragment extends ECashBaseFragment {
         qrPayment.setContent(edtContent.getText().toString());
         qrPayment.setSenderPublicKey(accountInfo.getEcKeyPublicValue());
         qrPayment.setTotalAmount(amount);
-        qrPayment.setFullName(CommonUtils.getFullName(accountInfo));
+        //qrPayment.setFullName(CommonUtils.getFullName(accountInfo));
 
         QRCodePayment channelSignature = new QRCodePayment();
         channelSignature.setContent(edtContent.getText().toString());

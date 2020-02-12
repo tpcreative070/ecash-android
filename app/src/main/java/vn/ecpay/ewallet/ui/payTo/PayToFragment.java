@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.payTo;
 
 import android.app.Activity;
+import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -40,6 +43,8 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
 import vn.ecpay.ewallet.ui.function.PayToFuntion;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
+
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 public class PayToFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.iv_back)
@@ -177,11 +182,20 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         showDialogSendRequestOk();
     }
     protected void showDialogSendRequestOk() {
+        restartSocket();
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (getActivity() == null) return;
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_SEND_REQUEST_PAYTO));
+            }
+        }, 500);
         DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
                 getString(R.string.str_send_request_success), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
-
+                        //
+                       // UsageEvents.Event
                     }
 
                     @Override

@@ -482,7 +482,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
 
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {

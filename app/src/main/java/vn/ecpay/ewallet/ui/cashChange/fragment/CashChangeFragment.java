@@ -53,7 +53,6 @@ import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.ui.function.CashInService;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
@@ -246,10 +245,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
         mDialog.show();
     }
-//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashChange: 10000
-//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashTake: 1000
-//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashTake: 2000
-//02-09 10:46:57.697 3182-3335/vn.ecpay.ewallet E/valueListCashTake: 5000
     private void getListCashSend() {
         listQualitySend = new ArrayList<>();
         listValueSend = new ArrayList<>();
@@ -279,7 +274,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         listCashSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
-                Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
+               // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
                 List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
                 for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
                     listCashSend.add(cashList.get(j));
@@ -301,15 +296,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
             return;
         }
-        // valueListCashChange =10000
-        // listQualityTake =5
-        // listValueTake =2000
-//        for(int i=0;i<listQualityTake.size();i++){
-//            Log.e("listQualityTake ",listQualityTake.get(i).toString()+"");
-//        }
-//        for(int i=0;i<listValueTake.size();i++){
-//            Log.e("listValueTake ",listValueTake.get(i).toString()+"");
-//        }
+
         cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
     }
 
@@ -360,7 +347,10 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         btnCashChange.setTextColor(getResources().getColor(R.color.blue));
                         btnCashTake.setBackgroundResource(R.drawable.bg_border_blue);
                         btnCashTake.setTextColor(getResources().getColor(R.color.blue));
-                        valueListCashTake.clear();
+                        if(valueListCashTake!=null){
+                            valueListCashTake.clear();
+                        }
+
                     }
 
                     @Override
@@ -389,6 +379,21 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                             dismissProgress();
                             setData();
                             showDialogCashChangeOk();
+                        });
+                    } catch (NullPointerException ignored) {
+                    }
+                }
+            }, 500);
+        }
+        if(event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)){
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> {
+                            dismissProgress();
+                            setData();
                         });
                     } catch (NullPointerException ignored) {
                     }
