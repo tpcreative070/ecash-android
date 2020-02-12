@@ -253,7 +253,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             setData();
         }
-        if (event.getData().equals(Constant.EVENT_PAYMEMT_SUCCESS)) {
+        if (event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             setData();
         }
         if (event.getData().equals(Constant.EVENT_UPDATE_AVARTAR)) {

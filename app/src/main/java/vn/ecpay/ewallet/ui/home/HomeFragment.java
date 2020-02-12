@@ -482,7 +482,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
 
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMEMT_SUCCESS)) {
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -493,7 +493,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         return;
                     }
                 }
-            }, 3000);
+            }, 5000);
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
@@ -516,7 +516,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onResume() {
         super.onResume();
-        updateBalance();
     }
 
     @Override

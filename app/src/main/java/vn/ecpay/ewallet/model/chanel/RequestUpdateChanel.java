@@ -8,65 +8,65 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class RequestUpdateChanel {
 
-    @SerializedName("clientKp")
-    private String mClientKp;
-    @SerializedName("groupChannelId")
-    private String mGroupChannelId;
-    @SerializedName("id")
-    private String mId;
-    @SerializedName("name")
-    private String mName;
-    @SerializedName("requireAuthorization")
-    private String mRequireAuthorization;
-    @SerializedName("requireSession")
-    private String mRequireSession;
+  @SerializedName("clientKp")
+  private String mClientKp;
+  @SerializedName("groupChannelId")
+  private String mGroupChannelId;
+  @SerializedName("id")
+  private String mId;
+  @SerializedName("name")
+  private String mName;
+  @SerializedName("requireAuthorization")
+  private String mRequireAuthorization;
+  @SerializedName("requireSession")
+  private String mRequireSession;
 
-    public String getClientKp() {
-        return mClientKp;
-    }
+  public String getClientKp() {
+    return mClientKp;
+  }
 
-    public void setClientKp(String clientKp) {
-        mClientKp = clientKp;
-    }
+  public void setClientKp(String clientKp) {
+    mClientKp = clientKp;
+  }
 
-    public String getGroupChannelId() {
-        return mGroupChannelId;
-    }
+  public String getGroupChannelId() {
+    return mGroupChannelId;
+  }
 
-    public void setGroupChannelId(String groupChannelId) {
-        mGroupChannelId = groupChannelId;
-    }
+  public void setGroupChannelId(String groupChannelId) {
+    mGroupChannelId = groupChannelId;
+  }
 
-    public String getId() {
-        return mId;
-    }
+  public String getId() {
+    return mId;
+  }
 
-    public void setId(String id) {
-        mId = id;
-    }
+  public void setId(String id) {
+    mId = id;
+  }
 
-    public String getName() {
-        return mName;
-    }
+  public String getName() {
+    return mName;
+  }
 
-    public void setName(String name) {
-        mName = name;
-    }
+  public void setName(String name) {
+    mName = name;
+  }
 
-    public String getRequireAuthorization() {
-        return mRequireAuthorization;
-    }
+  public String getRequireAuthorization() {
+    return mRequireAuthorization;
+  }
 
-    public void setRequireAuthorization(String requireAuthorization) {
-        mRequireAuthorization = requireAuthorization;
-    }
+  public void setRequireAuthorization(String requireAuthorization) {
+    mRequireAuthorization = requireAuthorization;
+  }
 
-    public String getRequireSession() {
-        return mRequireSession;
-    }
+  public String getRequireSession() {
+    return mRequireSession;
+  }
 
-    public void setRequireSession(String requireSession) {
-        mRequireSession = requireSession;
-    }
+  public void setRequireSession(String requireSession) {
+    mRequireSession = requireSession;
+  }
 
 }

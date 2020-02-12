@@ -17,8 +17,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
@@ -34,7 +32,6 @@ public class CashInService extends Service {
     private AccountInfo accountInfo;
 
     private String EVENT_CASH_IN_CHANGE ="";
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -51,18 +48,24 @@ public class CashInService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        //Log.e("event 1 ",event.toString());
+       // Log.e("B ",event.getData());
         if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
-            if (!isRunning) {
-                isRunning = true;
-                String userName = ECashApplication.getAccountInfo().getUsername();
-                accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
-                syncData();
-            }
-        } if(event.getData().equals(Constant.EVENT_CASH_IN_CHANGE)){
+
+            checkSync();
+        }
+        if(event.getData().equals(Constant.EVENT_CASH_IN_CHANGE)){
+            checkSync();
             EVENT_CASH_IN_CHANGE ="EVENT_CASH_IN_CHANGE";
         }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+    private void checkSync(){
+        if (!isRunning) {
+            isRunning = true;
+            String userName = ECashApplication.getAccountInfo().getUsername();
+            accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
+            syncData();
+        }
     }
 
     private void syncData() {
@@ -97,13 +100,13 @@ public class CashInService extends Service {
             }
         } else {
             isRunning = false;
-            //Log.e("EVENT_CASH_IN_PAYTO ",EVENT_CASH_IN_CHANGE);
+           // Log.e("EVENT_CASH_IN_PAYTO ",EVENT_CASH_IN_CHANGE);
             if(EVENT_CASH_IN_CHANGE.length()==0){
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
-
             }else{
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMEMT_SUCCESS));
                 EVENT_CASH_IN_CHANGE="";
+             //   Log.e("C ","C");
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
 
         }

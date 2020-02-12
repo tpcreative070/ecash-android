@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,14 +40,9 @@ import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
-import retrofit2.Retrofit;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.common.api_request.APIService;
-import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -65,19 +59,15 @@ import vn.ecpay.ewallet.model.cashValue.ResultOptimal;
 import vn.ecpay.ewallet.model.cashValue.UtilCashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
-import vn.ecpay.ewallet.model.payment.CashConvert;
-import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeHandler;
 import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
 import vn.ecpay.ewallet.ui.cashChange.component.GetFullNameAccountRequest;
 import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
-import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
-import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
-import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.function.CashInService;
 import vn.ecpay.ewallet.ui.function.ToPayFuntion;
 import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
+import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
@@ -377,6 +367,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     private Payments payment;
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+       // Log.e("D","D "+event.getData());
         if (event.getData().equals(Constant.EVENT_CASH_IN_PAYTO)) {
             new Timer().schedule(new TimerTask() {
                 @Override
@@ -386,8 +377,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                         getActivity().runOnUiThread(() -> {
                             if (payment != null) {
                                 validatePayment(payment);
-                            }else{
-                               // Log.e("payment null","todo");
                             }
                         });
                     } catch (NullPointerException ignored) {
@@ -406,12 +395,26 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     public void showDialogPaymentSuccess(Payments payToRequest) {
         this.payment =null;
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMEMT_SUCCESS));
+        restartSocket();
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (getActivity() == null) return;
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMENT_SUCCESS));
+            }
+        }, 500);
+
         DialogUtil.getInstance().showDialogPaymentSuccess(this, payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
             }
         });
+    }
+    public void restartSocket(){
+        if (getActivity() != null) {
+          //  Log.e("start ","start ");
+            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
+        }
     }
 
     public void showDialogNewPaymentRequest(Payments mPayment,boolean toPay) {
@@ -677,6 +680,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         cashChangeHandler.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake, new CashChangeSuccess() {
             @Override
             public void changeCashSuccess(CashInResponse cashInResponse) {
+                if (null != getActivity()) {
+                    getActivity().startService(new Intent(getActivity(), CashInService.class));}
                 DatabaseUtil.saveCashOut(cashInResponse.getId(), listCashSend, getActivity(), accountInfo.getUsername());
                 Gson gson = new Gson();
                 String jsonCashInResponse = gson.toJson(cashInResponse);
@@ -685,8 +690,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 cacheData_database.setResponseData(jsonCashInResponse);
                 cacheData_database.setType(TYPE_CASH_EXCHANGE);
                 DatabaseUtil.saveCacheData(cacheData_database, getActivity());
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
-              //  EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
+                //Log.e("A","A");
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
                 //validatePayment(payments);
                 dismissLoading();
             }

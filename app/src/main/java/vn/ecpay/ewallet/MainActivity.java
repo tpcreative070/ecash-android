@@ -312,14 +312,15 @@ public class MainActivity extends ECashBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode, this, resultCode, data));
-        if(resultCode == Activity.RESULT_OK){
-            if(requestCode==Constant.REQUEST_QR_CODE){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constant.REQUEST_QR_CODE) {
                 handleDataToPayResult(data);
             }
         }
     }
-    private void handleDataToPayResult(Intent data){
-        if(data!=null){
+
+    private void handleDataToPayResult(Intent data) {
+        if (data != null) {
             Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
             if(payment!=null){
                 //validatePayment(payment);
@@ -327,6 +328,7 @@ public class MainActivity extends ECashBaseActivity {
             }
         }
     }
+
     @Override
     protected void onDestroy() {
         if (networkChangeReceiver != null) {
@@ -334,6 +336,4 @@ public class MainActivity extends ECashBaseActivity {
         }
         super.onDestroy();
     }
-
-
 }

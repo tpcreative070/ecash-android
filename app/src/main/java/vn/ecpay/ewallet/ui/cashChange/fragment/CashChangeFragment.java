@@ -53,7 +53,6 @@ import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.ui.function.CashInService;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
@@ -386,7 +385,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 }
             }, 500);
         }
-        if(event.getData().equals(Constant.EVENT_PAYMEMT_SUCCESS)){
+        if(event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)){
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {

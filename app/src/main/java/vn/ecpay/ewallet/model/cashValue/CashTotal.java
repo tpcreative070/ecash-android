@@ -1,7 +1,5 @@
 package vn.ecpay.ewallet.model.cashValue;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class CashTotal {

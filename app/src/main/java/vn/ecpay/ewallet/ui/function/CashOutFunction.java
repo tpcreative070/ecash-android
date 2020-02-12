@@ -24,12 +24,9 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
@@ -46,6 +43,7 @@ public class CashOutFunction {
     private List<CashTotal> valuesList;
     private String typeSend;
     private CashOutListener cashOutListener;
+    private boolean isConnectSuccess = false;
 
     public CashOutFunction(Context context, List<CashTotal> valuesList, List<Contact> multiTransferList, String content, String typeSend) {
         this.context = context;
@@ -66,7 +64,8 @@ public class CashOutFunction {
                 for (int i = 0; i < multiTransferList.size(); i++) {
                     String currentTime = CommonUtils.getCurrentTime();
                     Gson gson = new Gson();
-                    ResponseMessSocket responseMessSocket = getObjectJsonSend(valuesList, multiTransferList.get(i), contentSendMoney, i);
+                    ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(context, valuesList,
+                            multiTransferList.get(i), contentSendMoney, i, typeSend, accountInfo);
                     String jsonCash = gson.toJson(responseMessSocket);
                     Contact contact = multiTransferList.get(i);
                     List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
@@ -120,22 +119,24 @@ public class CashOutFunction {
     }
 
     public void handleCashOutSocket(CashOutListener mCashOutListener) {
+        isConnectSuccess = false;
         this.cashOutListener = mCashOutListener;
         OkHttpClient client = new OkHttpClient();
         String url = SocketUtil.getUrl(accountInfo, context);
-        Log.e("cashout url ", url);
         Request requestCoinPrice = new Request.Builder().url(url).build();
         client.newWebSocket(requestCoinPrice, new WebSocketListener() {
             @SuppressLint("StaticFieldLeak")
             @Override
             public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
+                isConnectSuccess = true;
                 Log.e("send_money", "send money ok");
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         Gson gson = new Gson();
                         for (int i = 0; i < multiTransferList.size(); i++) {
-                            String jsonSend = gson.toJson(getObjectJsonSend(valuesList, multiTransferList.get(i), contentSendMoney, i));
+                            String jsonSend = gson.toJson(CommonUtils.getObjectJsonSendCashToCash(context, valuesList,
+                                    multiTransferList.get(i), contentSendMoney, i, typeSend, accountInfo));
                             webSocket.send(jsonSend);
                         }
                         return null;
@@ -145,59 +146,18 @@ public class CashOutFunction {
                     protected void onPostExecute(Void aVoid) {
                         cashOutListener.onCashOutSuccess();
                         EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
+                        webSocket.cancel();
                     }
                 }.execute();
             }
 
             @Override
             public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @NotNull Response response) {
-                Log.e("connect_socket", "connect socket fail");
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CONNECT_SOCKET_FAIL));
+                if (!isConnectSuccess) {
+                    EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CONNECT_SOCKET_FAIL));
+                }
             }
         });
         client.dispatcher().executorService().shutdown();
-    }
-
-    private ResponseMessSocket getObjectJsonSend(List<CashTotal> valuesListAdapter, Contact contact, String contentSendMoney, int index) {
-        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
-        ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
-
-        for (int i = 0; i < valuesListAdapter.size(); i++) {
-            if (valuesListAdapter.get(i).getTotal() > 0) {
-                List<CashLogs_Database> cashList = DatabaseUtil.getListCashForMoney(context, String.valueOf(valuesListAdapter.get(i).getParValue()));
-                int totalCashSend = valuesListAdapter.get(i).getTotal();
-                for (int j = 0; j < valuesListAdapter.get(i).getTotal(); j++) {
-                    if (index > 0) {
-                        int location = j + index * totalCashSend;
-                        listCashSend.add(cashList.get(location));
-                    } else {
-                        listCashSend.add(cashList.get(j));
-                    }
-                }
-            }
-        }
-
-        if (listCashSend.size() > 0) {
-            String[][] cashArray = new String[listCashSend.size()][3];
-            for (int i = 0; i < listCashSend.size(); i++) {
-                CashLogs_Database cash = listCashSend.get(i);
-                String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
-                cashArray[i] = moneyItem;
-            }
-            String encData = CommonUtils.getEncrypData(cashArray, contact.getPublicKeyValue());
-            ResponseMessSocket responseMess = new ResponseMessSocket();
-            responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
-            responseMess.setReceiver(String.valueOf(contact.getWalletId()));
-            responseMess.setTime(CommonUtils.getCurrentTime());
-            responseMess.setType(typeSend);
-            responseMess.setContent(contentSendMoney);
-            responseMess.setCashEnc(encData);
-            responseMess.setId(CommonUtils.getIdSender(responseMess, context));
-
-            CommonUtils.logJson(responseMess);
-            DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());
-            return responseMess;
-        }
-        return null;
     }
 }
