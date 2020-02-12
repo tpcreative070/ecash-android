@@ -72,12 +72,10 @@ public class WebSocketsService extends Service {
             Log.e("event", "service_UPDATE_ACCOUNT_LOGIN");
             Handler handler = new Handler();
             handler.postDelayed(() -> {
-                if (!isConnectSuccess) {
-                    if (ECashApplication.getAccountInfo() != null) {
-                        AccountInfo dbAccountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), getApplicationContext());
-                        if (dbAccountInfo != null) {
-                            startSocket();
-                        }
+                if (ECashApplication.getAccountInfo() != null) {
+                    AccountInfo dbAccountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), getApplicationContext());
+                    if (dbAccountInfo != null) {
+                        startSocket();
                     }
                 }
             }, 500);
@@ -127,6 +125,7 @@ public class WebSocketsService extends Service {
             if (responseMess != null) {
                 switch (responseMess.getType()) {
                     case Constant.TYPE_ECASH_TO_ECASH:
+                    case Constant.TYPE_PAYTO:
                         listResponseMessSockets.add(responseMess);
                         if (!isRunning) {
                             isRunning = true;
@@ -144,46 +143,34 @@ public class WebSocketsService extends Service {
                                 Gson gson = new Gson();
                                 String json = gson.toJson(responseMess);
 
-                                    CashTemp cashTemp = new CashTemp();
-                                    cashTemp.setContent(json);
-                                    cashTemp.setSenderAccountId(responseMess.getSender());
-                                    cashTemp.setTransactionSignature(responseMess.getId());
-                                    DatabaseUtil.saveCashTemp(cashTemp, getApplicationContext());
-                                    EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_LIXI));
-                                    confirmMess(responseMess);
-                                }
+                                CashTemp cashTemp = new CashTemp();
+                                cashTemp.setContent(json);
+                                cashTemp.setSenderAccountId(responseMess.getSender());
+                                cashTemp.setTransactionSignature(responseMess.getId());
+                                DatabaseUtil.saveCashTemp(cashTemp, getApplicationContext());
+                                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_LIXI));
+                                confirmMess(responseMess);
                             }
-                            break;
-                        case Constant.TYPE_SYNC_CONTACT:
-                            webSocket.send(getJsonSend(responseMess));
-                            DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
-                            confirmMess(responseMess);
-                            break;
-                        case Constant.TYPE_CANCEL_CONTACT:
-                            String walletIDContactCancel = responseMess.getSender();
-                            DatabaseUtil.updateStatusContact(getApplicationContext(), Constant.CONTACT_OFF, Long.valueOf(walletIDContactCancel));
-                            confirmMess(responseMess);
-                            break;
-                        case Constant.TYPE_TOPAY:
-                            Payments topayResponse =new Gson().fromJson(data, Payments.class);
-                            handlePaymentRequest(topayResponse);
-                            webSocket.send(getJsonSend(responseMess));
-                            confirmMess(responseMess);
-                            break;
-                        case Constant.TYPE_PAYTO:
-                            listResponseMessSockets.add(responseMess);
-                            if (!isRunning) {
-                                isRunning = true;
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        handleListResponse();
-                                    }
-                                }, 3000);
-                            }
-                            break;
-                    }
+                        }
+                        break;
+                    case Constant.TYPE_SYNC_CONTACT:
+                        webSocket.send(getJsonSend(responseMess));
+                        DatabaseUtil.saveListContact(getApplicationContext(), responseMess.getContacts());
+                        confirmMess(responseMess);
+                        break;
+                    case Constant.TYPE_CANCEL_CONTACT:
+                        String walletIDContactCancel = responseMess.getSender();
+                        DatabaseUtil.updateStatusContact(getApplicationContext(), Constant.CONTACT_OFF, Long.valueOf(walletIDContactCancel));
+                        confirmMess(responseMess);
+                        break;
+                    case Constant.TYPE_TOPAY:
+                        Payments topayResponse = new Gson().fromJson(data, Payments.class);
+                        handlePaymentRequest(topayResponse);
+                        webSocket.send(getJsonSend(responseMess));
+                        confirmMess(responseMess);
+                        break;
                 }
+            }
 
         }
 
@@ -204,20 +191,20 @@ public class WebSocketsService extends Service {
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             isConnectSuccess = false;
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CONNECT_SOCKET_FAIL));
             Log.e("onFailure", "SocKet_onFailure");
             t.printStackTrace();
         }
     };
 
-    private String getJsonSend(ResponseMessSocket responseMess){
+    private String getJsonSend(ResponseMessSocket responseMess) {
         RequestReceived requestReceived = new RequestReceived();
         requestReceived.setReceiver(responseMess.getReceiver());
         requestReceived.setRefId(responseMess.getRefId());
         requestReceived.setType(Constant.TYPE_SEN_SOCKET);
 
         Gson gson = new Gson();
-        String json = gson.toJson(requestReceived);
-        return json;
+        return gson.toJson(requestReceived);
     }
 
     private void handleListResponse() {
@@ -258,10 +245,10 @@ public class WebSocketsService extends Service {
     }
 
 
-    private void handlePaymentRequest(Payments payToRequest){
-       // Log.e("responseMess",responseMess.toString());
-        if(ECashApplication.getActivity()!=null){
-            if(ECashApplication.getActivity() instanceof ECashBaseActivity){
+    private void handlePaymentRequest(Payments payToRequest) {
+        // Log.e("responseMess",responseMess.toString());
+        if (ECashApplication.getActivity() != null) {
+            if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
                 ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
                 activity.runOnUiThread(new Runnable() {
                     @Override

@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.cashToCash.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -44,6 +45,7 @@ import vn.ecpay.ewallet.ui.function.CashOutFunction;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
+import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class CashToCashFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.tv_account_name)
@@ -68,8 +70,8 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     protected int balance;
     @BindView(R.id.toolbar_center_text)
     protected TextView toolbarCenterText;
-    private List<CashTotal> valuesListAdapter;
     private CashTotalAdapter cashValueAdapter;
+    private List<CashTotal> valuesListAdapter;
     private List<Contact> multiTransferList;
     protected long totalMoney;
     protected String typeSend;
@@ -223,15 +225,18 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     private void cashOutSuccess() {
         dismissProgress();
+        if (getActivity() != null) {
+            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
+        }
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(() -> setAdapter());
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
             }
         }, 500);
         showDialogSendOk();
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
 
     @Override
@@ -298,6 +303,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();
+            Toast.makeText(getActivity(), getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

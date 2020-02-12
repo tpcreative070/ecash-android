@@ -493,7 +493,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         return;
                     }
                 }
-            }, 3000);
+            }, 5000);
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
@@ -516,7 +516,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onResume() {
         super.onResume();
-        updateBalance();
     }
 
     @Override

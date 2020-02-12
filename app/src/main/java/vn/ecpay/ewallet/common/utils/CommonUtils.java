@@ -1,21 +1,17 @@
 package vn.ecpay.ewallet.common.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -46,14 +42,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeMap;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.CircleImageView;
-import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eccrypto.ECElGamal;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
@@ -61,25 +54,18 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eccrypto.Test;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.language.SharedPrefs;
-import vn.ecpay.ewallet.database.table.CacheData_Database;
+import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
-import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
-import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
-
-import static vn.ecpay.ewallet.ECashApplication.getActivity;
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class CommonUtils {
     public static String getModelName() {
@@ -792,6 +778,50 @@ public class CommonUtils {
         //  Log.e("moneyRemain ",cashValid.getCashRemain()+"");
         cashValid.setListCashRemain(cashDatabase);
         return cashValid;
+    }
+
+    public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
+                                                       Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
+
+        for (int i = 0; i < valuesListAdapter.size(); i++) {
+            if (valuesListAdapter.get(i).getTotal() > 0) {
+                List<CashLogs_Database> cashList = DatabaseUtil.getListCashForMoney(context, String.valueOf(valuesListAdapter.get(i).getParValue()));
+                int totalCashSend = valuesListAdapter.get(i).getTotal();
+                for (int j = 0; j < valuesListAdapter.get(i).getTotal(); j++) {
+                    if (index > 0) {
+                        int location = j + index * totalCashSend;
+                        listCashSend.add(cashList.get(location));
+                    } else {
+                        listCashSend.add(cashList.get(j));
+                    }
+                }
+            }
+        }
+
+        if (listCashSend.size() > 0) {
+            String[][] cashArray = new String[listCashSend.size()][3];
+            for (int i = 0; i < listCashSend.size(); i++) {
+                CashLogs_Database cash = listCashSend.get(i);
+                String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
+                cashArray[i] = moneyItem;
+            }
+            String encData = CommonUtils.getEncrypData(cashArray, contact.getPublicKeyValue());
+            ResponseMessSocket responseMess = new ResponseMessSocket();
+            responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
+            responseMess.setReceiver(String.valueOf(contact.getWalletId()));
+            responseMess.setTime(CommonUtils.getCurrentTime());
+            responseMess.setType(typeSend);
+            responseMess.setContent(contentSendMoney);
+            responseMess.setCashEnc(encData);
+            responseMess.setId(CommonUtils.getIdSender(responseMess, context));
+
+            CommonUtils.logJson(responseMess);
+            DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());
+            return responseMess;
+        }
+        return null;
     }
 
 }

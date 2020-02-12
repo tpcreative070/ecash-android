@@ -32,8 +32,6 @@ import vn.ecpay.ewallet.model.account.updateInfo.response.ResponseUpdateAccountI
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.cashValue.request.RequestGetMoneyValue;
 import vn.ecpay.ewallet.model.cashValue.response.ResponseGetMoneyValue;
-import vn.ecpay.ewallet.model.chanel.RequestUpdateChanel;
-import vn.ecpay.ewallet.model.chanel.response.ResponseUpdateChanel;
 import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
 import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
 import vn.ecpay.ewallet.model.contact.RequestSyncContact;
@@ -51,8 +49,8 @@ import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseGetPublicKeyByPhone;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 
 public interface APIService {
 

@@ -3,18 +3,19 @@ package vn.ecpay.ewallet.common.eventBus;
 import android.app.Activity;
 import android.content.Intent;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
+import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 
 public class EventDataChange {
-    String data;
-    ArrayList<QRCashTransfer> qrCashTransfers;
+    private String data;
 
-    int requestCode;
-    Activity activity;
-    int resultCode;
-    Intent dataImage;
+    //update avatar
+    private int requestCode;
+    private Activity activity;
+    private int resultCode;
+    private Intent dataImage;
 
     public EventDataChange(String data, int requestCode, Activity activity, int resultCode, Intent dataImage) {
         this.requestCode = requestCode;
@@ -28,17 +29,8 @@ public class EventDataChange {
         this.data = data;
     }
 
-    public EventDataChange(String data, ArrayList<QRCashTransfer> qrCashTransfers) {
-        this.data = data;
-        this.qrCashTransfers = qrCashTransfers;
-    }
-
     public String getData() {
         return data;
-    }
-
-    public ArrayList<QRCashTransfer> getQrCashTransfers() {
-        return qrCashTransfers;
     }
 
     public int getRequestCode() {
