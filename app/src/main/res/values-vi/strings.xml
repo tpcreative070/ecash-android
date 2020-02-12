@@ -1,5 +1,7 @@
 <resources>
     <!--<string name="app_name">Ecash Wallet</string>-->
+    <string name="receiver">Người nhận: </string>
+    <string name="sender">Người gửi: </string>
     <string name="avatar">Hình đại diện</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>

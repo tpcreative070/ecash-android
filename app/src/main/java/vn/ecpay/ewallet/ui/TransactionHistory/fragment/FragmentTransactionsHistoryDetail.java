@@ -46,11 +46,9 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
-import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.AdapterCashLogTransactionsHistory;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.TransactionQRCodeAdapter;
-import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_FAIL;
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
@@ -328,7 +326,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         super.onResume();
         try {
             ((TransactionsHistoryDetailActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
-        }catch (ClassCastException e){
+        } catch (ClassCastException e) {
 //            ((QRCodeActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
         }
     }
