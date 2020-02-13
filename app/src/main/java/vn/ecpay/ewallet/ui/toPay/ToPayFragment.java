@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.toPay;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,9 +9,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -18,6 +27,7 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -112,6 +122,9 @@ public class ToPayFragment extends ECashBaseFragment {
             if(money<1000||money%1000!=0){
                 showDialogError(getString(R.string.err_amount_validate));
                 return;
+            }else if(money>Constant.AMOUNT_LIMITED){
+                showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
+                return;
             }
         }
         if (edtContent.getText().toString().isEmpty()) {
@@ -155,5 +168,34 @@ public class ToPayFragment extends ECashBaseFragment {
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateData(EventDataChange event) {
+        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> setData());
+                    } catch (NullPointerException e) {
+                        return;
+                    }
+                }
+            }, 5000);
+        }
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().unregister(this);
+        super.onDetach();
     }
 }

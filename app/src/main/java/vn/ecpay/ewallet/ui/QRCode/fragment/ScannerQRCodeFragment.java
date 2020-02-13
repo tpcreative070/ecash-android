@@ -129,33 +129,39 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
             Log.e("qrScanBase ",gson.toJson(qrScanBase));
-            if (qrScanBase.getType() != null) {
-                switch (qrScanBase.getType()) {
-                    case QR_CONTACT:
-                        if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
-                            handleContactWithPayTo(result.getText());
-                        } else {
-                            handleContact(result.getText());
-                        }
-                        break;
-                    case QR_TO_PAY:
-                        handleQRCodeToPay(result.getText());
-                        break;
-                    default:
+            if(qrScanBase!=null){
+                if (qrScanBase.getType() != null) {
+                    switch (qrScanBase.getType()) {
+                        case QR_CONTACT:
+                            if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
+                                handleContactWithPayTo(result.getText());
+                            } else {
+                                handleContact(result.getText());
+                            }
+                            break;
+                        case QR_TO_PAY:
+                            handleQRCodeToPay(result.getText());
+                            break;
+                        default:
+                            dismissProgress();
+                            if (getActivity() != null)
+                                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                            break;
+                    }
+                } else {
+                    if (null != qrScanBase.getContent()) {
+                        handleCash(result.getText());
+                    } else {
                         dismissProgress();
                         if (getActivity() != null)
                             ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
-                        break;
+                    }
                 }
-            } else {
-                if (null != qrScanBase.getContent()) {
-                    handleCash(result.getText());
-                } else {
-                    dismissProgress();
-                    if (getActivity() != null)
-                        ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
-                }
+            }else{
+                if (getActivity() != null)
+                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
             }
+
         } catch (JsonSyntaxException e) {
             Log.e("e ",e.getLocalizedMessage());
             Log.e("e ",e.getMessage());

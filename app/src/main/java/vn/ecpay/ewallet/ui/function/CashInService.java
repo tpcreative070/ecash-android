@@ -102,10 +102,11 @@ public class CashInService extends Service {
             isRunning = false;
            // Log.e("EVENT_CASH_IN_PAYTO ",EVENT_CASH_IN_CHANGE);
             if(EVENT_CASH_IN_CHANGE.length()==0){
+               // Log.e("C  ","C");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
             }else{
                 EVENT_CASH_IN_CHANGE="";
-             //   Log.e("C ","C");
+              //  Log.e("E ","E");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
 

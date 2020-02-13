@@ -163,6 +163,9 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             if(money<1000||money%1000!=0){
                 showDialogError(getString(R.string.err_amount_validate));
                 return;
+            }else if(money>Constant.AMOUNT_LIMITED){
+                showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
+                return;
             }
         }
         if (edtContent.getText().toString().isEmpty()) {
@@ -221,15 +224,24 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-//        if (event.getData().equals(Constant.PAYTO_SUCCESS)) {
-//            dismissProgress();
-//        }
-
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();
             showDialogError(getString(R.string.err_connect_socket_fail));
         }
+        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
 
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> setData());
+                    } catch (NullPointerException e) {
+                        return;
+                    }
+                }
+            }, 5000);
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
     @Override

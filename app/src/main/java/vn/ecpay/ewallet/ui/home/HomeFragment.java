@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -473,6 +476,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+        Log.e("Home Event Bus",new Gson().toJson(event.getData()));
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }
@@ -482,7 +486,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
 
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)||
+                event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)||event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {

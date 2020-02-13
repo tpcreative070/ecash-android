@@ -18,6 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.Writer;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -36,6 +37,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -448,8 +450,11 @@ public class CommonUtils {
         int WIDTH = 400;
         Writer writer = new QRCodeWriter();
         BitMatrix bitMatrix = null;
+        Map<EncodeHintType, Object> hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+        hints.put(EncodeHintType.MARGIN, 0);
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         try {
-            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
+            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH,hints);
             Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
             for (int i = 0; i < 400; i++) {
                 for (int j = 0; j < 400; j++) {

@@ -24,6 +24,7 @@ import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_TO_ECASH;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_LIXI;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_PAYTO;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_ECASH_TO_EDONG;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
@@ -133,6 +134,12 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                 itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_cash_change));
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
                 itemViewHolder.tvTransactionAmount.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
+                break;
+            case TYPE_PAYTO:
+                itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_payment));
+                itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_payto_gray);
+                itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
+                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 break;
 
         }
