@@ -240,6 +240,8 @@ public class WebSocketsService extends Service {
             }
         } else {
             isRunning = false;
+          //  Log.e("Done ","Done");
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
         }
     }
 
