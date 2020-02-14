@@ -158,7 +158,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
                         return;
                     }
                 }
-            }, 3000);
+            }, 1000);
         }
 
         if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {

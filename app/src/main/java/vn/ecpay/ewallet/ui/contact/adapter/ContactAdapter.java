@@ -116,7 +116,6 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         context.getResources().getString(R.string.str_confirm_delete), new DialogUtil.OnConfirm() {
                             @Override
                             public void OnListenerOk() {
-                                DatabaseUtil.deleteContact(context, contactTransferModel.getWalletId());
                                 onDeleteItem.onDeleteOK(position);
                             }
 
@@ -167,7 +166,7 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ImageView iv_multi_chose;
         RelativeLayout view_foreground;
 
-        public ItemContactContentHolder(View itemView) {
+        ItemContactContentHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             tvPhone = itemView.findViewById(R.id.tv_phone);

@@ -48,7 +48,6 @@ import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.presenter.LoginPresenter;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
-import vn.ecpay.ewallet.ui.function.CashInService;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class FragmentLogin extends ECashBaseFragment implements LoginView {

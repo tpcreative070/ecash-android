@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -171,7 +172,6 @@ public class WebSocketsService extends Service {
                         break;
                 }
             }
-
         }
 
         @Override
@@ -227,6 +227,7 @@ public class WebSocketsService extends Service {
                 handleListResponse();
             }
         } else {
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
             isRunning = false;
         }
     }
@@ -246,17 +247,10 @@ public class WebSocketsService extends Service {
 
 
     private void handlePaymentRequest(Payments payToRequest) {
-        // Log.e("responseMess",responseMess.toString());
         if (ECashApplication.getActivity() != null) {
             if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
                 ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.showDialogNewPaymentRequest(payToRequest);
-                    }
-                });
-
+                activity.runOnUiThread(() -> activity.showDialogNewPaymentRequest(payToRequest));
             }
         }
     }
@@ -264,6 +258,7 @@ public class WebSocketsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Toast.makeText(getApplicationContext(), "Socket server tèo rồi T_T", Toast.LENGTH_LONG).show();
         EventBus.getDefault().unregister(this);
     }
 }

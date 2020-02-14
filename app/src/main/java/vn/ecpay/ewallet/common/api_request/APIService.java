@@ -36,6 +36,10 @@ import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
 import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
 import vn.ecpay.ewallet.model.contact.RequestSyncContact;
 import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
+import vn.ecpay.ewallet.model.contactAdd.RequestAddContact;
+import vn.ecpay.ewallet.model.contactAdd.ResponseAddContact;
+import vn.ecpay.ewallet.model.contactDelete.RequestDeleteContact;
+import vn.ecpay.ewallet.model.contactDelete.ResponseDeleteContact;
 import vn.ecpay.ewallet.model.ecashToEdong.RequestEcashToEdong;
 import vn.ecpay.ewallet.model.ecashToEdong.ResponseECashToEdong;
 import vn.ecpay.ewallet.model.edongToEcash.RequestEdongToECash;
@@ -113,6 +117,12 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0017")
     Call<ResponseSyncContact> syncContacts(@Body RequestSyncContact body);
+
+    @POST("ecgateway/execute/GWEC0023")
+    Call<ResponseAddContact> addContacts(@Body RequestAddContact body);
+
+    @POST("ecgateway/execute/GWEC0038")
+    Call<ResponseDeleteContact> deleteContacts(@Body RequestDeleteContact body);
 
     @POST("ecgateway/execute/GWEC0024")
     Call<ForgotPassOTPResponse> getOTPForgotPass(@Body ForgotPassOTPRequest body);

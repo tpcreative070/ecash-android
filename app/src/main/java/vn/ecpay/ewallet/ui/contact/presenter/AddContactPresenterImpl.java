@@ -21,6 +21,8 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contact.RequestSyncContact;
 import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
+import vn.ecpay.ewallet.model.contactAdd.RequestAddContact;
+import vn.ecpay.ewallet.model.contactAdd.ResponseAddContact;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
@@ -172,31 +174,31 @@ public class AddContactPresenterImpl implements AddContactPresenter {
     }
 
     @Override
-    public void syncContact(Context context, AccountInfo accountInfo, Contact contact) {
+    public void addContact(Context context, AccountInfo accountInfo, Contact contact) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
         List<String> userList = new ArrayList<>();
-        userList.add(contact.getPhone());
+        userList.add(String.valueOf(contact.getWalletId()));
 
-        RequestSyncContact requestSyncContact = new RequestSyncContact();
-        requestSyncContact.setChannelCode(Constant.CHANNEL_CODE);
-        requestSyncContact.setFunctionCode(Constant.FUNCTION_SYNC_CONTACT);
-        requestSyncContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestSyncContact.setListContacts(userList);
-        requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
-        requestSyncContact.setUsername(accountInfo.getUsername());
-        requestSyncContact.setWalletId(accountInfo.getWalletId());
-        requestSyncContact.setToken(CommonUtils.getToken(accountInfo));
-        requestSyncContact.setAuditNumber(CommonUtils.getAuditNumber());
+        RequestAddContact requestAddContact = new RequestAddContact();
+        requestAddContact.setChannelCode(Constant.CHANNEL_CODE);
+        requestAddContact.setFunctionCode(Constant.FUNCTION_ADD_CONTACT);
+        requestAddContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestAddContact.setListWallets(userList);
+        requestAddContact.setUsername(accountInfo.getUsername());
+        requestAddContact.setWalletId(String.valueOf(accountInfo.getWalletId()));
+        requestAddContact.setToken(CommonUtils.getToken(accountInfo));
+        requestAddContact.setAuditNumber(CommonUtils.getAuditNumber());
+        requestAddContact.setAddNewWalletId(String.valueOf(contact.getWalletId()));
 
-        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
-        requestSyncContact.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestAddContact));
+        requestAddContact.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
-        Call<ResponseSyncContact> call = apiService.syncContacts(requestSyncContact);
-        call.enqueue(new Callback<ResponseSyncContact>() {
+        Call<ResponseAddContact> call = apiService.addContacts(requestAddContact);
+        call.enqueue(new Callback<ResponseAddContact>() {
             @Override
-            public void onResponse(Call<ResponseSyncContact> call, Response<ResponseSyncContact> response) {
+            public void onResponse(Call<ResponseAddContact> call, Response<ResponseAddContact> response) {
                 addContactView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
@@ -215,7 +217,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
             }
 
             @Override
-            public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
+            public void onFailure(Call<ResponseAddContact> call, Throwable t) {
                 addContactView.dismissLoading();
                 addContactView.getWalletFail(application.getString(R.string.err_upload));
             }

@@ -53,8 +53,7 @@ import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.function.CashInService;
+import vn.ecpay.ewallet.ui.function.SyncCashService;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
@@ -337,7 +336,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @Override
     public void changeCashSuccess(CashInResponse cashInResponse) {
         if (null != getActivity())
-            getActivity().startService(new Intent(getActivity(), CashInService.class));
+            getActivity().startService(new Intent(getActivity(), SyncCashService.class));
         DatabaseUtil.saveCashOut(cashInResponse.getId(), listCashSend, getActivity(), accountInfo.getUsername());
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(cashInResponse);

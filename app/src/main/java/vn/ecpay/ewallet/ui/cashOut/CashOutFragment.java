@@ -2,6 +2,8 @@ package vn.ecpay.ewallet.ui.cashOut;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -10,14 +12,19 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -36,12 +43,17 @@ import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
+import vn.ecpay.ewallet.ui.function.SyncCashService;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
+
+import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CASH_OUT_MONEY;
+import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
 
 public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
@@ -94,7 +106,10 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashOutModule(this)).inject(this);
+        if (null != getActivity()) {
+            getActivity().startService(new Intent(getActivity(), SyncCashService.class));
+            ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashOutModule(this)).inject(this);
+        }
         cashOutPresenter.setView(this);
         cashOutPresenter.onViewCreate();
         String userName = ECashApplication.getAccountInfo().getUsername();
@@ -299,19 +314,36 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     @SuppressLint("StaticFieldLeak")
     @Override
     public void sendECashToEDongSuccess() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, getActivity(), accountInfo.getUsername());
-                cashOutPresenter.getEDongInfo(accountInfo);
-                return null;
-            }
+        EventBus.getDefault().postSticky(new EventDataChange(EVENT_CASH_OUT_MONEY, responseMess, listCashSend));
+        cashOutPresenter.getEDongInfo(accountInfo);
+    }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                dismissProgress();
-                showDialogCashOutOk();
-            }
-        }.execute();
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateData(EventDataChange event) {
+        if (event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() == null) return;
+                    getActivity().runOnUiThread(() -> {
+                        dismissProgress();
+                        showDialogCashOutOk();
+                    });
+                }
+            }, 500);
+        }
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().unregister(this);
+        super.onDetach();
     }
 }

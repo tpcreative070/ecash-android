@@ -91,6 +91,10 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     LinearLayout layoutQrCode;
     @BindView(R.id.rv_list_qr_code)
     RecyclerView rvListQrCode;
+    @BindView(R.id.layout_content)
+    RelativeLayout layoutContent;
+    @BindView(R.id.tv_sender_receiver)
+    TextView tvSenderReceiver;
     private TransactionsHistoryModel transactionsHistoryModel;
     private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistory;
     private TransactionQRCodeAdapter transactionQRCodeAdapter;
@@ -125,8 +129,6 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     }
 
     private void updateView() {
-        tvHumanCode.setText(transactionsHistoryModel.getReceiverAccountId());
-        tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
         tvHistoryPhone.setText(transactionsHistoryModel.getReceiverPhone());
         tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())));
         tvHistoryContent.setText(transactionsHistoryModel.getTransactionContent());
@@ -138,14 +140,30 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_out));
                 tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
                         CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                layoutContent.setVisibility(View.GONE);
+                tvSenderReceiver.setText(getResources().getString(R.string.receiver));
+                tvHumanCode.setText(transactionsHistoryModel.getSenderAccountId());
+                tvHistoryName.setText(transactionsHistoryModel.getSenderName());
+                break;
+            case TYPE_SEND_EDONG_TO_ECASH:
+                tvType.setText(getResources().getString(R.string.str_cash_in));
+                tvHistoryType.setText(getResources().getString(R.string.str_cash_in));
+                tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
+                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                tvSenderReceiver.setText(getResources().getString(R.string.sender));
+                tvHumanCode.setText(transactionsHistoryModel.getReceiverAccountId());
+                tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
+                layoutContent.setVisibility(View.GONE);
                 break;
             case TYPE_ECASH_TO_ECASH:
                 if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                    tvSenderReceiver.setText(getResources().getString(R.string.sender));
                 } else {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                    tvSenderReceiver.setText(getResources().getString(R.string.receiver));
                 }
                 tvType.setText(getResources().getString(R.string.str_transfer));
                 tvHistoryType.setText(getResources().getString(R.string.str_transfer));
@@ -154,24 +172,24 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                    tvSenderReceiver.setText(getResources().getString(R.string.sender));
                 } else {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                    tvSenderReceiver.setText(getResources().getString(R.string.receiver));
                 }
                 tvType.setText(getResources().getString(R.string.str_lixi));
                 tvHistoryType.setText(getResources().getString(R.string.str_lixi));
-                break;
-            case TYPE_SEND_EDONG_TO_ECASH:
-                tvType.setText(getResources().getString(R.string.str_cash_in));
-                tvHistoryType.setText(getResources().getString(R.string.str_cash_in));
-                tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
-                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 break;
             case TYPE_CASH_EXCHANGE:
                 tvType.setText(getResources().getString(R.string.str_cash_change));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_change));
                 tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
                 tvTotalMoneyTransfer.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
+                tvSenderReceiver.setText(getResources().getString(R.string.receiver));
+                tvHumanCode.setText(transactionsHistoryModel.getReceiverAccountId());
+                tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
+                layoutContent.setVisibility(View.GONE);
                 break;
 
         }

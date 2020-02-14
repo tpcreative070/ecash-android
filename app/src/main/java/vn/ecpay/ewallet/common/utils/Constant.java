@@ -57,6 +57,7 @@ public class Constant {
     public static final String UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION";
     public static final String UPDATE_ACCOUNT_LOGIN = "update_account_login";
 
+    public static final String EVENT_CASH_OUT_MONEY = "EVENT_CASH_OUT_MONEY";
     public static final String CASH_OUT_MONEY_SUCCESS = "cash_out_money_success";
     public static final String CASH_OUT_MONEY_FAIL = "cash_out_money_fail";
 
@@ -95,6 +96,8 @@ public class Constant {
     public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0020";
     public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
     public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
+    public static final String FUNCTION_ADD_CONTACT = "GWEC0023";
+    public static final String FUNCTION_DELETE_CONTACT = "GWEC0038";
     public static final String FUNCTION_FORGOT_PASS_OTP = "GWEC0024";
     public static final String FUNCTION_CHANGE_PASS = "GWEC0025";
     public static final String FUNCTION_GET_OTP_ACTIVE_ACCOUNT = "GWEC0029";

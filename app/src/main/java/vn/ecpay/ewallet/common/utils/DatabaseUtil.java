@@ -190,7 +190,8 @@ public class DatabaseUtil {
         return CommonUtils.generateSignature(dataSign, CommonUtils.getPrivateChannelKey());
     }
 
-    public static void updateTransactionsLogAndCashOutDatabase(ArrayList<CashLogs_Database> listCashSend, ResponseMessSocket responseMess, Context context, String userName) {
+    public static void updateTransactionsLogAndCashOutDatabase(ArrayList<CashLogs_Database> listCashSend,
+                                                               ResponseMessSocket responseMess, Context context, String userName) {
         saveCashOut(responseMess.getId(), listCashSend, context, userName);
         saveTransactionLog(responseMess, context);
     }

@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.database;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.room.Database;
@@ -265,27 +266,25 @@ public abstract class WalletDatabase extends RoomDatabase {
         mCash.setAccSign(cash.getAccSign());
         mCash.setType(cash.getType());
         mCash.setTransactionSignature(cash.getTransactionSignature());
-        mCash.setPreviousHash(cash.getPreviousHash());
+        mCash.setPreviousHash(DatabaseUtil.getPreviousHashCash(mCash));
         insertCashTask(mCash);
     }
 
     private static void insertCashTask(final CashLogs_Database cash) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cash));
-                walletDatabase.daoAccess().insertOnlySingleCash(cash);
-                return null;
-            }
-        }.execute();
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                Log.e("doInBackground","doInBackground");
+//                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cash));
+//                walletDatabase.daoAccess().insertOnlySingleCash(cash);
+//                return null;
+//            }
+//        }.execute();
+        walletDatabase.daoAccess().insertOnlySingleCash(cash);
     }
 
     public static List<CashLogs_Database> getAllCash() {
-        try {
-            return walletDatabase.daoAccess().getAllCash();
-        } catch (Exception e) {
-            return null;
-        }
+        return walletDatabase.daoAccess().getAllCash();
     }
 
     public static int getMaxIDCash() {
@@ -332,19 +331,12 @@ public abstract class WalletDatabase extends RoomDatabase {
         cashInvalid_database.setAccSign(cashLogs_database.getAccSign());
         cashInvalid_database.setType(cashLogs_database.getType());
         cashInvalid_database.setTransactionSignature(cashLogs_database.getTransactionSignature());
-        cashInvalid_database.setPreviousHash(cashLogs_database.getPreviousHash());
         insertCashInvalidTask(cashInvalid_database, cashLogs_database);
     }
 
     private static void insertCashInvalidTask(final CashInvalid_Database cash, CashLogs_Database cashLogs_database) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cashLogs_database));
-                walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
-                return null;
-            }
-        }.execute();
+        cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cashLogs_database));
+        walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
     }
 
     // todo Decision_Database--------------------------------------------------------------------------------------
