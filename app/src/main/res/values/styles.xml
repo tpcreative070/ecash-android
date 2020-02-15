@@ -145,4 +145,12 @@
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
     </style>
+
+    <style name="TextViewErrorInput" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_small</item>
+       <item name="android:textColor">@color/red</item>
+        <item name="android:layout_marginStart">3dp</item>
+    </style>
 </resources>

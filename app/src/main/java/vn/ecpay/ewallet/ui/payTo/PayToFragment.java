@@ -33,9 +33,11 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.ContentInputTextWatcher;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.NumberTextWatcher;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -66,6 +68,13 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     EditText edtContent;
     @BindView(R.id.iv_contact)
     ImageView ivContact;
+
+    @BindView(R.id.tv_error_wallet_id)
+    TextView tvErrorWallet;
+    @BindView(R.id.tv_error_amount)
+    TextView tvErrorAmount;
+    @BindView(R.id.tv_error_content)
+    TextView tvErrorContent;
 
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
@@ -99,9 +108,11 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
-        edtAmount.addTextChangedListener(new NumberTextWatcher(edtAmount));
+        edtAmount.addTextChangedListener(new NumberTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));
+        edtContent.addTextChangedListener(new ContentInputTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));
     }
     private void setData(){
+        Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -139,38 +150,44 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
     }
-    private void validateData(){// TODO
-      //  showDialogNewPaymentRequest("150000","1213244");
+    private void validateData(){
+        clearError();
         if (multiTransferList == null) {
             if (getActivity() != null)
-                showDialogError(getString(R.string.err_not_input_number_username));
+               // showDialogError(getString(R.string.err_not_input_number_username));
+            tvErrorWallet.setText(getString(R.string.err_not_input_number_username));
             return;
         }
         if (multiTransferList.size() == 0) {
             if (getActivity() != null)
-                showDialogError(getString(R.string.err_not_input_number_username));
+              //  showDialogError(getString(R.string.err_not_input_number_username));
+            tvErrorWallet.setText(getString(R.string.err_not_input_number_username));
             return;
         }
 
         if (edtAmount.getText().toString().isEmpty()) {
             if (getActivity() != null)
-                showDialogError(getString(R.string.err_anount_null));
+              //  showDialogError(getString(R.string.err_anount_null));
+            tvErrorAmount.setText(getString(R.string.err_anount_null));
             return;
         }
         if(edtAmount.getText().toString().length()>0){
             Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
            // Log.e("money%1000 ",money%1000+"");
             if(money<1000||money%1000!=0){
-                showDialogError(getString(R.string.err_amount_validate));
+              //  showDialogError(getString(R.string.err_amount_validate));
+                tvErrorAmount.setText(getString(R.string.err_amount_validate));
                 return;
             }else if(money>Constant.AMOUNT_LIMITED){
-                showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
+               // showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
+                tvErrorAmount.setText(getString(R.string.err_amount_does_not_exceed_twenty_million));
                 return;
             }
         }
         if (edtContent.getText().toString().isEmpty()) {
             if (getActivity() != null)
-                showDialogError(getString(R.string.err_dit_not_content));
+              //  showDialogError(getString(R.string.err_dit_not_content));
+            tvErrorContent.setText(getString(R.string.err_dit_not_content));
             return;
         }
         showProgress();///
@@ -182,7 +199,13 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         tvEcashNumber.setText("");
         edtContent.setText("");
         edtAmount.setText("");
+        clearError();
         showDialogSendRequestOk();
+    }
+    private void clearError(){
+        tvErrorWallet.setText("");
+        tvErrorAmount.setText("");
+        tvErrorContent.setText("");
     }
     protected void showDialogSendRequestOk() {
         restartSocket();
@@ -249,6 +272,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         multiTransferList =contactList;
         updateWalletSend();
     }
+
     private void updateWalletSend() {
         StringBuilder walletId = new StringBuilder();
         for (int i = 0; i < multiTransferList.size(); i++) {

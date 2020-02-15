@@ -1,21 +1,33 @@
 package vn.ecpay.ewallet.common.utils;
 
+import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Locale;
 
 public class NumberTextWatcher implements TextWatcher {
-    private EditText et;
+    private EditText amount;
+    private EditText content;
+    private Button confirm;
+    private Context context;
 
-    public NumberTextWatcher(EditText et)
+    public NumberTextWatcher(EditText amount)
     {
-        this.et = et;
+        this.amount = amount;
+
+    }
+    public NumberTextWatcher(Context context,EditText amount, EditText content, Button confirm)
+    {
+        this.context = context;
+        this.amount = amount;
+        this.content = content;
+        this.confirm = confirm;
 
     }
 
@@ -24,11 +36,11 @@ public class NumberTextWatcher implements TextWatcher {
 
     public void afterTextChanged(Editable s)
     {
-        et.removeTextChangedListener(this);
+        amount.removeTextChangedListener(this);
 
         try {
             String originalString = s.toString();
-
+            checkButtonConfirm(originalString);
             Long longval;
             if (originalString.contains(",")) {
                 originalString = originalString.replaceAll(",", "");
@@ -40,13 +52,15 @@ public class NumberTextWatcher implements TextWatcher {
             String formattedString = formatter.format(longval);
 
             //setting text after format to EditText
-            et.setText(formattedString);
-            et.setSelection(et.getText().length());
+            amount.setText(formattedString);
+            amount.setSelection(amount.getText().length());
+
+
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
         }
 
-        et.addTextChangedListener(this);
+        amount.addTextChangedListener(this);
 
     }
 
@@ -66,5 +80,20 @@ public class NumberTextWatcher implements TextWatcher {
         }
         long longval = Long.parseLong(number);
         return formatter.format(longval);
+    }
+
+    private void checkButtonConfirm(String text){
+            if(context!=null&&content!=null&&confirm!=null){
+                if(text.length()>0){
+                    //Log.e("edtContent","1");
+                    if(content.getText().toString().length()>0){
+                        Utils.disableButtonConfirm(context,confirm,false);
+                    }else{
+                        Utils.disableButtonConfirm(context,confirm,true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(context,confirm,true);
+                }
+            }
     }
 }
