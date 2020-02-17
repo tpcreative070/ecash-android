@@ -585,7 +585,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 }
                // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
               //  convertCash()
-                getPublicKeyOrganization(payment);
+                getPublicKeyOrganization(this.payment);
             }
 
         }
@@ -628,7 +628,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         listValueSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
-                Log.e("valueListCashChange . ",valueListCashChange.get(i).getParValue()+"");
+               //Log.e("valueListCashChange . ",valueListCashChange.get(i).getParValue()+"");
                 listQualitySend.add(valueListCashChange.get(i).getTotal());
                 listValueSend.add(valueListCashChange.get(i).getParValue());
             }
@@ -640,7 +640,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         listValueTake = new ArrayList<>();
         for (int i = 0; i < valueListCashTake.size(); i++) {
             if (valueListCashTake.get(i).getTotal() > 0) {
-                Log.e("valueListCashTake . ",valueListCashTake.get(i).getParValue()+" * "+valueListCashTake.get(i).getTotal()+"");
+              //  Log.e("valueListCashTake . ",valueListCashTake.get(i).getParValue()+" * "+valueListCashTake.get(i).getTotal()+"");
                 listQualityTake.add(valueListCashTake.get(i).getTotal());
                 listValueTake.add(valueListCashTake.get(i).getParValue());
             }
@@ -654,7 +654,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
-                 Log.e("valueListCashChange.",valueListCashChange.get(i).getParValue()+" - ");
+              //   Log.e("valueListCashChange.",valueListCashChange.get(i).getParValue()+" - ");
                 List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
                 for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
                     listCashSend.add(cashList.get(j));

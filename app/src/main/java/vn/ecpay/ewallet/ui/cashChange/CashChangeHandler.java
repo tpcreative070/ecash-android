@@ -186,10 +186,9 @@ public class CashChangeHandler {
                     }
                 }
                 else{
-
                     listener.getFullName("");
                 }
-                activity.dismissLoading();
+
             }
 
             @Override

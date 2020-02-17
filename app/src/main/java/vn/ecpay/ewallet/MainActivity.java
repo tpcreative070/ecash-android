@@ -310,15 +310,6 @@ public class MainActivity extends ECashBaseActivity {
             if(payment!=null){
                 //validatePayment(payment);
                 showDialogNewPaymentRequest(payment,false);
-//                String userName = ECashApplication.getAccountInfo().getUsername();
-//                 AccountInfo accountInfo =DatabaseUtil.getAccountInfo(userName, getActivity());
-//                 if(accountInfo!=null&&payment.getSender()!=null){
-//                     if(payment.getSender().equals(String.valueOf(accountInfo.getWalletId()))){
-//                         showDialogError(getActivity().getString(R.string.str_error_you_cannot_pay_for_your_self));
-//                         return;
-//                     }
-//                 }
-
             }
         }
     }
