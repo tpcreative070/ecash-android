@@ -232,7 +232,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     }
 
     private void gotoContact(){
-        ((PayToActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this), true);
+        ((PayToActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this,true), true);
     }
     @Override
     public void onAttach(@NonNull Context context) {

@@ -130,7 +130,6 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
             tvDone.setVisibility(View.GONE);
         }
     }
-
     private void getHeaderListLatter(List<Contact> usersList) {
         Collections.sort(usersList, (user1, user2) -> CommonUtils.getNameHeader(user1).toUpperCase()
                 .compareTo(CommonUtils.getNameHeader(user2).toUpperCase()));

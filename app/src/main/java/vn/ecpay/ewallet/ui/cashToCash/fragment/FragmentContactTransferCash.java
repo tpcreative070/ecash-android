@@ -46,15 +46,17 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
     private MultiTransferListener multiTransferListener;
     private AccountInfo accountInfo;
     private ArrayList<Contact> multiTransferList;
+    private boolean limitChoice =false;
 
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_contact_transfer;
     }
 
-    public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener) {
+    public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener,boolean limitChoice) {
         Bundle args = new Bundle();
         args.putSerializable(Constant.CONTACT_MULTI_TRANSFER, multiTransferListener);
+        args.putBoolean(Constant.CONTACT_MULTIPLE_CHOICE, limitChoice);
         FragmentContactTransferCash fragment = new FragmentContactTransferCash();
         fragment.setArguments(args);
         return fragment;
@@ -67,6 +69,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             this.multiTransferListener = (MultiTransferListener) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
+            this.limitChoice =  bundle.getBoolean(Constant.CONTACT_MULTIPLE_CHOICE);
         }
 
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -109,7 +112,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new ContactTransferAdapter(mSectionList, getActivity(), this);
+        mAdapter = new ContactTransferAdapter(mSectionList, getActivity(), this,this.limitChoice);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -191,4 +194,5 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
     public void onMultiTransfer(ArrayList<Contact> contactList) {
         multiTransferList = contactList;
     }
+
 }

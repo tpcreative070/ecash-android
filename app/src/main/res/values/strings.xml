@@ -317,4 +317,5 @@
     <string name="str_send_request_success">Send request successful</string>
     <string name="str_transfer_money_success">Transfer money successful</string>
     <string name="str_error_you_cannot_pay_for_your_self">You cannot pay for yourself!</string>
+    <string name="str_error_limited_select_contact">You may select up to 10 people for each request</string>
 </resources>

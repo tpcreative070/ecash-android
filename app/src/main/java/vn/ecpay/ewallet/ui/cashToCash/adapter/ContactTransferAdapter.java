@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.cashToCash.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
+
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 
 public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -31,11 +36,15 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     WeakReference<Context> mContextWeakReference;
     private MultiTransferListener multiTransferListener;
     ArrayList<Contact> multiTransferList;
+    private boolean limitChoice;
+    private Context context;
 
-    public ContactTransferAdapter(List<Contact> mContactList, Context context, MultiTransferListener multiTransferListener) {
+    public ContactTransferAdapter(List<Contact> mContactList, Context context, MultiTransferListener multiTransferListener, boolean limitChoice) {
         this.contactList = mContactList;
         this.mContextWeakReference = new WeakReference<>(context);
         this.multiTransferListener = multiTransferListener;
+        this.limitChoice = limitChoice;
+        this.context = context;
     }
 
     @Override
@@ -84,6 +93,18 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 addAndRemoveMultiTransfer(contactTransferModel, false);
                 itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
             } else {
+                if(limitChoice){
+                    if(multiTransferList!=null&&multiTransferList.size()==10){
+                        if(getActivity()!=null){
+                            if(getActivity() instanceof ECashBaseActivity){
+                                ((ECashBaseActivity) getActivity()).showDialogError(getActivity().getString(R.string.str_error_limited_select_contact));
+                            }else{
+                                Log.e("getActivity ", getActivity().getLocalClassName());
+                            }
+                        }
+                        return;
+                    }
+                }
                 addAndRemoveMultiTransfer(contactTransferModel, true);
                 itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
             }

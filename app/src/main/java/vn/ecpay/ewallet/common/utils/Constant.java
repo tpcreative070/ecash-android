@@ -30,6 +30,7 @@ public class Constant {
     public static final String CONTACT_MULTI_TRANSFER = "CONTACT_MULTI_TRANSFER";
     public static final String TRANSACTIONS_HISTORY_MODEL = "TRANSACTIONS_HISTORY_MODEL";
     public static final String IS_SESSION_TIMEOUT = "IS_SESSION_TIMEOUT";
+    public static final String CONTACT_MULTIPLE_CHOICE = "CONTACT_MULTIPLE_CHOICE";
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
