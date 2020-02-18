@@ -116,7 +116,7 @@
         </receiver>
 
         <service android:name=".webSocket.WebSocketsService" />
-        <service android:name=".ui.function.CashInService" />
+        <service android:name=".ui.function.SyncCashService" />
 
         <service android:name=".ui.firebase.ECashFireBaseService">
             <intent-filter>

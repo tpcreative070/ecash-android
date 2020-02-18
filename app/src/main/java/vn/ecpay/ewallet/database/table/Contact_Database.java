@@ -42,9 +42,6 @@ public class Contact_Database {
     @ColumnInfo(name = "destroyed")
     private String destroyed;
 
-    @ColumnInfo(name = "isSection")
-    private boolean isSection;
-
     @NonNull
     public Long getWalletId() {
         return walletId;
@@ -88,14 +85,6 @@ public class Contact_Database {
 
     public String getAddress() {
         return address;
-    }
-
-    public boolean isSection() {
-        return isSection;
-    }
-
-    public void setSection(boolean section) {
-        isSection = section;
     }
 
     public void setAddress(String address) {

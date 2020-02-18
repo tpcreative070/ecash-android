@@ -60,6 +60,7 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
+import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -438,12 +439,8 @@ public class CommonUtils {
         return userList;
     }
 
-    public static Long getMoneyEdong(Long money) {
-        if (money > 0) {
-            return money;
-        } else {
-            return 0L;
-        }
+    public static long getMoneyEDong(EdongInfo edongInfo) {
+        return (long) (edongInfo.getAccBalance() - edongInfo.getAccLock());
     }
 
     public static Bitmap generateQRCode(String value) {
@@ -454,7 +451,7 @@ public class CommonUtils {
         hints.put(EncodeHintType.MARGIN, 0);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         try {
-            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH,hints);
+            bitMatrix = writer.encode(value, BarcodeFormat.QR_CODE, WIDTH, WIDTH, hints);
             Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
             for (int i = 0; i < 400; i++) {
                 for (int j = 0; j < 400; j++) {
@@ -601,16 +598,15 @@ public class CommonUtils {
                 cashValid.setListCashRemain(cashDatabase);
                 // return list;
                 return cashValid;
-            }
-            else if (cashTotal.getParValue() < totalAmount) {
+            } else if (cashTotal.getParValue() < totalAmount) {
                 //todo" working here
                 Log.e("checkListECash", "4");
                 int cash = (int) totalAmount / cashTotal.getParValue();
                 int moneyRemain = (int) totalAmount % cashTotal.getParValue();
 //                    Log.e("cash", cash+"");
-                Log.e("moneyLeft....", moneyRemain+"");
+                Log.e("moneyLeft....", moneyRemain + "");
                 if (cash > 0 && moneyRemain == 0) {
-                    if(cashTotal.getTotalDatabase() >= cash){
+                    if (cashTotal.getTotalDatabase() >= cash) {
                         cashTotal.setTotal(cash);
                         cashTotal.setTotalDatabase(cash);
                         list.add(cashTotal);
@@ -619,12 +615,12 @@ public class CommonUtils {
                         cashValid.setCashRemain(0);
                         cashValid.setListCashRemain(cashDatabase);
                         return cashValid;
-                    }else if (cashTotal.getTotalDatabase() < cash) {
+                    } else if (cashTotal.getTotalDatabase() < cash) {
                         cashTotal.setTotal(cashTotal.getTotalDatabase());
                         cashTotal.setTotalDatabase(cashTotal.getTotalDatabase());
                         cashValid.getListCashValid().add(cashTotal);
-                        int left =(cash-cashTotal.getTotalDatabase())*cashTotal.getParValue();
-                        moneyRemain =moneyRemain+left;
+                        int left = (cash - cashTotal.getTotalDatabase()) * cashTotal.getParValue();
+                        moneyRemain = moneyRemain + left;
                         cashDatabase.remove(cashTotal);
                         CashValid cashV = getCashValid(cashDatabase, moneyRemain);
                         if (cashV != null) {
@@ -650,9 +646,9 @@ public class CommonUtils {
                         cashTotal.setTotalDatabase(cashTotal.getTotalDatabase());
                         cashValid.getListCashValid().add(cashTotal);
                         // list.add(cashTotal);
-                        int left =(cash-cashTotal.getTotalDatabase())*cashTotal.getParValue();
+                        int left = (cash - cashTotal.getTotalDatabase()) * cashTotal.getParValue();
                         //  Log.e("left", left+"");
-                        moneyRemain =moneyRemain+left;
+                        moneyRemain = moneyRemain + left;
                     }
                     CashValid cashV = getCashValid(cashDatabase, moneyRemain);
                     if (cashV != null) {
@@ -673,13 +669,12 @@ public class CommonUtils {
             }
 
         }
-        if(cashValid.getListCashValid().size()==0){
+        if (cashValid.getListCashValid().size() == 0) {
             cashValid.setCashRemain((int) totalAmount);
             cashValid.setListCashRemain(cashDatabase);
         }
         return cashValid;
     }
-
 
 
     private static CashValid getCashValid(List<CashTotal> cashDatabase, int money) {// b: so tien con du
@@ -689,7 +684,7 @@ public class CommonUtils {
         int moneyRemain = money;
         cashValid.setCashRemain(moneyRemain);
         for (CashTotal cashTotalTemp : cashDatabase) {
-             // Log.e("moneyRemain " + cashTotalTemp.getParValue(), moneyRemain + "");
+            // Log.e("moneyRemain " + cashTotalTemp.getParValue(), moneyRemain + "");
             if (cashValid.getCashRemain() == 0) {
                 // Log.e("moneyRemain =0 ","return ");
                 return cashValid;
@@ -711,7 +706,7 @@ public class CommonUtils {
 
                 } else if (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase() % moneyRemain == 0) {
                     Log.e("here 1", cashTotalTemp.getParValue() + "");
-                    boolean checklist=false;
+                    boolean checklist = false;
 
                     for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
                         if (moneyRemain == cashTotalTemp.getParValue() * i) {
@@ -722,22 +717,22 @@ public class CommonUtils {
                             cashValid.getListCashValid().add(cashTotalTemp);
                             cashValid.setCashRemain(moneyRemain);
                             Log.e("moneyRemain 0", moneyRemain + "");
-                            checklist =true;
+                            checklist = true;
                         }
                     }
-                    if(!checklist){
-                        boolean checked=false;
+                    if (!checklist) {
+                        boolean checked = false;
                         for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
-                            if(!checked){
-                                if(cashTotalTemp.getParValue()*i>moneyRemain){
-                                    i=i-1;
+                            if (!checked) {
+                                if (cashTotalTemp.getParValue() * i > moneyRemain) {
+                                    i = i - 1;
                                     cashTotalTemp.setTotal(i);
                                     cashTotalTemp.setTotalDatabase(i);
                                     //  list.add(cashTotalTemp);
                                     moneyRemain = moneyRemain - (cashTotalTemp.getParValue() * i);
                                     cashValid.getListCashValid().add(cashTotalTemp);
                                     cashValid.setCashRemain(moneyRemain);
-                                    checked=true;
+                                    checked = true;
                                     Log.e("moneyRemain 0.1", moneyRemain + "");
                                 }
                             }
@@ -745,7 +740,7 @@ public class CommonUtils {
                     }
                 } else {
                     Log.e("cashTotalTemp", cashTotalTemp.getParValue() + "");
-                    boolean checklist=false;
+                    boolean checklist = false;
                     for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
                         if (moneyRemain == cashTotalTemp.getParValue() * i) {
                             cashTotalTemp.setTotal(i);
@@ -760,18 +755,18 @@ public class CommonUtils {
                     }
 
                     if (!checklist) {
-                        boolean checked=false;
+                        boolean checked = false;
                         for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
-                            if(!checked){
-                                if(cashTotalTemp.getParValue()*i>moneyRemain){
-                                    i=i-1;
+                            if (!checked) {
+                                if (cashTotalTemp.getParValue() * i > moneyRemain) {
+                                    i = i - 1;
                                     cashTotalTemp.setTotal(i);
                                     cashTotalTemp.setTotalDatabase(i);
                                     //  list.add(cashTotalTemp);
                                     moneyRemain = moneyRemain - (cashTotalTemp.getParValue() * i);
                                     cashValid.getListCashValid().add(cashTotalTemp);
                                     cashValid.setCashRemain(moneyRemain);
-                                    checked=true;
+                                    checked = true;
                                     Log.e("moneyRemain 1.2", moneyRemain + "");
                                 }
                             }
@@ -786,7 +781,7 @@ public class CommonUtils {
     }
 
     public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
-                                                       Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
+                                                                 Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
 
@@ -829,4 +824,13 @@ public class CommonUtils {
         return null;
     }
 
+    public static ArrayList<Contact> getListTransfer(List<Contact> mSectionList) {
+        ArrayList<Contact> multiTransferList = new ArrayList<>();
+        for (Contact contact : mSectionList) {
+            if (contact.isAddTransfer) {
+                multiTransferList.add(contact);
+            }
+        }
+        return multiTransferList;
+    }
 }

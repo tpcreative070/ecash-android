@@ -32,7 +32,6 @@ import vn.ecpay.ewallet.ui.contact.adapter.AddContactAdapter;
 import vn.ecpay.ewallet.ui.contact.module.AddContactModule;
 import vn.ecpay.ewallet.ui.contact.presenter.AddContactPresenter;
 import vn.ecpay.ewallet.ui.contact.view.AddContactView;
-import vn.ecpay.ewallet.ui.interfaceListener.OnItemContactClickListener;
 
 public class FragmentAddContact extends ECashBaseFragment implements AddContactView {
     @BindView(R.id.edt_search)
@@ -151,7 +150,7 @@ public class FragmentAddContact extends ECashBaseFragment implements AddContactV
         mAdapter = new AddContactAdapter(transferModelArrayList, getActivity(), contact -> {
             showProgress();
             DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
-            addContactPresenter.syncContact(getActivity(), accountInfo, contact);
+            addContactPresenter.addContact(getActivity(), accountInfo, contact);
         });
         recyclerView.setAdapter(mAdapter);
     }

@@ -39,6 +39,15 @@ public class ECashApplication extends Application {
     public static String FBToken;
     private static ECashApplication sInstance;
     private Gson mGSon;
+    public static boolean isChangeDataBase = false;
+
+    public static boolean isIsChangeDataBase() {
+        return isChangeDataBase;
+    }
+
+    public static void setIsChangeDataBase(boolean isChangeDataBase) {
+        ECashApplication.isChangeDataBase = isChangeDataBase;
+    }
 
     public static ECashApplication getInstance() {
         return sInstance;
@@ -115,7 +124,6 @@ public class ECashApplication extends Application {
             default:
                 break;
         }
-
     }
 
     private void InitTokenFCMDB() {

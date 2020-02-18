@@ -29,20 +29,19 @@ import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int SECTION_VIEW = 0;
-    public static final int CONTENT_VIEW = 1;
+    private static final int SECTION_VIEW = 0;
+    private static final int CONTENT_VIEW = 1;
 
     List<Contact> contactList;
     WeakReference<Context> mContextWeakReference;
-    private MultiTransferListener multiTransferListener;
     ArrayList<Contact> multiTransferList;
     private boolean limitChoice;
     private Context context;
 
-    public ContactTransferAdapter(List<Contact> mContactList, Context context, MultiTransferListener multiTransferListener, boolean limitChoice) {
+    public ContactTransferAdapter(List<Contact> mContactList, Context context, boolean limitChoice)
+        {
         this.contactList = mContactList;
         this.mContextWeakReference = new WeakReference<>(context);
-        this.multiTransferListener = multiTransferListener;
         this.limitChoice = limitChoice;
         this.context = context;
     }
@@ -87,10 +86,15 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 contactTransferModel.getFullName(), String.valueOf(contactTransferModel.getWalletId())));
         itemViewHolder.tvPhone.setText(contactTransferModel.getPhone());
 
+        if (contactTransferModel.isAddTransfer) {
+            itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
+        } else {
+            itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
+        }
 
         itemViewHolder.view_foreground.setOnClickListener(v -> {
-            if (itemViewHolder.iv_multi_chose.getVisibility() == View.VISIBLE) {
-                addAndRemoveMultiTransfer(contactTransferModel, false);
+            if (contactTransferModel.isAddTransfer) {
+                contactList.get(position).setAddTransfer(false);
                 itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
             } else {
                 if(limitChoice){
@@ -105,27 +109,10 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         return;
                     }
                 }
-                addAndRemoveMultiTransfer(contactTransferModel, true);
+                contactList.get(position).setAddTransfer(true);
                 itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
             }
-
-            if (null != multiTransferListener) {
-                multiTransferListener.onMultiTransfer(multiTransferList);
-            }
         });
-    }
-
-    private void addAndRemoveMultiTransfer(Contact contact, boolean isAdd) {
-        if (isAdd) {
-            multiTransferList.add(contact);
-        } else {
-            for (int i = 0; i < multiTransferList.size(); i++) {
-                if (multiTransferList.get(i).getWalletId().equals(contact.getWalletId())) {
-                    multiTransferList.remove(i);
-                    break;
-                }
-            }
-        }
     }
 
     @Override
