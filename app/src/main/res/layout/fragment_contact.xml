@@ -29,7 +29,6 @@
             android:layout_toStartOf="@+id/iv_add_contact"
             android:textSize="@dimen/text_header"
             android:padding="10dp"
-            android:visibility="gone"
             android:layout_height="match_parent"/>
 
         <TextView

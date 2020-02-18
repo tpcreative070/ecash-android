@@ -21,6 +21,7 @@ public class Contact implements Serializable, Parcelable {
     private String fullName;
     private int status;
     public boolean isSection;
+    public boolean isAddTransfer;
     public Contact() {
     }
 
@@ -93,6 +94,13 @@ public class Contact implements Serializable, Parcelable {
         this.status = status;
     }
 
+    public boolean isAddTransfer() {
+        return isAddTransfer;
+    }
+
+    public void setAddTransfer(boolean addTransfer) {
+        isAddTransfer = addTransfer;
+    }
 
     @Override
     public int describeContents() {
@@ -109,6 +117,7 @@ public class Contact implements Serializable, Parcelable {
         dest.writeString(this.fullName);
         dest.writeInt(this.status);
         dest.writeByte(this.isSection ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isAddTransfer ? (byte) 1 : (byte) 0);
     }
 
     protected Contact(Parcel in) {
@@ -120,6 +129,7 @@ public class Contact implements Serializable, Parcelable {
         this.fullName = in.readString();
         this.status = in.readInt();
         this.isSection = in.readByte() != 0;
+        this.isAddTransfer = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {

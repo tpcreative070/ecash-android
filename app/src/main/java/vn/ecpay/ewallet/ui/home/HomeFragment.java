@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,6 +61,7 @@ import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.firebase.NotificationActivity;
+import vn.ecpay.ewallet.ui.function.SyncCashService;
 import vn.ecpay.ewallet.ui.home.module.HomeModule;
 import vn.ecpay.ewallet.ui.home.presenter.HomePresenter;
 import vn.ecpay.ewallet.ui.home.view.HomeView;
@@ -136,14 +141,14 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     private void updateAccountInfo() {
-        tvPaymentRequest.setText(String.format(getString(R.string.str_payment_request),"\n"));
+        tvPaymentRequest.setText(String.format(getString(R.string.str_payment_request), "\n"));
         accountInfo = ECashApplication.getAccountInfo();
         listEDongInfo = ECashApplication.getListEDongInfo();
         if (null != listEDongInfo) {
             if (listEDongInfo.size() > 0) {
                 eDongInfoCashIn = listEDongInfo.get(0);
                 tvHomeAccountEdong.setText(listEDongInfo.get(0).getAccountIdt());
-                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         }
 
@@ -152,6 +157,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             homePresenter.getCashValues(accountInfo, getActivity());
             updateNotification();
             updateNumberLixi();
+            //todo sync data
+            syncData();
             accountInfo = dbAccountInfo;
             tvHomeAccountName.setText(CommonUtils.getFullName(accountInfo));
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -174,6 +181,28 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             layoutActiveAccount.setVisibility(View.VISIBLE);
             layoutFullInfo.setVisibility(View.GONE);
         }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void syncData() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                if (null != getActivity()) {
+                    getActivity().startService(new Intent(getActivity(), SyncCashService.class));
+                    if (DatabaseUtil.getAllCacheData(getActivity()).size() > 0) {
+                        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
+                    }
+                }
+
+                if (DatabaseUtil.checkTransactionsLogs(getActivity()) && DatabaseUtil.checkCashLogs(getActivity())) {
+                    ECashApplication.setIsChangeDataBase(false);
+                } else {
+                    ECashApplication.setIsChangeDataBase(true);
+                }
+                return null;
+            }
+        }.execute();
     }
 
     private void updateNotification() {
@@ -213,24 +242,22 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     private void updateBalance() {
-        getActivity().runOnUiThread(() -> {
-            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-            tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
+        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+        tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
 
-            listEDongInfo = ECashApplication.getListEDongInfo();
-            if (listEDongInfo.size() > 0) {
-                for (int i = 0; i < listEDongInfo.size(); i++) {
-                    if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
-                        tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
-                        tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
-                    }
+        listEDongInfo = ECashApplication.getListEDongInfo();
+        if (listEDongInfo.size() > 0) {
+            for (int i = 0; i < listEDongInfo.size(); i++) {
+                if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
+                    tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
+                    tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
                 }
-            } else {
-                tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
             }
-        });
+        } else {
+            tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
+        }
     }
 
     private void showDialogEDong(ArrayList<EdongInfo> listEDongInfo) {
@@ -243,7 +270,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
         builder.setItems(eDong, (dialog, which) -> {
             tvHomeAccountEdong.setText(listEDongInfo.get(which).getAccountIdt());
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             eDongInfoCashIn = listEDongInfo.get(which);
         });
 
@@ -255,6 +282,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_notification:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (dbAccountInfo != null) {
                     Intent intentNoti = new Intent(getActivity(), NotificationActivity.class);
                     if (getActivity() != null) {
@@ -269,10 +301,20 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             case R.id.iv_qr_code:
             case R.id.viewElectronPay:
             case R.id.viewWaterPay:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (getActivity() != null)
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
                 break;
             case R.id.viewCreateBill:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentPayTo = new Intent(getActivity(), ToPayActivity.class);
@@ -289,12 +331,14 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
                 }
                 break;
-//                if (getActivity() != null)
-//                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
-//                break;
             case R.id.layout_account_info:
                 break;
             case R.id.viewPaymentRequest:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentPayTo = new Intent(getActivity(), PayToActivity.class);
@@ -311,11 +355,13 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         ECashApplication.get(getActivity()).showDialogSwitchLogin(getString(R.string.str_dialog_not_login));
                 }
                 break;
-//                if (getActivity() != null)
-//                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
-//                break;
 
             case R.id.layout_cash_in:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentCashIn = new Intent(getActivity(), CashInActivity.class);
@@ -334,6 +380,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
                 break;
             case R.id.layout_cash_out:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentCashOut = new Intent(getActivity(), CashOutActivity.class);
@@ -351,6 +402,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 }
                 break;
             case R.id.layout_change_cash:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentTransferCash = new Intent(getActivity(), CashChangeActivity.class);
@@ -368,6 +424,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 }
                 break;
             case R.id.layout_transfer_cash:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
@@ -386,6 +447,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 break;
 
             case R.id.layout_eDong:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (listEDongInfo != null) {
                     showDialogEDong(listEDongInfo);
                 }
@@ -402,6 +468,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 }
                 break;
             case R.id.layout_lixi:
+                if (ECashApplication.isIsChangeDataBase()) {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                    return;
+                }
                 if (ECashApplication.getAccountInfo() != null) {
                     if (dbAccountInfo != null) {
                         Intent intentTransferCash = new Intent(getActivity(), MyLixiActivity.class);
@@ -467,6 +538,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+        Log.e("Home Event Bus", new Gson().toJson(event.getData()));
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }
@@ -475,9 +547,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             updateAccountInfo();
         }
 
-        if (event.getData().equals(Constant.UPDATE_MONEY)
-                || event.getData().equals(Constant.UPDATE_MONEY_SOCKET)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS) ||
+                event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS) || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -488,7 +560,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         return;
                     }
                 }
-            }, 3000);
+            }, 2000);
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
@@ -506,6 +578,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
 
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -538,6 +615,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
         Toast.makeText(getActivity(), getString(R.string.str_active_account_success), Toast.LENGTH_LONG).show();
     }
 
@@ -559,7 +637,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onSyncContactSuccess() {
         Toast.makeText(getActivity(), getString(R.string.str_sync_contact_success), Toast.LENGTH_LONG).show();
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
     }
 
     @Override
@@ -608,18 +685,30 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         });
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void getCashValuesSuccess(List<Denomination> cashValuesList) {
-        if (cashValuesList.size() > 0) {
-            DatabaseUtil.deleteAllCashValue(getActivity());
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < cashValuesList.size(); i++) {
-                        DatabaseUtil.saveCashValue(cashValuesList.get(i), getActivity());
+        if (null != cashValuesList) {
+            if (cashValuesList.size() > 0) {
+                DatabaseUtil.deleteAllCashValue(getActivity());
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        for (int i = 0; i < cashValuesList.size(); i++) {
+                            DatabaseUtil.saveCashValue(cashValuesList.get(i), getActivity());
+                        }
+                        return null;
                     }
-                }
-            }, 500);
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        dismissProgress();
+                    }
+                }.execute();
+            }
+        } else {
+            dismissLoading();
         }
     }
 }

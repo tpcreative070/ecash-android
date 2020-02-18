@@ -7,7 +7,9 @@
     <string name="string_zero" translatable="false">0</string>
     <string name="string_todo" translatable="false">TODO</string>
 
-
+    <string name="receiver">Receiver: </string>
+    <string name="sender">Sender: </string>
+    <string name="avatar">Avatar</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -175,6 +177,7 @@
     <string name="str_dialog_active_acc">Please activate your account to use this function</string>
 
     //err
+    <string name="err_change_database">Your data has been edited</string>
     <string name="error">Connection errors. Something went wrong. Please try again later</string>
     <string name="err_socket_timeout" translatable="false">Kết nối thất bại. Xin vui lòng thử lại sau</string>
     <string name="err_upload" translatable="false">Đã có lỗi xảy ra.Xin vui lòng thử lại</string>
@@ -311,6 +314,8 @@
     <string name="str_share">Share</string>
     <string name="err_anount_null">You have not entered the amount</string>
     <string name="err_amount_validate">The amount is not valid</string>
+    <string name="err_amount_does_not_exceed_twenty_million">The amount does not exceed 20 million</string>
     <string name="str_send_request_success">Send request successful</string>
     <string name="str_transfer_money_success">Transfer money successful</string>
+    <string name="str_error_you_cannot_pay_for_your_self">You cannot pay for yourself!</string>
 </resources>

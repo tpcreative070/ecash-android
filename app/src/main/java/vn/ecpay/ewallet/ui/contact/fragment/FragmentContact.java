@@ -26,23 +26,33 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.api_request.APIService;
+import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
+import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.contactDelete.RequestDeleteContact;
+import vn.ecpay.ewallet.model.contactDelete.ResponseDeleteContact;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.contact.adapter.ContactAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
-public class FragmentContact extends ECashBaseFragment implements MultiTransferListener {
+public class FragmentContact extends ECashBaseFragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
@@ -113,22 +123,10 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ContactAdapter(mSectionList, getActivity(), pos -> {
-            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            List<Contact> listContactAfterDelete = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
-            setAdapter(listContactAfterDelete);
-        }, this);
+            showProgress();
+            deleteContact(mSectionList.get(pos));
+        });
         recyclerView.setAdapter(mAdapter);
-    }
-
-
-    @Override
-    public void onMultiTransfer(ArrayList<Contact> contactList) {
-        if (contactList.size() > 0) {
-            listContactTransfer = contactList;
-            tvDone.setVisibility(View.VISIBLE);
-        } else {
-            tvDone.setVisibility(View.GONE);
-        }
     }
 
     private void getHeaderListLatter(List<Contact> usersList) {
@@ -170,16 +168,20 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
                 edtSearch.setText(Constant.STR_EMPTY);
                 break;
             case R.id.tv_done:
-                Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL, listContactTransfer);
-                intentTransferCash.putExtras(mBundle);
-                if (getActivity() != null) {
-                    ((MainActivity) getActivity()).startActivity(intentTransferCash);
-                    ((MainActivity) getActivity()).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (CommonUtils.getListTransfer(mSectionList).size() > 0) {
+                    listContactTransfer = CommonUtils.getListTransfer(mSectionList);
+                    Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
+                    Bundle mBundle = new Bundle();
+                    mBundle.putParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL, listContactTransfer);
+                    intentTransferCash.putExtras(mBundle);
+                    if (getActivity() != null) {
+                        ((MainActivity) getActivity()).startActivity(intentTransferCash);
+                        ((MainActivity) getActivity()).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    }
+                    initAdapter();
+                } else {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_un_chose_wallet_send));
                 }
-                initAdapter();
-                tvDone.setVisibility(View.GONE);
                 break;
         }
     }
@@ -207,5 +209,56 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
             }, 1000);
         }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private void deleteContact(Contact contact) {
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(getResources().getString(R.string.api_base_url));
+        APIService apiService = retrofit.create(APIService.class);
+
+        RequestDeleteContact requestDeleteContact = new RequestDeleteContact();
+        requestDeleteContact.setChannelCode(Constant.CHANNEL_CODE);
+        requestDeleteContact.setFunctionCode(Constant.FUNCTION_DELETE_CONTACT);
+        requestDeleteContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestDeleteContact.setUsername(accountInfo.getUsername());
+        requestDeleteContact.setWalletId(String.valueOf(contact.getWalletId()));
+        requestDeleteContact.setToken(CommonUtils.getToken(accountInfo));
+        requestDeleteContact.setAuditNumber(CommonUtils.getAuditNumber());
+
+        byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestDeleteContact));
+        requestDeleteContact.setChannelSignature(CommonUtils.generateSignature(dataSign));
+
+        Call<ResponseDeleteContact> call = apiService.deleteContacts(requestDeleteContact);
+        call.enqueue(new Callback<ResponseDeleteContact>() {
+            @Override
+            public void onResponse(Call<ResponseDeleteContact> call, Response<ResponseDeleteContact> response) {
+                dismissProgress();
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    if (response.body().getResponseCode() != null) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            DatabaseUtil.deleteContact(getActivity(), contact.getWalletId());
+                            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+                            List<Contact> listContactAfterDelete = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+                            setAdapter(listContactAfterDelete);
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                            ECashApplication.getInstance().checkSessionByErrorCode(response.body().getResponseCode());
+                        } else {
+                            if (getActivity() != null)
+                                ((MainActivity) getActivity()).showDialogError(response.body().getResponseMessage());
+                        }
+                    }
+                } else {
+                    if (getActivity() != null)
+                        ((MainActivity) getActivity()).showDialogError(getResources().getString(R.string.err_upload));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDeleteContact> call, Throwable t) {
+                dismissProgress();
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getResources().getString(R.string.err_upload));
+            }
+        });
     }
 }

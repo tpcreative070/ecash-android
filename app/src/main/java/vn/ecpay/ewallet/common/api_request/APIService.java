@@ -32,12 +32,14 @@ import vn.ecpay.ewallet.model.account.updateInfo.response.ResponseUpdateAccountI
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.cashValue.request.RequestGetMoneyValue;
 import vn.ecpay.ewallet.model.cashValue.response.ResponseGetMoneyValue;
-import vn.ecpay.ewallet.model.chanel.RequestUpdateChanel;
-import vn.ecpay.ewallet.model.chanel.response.ResponseUpdateChanel;
 import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
 import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
 import vn.ecpay.ewallet.model.contact.RequestSyncContact;
 import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
+import vn.ecpay.ewallet.model.contactAdd.RequestAddContact;
+import vn.ecpay.ewallet.model.contactAdd.ResponseAddContact;
+import vn.ecpay.ewallet.model.contactDelete.RequestDeleteContact;
+import vn.ecpay.ewallet.model.contactDelete.ResponseDeleteContact;
 import vn.ecpay.ewallet.model.ecashToEdong.RequestEcashToEdong;
 import vn.ecpay.ewallet.model.ecashToEdong.ResponseECashToEdong;
 import vn.ecpay.ewallet.model.edongToEcash.RequestEdongToECash;
@@ -51,8 +53,8 @@ import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseGetPublicKeyByPhone;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 
 public interface APIService {
 
@@ -86,6 +88,9 @@ public interface APIService {
     @POST("ecgateway/execute/FU00012")
     Call<ResponseGetAccountWalletInfo> getWalletInfo(@Body RequestGetAccountWalletInfo body);
 
+    @POST("ecgateway/execute/GWEC0007")
+    Call<ResponseGetAccountWalletInfo> getWalletAccountInfo(@Body RequestGetAccountWalletInfo body);
+
     @POST("ecgateway/execute/GWEC0005")
     Call<ResponseGetPublicKeyCash> getPublicKeyCash(@Body RequestGetPublicKeyCash body);
 
@@ -112,6 +117,12 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0017")
     Call<ResponseSyncContact> syncContacts(@Body RequestSyncContact body);
+
+    @POST("ecgateway/execute/GWEC0023")
+    Call<ResponseAddContact> addContacts(@Body RequestAddContact body);
+
+    @POST("ecgateway/execute/GWEC0038")
+    Call<ResponseDeleteContact> deleteContacts(@Body RequestDeleteContact body);
 
     @POST("ecgateway/execute/GWEC0024")
     Call<ForgotPassOTPResponse> getOTPForgotPass(@Body ForgotPassOTPRequest body);

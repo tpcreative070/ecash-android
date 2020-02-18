@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.ui.cashChange.fragment;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,7 +53,7 @@ import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
-import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.function.SyncCashService;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
@@ -244,12 +245,12 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
         mDialog.show();
     }
-
     private void getListCashSend() {
         listQualitySend = new ArrayList<>();
         listValueSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
+               // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
                 listQualitySend.add(valueListCashChange.get(i).getTotal());
                 listValueSend.add(valueListCashChange.get(i).getParValue());
             }
@@ -261,6 +262,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         listValueTake = new ArrayList<>();
         for (int i = 0; i < valueListCashTake.size(); i++) {
             if (valueListCashTake.get(i).getTotal() > 0) {
+                Log.e("valueListCashTake ",valueListCashTake.get(i).getParValue()+"");
                 listQualityTake.add(valueListCashTake.get(i).getTotal());
                 listValueTake.add(valueListCashTake.get(i).getParValue());
             }
@@ -272,7 +274,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         listCashSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
-                Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
+               // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
                 List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
                 for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
                     listCashSend.add(cashList.get(j));
@@ -294,15 +296,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
             return;
         }
-        // valueListCashChange =10000
-        // listQualityTake =5
-        // listValueTake =2000
-        for(int i=0;i<listQualityTake.size();i++){
-            Log.e("listQualityTake ",listQualityTake.get(i).toString()+"");
-        }
-        for(int i=0;i<listValueTake.size();i++){
-            Log.e("listValueTake ",listValueTake.get(i).toString()+"");
-        }
+
         cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
     }
 
@@ -329,6 +323,8 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @SuppressLint("StaticFieldLeak")
     @Override
     public void changeCashSuccess(CashInResponse cashInResponse) {
+        if (null != getActivity())
+            getActivity().startService(new Intent(getActivity(), SyncCashService.class));
         DatabaseUtil.saveCashOut(cashInResponse.getId(), listCashSend, getActivity(), accountInfo.getUsername());
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(cashInResponse);
@@ -351,8 +347,10 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         btnCashChange.setTextColor(getResources().getColor(R.color.blue));
                         btnCashTake.setBackgroundResource(R.drawable.bg_border_blue);
                         btnCashTake.setTextColor(getResources().getColor(R.color.blue));
-                        totalMoneyChange = 0;
-                        totalMoneyTake = 0;
+                        if(valueListCashTake!=null){
+                            valueListCashTake.clear();
+                        }
+
                     }
 
                     @Override
@@ -371,19 +369,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY_SOCKET)) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> setData());
-                    } catch (NullPointerException ignored) {
-                    }
-                }
-            }, 500);
-        }
-
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
@@ -392,7 +377,23 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         if (getActivity() == null) return;
                         getActivity().runOnUiThread(() -> {
                             dismissProgress();
+                            setData();
                             showDialogCashChangeOk();
+                        });
+                    } catch (NullPointerException ignored) {
+                    }
+                }
+            }, 500);
+        }
+        if(event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)){
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> {
+                            dismissProgress();
+                            setData();
                         });
                     } catch (NullPointerException ignored) {
                     }

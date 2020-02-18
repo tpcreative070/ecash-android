@@ -1,7 +1,9 @@
 package vn.ecpay.ewallet.ui.function;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
@@ -17,18 +19,21 @@ import java.util.List;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 
-public class CashInService extends Service {
+import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CASH_OUT_MONEY;
+import static vn.ecpay.ewallet.common.utils.Constant.EVENT_UPDATE_CASH_IN;
+
+public class SyncCashService extends Service {
     private boolean isRunning = false;
     private List<CacheData> listResponseMessSockets;
     private AccountInfo accountInfo;
 
+    private String EVENT_CASH_IN_CHANGE ="";
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -45,20 +50,56 @@ public class CashInService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
+        if (event.getData().equals(EVENT_UPDATE_CASH_IN)) {
             if (!isRunning) {
+                isRunning = true;
+                String userName = ECashApplication.getAccountInfo().getUsername();
+                accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
                 syncData();
             }
+        }
+        if (event.getData().equals(EVENT_CASH_IN_CHANGE)) {
+            EVENT_CASH_IN_CHANGE = "EVENT_CASH_IN_PAYTO";
+        }
+
+        if (event.getData().equals(EVENT_CASH_OUT_MONEY)) {
+            String userName = ECashApplication.getAccountInfo().getUsername();
+            accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
+            cashOutData(event);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private void cashOutData(EventDataChange event) {
+        if (isRunning) {
+            cashOutData(event);
+        } else {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    isRunning = true;
+                    DatabaseUtil.updateTransactionsLogAndCashOutDatabase(event.getListCashSend(), event.getResponseMess(),
+                            getApplicationContext(), accountInfo.getUsername());
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    isRunning = false;
+                    EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
+                }
+            }.execute();
+        }
+    }
+
     private void syncData() {
-        isRunning = true;
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
         listResponseMessSockets = DatabaseUtil.getAllCacheData(getApplicationContext());
-        handleListResponse();
+        if (listResponseMessSockets.size() > 0) {
+            handleListResponse();
+        } else {
+            syncData();
+        }
     }
 
     private void handleListResponse() {
@@ -84,7 +125,14 @@ public class CashInService extends Service {
             }
         } else {
             isRunning = false;
-            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
+            if (EVENT_CASH_IN_CHANGE.length() == 0) {
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
+
+            } else {
+                EVENT_CASH_IN_CHANGE = "";
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
+            }
+
         }
     }
 

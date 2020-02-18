@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.database;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.room.Database;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -106,13 +108,7 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     // todo notification---------------------------------------------------------------------------------------
     public static void insertOnlySingleCacheData(final CacheData_Database cacheData, String fake) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                walletDatabase.daoAccess().insertOnlySingleCacheData(cacheData);
-                return null;
-            }
-        }.execute();
+        walletDatabase.daoAccess().insertOnlySingleCacheData(cacheData);
     }
 
     public static List<CacheData> getAllCacheData() {
@@ -270,27 +266,25 @@ public abstract class WalletDatabase extends RoomDatabase {
         mCash.setAccSign(cash.getAccSign());
         mCash.setType(cash.getType());
         mCash.setTransactionSignature(cash.getTransactionSignature());
-        mCash.setPreviousHash(cash.getPreviousHash());
+        mCash.setPreviousHash(DatabaseUtil.getPreviousHashCash(mCash));
         insertCashTask(mCash);
     }
 
     private static void insertCashTask(final CashLogs_Database cash) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                walletDatabase.daoAccess().insertOnlySingleCash(cash);
-                return null;
-            }
-        }.execute();
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                Log.e("doInBackground","doInBackground");
+//                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cash));
+//                walletDatabase.daoAccess().insertOnlySingleCash(cash);
+//                return null;
+//            }
+//        }.execute();
+        walletDatabase.daoAccess().insertOnlySingleCash(cash);
     }
 
     public static List<CashLogs_Database> getAllCash() {
-        try {
-            return walletDatabase.daoAccess().getAllCash();
-        } catch (Exception e) {
-            return null;
-        }
+        return walletDatabase.daoAccess().getAllCash();
     }
 
     public static int getMaxIDCash() {
@@ -322,33 +316,27 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     // todo Cash_Invalid----------------------------------------------------------------------------------
-    public static void insertCashInvalidTask(CashLogs_Database cash, String userName) {
-        CashInvalid_Database mCash = new CashInvalid_Database();
-        mCash.setUserName(userName);
-        mCash.setCountryCode(cash.getCountryCode());
-        mCash.setIssuerCode(cash.getIssuerCode());
-        mCash.setDecisionNo(cash.getDecisionNo());
-        mCash.setSerialNo(cash.getSerialNo());
-        mCash.setParValue(cash.getParValue());
-        mCash.setActiveDate(cash.getActiveDate());
-        mCash.setExpireDate(cash.getExpireDate());
-        mCash.setCycle(cash.getCycle());
-        mCash.setTreSign(cash.getTreSign());
-        mCash.setAccSign(cash.getAccSign());
-        mCash.setType(cash.getType());
-        mCash.setTransactionSignature(cash.getTransactionSignature());
-        mCash.setPreviousHash(cash.getPreviousHash());
-        insertCashInvalidTask(mCash);
+    public static void insertCashInvalidTask(CashLogs_Database cashLogs_database, String userName) {
+        CashInvalid_Database cashInvalid_database = new CashInvalid_Database();
+        cashInvalid_database.setUserName(userName);
+        cashInvalid_database.setCountryCode(cashLogs_database.getCountryCode());
+        cashInvalid_database.setIssuerCode(cashLogs_database.getIssuerCode());
+        cashInvalid_database.setDecisionNo(cashLogs_database.getDecisionNo());
+        cashInvalid_database.setSerialNo(cashLogs_database.getSerialNo());
+        cashInvalid_database.setParValue(cashLogs_database.getParValue());
+        cashInvalid_database.setActiveDate(cashLogs_database.getActiveDate());
+        cashInvalid_database.setExpireDate(cashLogs_database.getExpireDate());
+        cashInvalid_database.setCycle(cashLogs_database.getCycle());
+        cashInvalid_database.setTreSign(cashLogs_database.getTreSign());
+        cashInvalid_database.setAccSign(cashLogs_database.getAccSign());
+        cashInvalid_database.setType(cashLogs_database.getType());
+        cashInvalid_database.setTransactionSignature(cashLogs_database.getTransactionSignature());
+        insertCashInvalidTask(cashInvalid_database, cashLogs_database);
     }
 
-    private static void insertCashInvalidTask(final CashInvalid_Database cash) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
-                return null;
-            }
-        }.execute();
+    private static void insertCashInvalidTask(final CashInvalid_Database cash, CashLogs_Database cashLogs_database) {
+        cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cashLogs_database));
+        walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
     }
 
     // todo Decision_Database--------------------------------------------------------------------------------------

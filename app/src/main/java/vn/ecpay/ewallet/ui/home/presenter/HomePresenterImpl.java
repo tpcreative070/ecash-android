@@ -152,6 +152,7 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void getCashValues(AccountInfo accountInfo, Context context) {
+        homeView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -180,12 +181,14 @@ public class HomePresenterImpl implements HomePresenter {
                         }
                     }
                 } else {
+                    homeView.dismissLoading();
                     homeView.onSyncContactFail(application.getString(R.string.err_upload));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseGetMoneyValue> call, Throwable t) {
+                homeView.dismissLoading();
                 homeView.onSyncContactFail(application.getString(R.string.err_upload));
             }
         });
@@ -217,7 +220,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestGetAccountWalletInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
         Gson gson = new Gson();
         String json = gson.toJson(requestGetAccountWalletInfo);
-        Log.e("json", json);
+        Log.e("json.", json);
 
         Call<ResponseGetAccountWalletInfo> call = apiService.getWalletInfo(requestGetAccountWalletInfo);
         call.enqueue(new Callback<ResponseGetAccountWalletInfo>() {

@@ -48,7 +48,6 @@ import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.presenter.LoginPresenter;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
-import vn.ecpay.ewallet.ui.function.CashInService;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class FragmentLogin extends ECashBaseFragment implements LoginView {
@@ -338,10 +337,10 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void requestLoginSuccess(AccountInfo mAccountInfo) {
-        if (getActivity() != null) {
-            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
-            getActivity().startService(new Intent(getActivity(), CashInService.class));
-        }
+//        if (getActivity() != null) {
+//            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
+//        }
+        restartSocket();
         mAccountInfo.setUsername(userName);
         mAccountInfo.setToken(mAccountInfo.getToken());
         loginPresenter.getEDongInfo(mAccountInfo);

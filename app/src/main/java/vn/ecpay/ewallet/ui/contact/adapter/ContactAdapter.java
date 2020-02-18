@@ -35,18 +35,16 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     List<Contact> mCountriesModelList;
     WeakReference<Context> mContextWeakReference;
     private onDeleteItem onDeleteItem;
-    private MultiTransferListener multiTransferListener;
     ArrayList<Contact> multiTransferList;
 
     public interface onDeleteItem {
         void onDeleteOK(int pos);
     }
 
-    public ContactAdapter(List<Contact> mCountriesModelList, Context context, onDeleteItem mOnDeleteItem, MultiTransferListener multiTransferListener) {
+    public ContactAdapter(List<Contact> mCountriesModelList, Context context, onDeleteItem mOnDeleteItem) {
         this.mCountriesModelList = mCountriesModelList;
         this.mContextWeakReference = new WeakReference<>(context);
         this.onDeleteItem = mOnDeleteItem;
-        this.multiTransferListener = multiTransferListener;
     }
 
     @Override
@@ -116,7 +114,6 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         context.getResources().getString(R.string.str_confirm_delete), new DialogUtil.OnConfirm() {
                             @Override
                             public void OnListenerOk() {
-                                DatabaseUtil.deleteContact(context, contactTransferModel.getWalletId());
                                 onDeleteItem.onDeleteOK(position);
                             }
 
@@ -127,32 +124,21 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         });
 
+        if (contactTransferModel.isAddTransfer) {
+            itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
+        } else {
+            itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
+        }
+
         itemViewHolder.view_foreground.setOnClickListener(v -> {
-            if (itemViewHolder.iv_multi_chose.getVisibility() == View.VISIBLE) {
-                addAndRemoveMultiTransfer(contactTransferModel, false);
+            if (contactTransferModel.isAddTransfer) {
+                mCountriesModelList.get(position).setAddTransfer(false);
                 itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
             } else {
-                addAndRemoveMultiTransfer(contactTransferModel, true);
+                mCountriesModelList.get(position).setAddTransfer(true);
                 itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
             }
-
-            if (null != multiTransferListener) {
-                multiTransferListener.onMultiTransfer(multiTransferList);
-            }
         });
-    }
-
-    private void addAndRemoveMultiTransfer(Contact contact, boolean isAdd) {
-        if (isAdd) {
-            multiTransferList.add(contact);
-        } else {
-            for (int i = 0; i < multiTransferList.size(); i++) {
-                if (multiTransferList.get(i).getWalletId().equals(contact.getWalletId())) {
-                    multiTransferList.remove(i);
-                    break;
-                }
-            }
-        }
     }
 
 
@@ -167,7 +153,7 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ImageView iv_multi_chose;
         RelativeLayout view_foreground;
 
-        public ItemContactContentHolder(View itemView) {
+        ItemContactContentHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             tvPhone = itemView.findViewById(R.id.tv_phone);

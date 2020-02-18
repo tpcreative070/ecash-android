@@ -29,14 +29,12 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
-import vn.ecpay.ewallet.ui.wallet.activity.ChangePassActivity;
 import vn.ecpay.ewallet.ui.wallet.module.MyWalletModule;
 import vn.ecpay.ewallet.ui.wallet.presenter.MyWalletPresenter;
 import vn.ecpay.ewallet.ui.wallet.view.MyWalletView;
@@ -146,13 +144,17 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.UPDATE_MONEY)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)|| event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> updateBalance());
+                    try {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(() -> updateBalance());
+                    } catch (NullPointerException e) {
+                        return;
+                    }
                 }
             }, 1000);
         }

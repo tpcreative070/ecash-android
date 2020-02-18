@@ -19,6 +19,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 
 public class BillingQRCodeFragment extends ECashBaseFragment {
@@ -80,18 +81,21 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
         }
     }
     private void handleShare(){
-        if(bitmap!=null){
-            Uri uri = CommonUtils.getBitmapUri(getActivity(),bitmap);
-            if(uri!=null){
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                shareIntent.setType("image/jpeg");
-                getContext().startActivity(Intent.createChooser(shareIntent, getString(R.string.str_share)));
-            }else{
-                Toast.makeText(getActivity(),getString(R.string.str_have_warning),Toast.LENGTH_SHORT).show();
+        if (PermissionUtils.checkPermissionWriteStore(this, null)) {
+            if(bitmap!=null){
+                Uri uri = CommonUtils.getBitmapUri(getActivity(),bitmap);
+                if(uri!=null){
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                    shareIntent.setType("image/jpeg");
+                    getContext().startActivity(Intent.createChooser(shareIntent, getString(R.string.str_share)));
+                }else{
+                    Toast.makeText(getActivity(),getString(R.string.str_have_warning),Toast.LENGTH_SHORT).show();
+                }
             }
         }
+
     }
 }
 

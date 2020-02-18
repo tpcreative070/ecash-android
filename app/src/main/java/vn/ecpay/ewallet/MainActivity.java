@@ -19,8 +19,17 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +39,9 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
@@ -38,8 +49,9 @@ import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistor
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
-
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class MainActivity extends ECashBaseActivity {
     @BindView(R.id.main_content)
@@ -70,6 +82,11 @@ public class MainActivity extends ECashBaseActivity {
         setupTabs();
         tabHost.setOnTabChangedListener(this::onChange);
         tabHost.getTabWidget().getChildAt(1).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
@@ -78,6 +95,11 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(3).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
@@ -86,6 +108,11 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(4).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
@@ -93,6 +120,11 @@ public class MainActivity extends ECashBaseActivity {
             }
         });
         tabHost.getTabWidget().getChildAt(2).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);
             startActivityForResult(intentCashIn, Constant.REQUEST_QR_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -285,32 +317,37 @@ public class MainActivity extends ECashBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         EventBus.getDefault().postSticky(new EventDataChange(EVENT_CHOSE_IMAGE, requestCode, this, resultCode, data));
-        if(resultCode == Activity.RESULT_OK){
-            if(requestCode==Constant.REQUEST_QR_CODE){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constant.REQUEST_QR_CODE) {
                 handleDataToPayResult(data);
             }
         }
     }
 
-    private void handleDataToPayResult(Intent data){
-        if(data!=null){
-            Payments qrToPay = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
-            if(qrToPay!=null){
-                validatePayment(qrToPay);
+    private void handleDataToPayResult(Intent data) {
+        if (data != null) {
+            Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
+            if(payment!=null){
+                //validatePayment(payment);
+                String userName = ECashApplication.getAccountInfo().getUsername();
+                 AccountInfo accountInfo =DatabaseUtil.getAccountInfo(userName, getActivity());
+                 if(accountInfo!=null&&payment.getSender()!=null){
+                     if(payment.getSender().equals(String.valueOf(accountInfo.getWalletId()))){
+                         showDialogError(getActivity().getString(R.string.str_error_you_cannot_pay_for_your_self));
+                         return;
+                     }
+                 }
+                showDialogNewPaymentRequest(payment,false);
             }
         }
     }
+
+
     @Override
     protected void onDestroy() {
         if (networkChangeReceiver != null) {
             unregisterReceiver(networkChangeReceiver);
         }
         super.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
     }
 }

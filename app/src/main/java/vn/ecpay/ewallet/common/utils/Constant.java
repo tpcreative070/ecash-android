@@ -56,10 +56,11 @@ public class Constant {
     public static final String EVENT_CHOSE_IMAGE = "EVENT_CHOSE_IMAGE";
     public static final String UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION";
     public static final String UPDATE_ACCOUNT_LOGIN = "update_account_login";
-    public static final String UPDATE_MONEY = "update_money";
-    public static final String UPDATE_MONEY_SOCKET = "update_money_socket";
+
+    public static final String EVENT_CASH_OUT_MONEY = "EVENT_CASH_OUT_MONEY";
     public static final String CASH_OUT_MONEY_SUCCESS = "cash_out_money_success";
     public static final String CASH_OUT_MONEY_FAIL = "cash_out_money_fail";
+
     public static final String EVENT_CONNECT_SOCKET_FAIL = "EVENT_CONNECT_SOCKET_FAIL";
     public static final String EVENT_VERIFY_CASH_FAIL = "EVENT_VERIFY_CASH_FAIL";
     public static final String EVENT_UPDATE_CONTACT = "EVENT_UPDATE_CONTACT";
@@ -72,6 +73,11 @@ public class Constant {
 
     public static final String EVENT_UPDATE_CASH_IN = "EVENT_UPDATE_CASH_IN";
     public static final String EVENT_CASH_IN_SUCCESS = "EVENT_CASH_IN_SUCCESS";
+    public static final String EVENT_CASH_IN_PAYTO = "EVENT_CASH_IN_PAYTO";
+    public static final String EVENT_CASH_IN_CHANGE = "EVENT_CASH_IN_CHANGE";
+    public static final String EVENT_PAYMENT_SUCCESS = "EVENT_PAYMENT_SUCCESS";
+    public static final String EVENT_SEND_REQUEST_PAYTO = "EVENT_SEND_REQUEST_PAYTO";
+    public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
@@ -94,6 +100,8 @@ public class Constant {
     public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0020";
     public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
     public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
+    public static final String FUNCTION_ADD_CONTACT = "GWEC0023";
+    public static final String FUNCTION_DELETE_CONTACT = "GWEC0038";
     public static final String FUNCTION_FORGOT_PASS_OTP = "GWEC0024";
     public static final String FUNCTION_CHANGE_PASS = "GWEC0025";
     public static final String FUNCTION_GET_OTP_ACTIVE_ACCOUNT = "GWEC0029";
@@ -127,4 +135,5 @@ public class Constant {
     // todo Qr code
     public static final String QR_CONTACT = "MC";
     public static final String QR_TO_PAY = "TP";
+    public static final long AMOUNT_LIMITED = 20000000;
 }

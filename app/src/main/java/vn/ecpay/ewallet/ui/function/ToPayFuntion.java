@@ -118,6 +118,7 @@ public class ToPayFuntion {
             responseMess.setReceiver(String.valueOf(payToRequest.getSender()));
             responseMess.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
             responseMess.setType(Constant.TYPE_PAYTO);
+            //responseMess.setType(Constant.TYPE_ECASH_TO_ECASH);
             responseMess.setContent(payToRequest.getContent());
             responseMess.setCashEnc(encData);
             responseMess.setId(CommonUtils.getIdSender(responseMess, context));
