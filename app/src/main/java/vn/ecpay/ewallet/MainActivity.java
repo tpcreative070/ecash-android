@@ -41,30 +41,15 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CacheData_Database;
-import vn.ecpay.ewallet.database.table.CashLogs_Database;
-import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cashValue.CashTotal;
-import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
-import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
-import vn.ecpay.ewallet.ui.cashChange.CashChangeHandler;
-import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
-import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
-import vn.ecpay.ewallet.ui.function.ToPayFuntion;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
-import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
-
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
-import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
@@ -342,11 +327,21 @@ public class MainActivity extends ECashBaseActivity {
     private void handleDataToPayResult(Intent data) {
         if (data != null) {
             Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
-            if (payment != null) {
-                validatePayment(payment);
+            if(payment!=null){
+                //validatePayment(payment);
+                String userName = ECashApplication.getAccountInfo().getUsername();
+                 AccountInfo accountInfo =DatabaseUtil.getAccountInfo(userName, getActivity());
+                 if(accountInfo!=null&&payment.getSender()!=null){
+                     if(payment.getSender().equals(String.valueOf(accountInfo.getWalletId()))){
+                         showDialogError(getActivity().getString(R.string.str_error_you_cannot_pay_for_your_self));
+                         return;
+                     }
+                 }
+                showDialogNewPaymentRequest(payment,false);
             }
         }
     }
+
 
     @Override
     protected void onDestroy() {

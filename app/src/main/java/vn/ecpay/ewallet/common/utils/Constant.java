@@ -74,6 +74,10 @@ public class Constant {
     public static final String EVENT_UPDATE_CASH_IN = "EVENT_UPDATE_CASH_IN";
     public static final String EVENT_CASH_IN_SUCCESS = "EVENT_CASH_IN_SUCCESS";
     public static final String EVENT_CASH_IN_PAYTO = "EVENT_CASH_IN_PAYTO";
+    public static final String EVENT_CASH_IN_CHANGE = "EVENT_CASH_IN_CHANGE";
+    public static final String EVENT_PAYMENT_SUCCESS = "EVENT_PAYMENT_SUCCESS";
+    public static final String EVENT_SEND_REQUEST_PAYTO = "EVENT_SEND_REQUEST_PAYTO";
+    public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
@@ -131,4 +135,5 @@ public class Constant {
     // todo Qr code
     public static final String QR_CONTACT = "MC";
     public static final String QR_TO_PAY = "TP";
+    public static final long AMOUNT_LIMITED = 20000000;
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -225,9 +226,11 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     private void cashOutSuccess() {
         dismissProgress();
-        if (getActivity() != null) {
-            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
-        }
+//        if (getActivity() != null) {
+
+//            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
+//        }
+        restartSocket();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -285,7 +288,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             Toast.makeText(getActivity(), getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
         }
 
-        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {

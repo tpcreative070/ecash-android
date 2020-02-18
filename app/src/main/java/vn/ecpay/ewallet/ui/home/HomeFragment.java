@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -145,7 +148,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             if (listEDongInfo.size() > 0) {
                 eDongInfoCashIn = listEDongInfo.get(0);
                 tvHomeAccountEdong.setText(listEDongInfo.get(0).getAccountIdt());
-                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         }
 
@@ -248,12 +251,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             for (int i = 0; i < listEDongInfo.size(); i++) {
                 if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
                     tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
-                    tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+                    tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
                 }
             }
         } else {
             tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
         }
     }
 
@@ -267,7 +270,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
         builder.setItems(eDong, (dialog, which) -> {
             tvHomeAccountEdong.setText(listEDongInfo.get(which).getAccountIdt());
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             eDongInfoCashIn = listEDongInfo.get(which);
         });
 
@@ -535,6 +538,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+        Log.e("Home Event Bus", new Gson().toJson(event.getData()));
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }
@@ -544,7 +548,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
 
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS) ||
+                event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS) || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -694,8 +699,16 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                         }
                         return null;
                     }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        dismissProgress();
+                    }
                 }.execute();
             }
+        } else {
+            dismissLoading();
         }
     }
 }

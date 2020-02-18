@@ -41,6 +41,7 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactDelete.RequestDeleteContact;
@@ -51,7 +52,7 @@ import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.contact.adapter.ContactAdapter;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
-public class FragmentContact extends ECashBaseFragment implements MultiTransferListener {
+public class FragmentContact extends ECashBaseFragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
@@ -124,18 +125,8 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
         mAdapter = new ContactAdapter(mSectionList, getActivity(), pos -> {
             showProgress();
             deleteContact(mSectionList.get(pos));
-        }, this);
+        });
         recyclerView.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void onMultiTransfer(ArrayList<Contact> contactList) {
-        if (contactList.size() > 0) {
-            listContactTransfer = contactList;
-            tvDone.setVisibility(View.VISIBLE);
-        } else {
-            tvDone.setVisibility(View.GONE);
-        }
     }
 
     private void getHeaderListLatter(List<Contact> usersList) {
@@ -177,16 +168,20 @@ public class FragmentContact extends ECashBaseFragment implements MultiTransferL
                 edtSearch.setText(Constant.STR_EMPTY);
                 break;
             case R.id.tv_done:
-                Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL, listContactTransfer);
-                intentTransferCash.putExtras(mBundle);
-                if (getActivity() != null) {
-                    ((MainActivity) getActivity()).startActivity(intentTransferCash);
-                    ((MainActivity) getActivity()).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (CommonUtils.getListTransfer(mSectionList).size() > 0) {
+                    listContactTransfer = CommonUtils.getListTransfer(mSectionList);
+                    Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
+                    Bundle mBundle = new Bundle();
+                    mBundle.putParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL, listContactTransfer);
+                    intentTransferCash.putExtras(mBundle);
+                    if (getActivity() != null) {
+                        ((MainActivity) getActivity()).startActivity(intentTransferCash);
+                        ((MainActivity) getActivity()).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    }
+                    initAdapter();
+                } else {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_un_chose_wallet_send));
                 }
-                initAdapter();
-                tvDone.setVisibility(View.GONE);
                 break;
         }
     }

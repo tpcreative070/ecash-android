@@ -43,17 +43,14 @@ import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
-import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
-import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CASH_OUT_MONEY;
-import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
 
 public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
@@ -129,7 +126,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         if (listEDongInfo.size() > 0) {
             edongInfo = listEDongInfo.get(0);
             tvEDongWallet.setText(listEDongInfo.get(0).getAccountIdt());
-            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             tvEdong.setText(listEDongInfo.get(0).getAccountIdt());
         }
     }
@@ -198,7 +195,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             }
         } else {
             tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEdong(listEDongInfo.get(0).getUsableBalance())));
+            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
         }
     }
 

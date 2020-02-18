@@ -55,6 +55,7 @@ import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_ECASH_TO_ECASH;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_LIXI;
+import static vn.ecpay.ewallet.common.utils.Constant.TYPE_PAYTO;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_ECASH_TO_EDONG;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
@@ -160,10 +161,14 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                     tvSenderReceiver.setText(getResources().getString(R.string.sender));
+                    tvHumanCode.setText(transactionsHistoryModel.getSenderAccountId());
+                    tvHistoryName.setText(transactionsHistoryModel.getSenderName());
                 } else {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                     tvSenderReceiver.setText(getResources().getString(R.string.receiver));
+                    tvHumanCode.setText(transactionsHistoryModel.getReceiverAccountId());
+                    tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
                 }
                 tvType.setText(getResources().getString(R.string.str_transfer));
                 tvHistoryType.setText(getResources().getString(R.string.str_transfer));
@@ -191,7 +196,12 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
                 layoutContent.setVisibility(View.GONE);
                 break;
-
+            case TYPE_PAYTO:
+                tvType.setText(getResources().getString(R.string.str_payment));
+                tvHistoryType.setText(getResources().getString(R.string.str_payment));
+                tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
+                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                break;
         }
 
         if (Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_SUCCESS) {

@@ -96,6 +96,18 @@ public class WebSocketsService extends Service {
                 }
             }, 5000);
         }
+        if (event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)||event.getData().equals(Constant.EVENT_SEND_REQUEST_PAYTO)) {
+            Log.e("event", "EVENT_PAYMENT_SUCCESS or EVENT_SEND_REQUEST_PAYTO");
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if (ECashApplication.getAccountInfo() != null) {
+                    AccountInfo dbAccountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), getApplicationContext());
+                    if (dbAccountInfo != null) {
+                        startSocket();
+                    }
+                }
+            }, 500);
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -178,7 +190,7 @@ public class WebSocketsService extends Service {
         public void onClosing(WebSocket webSocket, int code, String reason) {
             webSocket.close(1000, null);
             webSocket.cancel();
-            Log.d("onClosing", "CLOSE: " + code + " " + reason);
+            Log.e("onClosing", "CLOSE: " + code + " " + reason);
         }
 
         @Override
@@ -250,7 +262,13 @@ public class WebSocketsService extends Service {
         if (ECashApplication.getActivity() != null) {
             if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
                 ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
-                activity.runOnUiThread(() -> activity.showDialogNewPaymentRequest(payToRequest));
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.showDialogNewPaymentRequest(payToRequest,true);
+                    }
+                });
+
             }
         }
     }

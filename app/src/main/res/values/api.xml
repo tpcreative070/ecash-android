@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="api_base_url" translatable="false">http://116.193.72.25:3979/</string>
-<!--        <string name="api_base_url" translatable="false">http://116.193.72.25:8013/</string>-->
-    <string name="url_socket" translatable="false">116.193.72.25:1959</string>
-<!--        <string name="url_socket" translatable="false">116.193.72.25:8010</string>-->
+<!--    <string name="api_base_url" translatable="false">http://116.193.72.25:3979/</string>-->
+        <string name="api_base_url" translatable="false">http://116.193.72.25:8013/</string>
+<!--    <string name="url_socket" translatable="false">116.193.72.25:1959</string>-->
+        <string name="url_socket" translatable="false">116.193.72.25:8010</string>
 <!--        <string name="url_socket" translatable="false">10.10.32.102:8010</string>-->
 </resources>

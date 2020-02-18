@@ -33,8 +33,7 @@ public class SyncCashService extends Service {
     private List<CacheData> listResponseMessSockets;
     private AccountInfo accountInfo;
 
-    private String EVENT_CASH_IN_PAYTO = "";
-
+    private String EVENT_CASH_IN_CHANGE ="";
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -59,8 +58,8 @@ public class SyncCashService extends Service {
                 syncData();
             }
         }
-        if (event.getData().equals(EVENT_CASH_IN_PAYTO)) {
-            EVENT_CASH_IN_PAYTO = "EVENT_CASH_IN_PAYTO";
+        if (event.getData().equals(EVENT_CASH_IN_CHANGE)) {
+            EVENT_CASH_IN_CHANGE = "EVENT_CASH_IN_PAYTO";
         }
 
         if (event.getData().equals(EVENT_CASH_OUT_MONEY)) {
@@ -126,11 +125,11 @@ public class SyncCashService extends Service {
             }
         } else {
             isRunning = false;
-            if (EVENT_CASH_IN_PAYTO.length() == 0) {
+            if (EVENT_CASH_IN_CHANGE.length() == 0) {
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
 
             } else {
-                EVENT_CASH_IN_PAYTO = "";
+                EVENT_CASH_IN_CHANGE = "";
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
 
