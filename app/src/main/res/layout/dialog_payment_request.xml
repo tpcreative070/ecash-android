@@ -1,49 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_border_gray"
     android:layout_margin="10dp"
     android:padding="10dp"
     >
-    <ImageView
-        android:id="@+id/iv_icon"
-        android:layout_width="50dp"
-        android:layout_height="38dp"
-        android:src="@drawable/ic_payment"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        />
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_icon"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:text="@string/str_payment_request"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="@dimen/text_header" />
-    <TextView
-        android:id="@+id/tv_content"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTitle"
-        android:gravity="center"
-        android:lineSpacingExtra="3dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/str_content_payment_request"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_large" />
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="50dp"
+            android:layout_height="38dp"
+            android:src="@drawable/ic_payment"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            />
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_icon"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:text="@string/str_payment_request"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_header" />
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTitle"
+            android:gravity="center"
+            android:lineSpacingExtra="3dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/str_content_payment_request"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_large" />
 
-    <Button
-        android:id="@+id/btn_payment"
-        style="@style/btn_submit_full"
-        android:layout_below="@+id/tv_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/str_payment"
-        android:textAllCaps="true"
-        android:textSize="@dimen/text_header" />
-</RelativeLayout>
+        <Button
+            android:id="@+id/btn_payment"
+            style="@style/btn_submit_full"
+            android:layout_below="@+id/tv_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/str_payment"
+            android:textAllCaps="true"
+            android:textSize="@dimen/text_header" />
+    </RelativeLayout>
+
+</androidx.core.widget.NestedScrollView>

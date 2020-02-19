@@ -461,6 +461,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     }
 
     public void showDialogConfirmPayment(List<CashTotal> valueListCash, Payments payToRequest) {
+
         DialogUtil.getInstance().showDialogConfirmPayment(this, valueListCash, payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
@@ -488,7 +489,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             valueListCashChange = new ArrayList<>();
             valueListCashTake = new ArrayList<>();
             List<CashTotal> listDataBase = DatabaseUtil.getAllCashTotal(getActivity());
-            //Collections.reverse(listDataBase);
+            Collections.reverse(listDataBase);
 
             List<CashTotal> walletList = new ArrayList<>();
             for (CashTotal cash : listDataBase) {
