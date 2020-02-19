@@ -30,8 +30,10 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.ContentInputTextWatcher;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.NumberTextWatcher;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCodePayment;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
@@ -65,6 +67,12 @@ public class ToPayFragment extends ECashBaseFragment {
     @BindView(R.id.iv_qr_code)
     ImageView ivQRCode;
 
+    @BindView(R.id.tv_error_wallet_id)
+    TextView tvErrorWallet;
+    @BindView(R.id.tv_error_amount)
+    TextView tvErrorAmount;
+    @BindView(R.id.tv_error_content)
+    TextView tvErrorContent;
 
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
@@ -83,7 +91,8 @@ public class ToPayFragment extends ECashBaseFragment {
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
-        edtAmount.addTextChangedListener(new NumberTextWatcher(edtAmount));
+        edtAmount.addTextChangedListener(new NumberTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));
+        edtContent.addTextChangedListener(new ContentInputTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));
     }
     @Override
     public void onResume() {
@@ -91,6 +100,7 @@ public class ToPayFragment extends ECashBaseFragment {
         super.onResume();
     }
     private void setData(){
+        Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
         viewContact.setVisibility(View.GONE);
         viewQRCode.setVisibility(View.GONE);
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
@@ -111,25 +121,30 @@ public class ToPayFragment extends ECashBaseFragment {
         }
     }
     private void validateData(){
+        clearError();
         if (edtAmount.getText().toString().isEmpty()) {
             if (getActivity() != null)
-                showDialogError(getString(R.string.err_anount_null));
+             //   showDialogError(getString(R.string.err_anount_null));
+            tvErrorAmount.setText(getString(R.string.err_anount_null));
             return;
         }
         if(edtAmount.getText().toString().length()>0){
             Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
             // Log.e("money%1000 ",money%1000+"");
             if(money<1000||money%1000!=0){
-                showDialogError(getString(R.string.err_amount_validate));
+              //  showDialogError(getString(R.string.err_amount_validate));
+                tvErrorAmount.setText(getString(R.string.err_amount_validate));
                 return;
             }else if(money>Constant.AMOUNT_LIMITED){
-                showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
+             //   showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
+                tvErrorAmount.setText(getString(R.string.err_amount_does_not_exceed_twenty_million));
                 return;
             }
         }
         if (edtContent.getText().toString().isEmpty()) {
             if (getActivity() != null)
                 showDialogError(getString(R.string.err_dit_not_content));
+            tvErrorContent.setText(getString(R.string.err_dit_not_content));
             return;
         }
         String userName = ECashApplication.getAccountInfo().getUsername();
@@ -156,6 +171,11 @@ public class ToPayFragment extends ECashBaseFragment {
         qrPayment.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
         crateQRCode(qrPayment);
+    }
+    private void clearError(){
+        tvErrorWallet.setText("");
+        tvErrorAmount.setText("");
+        tvErrorContent.setText("");
     }
     private void crateQRCode(QRCodePayment qrCodePayment){
         if (getActivity() != null) {

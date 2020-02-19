@@ -197,10 +197,16 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 layoutContent.setVisibility(View.GONE);
                 break;
             case TYPE_PAYTO:
+                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                    tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                } else {
+                    tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                }
                 tvType.setText(getResources().getString(R.string.str_payment));
                 tvHistoryType.setText(getResources().getString(R.string.str_payment));
-                tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
-                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+
                 break;
         }
 
