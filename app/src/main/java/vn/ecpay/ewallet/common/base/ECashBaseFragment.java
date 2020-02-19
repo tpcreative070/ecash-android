@@ -148,9 +148,15 @@ public abstract class ECashBaseFragment extends Fragment {
      */
     protected abstract int getLayoutResId();
 
+
     public void restartSocket(){
         if (getActivity() instanceof ECashBaseActivity) {
             ((ECashBaseActivity) getActivity()).restartSocket();
+        }
+    }
+    public void stopSocket(){
+        if (getActivity() instanceof ECashBaseActivity) {
+            ((ECashBaseActivity) getActivity()).stopSocket();
         }
     }
 }

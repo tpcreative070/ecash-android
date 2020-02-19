@@ -21,6 +21,7 @@ import java.util.List;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
@@ -98,15 +99,19 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
             } else {
                 if(limitChoice){
-                    if(multiTransferList!=null&&multiTransferList.size()==10){
-                        if(getActivity()!=null){
-                            if(getActivity() instanceof ECashBaseActivity){
-                                ((ECashBaseActivity) getActivity()).showDialogError(getActivity().getString(R.string.str_error_limited_select_contact));
-                            }else{
-                                Log.e("getActivity ", getActivity().getLocalClassName());
+                    if(contactList!=null){
+                        if(CommonUtils.getCountTransfer(contactList)==10){
+                            if(getActivity()!=null){
+                                if(getActivity() instanceof ECashBaseActivity){
+                                    ((ECashBaseActivity) getActivity()).showDialogError(getActivity().getString(R.string.str_error_limited_select_contact));
+                                }else{
+                                    Log.e("getActivity ", getActivity().getLocalClassName());
+                                }
                             }
+                            return;
                         }
-                        return;
+
+
                     }
                 }
                 contactList.get(position).setAddTransfer(true);

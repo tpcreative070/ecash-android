@@ -251,7 +251,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             dismissProgress();
             showDialogError(getString(R.string.err_connect_socket_fail));
         }
-        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
+        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
 
             new Timer().schedule(new TimerTask() {
                 @Override
