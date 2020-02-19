@@ -158,7 +158,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             updateNotification();
             updateNumberLixi();
             //todo sync data
-            syncData();
+           // syncData();
             accountInfo = dbAccountInfo;
             tvHomeAccountName.setText(CommonUtils.getFullName(accountInfo));
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -675,8 +676,12 @@ public class DialogUtil {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_confirm_payment);
             Button btnOk;
+
+            TextView tv_info=mDialog.findViewById(R.id.tv_info);
+            tv_info.setText(context.getString(R.string.str_payment_info));
             TextView tv_title=mDialog.findViewById(R.id.tv_title);
             RecyclerView rvCashValues=mDialog.findViewById(R.id.rv_cash_values);
+
             CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash, context);
             rvCashValues.setAdapter(cashValueAdapter);
             TextView tvTotalAmount=mDialog.findViewById(R.id.tv_total_payment);

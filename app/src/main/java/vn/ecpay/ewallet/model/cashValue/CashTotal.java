@@ -1,8 +1,9 @@
 package vn.ecpay.ewallet.model.cashValue;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class CashTotal {
+public class CashTotal implements Serializable {
     private int parValue;
     private int totalDatabase;
     private int total;
