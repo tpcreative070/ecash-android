@@ -98,9 +98,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     @Override
     protected void onDestroy() {
-        //EventBus.getDefault().unregister(this);
         super.onDestroy();
-
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -418,6 +417,18 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
         }
     }
+    public void stopSocket(){
+        if (getActivity() != null) {
+            //  Log.e("start ","start ");
+            if(CommonUtils.isMyServiceRunning(WebSocketsService.class)){
+                Log.e("stop service","stop service");
+                getActivity().stopService(new Intent(getActivity(), WebSocketsService.class));
+            }else{
+                Log.e("cannot stop service","cannot stop service");
+            }
+
+        }
+    }
 
     public void showDialogNewPaymentRequest(Payments mPayment, boolean toPay) {
         showLoading();
@@ -477,7 +488,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             valueListCashChange = new ArrayList<>();
             valueListCashTake = new ArrayList<>();
             List<CashTotal> listDataBase = DatabaseUtil.getAllCashTotal(getActivity());
-            Collections.reverse(listDataBase);
+            //Collections.reverse(listDataBase);
 
             List<CashTotal> walletList = new ArrayList<>();
             for (CashTotal cash : listDataBase) {
@@ -587,7 +598,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 }
                 // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
                 //  convertCash()
-                getPublicKeyOrganization(payment);
                // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
               //  convertCash()
                 getPublicKeyOrganization(this.payment);
@@ -700,7 +710,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 cacheData_database.setResponseData(jsonCashInResponse);
                 cacheData_database.setType(TYPE_CASH_EXCHANGE);
                 DatabaseUtil.saveCacheData(cacheData_database, getActivity());
-                //Log.e("A","A");
+                Log.e("A","A");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
                 //validatePayment(payments);
                 dismissLoading();

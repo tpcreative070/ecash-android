@@ -108,6 +108,9 @@ public class WebSocketsService extends Service {
                 }
             }, 500);
         }
+        if(event.getData().equals(Constant.EVENT_ACCOUNT_LOGOUT)){
+            stopSocket();
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -122,6 +125,14 @@ public class WebSocketsService extends Service {
         Request requestCoinPrice = new Request.Builder().url(url).build();
         webSocketLocal = client.newWebSocket(requestCoinPrice, webSocketListener);
         client.dispatcher().executorService().shutdown();
+    }
+
+    private void stopSocket(){
+        if(webSocketListener!=null&&webSocketLocal!=null){
+//            webSocketLocal.close(1000, "stop");
+//            webSocketLocal.cancel();
+            webSocketListener.onClosed(webSocketLocal,1000,"stop");
+        }
     }
 
     WebSocketListener webSocketListener = new WebSocketListener() {
