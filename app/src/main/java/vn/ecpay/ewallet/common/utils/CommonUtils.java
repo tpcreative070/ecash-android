@@ -838,6 +838,15 @@ public class CommonUtils {
         }
         return multiTransferList;
     }
+    public static int getCountTransfer(List<Contact> mSectionList) {
+        int count=0;
+        for (Contact contact : mSectionList) {
+            if (contact.isAddTransfer) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     public static boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) ECashApplication.getActivity().getSystemService(Context.ACTIVITY_SERVICE);
