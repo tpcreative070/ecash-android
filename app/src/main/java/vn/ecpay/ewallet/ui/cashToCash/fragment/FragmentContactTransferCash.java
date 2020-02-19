@@ -34,7 +34,7 @@ import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.payTo.PayToActivity;
 
-public class FragmentContactTransferCash extends ECashBaseFragment implements MultiTransferListener {
+public class FragmentContactTransferCash extends ECashBaseFragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
@@ -46,15 +46,17 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
     private MultiTransferListener multiTransferListener;
     private AccountInfo accountInfo;
     private ArrayList<Contact> multiTransferList;
+    private boolean limitChoice =false;
 
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_contact_transfer;
     }
 
-    public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener) {
+    public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener,boolean limitChoice) {
         Bundle args = new Bundle();
         args.putSerializable(Constant.CONTACT_MULTI_TRANSFER, multiTransferListener);
+        args.putBoolean(Constant.CONTACT_MULTIPLE_CHOICE, limitChoice);
         FragmentContactTransferCash fragment = new FragmentContactTransferCash();
         fragment.setArguments(args);
         return fragment;
@@ -67,6 +69,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             this.multiTransferListener = (MultiTransferListener) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
+            this.limitChoice =  bundle.getBoolean(Constant.CONTACT_MULTIPLE_CHOICE);
         }
 
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -109,7 +112,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new ContactTransferAdapter(mSectionList, getActivity(), this);
+        mAdapter = new ContactTransferAdapter(mSectionList, getActivity() ,this.limitChoice);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -139,43 +142,30 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                    if (getActivity() != null&&getCurrentActivity()!=null){
-                        //Toast.makeText(getActivity(),getCurrentActivity(),Toast.LENGTH_LONG).show();
-                        if(getCurrentActivity().equals((CashToCashActivity.class.getName()))){
-                            (getActivity()).onBackPressed();
-                        }else if(getCurrentActivity().equals((PayToActivity.class.getName()))){
-                            getActivity().onBackPressed();
-                        }
-                        else if(getCurrentActivity().equals((MyLixiActivity.class.getName()))){
-                            (getActivity()).onBackPressed();
-                        }
+                if (getActivity() != null && getCurrentActivity() != null) {
+                    //Toast.makeText(getActivity(),getCurrentActivity(),Toast.LENGTH_LONG).show();
+                    if (getCurrentActivity().equals((CashToCashActivity.class.getName()))) {
+                        (getActivity()).onBackPressed();
+                    } else if (getCurrentActivity().equals((PayToActivity.class.getName()))) {
+                        getActivity().onBackPressed();
+                    } else if (getCurrentActivity().equals((MyLixiActivity.class.getName()))) {
+                        (getActivity()).onBackPressed();
                     }
+                }
 
                 break;
             case R.id.tv_done:
-                if (multiTransferList != null) {
-                    if (multiTransferList.size() > 0) {
-                        multiTransferListener.onMultiTransfer(multiTransferList);
-                        if (getActivity() != null&&getCurrentActivity()!=null){
-                            //Toast.makeText(getActivity(),getCurrentActivity(),Toast.LENGTH_LONG).show();
-                            if(getCurrentActivity().equals((CashToCashActivity.class.getName()))){
-                                (getActivity()).onBackPressed();
-                            }else if(getCurrentActivity().equals((PayToActivity.class.getName()))){
-                                getActivity().onBackPressed();
-                            }
-                            else if(getCurrentActivity().equals((MyLixiActivity.class.getName()))){
-                                (getActivity()).onBackPressed();
-                            }
+                if (CommonUtils.getListTransfer(mSectionList).size() > 0) {
+                    multiTransferList = CommonUtils.getListTransfer(mSectionList);
+                    multiTransferListener.onMultiTransfer(multiTransferList);
+                    if (getActivity() != null && getCurrentActivity() != null) {
+                        if (getCurrentActivity().equals((CashToCashActivity.class.getName()))) {
+                            (getActivity()).onBackPressed();
+                        } else if (getCurrentActivity().equals((PayToActivity.class.getName()))) {
+                            getActivity().onBackPressed();
+                        } else if (getCurrentActivity().equals((MyLixiActivity.class.getName()))) {
+                            (getActivity()).onBackPressed();
                         }
-//                        try {
-//                            if (getActivity() != null)
-//                                ((CashToCashActivity) getActivity()).onBackPressed();
-//                        } catch (ClassCastException e) {
-//                            if (getActivity() != null)
-//                                ((MyLixiActivity) getActivity()).onBackPressed();
-//                        }
-                    } else {
-                        DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_un_chose_wallet_send));
                     }
                 } else {
                     DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_un_chose_wallet_send));
@@ -187,8 +177,4 @@ public class FragmentContactTransferCash extends ECashBaseFragment implements Mu
         }
     }
 
-    @Override
-    public void onMultiTransfer(ArrayList<Contact> contactList) {
-        multiTransferList = contactList;
-    }
 }

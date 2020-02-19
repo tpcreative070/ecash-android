@@ -1,11 +1,10 @@
 package vn.ecpay.ewallet.ui.function;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -26,7 +25,10 @@ import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 
-public class CashInService extends Service {
+import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CASH_OUT_MONEY;
+import static vn.ecpay.ewallet.common.utils.Constant.EVENT_UPDATE_CASH_IN;
+
+public class SyncCashService extends Service {
     private boolean isRunning = false;
     private List<CacheData> listResponseMessSockets;
     private AccountInfo accountInfo;
@@ -48,23 +50,46 @@ public class CashInService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-       // Log.e("B ",event.getData());
-        if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
-
-            checkSync();
+        if (event.getData().equals(EVENT_UPDATE_CASH_IN)) {
+            if (!isRunning) {
+                isRunning = true;
+                String userName = ECashApplication.getAccountInfo().getUsername();
+                accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
+                syncData();
+            }
         }
-        if(event.getData().equals(Constant.EVENT_CASH_IN_CHANGE)){
-            checkSync();
-            EVENT_CASH_IN_CHANGE ="EVENT_CASH_IN_CHANGE";
+        if (event.getData().equals(EVENT_CASH_IN_CHANGE)) {
+            EVENT_CASH_IN_CHANGE = "EVENT_CASH_IN_PAYTO";
+        }
+
+        if (event.getData().equals(EVENT_CASH_OUT_MONEY)) {
+            String userName = ECashApplication.getAccountInfo().getUsername();
+            accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
+            cashOutData(event);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
-    private void checkSync(){
-        if (!isRunning) {
-            isRunning = true;
-            String userName = ECashApplication.getAccountInfo().getUsername();
-            accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
-            syncData();
+
+    @SuppressLint("StaticFieldLeak")
+    private void cashOutData(EventDataChange event) {
+        if (isRunning) {
+            cashOutData(event);
+        } else {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    isRunning = true;
+                    DatabaseUtil.updateTransactionsLogAndCashOutDatabase(event.getListCashSend(), event.getResponseMess(),
+                            getApplicationContext(), accountInfo.getUsername());
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    isRunning = false;
+                    EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
+                }
+            }.execute();
         }
     }
 
@@ -100,13 +125,11 @@ public class CashInService extends Service {
             }
         } else {
             isRunning = false;
-           // Log.e("EVENT_CASH_IN_PAYTO ",EVENT_CASH_IN_CHANGE);
-            if(EVENT_CASH_IN_CHANGE.length()==0){
-               // Log.e("C  ","C");
+            if (EVENT_CASH_IN_CHANGE.length() == 0) {
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
-            }else{
-                EVENT_CASH_IN_CHANGE="";
-              //  Log.e("E ","E");
+
+            } else {
+                EVENT_CASH_IN_CHANGE = "";
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
 

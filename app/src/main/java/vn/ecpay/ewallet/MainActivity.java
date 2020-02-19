@@ -82,6 +82,11 @@ public class MainActivity extends ECashBaseActivity {
         setupTabs();
         tabHost.setOnTabChangedListener(this::onChange);
         tabHost.getTabWidget().getChildAt(1).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
@@ -90,6 +95,11 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(3).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
@@ -98,6 +108,11 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(4).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
@@ -105,6 +120,11 @@ public class MainActivity extends ECashBaseActivity {
             }
         });
         tabHost.getTabWidget().getChildAt(2).setOnClickListener(v -> {
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);
             startActivityForResult(intentCashIn, Constant.REQUEST_QR_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -309,14 +329,6 @@ public class MainActivity extends ECashBaseActivity {
             Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
             if(payment!=null){
                 //validatePayment(payment);
-                String userName = ECashApplication.getAccountInfo().getUsername();
-                 AccountInfo accountInfo =DatabaseUtil.getAccountInfo(userName, getActivity());
-                 if(accountInfo!=null&&payment.getSender()!=null){
-                     if(payment.getSender().equals(String.valueOf(accountInfo.getWalletId()))){
-                         showDialogError(getActivity().getString(R.string.str_error_you_cannot_pay_for_your_self));
-                         return;
-                     }
-                 }
                 showDialogNewPaymentRequest(payment,false);
             }
         }

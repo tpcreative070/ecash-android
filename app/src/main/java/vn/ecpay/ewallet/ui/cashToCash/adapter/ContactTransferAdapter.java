@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.cashToCash.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,25 +18,32 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
+
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 
 public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int SECTION_VIEW = 0;
-    public static final int CONTENT_VIEW = 1;
+    private static final int SECTION_VIEW = 0;
+    private static final int CONTENT_VIEW = 1;
 
     List<Contact> contactList;
     WeakReference<Context> mContextWeakReference;
-    private MultiTransferListener multiTransferListener;
     ArrayList<Contact> multiTransferList;
+    private boolean limitChoice;
+    private Context context;
 
-    public ContactTransferAdapter(List<Contact> mContactList, Context context, MultiTransferListener multiTransferListener) {
+    public ContactTransferAdapter(List<Contact> mContactList, Context context, boolean limitChoice)
+        {
         this.contactList = mContactList;
         this.mContextWeakReference = new WeakReference<>(context);
-        this.multiTransferListener = multiTransferListener;
+        this.limitChoice = limitChoice;
+        this.context = context;
     }
 
     @Override
@@ -78,33 +86,33 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 contactTransferModel.getFullName(), String.valueOf(contactTransferModel.getWalletId())));
         itemViewHolder.tvPhone.setText(contactTransferModel.getPhone());
 
+        if (contactTransferModel.isAddTransfer) {
+            itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
+        } else {
+            itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
+        }
 
         itemViewHolder.view_foreground.setOnClickListener(v -> {
-            if (itemViewHolder.iv_multi_chose.getVisibility() == View.VISIBLE) {
-                addAndRemoveMultiTransfer(contactTransferModel, false);
+            if (contactTransferModel.isAddTransfer) {
+                contactList.get(position).setAddTransfer(false);
                 itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
             } else {
-                addAndRemoveMultiTransfer(contactTransferModel, true);
+                if(limitChoice){
+                    if(multiTransferList!=null&&multiTransferList.size()==10){
+                        if(getActivity()!=null){
+                            if(getActivity() instanceof ECashBaseActivity){
+                                ((ECashBaseActivity) getActivity()).showDialogError(getActivity().getString(R.string.str_error_limited_select_contact));
+                            }else{
+                                Log.e("getActivity ", getActivity().getLocalClassName());
+                            }
+                        }
+                        return;
+                    }
+                }
+                contactList.get(position).setAddTransfer(true);
                 itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
             }
-
-            if (null != multiTransferListener) {
-                multiTransferListener.onMultiTransfer(multiTransferList);
-            }
         });
-    }
-
-    private void addAndRemoveMultiTransfer(Contact contact, boolean isAdd) {
-        if (isAdd) {
-            multiTransferList.add(contact);
-        } else {
-            for (int i = 0; i < multiTransferList.size(); i++) {
-                if (multiTransferList.get(i).getWalletId().equals(contact.getWalletId())) {
-                    multiTransferList.remove(i);
-                    break;
-                }
-            }
-        }
     }
 
     @Override

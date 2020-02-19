@@ -57,7 +57,6 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
-import vn.ecpay.ewallet.ui.function.CashInService;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.common.utils.Constant.QR_CONTACT;

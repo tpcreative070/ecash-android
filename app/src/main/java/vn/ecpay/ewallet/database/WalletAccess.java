@@ -94,13 +94,13 @@ public interface WalletAccess {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleContact(Contact_Database contact);
 
-    @Query("SELECT * FROM CONTACTS where walletId <>:myWalletId and status = '1'")
+    @Query("SELECT publicKeyValue, phone, walletId, fullName, status, 0 as isSection, 0 as isAddTransfer FROM CONTACTS where walletId <>:myWalletId and status = '1'")
     List<Contact> getAllContact(String myWalletId);
 
     @Query("DELETE From CONTACTS WHERE walletId = :strWalletId")
     void deleteContact(Long strWalletId);
 
-    @Query("SELECT * FROM CONTACTS Where (phone LIKE :name OR fullName like :name) AND walletId <>:myWalletId AND status = '1'")
+    @Query("SELECT publicKeyValue, phone, walletId, fullName, status, 0 as isSection , 0 as isAddTransfer FROM CONTACTS Where (phone LIKE :name OR fullName like :name) AND walletId <>:myWalletId AND status = '1'")
     List<Contact> getAllContactFilter(String name, Long myWalletId);
 
     @Query("UPDATE CONTACTS SET fullName=:name WHERE walletId = :walletId")
@@ -109,7 +109,7 @@ public interface WalletAccess {
     @Query("UPDATE CONTACTS SET status =:status WHERE walletId = :walletId")
     void updateStatusContact(int status, Long walletId);
 
-    @Query("SELECT * FROM CONTACTS WHERE walletId = :strWalletId")
+    @Query("SELECT publicKeyValue, phone, walletId, fullName, status, 0 as isSection, 0 as isAddTransfer FROM CONTACTS WHERE walletId = :strWalletId")
     Contact checkContactExit(String strWalletId);
 
     // todo Decision_Database--------------------------------------------------------------------------------------
