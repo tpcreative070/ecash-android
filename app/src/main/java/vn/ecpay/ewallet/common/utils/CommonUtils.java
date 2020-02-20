@@ -857,4 +857,9 @@ public class CommonUtils {
         }
         return false;
     }
+
+    public static  AccountInfo getAccountByUserName(Context context){
+        String username =ECashApplication.getAccountInfo().getUsername();
+        return DatabaseUtil.getAccountInfo(username, context);
+    }
 }

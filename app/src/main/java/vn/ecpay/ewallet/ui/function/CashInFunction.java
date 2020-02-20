@@ -285,6 +285,9 @@ public class CashInFunction {
     private void checkVerifyCash(CashLogs_Database cash, String decisionTrekp, String decisionAcckp) {
         if (CommonUtils.verifyCash(cash, decisionTrekp, decisionAcckp)) {
             //xác thực đồng ecash ok => save cash
+            if(accountInfo.getUsername()==null){
+                accountInfo = CommonUtils.getAccountByUserName(context);
+            }
             DatabaseUtil.saveCashToDB(cash, context, accountInfo.getUsername());
         } else {
             //lưu vào tien fake
