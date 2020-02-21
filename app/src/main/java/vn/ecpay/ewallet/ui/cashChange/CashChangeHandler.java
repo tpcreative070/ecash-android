@@ -132,8 +132,11 @@ public class CashChangeHandler {
                             activity.dismissLoading();
                             activity.showDialogError(response.body().getResponseMessage());
                         }
+                    }else {
+                        activity.showDialogError(response.body().getResponseMessage());
                     }
                 } else {
+                    activity.dismissLoading();
                     activity.showDialogError(application.getString(R.string.err_upload));
                 }
             }

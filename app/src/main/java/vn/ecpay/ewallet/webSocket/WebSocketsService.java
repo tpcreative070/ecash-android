@@ -246,7 +246,9 @@ public class WebSocketsService extends Service {
                 }
             } else {
                 listResponseMessSockets.remove(0);
-                confirmMess(listResponseMessSockets.get(0));
+                if(listResponseMessSockets!=null&&listResponseMessSockets.size()>0){
+                    confirmMess(listResponseMessSockets.get(0));
+                }
                 handleListResponse();
             }
         } else {
