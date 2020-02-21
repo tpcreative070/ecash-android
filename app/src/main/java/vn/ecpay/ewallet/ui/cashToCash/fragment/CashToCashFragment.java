@@ -205,12 +205,12 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                         showDialogErr(R.string.err_store_image);
                     return;
                 }
-                CashOutFunction cashOutSocketFunction = new CashOutFunction(getActivity(), valuesListAdapter,
+                CashOutFunction cashOutSocketFunction = new CashOutFunction(this, valuesListAdapter,
                         multiTransferList, edtContent.getText().toString(), typeSend);
                 cashOutSocketFunction.handleCashOutQRCode(this::cashOutSuccess);
             }
         } else {
-            CashOutFunction cashOutSocketFunction = new CashOutFunction(getActivity(), valuesListAdapter,
+            CashOutFunction cashOutSocketFunction = new CashOutFunction(this, valuesListAdapter,
                     multiTransferList, edtContent.getText().toString(), typeSend);
             cashOutSocketFunction.handleCashOutSocket(this::cashOutSuccess);
         }
@@ -249,7 +249,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showProgress();
-                    CashOutFunction cashOutSocketFunction = new CashOutFunction(getActivity(), valuesListAdapter,
+                    CashOutFunction cashOutSocketFunction = new CashOutFunction(this, valuesListAdapter,
                             multiTransferList, edtContent.getText().toString(), typeSend);
                     cashOutSocketFunction.handleCashOutQRCode(this::cashOutSuccess);
                 }

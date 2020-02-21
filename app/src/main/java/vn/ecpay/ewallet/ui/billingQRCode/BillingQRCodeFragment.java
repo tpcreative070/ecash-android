@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
+import vn.ecpay.ewallet.common.utils.QRCodeUtil;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 
 public class BillingQRCodeFragment extends ECashBaseFragment {
@@ -77,7 +78,8 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
     }
     private void handleSave(){
         if(bitmap!=null&& qrScanBase !=null){
-            saveImageQRCode(bitmap,CommonUtils.getCurrentTime(Constant.FORMAT_DATE_SEND_CASH));
+            QRCodeUtil.saveImageQRCode(this,bitmap,CommonUtils.getCurrentTime(Constant.FORMAT_DATE_SEND_CASH), Constant.DIRECTORY_QR_MY_PAYMENT);
+
         }
     }
     private void handleShare(){
