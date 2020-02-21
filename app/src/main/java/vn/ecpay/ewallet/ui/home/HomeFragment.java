@@ -151,7 +151,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         }
-
+        if(accountInfo==null){
+            accountInfo =ECashApplication.getAccountInfo();
+        }
+        if(accountInfo.getUsername()==null){
+            accountInfo =CommonUtils.getAccountByUserName(getContext());
+        }
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
             homePresenter.getCashValues(accountInfo, getActivity());
