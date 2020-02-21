@@ -40,6 +40,7 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
@@ -112,6 +113,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         Handler handler = new Handler();
         handler.postDelayed(() -> progress.setVisibility(View.GONE), 1000);
         mScannerView.setResultHandler(this);
+        restartScan();
     }
 
     @Override
@@ -122,7 +124,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
 
     @Override
     public void handleResult(Result result) {
-        Log.e("result ", result.toString());
+        Log.e("result ",result.toString());
         Gson gson = new Gson();
        // Log.e("gson ", gson.toJson(result));
         try {
@@ -220,6 +222,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
+     //    Log.e("result",result);
         Gson gson = new Gson();
         try {
             // QRCodeSender qrCodeSender = new QRCodeSender();
@@ -361,6 +364,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     private String transactionSignatureCashInQR;
 
     private void handleCashIn(ResponseMessSocket responseMess) {
+        mScannerView.stopCamera();
         transactionSignatureCashInQR = responseMess.getId();
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(responseMess);
@@ -428,10 +432,20 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void onCashInSuccessListener() {
-        restartScan();
-        TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignatureCashInQR);
-        if (getActivity() != null)
-            ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
+        if (WalletDatabase.numberRequest == 0) {
+            dismissProgress();
+            TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignatureCashInQR);
+            if (getActivity() != null)
+                ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
+        } else {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> onCashInSuccessListener());
+                }
+            }, 1000);
+        }
     }
 
     @Override

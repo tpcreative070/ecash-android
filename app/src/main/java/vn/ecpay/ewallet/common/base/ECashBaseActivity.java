@@ -98,8 +98,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
+
     }
 
     @Override
@@ -465,7 +466,6 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     }
 
     public void showDialogConfirmPayment(List<CashTotal> valueListCash, Payments payToRequest) {
-
         DialogUtil.getInstance().showDialogConfirmPayment(this, valueListCash, payToRequest, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {

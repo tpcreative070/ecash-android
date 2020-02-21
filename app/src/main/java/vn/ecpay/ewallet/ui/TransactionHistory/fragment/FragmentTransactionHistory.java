@@ -159,21 +159,27 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-      //  Log.e("history event ",new Gson().toJson(event));
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)|| event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)|| event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+            if (getActivity() != null)
+                getActivity().runOnUiThread(this::reloadData);
+        }
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private void reloadData() {
+        if (WalletDatabase.numberRequest == 0) {
+            List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
+            setAdapter(transactionsHistoryModelList);
+        } else {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> {
-                        List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
-                        setAdapter(transactionsHistoryModelList);
-                    });
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> reloadData());
                 }
-            }, 2000);
+            }, 1000);
         }
-        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override

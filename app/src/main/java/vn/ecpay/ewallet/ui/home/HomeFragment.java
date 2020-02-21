@@ -242,21 +242,31 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     private void updateBalance() {
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
+        if (WalletDatabase.numberRequest == 0) {
+            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+            balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+            tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
 
-        listEDongInfo = ECashApplication.getListEDongInfo();
-        if (listEDongInfo.size() > 0) {
-            for (int i = 0; i < listEDongInfo.size(); i++) {
-                if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
-                    tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
-                    tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
+            listEDongInfo = ECashApplication.getListEDongInfo();
+            if (listEDongInfo.size() > 0) {
+                for (int i = 0; i < listEDongInfo.size(); i++) {
+                    if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
+                        tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
+                        tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
+                    }
                 }
+            } else {
+                tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         } else {
-            tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> updateBalance());
+                }
+            }, 1000);
         }
     }
 
@@ -548,19 +558,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
 
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS) ||
-                event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS) || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> updateBalance());
-                    } catch (NullPointerException e) {
-                        return;
-                    }
-                }
-            }, 2000);
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
+                || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)
+                || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
+            if (getActivity() != null)
+                getActivity().runOnUiThread(this::updateBalance);
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
