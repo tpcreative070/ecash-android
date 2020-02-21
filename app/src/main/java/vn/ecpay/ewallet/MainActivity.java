@@ -108,11 +108,11 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(4).setOnClickListener(v -> {
-            if (ECashApplication.isIsChangeDataBase()) {
-                if (getActivity() != null)
-                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
-                return;
-            }
+//            if (ECashApplication.isIsChangeDataBase()) {
+//                if (getActivity() != null)
+//                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+//                return;
+//            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {

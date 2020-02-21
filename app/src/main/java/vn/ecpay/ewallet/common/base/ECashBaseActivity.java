@@ -25,14 +25,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Stack;
@@ -45,32 +41,13 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.database.table.CacheData_Database;
-import vn.ecpay.ewallet.database.table.CashLogs_Database;
-import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
-import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.cashValue.CashTotal;
-import vn.ecpay.ewallet.model.cashValue.ResultOptimal;
-import vn.ecpay.ewallet.model.cashValue.UtilCashTotal;
-import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.payment.Payments;
-import vn.ecpay.ewallet.ui.cashChange.CashChangeHandler;
-import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
-import vn.ecpay.ewallet.ui.cashChange.component.GetFullNameAccountRequest;
-import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
-import vn.ecpay.ewallet.ui.function.SyncCashService;
-import vn.ecpay.ewallet.ui.function.ToPayFuntion;
-import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
+import vn.ecpay.ewallet.ui.cashChange.PaymentCashChangeHandler;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
-import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public abstract class ECashBaseActivity extends AppCompatActivity implements BaseView {
     private static final String TAG = "BaseActivity";
@@ -78,7 +55,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     Stack<Fragment> fragmentStack;
     FragmentManager fmgr;
     public static final int TIMES_OUT = 300000;
-    private CashChangeHandler cashChangeHandler;
+    private PaymentCashChangeHandler cashChangeHandler;
 
     public void initFragmentStack() {
         fragmentStack = new Stack<Fragment>();
@@ -98,8 +75,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
+
     }
 
     @Override
@@ -415,7 +393,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     }
 
     public void showDialogNewPaymentRequest(Payments mPayment, boolean toPay) {
-        cashChangeHandler = new CashChangeHandler(ECashApplication.getInstance(), this,mPayment);
+        cashChangeHandler = new PaymentCashChangeHandler(ECashApplication.getInstance(), this,mPayment);
         cashChangeHandler.showDialogNewPaymentRequest(toPay);
     }
 

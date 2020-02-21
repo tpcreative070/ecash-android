@@ -3,7 +3,6 @@ package vn.ecpay.ewallet.database;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.widget.EditText;
 
 import androidx.room.Database;
@@ -14,7 +13,6 @@ import androidx.sqlite.db.SimpleSQLiteQuery;
 import com.commonsware.cwac.saferoom.SafeHelperFactory;
 import com.google.firebase.database.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import vn.ecpay.ewallet.common.utils.CommonUtils;
@@ -66,6 +64,7 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
+    public static int numberRequest = 0;
 
     public abstract WalletAccess daoAccess();
 
@@ -266,21 +265,24 @@ public abstract class WalletDatabase extends RoomDatabase {
         mCash.setAccSign(cash.getAccSign());
         mCash.setType(cash.getType());
         mCash.setTransactionSignature(cash.getTransactionSignature());
-        mCash.setPreviousHash(DatabaseUtil.getPreviousHashCash(mCash));
         insertCashTask(mCash);
     }
 
     private static void insertCashTask(final CashLogs_Database cash) {
-//        new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                Log.e("doInBackground","doInBackground");
-//                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cash));
-//                walletDatabase.daoAccess().insertOnlySingleCash(cash);
-//                return null;
-//            }
-//        }.execute();
-        walletDatabase.daoAccess().insertOnlySingleCash(cash);
+        numberRequest = numberRequest + 1;
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cash));
+                walletDatabase.daoAccess().insertOnlySingleCash(cash);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                numberRequest = numberRequest - 1;
+            }
+        }.execute();
     }
 
     public static List<CashLogs_Database> getAllCash() {
@@ -335,8 +337,14 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     private static void insertCashInvalidTask(final CashInvalid_Database cash, CashLogs_Database cashLogs_database) {
-        cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cashLogs_database));
-        walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cashLogs_database));
+                walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
+                return null;
+            }
+        }.execute();
     }
 
     // todo Decision_Database--------------------------------------------------------------------------------------
@@ -451,7 +459,6 @@ public abstract class WalletDatabase extends RoomDatabase {
         mTransactionLog.setCashEnc(transactionLog.getCashEnc());
         mTransactionLog.setRefId(transactionLog.getRefId());
         mTransactionLog.setTransactionSignature(transactionLog.getTransactionSignature());
-        mTransactionLog.setPreviousHash(transactionLog.getPreviousHash());
         insertTransactionLogTask(mTransactionLog, Constant.STR_EMPTY);
     }
 
@@ -459,6 +466,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
+                transactionLog.setPreviousHash(DatabaseUtil.getPreviousHashTransactionLog(transactionLog));
                 walletDatabase.daoAccess().insertOnlySingleTransactionLog(transactionLog);
                 return null;
             }

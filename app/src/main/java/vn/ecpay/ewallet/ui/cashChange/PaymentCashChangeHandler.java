@@ -59,7 +59,7 @@ import static vn.ecpay.ewallet.ECashApplication.getActivity;
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
-public class CashChangeHandler {
+public class PaymentCashChangeHandler {
     private Payments payment;
   private ECashBaseActivity activity;
     private ECashApplication application;
@@ -74,7 +74,7 @@ public class CashChangeHandler {
     private List<CashTotal> valueListCashTake = new ArrayList<>();
 
     private List<CashTotal> listTransfer = new ArrayList<>();
-    public CashChangeHandler(ECashApplication application,ECashBaseActivity activity,Payments payment){
+    public PaymentCashChangeHandler(ECashApplication application, ECashBaseActivity activity, Payments payment){
         this.application =application;
         this.activity =activity;
         this.payment =payment;
@@ -311,6 +311,7 @@ public class CashChangeHandler {
                 //List<CashTotal> list = resultOptimal.listPartial;
               //  handlePaymentWithCashValid(list);
                 listTransfer=resultOptimal.listPartial;
+                handlePaymentWithCashValid();
 
             }
             else {

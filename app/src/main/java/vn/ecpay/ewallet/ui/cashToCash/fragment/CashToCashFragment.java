@@ -77,7 +77,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     protected long totalMoney;
     protected String typeSend;
 
-
     public static CashToCashFragment newInstance(ArrayList<Contact> listContactTransfer) {
         Bundle args = new Bundle();
         args.putParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL, listContactTransfer);
@@ -225,21 +224,20 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void cashOutSuccess() {
-        dismissProgress();
-//        if (getActivity() != null) {
-
-//            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
-//        }
-        restartSocket();
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (getActivity() == null) return;
-                getActivity().runOnUiThread(() -> setAdapter());
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
-            }
-        }, 500);
-        showDialogSendOk();
+        if (WalletDatabase.numberRequest == 0) {
+            showDialogSendOk();
+            dismissProgress();
+            restartSocket();
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
+        } else {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> cashOutSuccess());
+                }
+            }, 1000);
+        }
     }
 
     @Override
@@ -288,7 +286,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             Toast.makeText(getActivity(), getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
         }
 
-        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS) || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
