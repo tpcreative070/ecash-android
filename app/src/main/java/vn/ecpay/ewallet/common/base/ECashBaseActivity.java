@@ -98,7 +98,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     @Override
     protected void onDestroy() {
-        //EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
 
     }

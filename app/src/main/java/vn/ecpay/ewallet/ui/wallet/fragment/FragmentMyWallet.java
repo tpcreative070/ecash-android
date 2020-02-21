@@ -145,18 +145,9 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)|| event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> updateBalance());
-                    } catch (NullPointerException e) {
-                        return;
-                    }
-                }
-            }, 1000);
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS) || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
+            if (getActivity() == null) return;
+            getActivity().runOnUiThread(this::updateBalance);
         }
 
         if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {
@@ -173,9 +164,19 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     }
 
     private void updateBalance() {
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        tvPrice.setText(CommonUtils.formatPriceVND(balance));
+        if (WalletDatabase.numberRequest == 0) {
+            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+            balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+            tvPrice.setText(CommonUtils.formatPriceVND(balance));
+        } else {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> updateBalance());
+                }
+            }, 1000);
+        }
     }
 
     @Override

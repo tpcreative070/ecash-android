@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.common.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
 
 import org.greenrobot.eventbus.EventBus;
@@ -74,8 +75,6 @@ public class DatabaseUtil {
         transactionLog.setCashEnc(responseMess.getCashEnc());
         transactionLog.setTransactionSignature(responseMess.getId());
         transactionLog.setRefId(responseMess.getRefId());
-        transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog, context));
-
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertTransactionLogTask(transactionLog);
     }
@@ -89,8 +88,6 @@ public class DatabaseUtil {
         transactionLog.setCashEnc(cashInResponse.getCashEnc());
         transactionLog.setTransactionSignature(cashInResponse.getId());
         transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
-        transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog, context));
-
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
     }
@@ -115,8 +112,7 @@ public class DatabaseUtil {
     }
 
     //ma hoa mat xich transaction log
-    public static String getPreviousHashTransactionLog(TransactionLog_Database transactionLog, Context context) {
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+    public static String getPreviousHashTransactionLog(TransactionLog_Database transactionLog) {
         List<TransactionLog_Database> transactionLogList = WalletDatabase.getAllTransactionLog();
         if (transactionLogList.size() > 0) {
             //get transaction_log max id

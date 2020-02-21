@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +16,12 @@ import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import butterknife.ButterKnife;
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.common.utils.CommonUtils;
-import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.model.cashValue.CashTotal;
 
 public abstract class ECashBaseFragment extends Fragment {
     private static final String TAG = "ECashBaseFragment";
@@ -141,11 +134,7 @@ public abstract class ECashBaseFragment extends Fragment {
         }
 
     }
-    /**
-     * Layout Res ID.
-     *
-     * @return Layout res id
-     */
+
     protected abstract int getLayoutResId();
 
     public void restartSocket(){

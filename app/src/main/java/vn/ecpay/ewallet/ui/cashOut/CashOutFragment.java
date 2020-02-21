@@ -324,18 +324,24 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
+            reloadData();
+        }
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private void reloadData() {
+        if (WalletDatabase.numberRequest == 0) {
+            dismissProgress();
+            showDialogCashOutOk();
+        } else {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> {
-                        dismissProgress();
-                        showDialogCashOutOk();
-                    });
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> reloadData());
                 }
-            }, 500);
+            }, 1000);
         }
-        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override

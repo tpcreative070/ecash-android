@@ -260,18 +260,24 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
+            reloadData();
+        }
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private void reloadData() {
+        if (WalletDatabase.numberRequest == 0) {
+            dismissProgress();
+            showDialogCashInOk();
+        } else {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> {
-                        dismissProgress();
-                        showDialogCashInOk();
-                    });
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> reloadData());
                 }
-            }, 500);
+            }, 1000);
         }
-        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override

@@ -370,20 +370,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> {
-                            dismissProgress();
-                            setData();
-                            showDialogCashChangeOk();
-                        });
-                    } catch (NullPointerException ignored) {
-                    }
-                }
-            }, 500);
+           reloadData();
         }
         if(event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)){
             new Timer().schedule(new TimerTask() {
@@ -401,6 +388,22 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             }, 500);
         }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private void reloadData() {
+        if (WalletDatabase.numberRequest == 0) {
+            dismissProgress();
+            setData();
+            showDialogCashChangeOk();
+        } else {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> reloadData());
+                }
+            }, 1000);
+        }
     }
 
     @Override
