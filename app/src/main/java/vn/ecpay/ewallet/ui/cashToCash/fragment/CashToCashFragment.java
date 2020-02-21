@@ -146,9 +146,9 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             case R.id.layout_chose_wallet:
                 if (getActivity() != null) {
                     try {
-                        ((CashToCashActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this), true);
+                        ((CashToCashActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this,false), true);
                     } catch (ClassCastException e) {
-                        ((MyLixiActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this), true);
+                        ((MyLixiActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this,false), true);
                     }
                 }
                 break;

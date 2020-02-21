@@ -136,10 +136,21 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                 itemViewHolder.tvTransactionAmount.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
                 break;
             case TYPE_PAYTO:
-                itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_payment));
-                itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_payto_gray);
-                itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
-                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+                            transactionsHistoryModel.getSenderName(), String.valueOf(transactionsHistoryModel.getSenderAccountId())));
+                    itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_payment));
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_payto_gray);
+                    itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                } else {
+                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+                            transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
+                    itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_payment));
+                    itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_payto_gray);
+                    itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
+                            CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                }
                 break;
 
         }

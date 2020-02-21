@@ -145,13 +145,18 @@
                 android:layout_marginEnd="12dp"
                 android:contentDescription="@string/string_todo" />
         </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_error_wallet_id"
+            style="@style/TextViewErrorInput"
+            android:text=""
+            />
 
         <RelativeLayout
             android:id="@+id/view_qr_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="13dp"
             >
             <TextView
                 android:layout_width="wrap_content"
@@ -176,21 +181,31 @@
             android:layout_marginTop="15dp"
             android:background="@drawable/bg_edit_text"
             android:drawablePadding="15dp"
-            android:maxLength="16"
+            android:maxLength="10"
             android:textSize="@dimen/text_normal"
             android:hint="@string/str_enter_amount_to_pay"
             android:inputType="number" />
+        <TextView
+            android:id="@+id/tv_error_amount"
+            style="@style/TextViewErrorInput"
+            android:text=""
+            />
 
         <EditText
             android:id="@+id/edt_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="18dp"
             android:background="@drawable/bg_edit_text"
             android:drawablePadding="15dp"
             android:hint="@string/str_enter_content_payment"
             android:textSize="@dimen/text_normal"
            />
+        <TextView
+            android:id="@+id/tv_error_content"
+            style="@style/TextViewErrorInput"
+            android:text=""
+            />
 
         <Button
             android:id="@+id/btn_confirm"

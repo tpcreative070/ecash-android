@@ -158,7 +158,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             updateNotification();
             updateNumberLixi();
             //todo sync data
-            syncData();
+           // syncData();
             accountInfo = dbAccountInfo;
             tvHomeAccountName.setText(CommonUtils.getFullName(accountInfo));
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -548,7 +548,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        Log.e("Home Event Bus", new Gson().toJson(event.getData()));
+      //  Log.e("Home Event Bus", new Gson().toJson(event.getData()));
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }

@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -25,15 +26,13 @@ import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 
-import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CASH_OUT_MONEY;
-import static vn.ecpay.ewallet.common.utils.Constant.EVENT_UPDATE_CASH_IN;
 
 public class SyncCashService extends Service {
     private boolean isRunning = false;
     private List<CacheData> listResponseMessSockets;
     private AccountInfo accountInfo;
 
-    private String EVENT_CASH_IN_CHANGE ="";
+    private boolean changeCashPayment=false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -50,7 +49,9 @@ public class SyncCashService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(EVENT_UPDATE_CASH_IN)) {
+        Gson g = new Gson();
+        Log.e("B ", event.getData());
+        if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
             if (!isRunning) {
                 isRunning = true;
                 String userName = ECashApplication.getAccountInfo().getUsername();
@@ -58,11 +59,13 @@ public class SyncCashService extends Service {
                 syncData();
             }
         }
-        if (event.getData().equals(EVENT_CASH_IN_CHANGE)) {
-            EVENT_CASH_IN_CHANGE = "EVENT_CASH_IN_PAYTO";
+        if (event.getData().equals(Constant.EVENT_CASH_IN_CHANGE)) {
+            changeCashPayment =true;
+            syncData();
+
         }
 
-        if (event.getData().equals(EVENT_CASH_OUT_MONEY)) {
+        if (event.getData().equals(Constant.EVENT_CASH_OUT_MONEY)) {
             String userName = ECashApplication.getAccountInfo().getUsername();
             accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
             cashOutData(event);
@@ -125,11 +128,12 @@ public class SyncCashService extends Service {
             }
         } else {
             isRunning = false;
-            if (EVENT_CASH_IN_CHANGE.length() == 0) {
+            if (!changeCashPayment) {
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
 
             } else {
-                EVENT_CASH_IN_CHANGE = "";
+                changeCashPayment =false;
+                Log.e("C ","C");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
 

@@ -377,13 +377,16 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                         if (getActivity() == null) return;
                         getActivity().runOnUiThread(() -> {
                             if (payment != null) {
+
+//                                List<CashTotal> listDataBase = DatabaseUtil.getAllCashTotal(getActivity());
+
                                 validatePayment(payment);
                             }
                         });
                     } catch (NullPointerException ignored) {
                     }
                 }
-            }, 500);
+            }, 1000);
 
 
         }
@@ -416,6 +419,19 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         if (getActivity() != null) {
             //  Log.e("start ","start ");
             getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
+        }
+    }
+
+    public void stopSocket() {
+        if (getActivity() != null) {
+            //  Log.e("start ","start ");
+            if (CommonUtils.isMyServiceRunning(WebSocketsService.class)) {
+                Log.e("stop service", "stop service");
+                getActivity().stopService(new Intent(getActivity(), WebSocketsService.class));
+            } else {
+                Log.e("cannot stop service", "cannot stop service");
+            }
+
         }
     }
 
@@ -477,14 +493,18 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             valueListCashChange = new ArrayList<>();
             valueListCashTake = new ArrayList<>();
             List<CashTotal> listDataBase = DatabaseUtil.getAllCashTotal(getActivity());
-            Collections.reverse(listDataBase);
+            // Collections.reverse(listDataBase);// todo
 
             List<CashTotal> walletList = new ArrayList<>();
             for (CashTotal cash : listDataBase) {
                 walletList.addAll(cash.slitCashTotal());
             }
 
-            List<CashTotal> partialList = new ArrayList<CashTotal>();
+            for (CashTotal cashTotal : walletList) {
+                Log.e(" change new .", cashTotal.getParValue() + "");
+            }
+
+            List<CashTotal> partialList = new ArrayList<>();
             UtilCashTotal util = new UtilCashTotal();
             ResultOptimal resultOptimal = util.recursiveFindeCashs(walletList, partialList, totalAmount);
 
@@ -533,7 +553,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                         arrayUseForExchange.add(item);
                     }
                 }
-
+                //Collections.reverse(arrayUseForExchange);
                 ResultOptimal expectedExchange = util.recursiveGetArrayNeedExchange(resultOptimal.remain, new ArrayList<CashTotal>());
                 long otherAmountNeedExchange = amountCompare - resultOptimal.remain;
                 ResultOptimal resultOtherExchange = util.recursiveGetArrayNeedExchange(otherAmountNeedExchange, new ArrayList<CashTotal>());
@@ -570,6 +590,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 for (CashTotal item : arrayUseForExchange) {
                     stEchange += item.getParValue() + ",";
                     item.setTotal(item.getTotal() + 1);
+                    //  Log.e("item change ",item.getParValue()+"");
                     valueListCashChange.add(item);
                 }
                 if (stEchange.length() > 0) {
@@ -587,7 +608,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 }
                 // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
                 //  convertCash()
-                getPublicKeyOrganization(payment);
+                // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
+                //  convertCash()
+                getPublicKeyOrganization(this.payment);
             }
 
         } else {//balanceEcash<totalAmount
@@ -632,6 +655,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
                 Log.e("valueListCashChange . ", valueListCashChange.get(i).getParValue() + "");
+                //Log.e("valueListCashChange . ",valueListCashChange.get(i).getParValue()+"");
                 listQualitySend.add(valueListCashChange.get(i).getTotal());
                 listValueSend.add(valueListCashChange.get(i).getParValue());
             }
@@ -644,6 +668,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         for (int i = 0; i < valueListCashTake.size(); i++) {
             if (valueListCashTake.get(i).getTotal() > 0) {
                 Log.e("valueListCashTake . ", valueListCashTake.get(i).getParValue() + " * " + valueListCashTake.get(i).getTotal() + "");
+                //  Log.e("valueListCashTake . ",valueListCashTake.get(i).getParValue()+" * "+valueListCashTake.get(i).getTotal()+"");
                 listQualityTake.add(valueListCashTake.get(i).getTotal());
                 listValueTake.add(valueListCashTake.get(i).getParValue());
             }
@@ -657,7 +682,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
-                Log.e("valueListCashChange.", valueListCashChange.get(i).getParValue() + " - ");
+                //   Log.e("valueListCashChange.",valueListCashChange.get(i).getParValue()+" - ");
+                //  Log.e("valueListCashChange.", valueListCashChange.get(i).getParValue() + " - ");
                 List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
                 for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
                     listCashSend.add(cashList.get(j));
@@ -694,10 +720,10 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 cacheData_database.setResponseData(jsonCashInResponse);
                 cacheData_database.setType(TYPE_CASH_EXCHANGE);
                 DatabaseUtil.saveCacheData(cacheData_database, getActivity());
-                //Log.e("A","A");
+                // Log.e("A","A");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
                 //validatePayment(payments);
-                dismissLoading();
+                // dismissLoading();
             }
         });
         //  dismissLoading();

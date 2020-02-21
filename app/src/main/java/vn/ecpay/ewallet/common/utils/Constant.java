@@ -30,6 +30,7 @@ public class Constant {
     public static final String CONTACT_MULTI_TRANSFER = "CONTACT_MULTI_TRANSFER";
     public static final String TRANSACTIONS_HISTORY_MODEL = "TRANSACTIONS_HISTORY_MODEL";
     public static final String IS_SESSION_TIMEOUT = "IS_SESSION_TIMEOUT";
+    public static final String CONTACT_MULTIPLE_CHOICE = "CONTACT_MULTIPLE_CHOICE";
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
@@ -78,6 +79,7 @@ public class Constant {
     public static final String EVENT_PAYMENT_SUCCESS = "EVENT_PAYMENT_SUCCESS";
     public static final String EVENT_SEND_REQUEST_PAYTO = "EVENT_SEND_REQUEST_PAYTO";
     public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
+    public static final String EVENT_ACCOUNT_LOGOUT = "EVENT_ACCOUNT_LOGOUT";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";

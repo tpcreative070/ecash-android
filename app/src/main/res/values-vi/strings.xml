@@ -312,6 +312,7 @@
     <string name="str_send_request_success">Gửi yêu cầu thành công</string>
     <string name="str_transfer_money_success">chuyển tiền thành công</string>
     <string name="str_error_you_cannot_pay_for_your_self">Bạn không thể thanh toán cho chính mình!</string>
+    <string name="str_error_limited_select_contact">Bạn được chọn tối đa 10 người cho mỗi lần yêu cầu </string>
 </resources>
 
 

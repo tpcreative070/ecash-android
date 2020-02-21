@@ -7,11 +7,14 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import vn.ecpay.ewallet.R;
 
 /**
  * Created by Bui on 7/6/2017.
@@ -79,4 +82,12 @@ public class Utils {
     }
     return false;
   }
+
+  public static void disableButtonConfirm(Context context,Button button,boolean isDisable){
+    if(button==null)
+      return;
+    button.setEnabled(!isDisable);
+    button.setBackgroundColor(isDisable? context.getResources().getColor(R.color.background_tab_pressed):context.getResources().getColor(R.color.blue));
+  }
+
 }

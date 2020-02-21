@@ -46,15 +46,17 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
     private MultiTransferListener multiTransferListener;
     private AccountInfo accountInfo;
     private ArrayList<Contact> multiTransferList;
+    private boolean limitChoice =false;
 
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_contact_transfer;
     }
 
-    public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener) {
+    public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener,boolean limitChoice) {
         Bundle args = new Bundle();
         args.putSerializable(Constant.CONTACT_MULTI_TRANSFER, multiTransferListener);
+        args.putBoolean(Constant.CONTACT_MULTIPLE_CHOICE, limitChoice);
         FragmentContactTransferCash fragment = new FragmentContactTransferCash();
         fragment.setArguments(args);
         return fragment;
@@ -67,6 +69,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             this.multiTransferListener = (MultiTransferListener) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
+            this.limitChoice =  bundle.getBoolean(Constant.CONTACT_MULTIPLE_CHOICE);
         }
 
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -109,7 +112,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new ContactTransferAdapter(mSectionList, getActivity());
+        mAdapter = new ContactTransferAdapter(mSectionList, getActivity() ,this.limitChoice);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -173,4 +176,5 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
                 break;
         }
     }
+
 }
