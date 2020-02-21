@@ -32,7 +32,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -375,11 +374,11 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                     try {
                         if (getActivity() == null) return;
                         getActivity().runOnUiThread(() -> {
-                            if (payment != null) {
-
-//                                List<CashTotal> listDataBase = DatabaseUtil.getAllCashTotal(getActivity());
-
-                                validatePayment(payment);
+                            if (payment != null && listTransfer != null) {
+                                //validatePayment(payment);
+                                handlePaymentWithCashValid(payment, listTransfer);
+                            } else {
+                                showDialogError("có lỗi xẩy ra!");
                             }
                         });
                     } catch (NullPointerException ignored) {
@@ -394,6 +393,37 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     private void showDialogCannotPayment() {
         DialogUtil.getInstance().showDialogCannotPayment(this);
+    }
+
+    private void handlePaymentWithCashValid(Payments payments, List<CashTotal> listTransfer) {
+        valueListCashChange = new ArrayList<>();
+        // String st = "";
+        for (CashTotal item : listTransfer) {
+            //   st += item.getParValue() + ",";
+            if (valueListCashChange.size() > 0) {
+                boolean check = false;
+                for (CashTotal cash : valueListCashChange) {
+                    if (cash.getParValue() == item.getParValue()) {
+                        cash.setTotalDatabase(cash.getTotal() + 1);
+                        cash.setTotal(cash.getTotal() + 1);
+                        check = true;
+                    }
+                }
+                if (!check) {
+                    item.setTotal(1);
+                    item.setTotalDatabase(1);
+                    valueListCashChange.add(item);
+                }
+            } else {
+                item.setTotal(1);
+                item.setTotalDatabase(1);
+                valueListCashChange.add(item);
+            }
+        }
+        //                if (st.length() > 0) {
+//                    st = "Array Transfer = [" + st.substring(0, st.length() - 1) + "]";
+//                }
+        showDialogConfirmPayment(valueListCashChange, payments);
     }
 
     public void showDialogPaymentSuccess(Payments payToRequest) {
@@ -412,6 +442,14 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             public void OnListenerOk() {
             }
         });
+
+        listQualitySend = new ArrayList<>();
+        listValueSend = new ArrayList<>();
+        listQualityTake = new ArrayList<>();
+        listValueTake = new ArrayList<>();
+        valueListCashChange = new ArrayList<>();
+        valueListCashTake = new ArrayList<>();
+        listTransfer = new ArrayList<>();
     }
 
     public void restartSocket() {
@@ -499,51 +537,18 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             for (CashTotal cash : listDataBase) {
                 walletList.addAll(cash.slitCashTotal());
             }
-
-            for (CashTotal cashTotal : walletList) {
-                Log.e(" change new .", cashTotal.getParValue() + "");
-            }
-
+//            for (CashTotal cashTotal : walletList) {
+//                Log.e(" change new .", cashTotal.getParValue() + "");
+//            }
             List<CashTotal> partialList = new ArrayList<>();
             UtilCashTotal util = new UtilCashTotal();
             ResultOptimal resultOptimal = util.recursiveFindeCashs(walletList, partialList, totalAmount);
-
             if (resultOptimal.remain == 0) {
-                String st = "";
-                for (CashTotal item : resultOptimal.listPartial) {
-                    st += item.getParValue() + ",";
+                List<CashTotal> list = resultOptimal.listPartial;
+                handlePaymentWithCashValid(payment, list);
 
-                    if (valueListCashChange.size() > 0) {
-                        boolean check = false;
-                        for (CashTotal cash : valueListCashChange) {
-                            if (cash.getParValue() == item.getParValue()) {
-                                cash.setTotalDatabase(cash.getTotal() + 1);
-                                cash.setTotal(cash.getTotal() + 1);
-                                check = true;
-                            }
-                        }
-                        if (!check) {
-                            item.setTotal(1);
-                            item.setTotalDatabase(1);
-                            valueListCashChange.add(item);
-                        }
-                    } else {
-                        item.setTotal(1);
-                        item.setTotalDatabase(1);
-                        valueListCashChange.add(item);
-                    }
-                    //valueListCashTake.add(item);
-                }
-                if (st.length() > 0) {
-                    st = "Array Transfer = [" + st.substring(0, st.length() - 1) + "]";
-                }
-                //textView.setText(st);
-                String userName = ECashApplication.getAccountInfo().getUsername();
-                AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-                CashChangeHandler cashChangeHandler = new CashChangeHandler(ECashApplication.getInstance(), this);
-                showDialogConfirmPayment(valueListCashChange, payment);
-                // getPublicKeyOrganization(payment);
-            } else {
+            }
+            else {
                 /** Lay ra nhung to tien can doi **/
                 int amountCompare = 0;
                 ArrayList<CashTotal> arrayUseForExchange = new ArrayList<CashTotal>();
@@ -602,6 +607,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 String stTranfer = "";
                 for (CashTotal item : rs.listPartial) {
                     stTranfer += item.getParValue() + ",";
+                    listTransfer.add(item);
                 }
                 if (stTranfer.length() > 0) {
                     stTranfer = "Array Transfer = [" + stTranfer.substring(0, stTranfer.length() - 1) + "]";
@@ -648,6 +654,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
     private List<CashTotal> valueListCashChange = new ArrayList<>();
     private List<CashTotal> valueListCashTake = new ArrayList<>();
+
+    private List<CashTotal> listTransfer = new ArrayList<>();
+
 
     private void getListCashSend() {
         listQualitySend = new ArrayList<>();
