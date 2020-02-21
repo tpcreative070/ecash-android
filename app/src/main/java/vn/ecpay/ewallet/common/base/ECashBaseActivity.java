@@ -78,6 +78,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     Stack<Fragment> fragmentStack;
     FragmentManager fmgr;
     public static final int TIMES_OUT = 300000;
+    private CashChangeHandler cashChangeHandler;
 
     public void initFragmentStack() {
         fragmentStack = new Stack<Fragment>();
@@ -361,6 +362,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         return context;
     }
     //------------------
+    public void setEvenBus(String evenBus){
+        EventBus.getDefault().postSticky(new EventDataChange(evenBus));
+    }
 
     private Payments payment;
 
@@ -374,10 +378,10 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                     try {
                         if (getActivity() == null) return;
                         getActivity().runOnUiThread(() -> {
-                            if (payment != null && listTransfer != null) {
-                                //validatePayment(payment);
-                                handlePaymentWithCashValid(payment, listTransfer);
+                            if (cashChangeHandler != null ) {
+                                cashChangeHandler.handlePaymentWithCashValid();
                             } else {
+                                dismissLoading();
                                 showDialogError("có lỗi xẩy ra!");
                             }
                         });
@@ -386,70 +390,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
                 }
             }, 1000);
 
-
         }
         EventBus.getDefault().removeStickyEvent(event);
-    }
-
-    private void showDialogCannotPayment() {
-        DialogUtil.getInstance().showDialogCannotPayment(this);
-    }
-
-    private void handlePaymentWithCashValid(Payments payments, List<CashTotal> listTransfer) {
-        valueListCashChange = new ArrayList<>();
-        // String st = "";
-        for (CashTotal item : listTransfer) {
-            //   st += item.getParValue() + ",";
-            if (valueListCashChange.size() > 0) {
-                boolean check = false;
-                for (CashTotal cash : valueListCashChange) {
-                    if (cash.getParValue() == item.getParValue()) {
-                        cash.setTotalDatabase(cash.getTotal() + 1);
-                        cash.setTotal(cash.getTotal() + 1);
-                        check = true;
-                    }
-                }
-                if (!check) {
-                    item.setTotal(1);
-                    item.setTotalDatabase(1);
-                    valueListCashChange.add(item);
-                }
-            } else {
-                item.setTotal(1);
-                item.setTotalDatabase(1);
-                valueListCashChange.add(item);
-            }
-        }
-        //                if (st.length() > 0) {
-//                    st = "Array Transfer = [" + st.substring(0, st.length() - 1) + "]";
-//                }
-        showDialogConfirmPayment(valueListCashChange, payments);
-    }
-
-    public void showDialogPaymentSuccess(Payments payToRequest) {
-        this.payment = null;
-        restartSocket();
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (getActivity() == null) return;
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMENT_SUCCESS));
-            }
-        }, 500);
-
-        DialogUtil.getInstance().showDialogPaymentSuccess(this, payToRequest, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-            }
-        });
-
-        listQualitySend = new ArrayList<>();
-        listValueSend = new ArrayList<>();
-        listQualityTake = new ArrayList<>();
-        listValueTake = new ArrayList<>();
-        valueListCashChange = new ArrayList<>();
-        valueListCashTake = new ArrayList<>();
-        listTransfer = new ArrayList<>();
     }
 
     public void restartSocket() {
@@ -473,286 +415,8 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     }
 
     public void showDialogNewPaymentRequest(Payments mPayment, boolean toPay) {
-        showLoading();
-        this.payment = mPayment;
-        payment.setFullName("");
-        AccountInfo accountInfo = ECashApplication.getAccountInfo();
-        if (accountInfo != null) {
-            CashChangeHandler cashChangeHandler = new CashChangeHandler(ECashApplication.getInstance(), this);
-            cashChangeHandler.getWalletAccountInfo(accountInfo, Long.parseLong(payment.getSender()), new GetFullNameAccountRequest() {
-                @Override
-                public void getFullName(String fullname) {
-                    payment.setFullName(fullname);
-                    if (toPay) {
-                        DialogUtil.getInstance().showDialogPaymentRepuest(getActivity(), payment, () -> validatePayment(payment));
-
-                    } else {
-                        validatePayment(payment);
-                    }
-                }
-            });
-        } else {
-            if (toPay) {
-                DialogUtil.getInstance().showDialogPaymentRepuest(getActivity(), payment, () -> validatePayment(payment));
-
-            } else {
-                validatePayment(payment);
-            }
-        }
-
-    }
-
-    public void showDialogConfirmPayment(List<CashTotal> valueListCash, Payments payToRequest) {
-
-        DialogUtil.getInstance().showDialogConfirmPayment(this, valueListCash, payToRequest, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                handleToPay(valueListCash, payToRequest);
-            }
-        });
-    }
-
-    public void validatePayment(Payments payment) {
-        this.payment = payment;
-        showProgressDialog();
-        long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        long balanceEdong = 0;
-
-        ArrayList<EdongInfo> listEDongInfo = ECashApplication.getListEDongInfo();
-        if (null != listEDongInfo) {
-            if (listEDongInfo.size() > 0) {
-                balanceEdong = CommonUtils.getMoneyEDong(listEDongInfo.get(0));
-            }
-        }
-        long totalAmount = Long.parseLong(payment.getTotalAmount());
-
-        //-------
-        if (balanceEcash >= totalAmount) {
-            valueListCashChange = new ArrayList<>();
-            valueListCashTake = new ArrayList<>();
-            List<CashTotal> listDataBase = DatabaseUtil.getAllCashTotal(getActivity());
-            // Collections.reverse(listDataBase);// todo
-
-            List<CashTotal> walletList = new ArrayList<>();
-            for (CashTotal cash : listDataBase) {
-                walletList.addAll(cash.slitCashTotal());
-            }
-//            for (CashTotal cashTotal : walletList) {
-//                Log.e(" change new .", cashTotal.getParValue() + "");
-//            }
-            List<CashTotal> partialList = new ArrayList<>();
-            UtilCashTotal util = new UtilCashTotal();
-            ResultOptimal resultOptimal = util.recursiveFindeCashs(walletList, partialList, totalAmount);
-            if (resultOptimal.remain == 0) {
-                List<CashTotal> list = resultOptimal.listPartial;
-                handlePaymentWithCashValid(payment, list);
-
-            }
-            else {
-                /** Lay ra nhung to tien can doi **/
-                int amountCompare = 0;
-                ArrayList<CashTotal> arrayUseForExchange = new ArrayList<CashTotal>();
-                for (CashTotal item : resultOptimal.listWallet) {
-                    if (amountCompare < resultOptimal.remain) {
-                        amountCompare += item.getParValue();
-                        arrayUseForExchange.add(item);
-                    }
-                }
-                //Collections.reverse(arrayUseForExchange);
-                ResultOptimal expectedExchange = util.recursiveGetArrayNeedExchange(resultOptimal.remain, new ArrayList<CashTotal>());
-                long otherAmountNeedExchange = amountCompare - resultOptimal.remain;
-                ResultOptimal resultOtherExchange = util.recursiveGetArrayNeedExchange(otherAmountNeedExchange, new ArrayList<CashTotal>());
-                expectedExchange.listPartial.addAll(resultOtherExchange.listPartial);
-                String stExpect = "";
-                for (CashTotal item : expectedExchange.listPartial) {
-                    stExpect += item.getParValue() + ",";
-
-                    if (valueListCashTake.size() > 0) {
-                        boolean check = false;
-                        for (CashTotal cash : valueListCashTake) {
-                            if (cash.getParValue() == item.getParValue()) {
-                                cash.setTotalDatabase(cash.getTotal() + 1);
-                                cash.setTotal(cash.getTotal() + 1);
-                                check = true;
-                            }
-                        }
-                        if (!check) {
-                            item.setTotalDatabase(1);
-                            item.setTotal(1);
-                            valueListCashTake.add(item);
-                        }
-                    } else {
-                        item.setTotalDatabase(1);
-                        item.setTotal(1);
-                        valueListCashTake.add(item);
-                    }
-                }
-                if (stExpect.length() > 0) {
-                    stExpect = "Array Expect Exchange = [" + stExpect.substring(0, stExpect.length() - 1) + "]";
-                }
-
-                String stEchange = "";
-                for (CashTotal item : arrayUseForExchange) {
-                    stEchange += item.getParValue() + ",";
-                    item.setTotal(item.getTotal() + 1);
-                    //  Log.e("item change ",item.getParValue()+"");
-                    valueListCashChange.add(item);
-                }
-                if (stEchange.length() > 0) {
-                    stEchange = "Array Ecash Use For Exchange = [" + stEchange.substring(0, stEchange.length() - 1) + "]";
-                }
-
-                resultOptimal.listPartial.addAll(expectedExchange.listPartial);
-                ResultOptimal rs = util.recursiveFindeCashs(resultOptimal.listPartial, new ArrayList<CashTotal>(), totalAmount);
-                String stTranfer = "";
-                for (CashTotal item : rs.listPartial) {
-                    stTranfer += item.getParValue() + ",";
-                    listTransfer.add(item);
-                }
-                if (stTranfer.length() > 0) {
-                    stTranfer = "Array Transfer = [" + stTranfer.substring(0, stTranfer.length() - 1) + "]";
-                }
-                // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
-                //  convertCash()
-                // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
-                //  convertCash()
-                getPublicKeyOrganization(this.payment);
-            }
-
-        } else {//balanceEcash<totalAmount
-            Log.e("case 1", "case 1");
-            dismissLoading();
-            showDialogCannotPayment();
-        }
-
-        //
-    }
-
-    private void getPublicKeyOrganization(Payments payments) {
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        CashChangeHandler cashChangeHandler = new CashChangeHandler(ECashApplication.getInstance(), this);
-        cashChangeHandler.getPublicKeyOrganization(accountInfo, new PublicKeyOrganization() {
-            @Override
-            public void getPublicKeyOrganization(String publicKey) {
-                //   Log.e("publicKey ",publicKey);
-                if (publicKey != null && publicKey.length() > 0) {
-                    // getCashConvert(accountInfo,cashChangeHandler, payments, publicKey);
-                    getListCashSend();
-                    getListCashTake();
-                    convertCash(cashChangeHandler, publicKey, accountInfo, payments);
-                }
-            }
-        });
-    }
-
-    private List<Integer> listQualitySend = new ArrayList<>();
-    private List<Integer> listValueSend = new ArrayList<>();
-
-    private List<Integer> listQualityTake = new ArrayList<>();
-    private List<Integer> listValueTake = new ArrayList<>();
-
-    private List<CashTotal> valueListCashChange = new ArrayList<>();
-    private List<CashTotal> valueListCashTake = new ArrayList<>();
-
-    private List<CashTotal> listTransfer = new ArrayList<>();
-
-
-    private void getListCashSend() {
-        listQualitySend = new ArrayList<>();
-        listValueSend = new ArrayList<>();
-        for (int i = 0; i < valueListCashChange.size(); i++) {
-            if (valueListCashChange.get(i).getTotal() > 0) {
-                Log.e("valueListCashChange . ", valueListCashChange.get(i).getParValue() + "");
-                //Log.e("valueListCashChange . ",valueListCashChange.get(i).getParValue()+"");
-                listQualitySend.add(valueListCashChange.get(i).getTotal());
-                listValueSend.add(valueListCashChange.get(i).getParValue());
-            }
-        }
-    }
-
-    private void getListCashTake() {
-        listQualityTake = new ArrayList<>();
-        listValueTake = new ArrayList<>();
-        for (int i = 0; i < valueListCashTake.size(); i++) {
-            if (valueListCashTake.get(i).getTotal() > 0) {
-                Log.e("valueListCashTake . ", valueListCashTake.get(i).getParValue() + " * " + valueListCashTake.get(i).getTotal() + "");
-                //  Log.e("valueListCashTake . ",valueListCashTake.get(i).getParValue()+" * "+valueListCashTake.get(i).getTotal()+"");
-                listQualityTake.add(valueListCashTake.get(i).getTotal());
-                listValueTake.add(valueListCashTake.get(i).getParValue());
-            }
-        }
-    }
-
-
-    private void convertCash(CashChangeHandler cashChangeHandler, String keyPublicReceiver, AccountInfo accountInfo, Payments payments) {
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
-
-        for (int i = 0; i < valueListCashChange.size(); i++) {
-            if (valueListCashChange.get(i).getTotal() > 0) {
-                //   Log.e("valueListCashChange.",valueListCashChange.get(i).getParValue()+" - ");
-                //  Log.e("valueListCashChange.", valueListCashChange.get(i).getParValue() + " - ");
-                List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
-                for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
-                    listCashSend.add(cashList.get(j));
-                }
-            }
-        }
-
-        String[][] cashSendArray = new String[listCashSend.size()][3];
-
-        for (int i = 0; i < listCashSend.size(); i++) {
-            CashLogs_Database cash = listCashSend.get(i);
-            String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
-            cashSendArray[i] = moneyItem;
-        }
-        String encData = getEncrypData(cashSendArray, keyPublicReceiver);
-        if (encData.isEmpty()) {
-            dismissLoading();
-            if (getActivity() != null)
-                showDialogError("không lấy được endCrypt data và ID");
-            return;
-        }
-
-        cashChangeHandler.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake, new CashChangeSuccess() {
-            @Override
-            public void changeCashSuccess(CashInResponse cashInResponse) {
-                if (null != getActivity()) {
-                    getActivity().startService(new Intent(getActivity(), SyncCashService.class));
-                }
-                DatabaseUtil.saveCashOut(cashInResponse.getId(), listCashSend, getActivity(), accountInfo.getUsername());
-                Gson gson = new Gson();
-                String jsonCashInResponse = gson.toJson(cashInResponse);
-                CacheData_Database cacheData_database = new CacheData_Database();
-                cacheData_database.setTransactionSignature(cashInResponse.getId());
-                cacheData_database.setResponseData(jsonCashInResponse);
-                cacheData_database.setType(TYPE_CASH_EXCHANGE);
-                DatabaseUtil.saveCacheData(cacheData_database, getActivity());
-                // Log.e("A","A");
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
-                //validatePayment(payments);
-                // dismissLoading();
-            }
-        });
-        //  dismissLoading();
-    }
-
-    private void handleToPay(List<CashTotal> listCash, Payments payToRequest) {
-        showLoading();
-        ArrayList<Contact> listContact = new ArrayList<>();
-        Contact contact = new Contact();
-        contact.setWalletId(Long.parseLong(payToRequest.getSender()));
-        listContact.add(contact);
-        ToPayFuntion toPayFuntion = new ToPayFuntion(getActivity(), listCash, contact, payToRequest);
-        toPayFuntion.handlePayToSocket(new ToPayListener() {
-            @Override
-            public void onToPaySuccess() {
-                dismissLoading();
-
-                showDialogPaymentSuccess(payToRequest);
-            }
-        });
+        cashChangeHandler = new CashChangeHandler(ECashApplication.getInstance(), this,mPayment);
+        cashChangeHandler.showDialogNewPaymentRequest(toPay);
     }
 
 }
