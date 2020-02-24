@@ -41,12 +41,15 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.cashChange.PaymentCashChangeHandler;
 import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
+import static vn.ecpay.ewallet.ECashApplication.get;
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 public abstract class ECashBaseActivity extends AppCompatActivity implements BaseView {
@@ -391,10 +394,33 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
 
         }
     }
-
     public void showDialogNewPaymentRequest(Payments mPayment, boolean toPay) {
-        cashChangeHandler = new PaymentCashChangeHandler(ECashApplication.getInstance(), this,mPayment);
-        cashChangeHandler.showDialogNewPaymentRequest(toPay);
+        Payment_DataBase payment_dataBase = new Payment_DataBase();
+        payment_dataBase.setSender(mPayment.getSender());
+        payment_dataBase.setTime(mPayment.getTime());
+        payment_dataBase.setType(mPayment.getType());
+        payment_dataBase.setContent(mPayment.getContent());
+        payment_dataBase.setSenderPublicKey(mPayment.getSenderPublicKey());
+        payment_dataBase.setTotalAmount(mPayment.getTotalAmount());
+        payment_dataBase.setChannelSignature(mPayment.getChannelSignature());
+        payment_dataBase.setFullName(mPayment.getFullName());
+        payment_dataBase.setToPay(toPay);
+
+        DatabaseUtil.insertPayment(getActivity(), payment_dataBase);
+
+        getPaymentDataBase();
+    }
+
+    public void getPaymentDataBase(){
+        Payment_DataBase payment_dataBase = DatabaseUtil.getPayment(getActivity());
+        if(payment_dataBase!=null){
+            if(cashChangeHandler!=null){
+                if(cashChangeHandler.isHandle())
+                    return;
+            }
+            cashChangeHandler = new PaymentCashChangeHandler(ECashApplication.getInstance(), this,payment_dataBase);
+            cashChangeHandler.showDialogNewPaymentRequest(payment_dataBase.isToPay());
+        }
     }
 
 }

@@ -67,17 +67,11 @@ public class ToPayFuntion {
                         Gson gson = new Gson();
                         String jsonSend = gson.toJson(getObjectJsonSend(valuesList));
                         webSocket.send(jsonSend);
-//                        for (int i = 0; i < multiTransferList.size(); i++) {
-//                            String jsonSend = gson.toJson(getObjectJsonSend(valuesList, multiTransferList.get(i), i));
-//                            webSocket.send(jsonSend);
-//                        }
                         return null;
                     }
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
-//                        Log.e("response ",response.toString());
-//                        Log.e("response ",response.body().toString());
                         toPayListener.onToPaySuccess();
                         EventBus.getDefault().postSticky(new EventDataChange(Constant.PAYTO_SUCCESS));
                     }
@@ -97,7 +91,7 @@ public class ToPayFuntion {
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         for (int i = 0; i < valuesList.size(); i++) {
-           Log.e("valuesListAdapter i ",valuesList.get(i).getTotal()+"");
+           //Log.e("valuesListAdapter i ",valuesList.get(i).getTotal()+"");
             if (valuesList.get(i).getTotal() > 0) {
                 List<CashLogs_Database> cashList = DatabaseUtil.getListCashForMoney(context, String.valueOf(valuesList.get(i).getParValue()));
                 for (int j = 0; j < valuesList.get(i).getTotal(); j++) {
