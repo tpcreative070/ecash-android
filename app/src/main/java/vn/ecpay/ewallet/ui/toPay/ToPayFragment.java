@@ -192,7 +192,7 @@ public class ToPayFragment extends ECashBaseFragment {
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        Log.e("event topay ",event.getData());
+        //Log.e("event topay ",event.getData());
         if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
 
             new Timer().schedule(new TimerTask() {

@@ -862,4 +862,15 @@ public class CommonUtils {
         String username =ECashApplication.getAccountInfo().getUsername();
         return DatabaseUtil.getAccountInfo(username, context);
     }
+    public static  boolean checkWalletIDisMe(Context context,String waletID){
+        String username =ECashApplication.getAccountInfo().getUsername();
+        String userName = ECashApplication.getAccountInfo().getUsername();
+        AccountInfo accountInfo =DatabaseUtil.getAccountInfo(userName, context);
+        if(accountInfo!=null&&waletID!=null){
+            if(waletID.equals(String.valueOf(accountInfo.getWalletId()))){
+                return true;
+            }
+        }
+        return false;
+    }
 }

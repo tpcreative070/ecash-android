@@ -545,7 +545,7 @@ public class PaymentCashChangeHandler {
         isHandle =false;
 
         activity.restartSocket();
-        activity.getPaymentDataBase();
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -558,6 +558,7 @@ public class PaymentCashChangeHandler {
         DialogUtil.getInstance().showDialogPaymentSuccess(activity, payment_dataBase, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
+                activity.getPaymentDataBase();
             }
         });
 

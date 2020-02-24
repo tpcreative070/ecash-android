@@ -372,6 +372,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             }, 1000);
 
         }
+        if(event.getData().equals(Constant.EVENT_NEW_PAYMENT)){
+            getPaymentDataBase();
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
