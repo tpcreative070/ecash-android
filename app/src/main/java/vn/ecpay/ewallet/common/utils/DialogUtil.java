@@ -649,7 +649,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentRepuest(Context context, Payment_DataBase payToRequest, final OnResult pOnConfirm){
+    public void showDialogPaymentRequest(Context context, Payment_DataBase payToRequest, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_request);

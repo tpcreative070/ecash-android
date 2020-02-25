@@ -425,5 +425,4 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
             cashChangeHandler.showDialogNewPaymentRequest(payment_dataBase.isToPay());
         }
     }
-
 }
