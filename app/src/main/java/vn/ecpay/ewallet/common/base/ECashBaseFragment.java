@@ -113,4 +113,9 @@ public abstract class ECashBaseFragment extends Fragment {
             ((ECashBaseActivity) getActivity()).stopSocket();
         }
     }
+    public void getPaymentDataBase(){
+        if(getActivity() instanceof ECashBaseActivity){
+            ((ECashBaseActivity)getActivity()).getPaymentDataBase();
+        }
+    }
 }

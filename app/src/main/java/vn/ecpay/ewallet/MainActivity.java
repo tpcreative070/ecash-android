@@ -328,12 +328,14 @@ public class MainActivity extends ECashBaseActivity {
         if (data != null) {
             Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
             if(payment!=null){
-                //validatePayment(payment);
+                if(CommonUtils.checkWalletIDisMe(getActivity(),payment.getSender())){
+                    showDialogError(getActivity().getString(R.string.str_error_you_cannot_pay_for_your_self));
+                    return;
+                }
                 showDialogNewPaymentRequest(payment,false);
             }
         }
     }
-
 
     @Override
     protected void onDestroy() {

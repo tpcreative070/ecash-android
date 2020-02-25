@@ -23,6 +23,7 @@ import java.util.List;
 
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.language.LanguageObject;
@@ -648,7 +649,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentRepuest(Context context, Payments payToRequest, final OnResult pOnConfirm){
+    public void showDialogPaymentRequest(Context context, Payment_DataBase payToRequest, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_request);
@@ -671,7 +672,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogConfirmPayment(Context context, List<CashTotal> valueListCash, Payments payToRequest, final OnResult pOnConfirm){
+    public void showDialogConfirmPayment(Context context, List<CashTotal> valueListCash, Payment_DataBase payToRequest, final OnResult pOnConfirm){
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_confirm_payment);

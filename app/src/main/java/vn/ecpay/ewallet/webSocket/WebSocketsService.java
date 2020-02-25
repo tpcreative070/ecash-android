@@ -26,10 +26,10 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
-import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.payment.Payments;
@@ -37,6 +37,8 @@ import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
+
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
@@ -96,7 +98,7 @@ public class WebSocketsService extends Service {
                 }
             }, 5000);
         }
-        if (event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)||event.getData().equals(Constant.EVENT_SEND_REQUEST_PAYTO)) {
+        if (event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS) || event.getData().equals(Constant.EVENT_SEND_REQUEST_PAYTO)) {
             Log.e("event", "EVENT_PAYMENT_SUCCESS or EVENT_SEND_REQUEST_PAYTO");
             Handler handler = new Handler();
             handler.postDelayed(() -> {
@@ -108,7 +110,7 @@ public class WebSocketsService extends Service {
                 }
             }, 500);
         }
-        if(event.getData().equals(Constant.EVENT_ACCOUNT_LOGOUT)){
+        if (event.getData().equals(Constant.EVENT_ACCOUNT_LOGOUT)) {
             stopSocket();
         }
         EventBus.getDefault().removeStickyEvent(event);
@@ -127,11 +129,11 @@ public class WebSocketsService extends Service {
         client.dispatcher().executorService().shutdown();
     }
 
-    private void stopSocket(){
-        if(webSocketListener!=null&&webSocketLocal!=null){
+    private void stopSocket() {
+        if (webSocketListener != null && webSocketLocal != null) {
 //            webSocketLocal.close(1000, "stop");
 //            webSocketLocal.cancel();
-            webSocketListener.onClosed(webSocketLocal,1000,"stop");
+            webSocketListener.onClosed(webSocketLocal, 1000, "stop");
         }
     }
 
@@ -245,9 +247,10 @@ public class WebSocketsService extends Service {
                     handleListResponse();
                 }
             } else {
-                listResponseMessSockets.remove(0);
-                if(listResponseMessSockets!=null&&listResponseMessSockets.size()>0){
+                if (listResponseMessSockets != null && listResponseMessSockets.size() > 0) {
                     confirmMess(listResponseMessSockets.get(0));
+                    listResponseMessSockets.remove(0);
+
                 }
                 handleListResponse();
             }
@@ -272,18 +275,31 @@ public class WebSocketsService extends Service {
 
 
     private void handlePaymentRequest(Payments payToRequest) {
-        if (ECashApplication.getActivity() != null) {
-            if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
-                ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.showDialogNewPaymentRequest(payToRequest,true);
-                    }
-                });
+        Payment_DataBase payment_dataBase = new Payment_DataBase();
+        payment_dataBase.setSender(payToRequest.getSender());
+        payment_dataBase.setTime(payToRequest.getTime());
+        payment_dataBase.setType(payToRequest.getType());
+        payment_dataBase.setContent(payToRequest.getContent());
+        payment_dataBase.setSenderPublicKey(payToRequest.getSenderPublicKey());
+        payment_dataBase.setTotalAmount(payToRequest.getTotalAmount());
+        payment_dataBase.setChannelSignature(payToRequest.getChannelSignature());
+        payment_dataBase.setFullName(payToRequest.getFullName());
+        payment_dataBase.setToPay(true);
 
-            }
-        }
+        DatabaseUtil.insertPayment(getActivity(), payment_dataBase);
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_NEW_PAYMENT));
+//        if (ECashApplication.getActivity() != null) {
+//            if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
+//                ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
+//                activity.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        activity.showDialogNewPaymentRequest(payToRequest,true);
+//                    }
+//                });
+//
+//            }
+//        }
     }
 
     @Override

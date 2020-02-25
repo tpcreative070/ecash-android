@@ -85,6 +85,7 @@ public class Constant {
     public static final String EVENT_SEND_REQUEST_PAYTO = "EVENT_SEND_REQUEST_PAYTO";
     public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
     public static final String EVENT_ACCOUNT_LOGOUT = "EVENT_ACCOUNT_LOGOUT";
+    public static final String EVENT_NEW_PAYMENT = "EVENT_NEW_PAYMENT";
 
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";

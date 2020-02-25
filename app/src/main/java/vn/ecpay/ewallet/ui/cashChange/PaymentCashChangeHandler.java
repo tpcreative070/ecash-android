@@ -1,14 +1,9 @@
 package vn.ecpay.ewallet.ui.cashChange;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.gson.Gson;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +20,6 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
-import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -34,9 +27,9 @@ import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.RequestGetAccountWalletInfo;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.ResponseGetAccountWalletInfo;
-import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
@@ -47,7 +40,6 @@ import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.edongToEcash.response.ResponseEdongToECash;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.RequestGetPublicKeyOrganizetion;
 import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrganization;
-import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
 import vn.ecpay.ewallet.ui.cashChange.component.GetFullNameAccountRequest;
 import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
@@ -60,10 +52,11 @@ import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class PaymentCashChangeHandler {
-    private Payments payment;
+    private Payment_DataBase payment;
   private ECashBaseActivity activity;
     private ECashApplication application;
     private  String publicKeyOrganization ="";
+    private boolean isHandle;
     private List<Integer> listQualitySend = new ArrayList<>();
     private List<Integer> listValueSend = new ArrayList<>();
 
@@ -74,7 +67,7 @@ public class PaymentCashChangeHandler {
     private List<CashTotal> valueListCashTake = new ArrayList<>();
 
     private List<CashTotal> listTransfer = new ArrayList<>();
-    public PaymentCashChangeHandler(ECashApplication application, ECashBaseActivity activity, Payments payment){
+    public PaymentCashChangeHandler(ECashApplication application, ECashBaseActivity activity, Payment_DataBase payment){
         this.application =application;
         this.activity =activity;
         this.payment =payment;
@@ -248,8 +241,10 @@ public class PaymentCashChangeHandler {
         });
     }
     public void showDialogNewPaymentRequest(boolean toPay) {
+        isHandle =true;
         activity.showLoading();
         payment.setFullName("");
+        DatabaseUtil.deletePayment(activity,payment.getId());
         AccountInfo accountInfo = ECashApplication.getAccountInfo();
         if (accountInfo != null) {
             getWalletAccountInfo(accountInfo, Long.parseLong(payment.getSender()), new GetFullNameAccountRequest() {
@@ -257,7 +252,7 @@ public class PaymentCashChangeHandler {
                 public void getFullName(String fullname) {
                     payment.setFullName(fullname);
                     if (toPay) {
-                        DialogUtil.getInstance().showDialogPaymentRepuest(activity, payment, () -> validatePayment());
+                        DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, () -> validatePayment());
 
                     } else {
                         validatePayment();
@@ -266,7 +261,7 @@ public class PaymentCashChangeHandler {
             });
         } else {
             if (toPay) {
-                DialogUtil.getInstance().showDialogPaymentRepuest(activity, payment, () -> validatePayment());
+                DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, () -> validatePayment());
 
             } else {
                 validatePayment();
@@ -280,14 +275,7 @@ public class PaymentCashChangeHandler {
             return;
         activity.showLoading();
         long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        long balanceEdong = 0;
 
-        ArrayList<EdongInfo> listEDongInfo = ECashApplication.getListEDongInfo();
-        if (null != listEDongInfo) {
-            if (listEDongInfo.size() > 0) {
-                balanceEdong = CommonUtils.getMoneyEDong(listEDongInfo.get(0));
-            }
-        }
         long totalAmount = Long.parseLong(payment.getTotalAmount());
 
         //-------
@@ -378,17 +366,14 @@ public class PaymentCashChangeHandler {
                 if (stTranfer.length() > 0) {
                     stTranfer = "Array Transfer = [" + stTranfer.substring(0, stTranfer.length() - 1) + "]";
                 }
-                // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
-                //  convertCash()
-                // textView.setText(stExpect + "\n\n" + stEchange + "\n\n" + stTranfer);
-                //  convertCash()
+
                 getPublicKeyOrganization();
             }
 
         } else {//balanceEcash<totalAmount
-            Log.e("case 1", "case 1");
             activity.dismissLoading();
             showDialogCannotPayment();
+            isHandle =false;
         }
 
         //
@@ -463,6 +448,7 @@ public class PaymentCashChangeHandler {
             activity.dismissLoading();
             if (activity != null)
                 activity.showDialogError("không lấy được endCrypt data và ID");
+            isHandle=false;
             return;
         }
 
@@ -491,8 +477,10 @@ public class PaymentCashChangeHandler {
     }
     public void handlePaymentWithCashValid() {
         if(listTransfer==null||listTransfer.size()==0){
-            activity.showDialogError("có lỗi xẩy ra!");
+           // activity.showDialogError("có lỗi xẩy ra!!!");
+            Log.e("Error listTransfer","handlePaymentWithCashValid");
             activity.dismissLoading();
+            isHandle=false;
             return;
         }
         valueListCashChange = new ArrayList<>();
@@ -527,7 +515,7 @@ public class PaymentCashChangeHandler {
     private void showDialogCannotPayment() {
         DialogUtil.getInstance().showDialogCannotPayment(activity);
     }
-    private void handleToPay(List<CashTotal> listCash, Payments payToRequest) {
+    private void handleToPay(List<CashTotal> listCash, Payment_DataBase payToRequest) {
         activity.showLoading();
         ArrayList<Contact> listContact = new ArrayList<>();
         Contact contact = new Contact();
@@ -542,10 +530,15 @@ public class PaymentCashChangeHandler {
                 showDialogPaymentSuccess(payToRequest);
             }
         });
+
     }
-    public void showDialogPaymentSuccess(Payments payToRequest) {
+    public void showDialogPaymentSuccess(Payment_DataBase payment_dataBase) {
+       // DatabaseUtil.deletePayment(activity,payment_dataBase.getId());
         this.payment = null;
+        isHandle =false;
+
         activity.restartSocket();
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -555,9 +548,10 @@ public class PaymentCashChangeHandler {
             }
         }, 500);
 
-        DialogUtil.getInstance().showDialogPaymentSuccess(activity, payToRequest, new DialogUtil.OnResult() {
+        DialogUtil.getInstance().showDialogPaymentSuccess(activity, payment_dataBase, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
+                activity.getPaymentDataBase();
             }
         });
 
@@ -570,4 +564,11 @@ public class PaymentCashChangeHandler {
         listTransfer = new ArrayList<>();
     }
 
+    public boolean isHandle() {
+        return isHandle;
+    }
+
+    public void setHandle(boolean handle) {
+        isHandle = handle;
+    }
 }

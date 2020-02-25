@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,8 +21,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -138,6 +135,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         homePresenter.setView(this);
         homePresenter.onViewCreate();
         updateAccountInfo();
+        checkPayment();
     }
 
     private void updateAccountInfo() {
@@ -716,6 +714,13 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             }
         } else {
             dismissLoading();
+        }
+    }
+    private void checkPayment(){
+        if (ECashApplication.getAccountInfo() != null) {
+            if (dbAccountInfo != null) {
+                getPaymentDataBase();
+            }
         }
     }
 }

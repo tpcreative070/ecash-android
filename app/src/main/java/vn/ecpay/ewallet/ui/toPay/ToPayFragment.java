@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.ui.toPay;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -191,7 +192,8 @@ public class ToPayFragment extends ECashBaseFragment {
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
+        //Log.e("event topay ",event.getData());
+        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
 
             new Timer().schedule(new TimerTask() {
                 @Override

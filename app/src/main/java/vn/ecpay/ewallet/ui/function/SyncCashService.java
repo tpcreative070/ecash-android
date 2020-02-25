@@ -49,8 +49,7 @@ public class SyncCashService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        Gson g = new Gson();
-        Log.e("B ", event.getData());
+       // Log.e("B ", event.getData());
         if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
             if (!isRunning) {
                 isRunning = true;
