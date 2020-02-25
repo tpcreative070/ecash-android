@@ -112,12 +112,12 @@ public class FragmentContact extends ECashBaseFragment {
     }
 
     private void setAdapter(List<Contact> listContact) {
+        mSectionList = new ArrayList<>();
         if (listContact.size() == 0) {
             recyclerView.setVisibility(View.GONE);
             return;
         }
         recyclerView.setVisibility(View.VISIBLE);
-        mSectionList = new ArrayList<>();
         getHeaderListLatter(listContact);
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

@@ -96,7 +96,7 @@ public class WebSocketsService extends Service {
                 }
             }, 5000);
         }
-        if (event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)||event.getData().equals(Constant.EVENT_SEND_REQUEST_PAYTO)) {
+        if (event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS) || event.getData().equals(Constant.EVENT_SEND_REQUEST_PAYTO)) {
             Log.e("event", "EVENT_PAYMENT_SUCCESS or EVENT_SEND_REQUEST_PAYTO");
             Handler handler = new Handler();
             handler.postDelayed(() -> {
@@ -108,7 +108,7 @@ public class WebSocketsService extends Service {
                 }
             }, 500);
         }
-        if(event.getData().equals(Constant.EVENT_ACCOUNT_LOGOUT)){
+        if (event.getData().equals(Constant.EVENT_ACCOUNT_LOGOUT)) {
             stopSocket();
         }
         EventBus.getDefault().removeStickyEvent(event);
@@ -127,11 +127,9 @@ public class WebSocketsService extends Service {
         client.dispatcher().executorService().shutdown();
     }
 
-    private void stopSocket(){
-        if(webSocketListener!=null&&webSocketLocal!=null){
-//            webSocketLocal.close(1000, "stop");
-//            webSocketLocal.cancel();
-            webSocketListener.onClosed(webSocketLocal,1000,"stop");
+    private void stopSocket() {
+        if (webSocketListener != null && webSocketLocal != null) {
+            webSocketListener.onClosed(webSocketLocal, 1000, "stop");
         }
     }
 
@@ -245,10 +243,8 @@ public class WebSocketsService extends Service {
                     handleListResponse();
                 }
             } else {
+                confirmMess(listResponseMessSockets.get(0));
                 listResponseMessSockets.remove(0);
-                if(listResponseMessSockets!=null&&listResponseMessSockets.size()>0){
-                    confirmMess(listResponseMessSockets.get(0));
-                }
                 handleListResponse();
             }
         } else {
@@ -278,7 +274,7 @@ public class WebSocketsService extends Service {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        activity.showDialogNewPaymentRequest(payToRequest,true);
+                        activity.showDialogNewPaymentRequest(payToRequest, true);
                     }
                 });
 

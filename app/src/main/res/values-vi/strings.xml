@@ -245,14 +245,6 @@
     <string name="str_dialog_cash_out_success">bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
     <string name="str_dialog_cash_to_cash_success">bạn đã chuyển thành công số tiền: %s sang tài khoản: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
 
-    //money check
-    <string name="str_10000">10000</string>
-    <string name="str_20000">20000</string>
-    <string name="str_50000">50000</string>
-    <string name="str_100000">100000</string>
-    <string name="str_200000">200000</string>
-    <string name="str_500000">500000</string>
-
     //key store
     <string name="str_key_store_provider">AndroidKeyStore</string>
 

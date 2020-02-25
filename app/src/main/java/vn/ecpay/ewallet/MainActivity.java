@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -18,18 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,9 +27,7 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
@@ -49,9 +35,9 @@ import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistor
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
+
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CHOSE_IMAGE;
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class MainActivity extends ECashBaseActivity {
     @BindView(R.id.main_content)
@@ -78,7 +64,6 @@ public class MainActivity extends ECashBaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("FCMToken", "token " + FirebaseInstanceId.getInstance().getToken());
         setupTabs();
         tabHost.setOnTabChangedListener(this::onChange);
         tabHost.getTabWidget().getChildAt(1).setOnClickListener(v -> {
@@ -108,11 +93,11 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(4).setOnClickListener(v -> {
-//            if (ECashApplication.isIsChangeDataBase()) {
-//                if (getActivity() != null)
-//                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
-//                return;
-//            }
+            if (ECashApplication.isIsChangeDataBase()) {
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
+                return;
+            }
             if (CommonUtils.isAccountExit(this)) {
                 Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
             } else {
@@ -333,7 +318,6 @@ public class MainActivity extends ECashBaseActivity {
             }
         }
     }
-
 
     @Override
     protected void onDestroy() {

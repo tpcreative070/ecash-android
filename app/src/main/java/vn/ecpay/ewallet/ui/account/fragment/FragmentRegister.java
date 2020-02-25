@@ -327,7 +327,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void registerSuccess(AccountInfo mAccountInfo, String privateKeyBase64, String publicKeyBase64) {
-        DatabaseUtil.changePassDatabase(getActivity(), mAccountInfo.getMasterKey());
+        DatabaseUtil.changeMasterKeyDatabase(getActivity(), mAccountInfo.getMasterKey());
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

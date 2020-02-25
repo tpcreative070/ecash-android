@@ -129,7 +129,6 @@ public class CashOutFunction {
             @Override
             public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
                 isConnectSuccess = true;
-                Log.e("send_money", "send money ok");
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
@@ -138,6 +137,7 @@ public class CashOutFunction {
                             String jsonSend = gson.toJson(CommonUtils.getObjectJsonSendCashToCash(context, valuesList,
                                     multiTransferList.get(i), contentSendMoney, i, typeSend, accountInfo));
                             webSocket.send(jsonSend);
+                            Log.e("send_money", "send money ok");
                         }
                         return null;
                     }
@@ -158,6 +158,5 @@ public class CashOutFunction {
                 }
             }
         });
-        client.dispatcher().executorService().shutdown();
     }
 }

@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.home.presenter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
@@ -10,9 +9,6 @@ import com.google.gson.Gson;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import javax.inject.Inject;
@@ -240,7 +236,7 @@ public class HomePresenterImpl implements HomePresenter {
                             ECashApplication.masterKey = mAccountInfo.getMasterKey();
 
                             //update key
-                            DatabaseUtil.changePassDatabase(context, mAccountInfo.getMasterKey());
+                            DatabaseUtil.changeMasterKeyDatabase(context, mAccountInfo.getMasterKey());
                             KeyStoreUtils.saveKeyPrivateWallet(privateKeyBase64, context);
                             KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), context);
                             homeView.onActiveAccountSuccess(mAccountInfo);

@@ -58,8 +58,10 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
+import vn.ecpay.ewallet.ui.function.SyncCashService;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 import static vn.ecpay.ewallet.common.utils.Constant.QR_CONTACT;
 import static vn.ecpay.ewallet.common.utils.Constant.QR_TO_PAY;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
@@ -96,6 +98,9 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new QRCodeModule(this)).inject(this);
+        if (null != getActivity()) {
+            getActivity().startService(new Intent(getActivity(), SyncCashService.class));
+        }
         qrCodePresenter.setView(this);
         qrCodePresenter.onViewCreate();
         eCashSplit = new StringBuffer();
@@ -124,12 +129,12 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
 
     @Override
     public void handleResult(Result result) {
-        Log.e("result ",result.toString());
+        Log.e("result ", result.toString());
         Gson gson = new Gson();
-       // Log.e("gson ", gson.toJson(result));
+        // Log.e("gson ", gson.toJson(result));
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
-          //  Log.e("qrScanBase ", gson.toJson(qrScanBase));
+            //  Log.e("qrScanBase ", gson.toJson(qrScanBase));
             if (qrScanBase != null) {
                 if (qrScanBase.getType() != null) {
                     switch (qrScanBase.getType()) {
@@ -222,7 +227,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
-     //    Log.e("result",result);
+        //    Log.e("result",result);
         Gson gson = new Gson();
         try {
             // QRCodeSender qrCodeSender = new QRCodeSender();
@@ -334,8 +339,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                             if (!checkContactExist(contact)) {
                                 DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
                             }
-                        }else{
-                            Log.e("payment ","bạn gửi yêu cầu cho chính bạn ");
+                        } else {
+                            Log.e("payment ", "bạn gửi yêu cầu cho chính bạn ");
                         }
                     }
                     ((QRCodeActivity) getActivity()).checkPayTo(contact);

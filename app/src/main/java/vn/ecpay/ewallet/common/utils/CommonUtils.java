@@ -1,8 +1,6 @@
 package vn.ecpay.ewallet.common.utils;
 
 import android.app.ActivityManager;
-import android.app.Application;
-import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -72,8 +70,6 @@ import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.Resp
 import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 public class CommonUtils {
     public static String getModelName() {

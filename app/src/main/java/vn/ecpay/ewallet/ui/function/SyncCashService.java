@@ -136,7 +136,6 @@ public class SyncCashService extends Service {
                 Log.e("C ","C");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
-
         }
     }
 
