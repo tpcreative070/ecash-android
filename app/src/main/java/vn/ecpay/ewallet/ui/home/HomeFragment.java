@@ -685,7 +685,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
             @Override
             public void onCancel() {
-                ((AccountActivity) getActivity()).onBackPressed();
+                //((AccountActivity) getActivity()).onBackPressed();//todo crash app
             }
         });
     }

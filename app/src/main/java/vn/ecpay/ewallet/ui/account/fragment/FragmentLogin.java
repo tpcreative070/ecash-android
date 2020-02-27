@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -199,7 +200,8 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             }
         }
         if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
-            getIMEI();
+           // getIMEI();
+            new Handler().postDelayed(() -> getIMEI(), 500);
         }
     }
 
@@ -208,7 +210,8 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getIMEI();
+               // getIMEI();
+                new Handler().postDelayed(() -> getIMEI(), 500);
             }
         }
     }
