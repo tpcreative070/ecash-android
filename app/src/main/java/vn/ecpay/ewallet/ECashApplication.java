@@ -161,7 +161,7 @@ public class ECashApplication extends Application {
 
     }
 
-    public void showDialogSwitchLogin(final String messenger) {
+    public static void showDialogSwitchLogin(final String messenger) {
         if (DialogUtil.getInstance().isShowing()) {
             DialogUtil.getInstance().dismissDialog();
         }

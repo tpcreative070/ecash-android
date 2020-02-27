@@ -271,6 +271,18 @@ public class CommonUtils {
         return fmt.format(money) + " VNĐ";
     }
 
+    public static String formatPriceVND(Double money) {
+        DecimalFormat fmt = new DecimalFormat();
+        DecimalFormatSymbols fmts = new DecimalFormatSymbols();
+
+        fmts.setGroupingSeparator('.');
+
+        fmt.setGroupingSize(3);
+        fmt.setGroupingUsed(true);
+        fmt.setDecimalFormatSymbols(fmts);
+        return fmt.format(money) + " VNĐ";
+    }
+
     public static String getCurrentTime() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat(Constant.FORMAT_DATE_SEND_CASH);
@@ -440,8 +452,8 @@ public class CommonUtils {
         return userList;
     }
 
-    public static long getMoneyEDong(EdongInfo edongInfo) {
-        return (long) (edongInfo.getAccBalance() - edongInfo.getAccLock());
+    public static Long getMoneyEDong(EdongInfo edongInfo) {
+        return (edongInfo.getAccBalance() - edongInfo.getAccLock());
     }
 
     public static Bitmap generateQRCode(String value) {
@@ -834,8 +846,9 @@ public class CommonUtils {
         }
         return multiTransferList;
     }
+
     public static int getCountTransfer(List<Contact> mSectionList) {
-        int count=0;
+        int count = 0;
         for (Contact contact : mSectionList) {
             if (contact.isAddTransfer) {
                 count++;
@@ -854,8 +867,8 @@ public class CommonUtils {
         return false;
     }
 
-    public static  AccountInfo getAccountByUserName(Context context){
-        String username =ECashApplication.getAccountInfo().getUsername();
+    public static AccountInfo getAccountByUserName(Context context) {
+        String username = ECashApplication.getAccountInfo().getUsername();
         return DatabaseUtil.getAccountInfo(username, context);
     }
 }

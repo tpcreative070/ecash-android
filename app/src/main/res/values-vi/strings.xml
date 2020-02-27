@@ -101,7 +101,7 @@
     <string name="str_lixi_close">Chưa mở</string>
     <string name="str_send_lixi">Gửi lì xì</string>
     <string name="str_input_wish">Nhắn lời chúc</string>
-    <string name="str_change_cash_success">Đổi tiền thành công</string>
+    <string name="str_change_cash_success">Đổi eCash thành công. Bạn có muốn tiếp tục thực hiện giao dịch</string>
     <string name="str_total_lixi">Tổng lì xì</string>
     <string name="str_wishes">Lời chúc</string>
     <string name="str_take_lixi_success">Bạn nhận được một gói Lì Xi bạn vui lòng mở gói Lì Xì</string>
@@ -200,6 +200,8 @@
     <string name="err_new_pass_must_other_old_pass">Mật khẩu mới phái khác mật khẩu cũ</string>
     <string name="err_pass_bigger_six_char">Mật khẩu bạn nhập không hợp lệ</string>
     <string name="err_user_name_null">bạn chưa nhập tên tài khoản</string>
+    <string name="err_user_name_lenght">Độ dài tên tài khoản phải lớn hơn 3 ký tự</string>
+    <string name="err_name_lenght">Độ dài tên phải lớn hơn 2 ký tự</string>
     <string name="err_name_null">bạn chưa nhập họ tên</string>
     <string name="err_cmnd_null">bạn chưa nhập chứng minh nhân dân</string>
     <string name="err_phone_null">bạn chưa nhập số điện thoại</string>
@@ -241,9 +243,9 @@
     <string name="str_history_date_header">Tháng %s/%s</string>
     <string name="str_date">%s/%s/%s</string>
     <string name="str_total_money">%s VNĐ</string>
-    <string name="str_dialog_cash_in_success">bạn đã nạp thành công số tiền: %s từ tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
-    <string name="str_dialog_cash_out_success">bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
-    <string name="str_dialog_cash_to_cash_success">bạn đã chuyển thành công số tiền: %s sang tài khoản: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_in_success">Bạn đã nạp thành công số tiền: %s từ tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_out_success">Bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_to_cash_success">Bạn đã chuyển thành công số tiền: %s sang tài khoản: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
 
     //key store
     <string name="str_key_store_provider">AndroidKeyStore</string>

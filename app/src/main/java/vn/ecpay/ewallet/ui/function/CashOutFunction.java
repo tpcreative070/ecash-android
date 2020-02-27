@@ -146,7 +146,6 @@ public class CashOutFunction {
                     protected void onPostExecute(Void aVoid) {
                         cashOutListener.onCashOutSuccess();
                         EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
-                        webSocket.cancel();
                     }
                 }.execute();
             }
@@ -158,5 +157,6 @@ public class CashOutFunction {
                 }
             }
         });
+        client.dispatcher().executorService().shutdown();
     }
 }

@@ -48,6 +48,8 @@ import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
+import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CASH_OUT_MONEY;
@@ -111,7 +113,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         cashOutPresenter.onViewCreate();
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        listEDongInfo = ECashApplication.getListEDongInfo();
         setData();
         cashOutPresenter.getPublicKeyOrganization(getActivity(), accountInfo);
     }
@@ -123,6 +124,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
+        listEDongInfo = ECashApplication.getListEDongInfo();
         if (listEDongInfo.size() > 0) {
             edongInfo = listEDongInfo.get(0);
             tvEDongWallet.setText(listEDongInfo.get(0).getAccountIdt());
@@ -169,7 +171,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                     @Override
                     public void OnListenerOk() {
                         setData();
-                        updateBalance();
                         updateTotalMoney();
                     }
 
@@ -179,24 +180,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                             getActivity().finish();
                     }
                 });
-    }
-
-    private void updateBalance() {
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
-        listEDongInfo = ECashApplication.getListEDongInfo();
-        if (listEDongInfo.size() > 0) {
-            for (int i = 0; i < listEDongInfo.size(); i++) {
-                if (listEDongInfo.get(i).getAccountIdt().equals(edongInfo.getAccountIdt())) {
-                    tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
-                    tvEdong.setText(listEDongInfo.get(i).getAccountIdt());
-                }
-            }
-        } else {
-            tvEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
-        }
     }
 
     @Override
@@ -233,18 +216,31 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             return;
         }
 
-        new AsyncTask<Void, Void, Void>() {
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
+        showLoading();
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
-            protected void onPreExecute() {
-                showProgress();
+            public void onUpdateMasterSuccess() {
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected void onPreExecute() {
+                        showProgress();
+                    }
+
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        getCashEncrypt();
+                        return null;
+                    }
+                }.execute();
             }
 
             @Override
-            protected Void doInBackground(Void... voids) {
-                getCashEncrypt();
-                return null;
+            public void onUpdateMasterFail() {
+                dismissLoading();
+                showDialogError(getResources().getString(R.string.err_upload));
             }
-        }.execute();
+        });
     }
 
 
@@ -312,7 +308,17 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     @Override
     public void sendECashToEDongSuccess() {
         EventBus.getDefault().postSticky(new EventDataChange(EVENT_CASH_OUT_MONEY, responseMess, listCashSend));
-        cashOutPresenter.getEDongInfo(accountInfo);
+    }
+
+    @Override
+    public void getEDongInfoSuccess() {
+        if (getActivity() != null)
+            getActivity().runOnUiThread(() -> {
+                dismissProgress();
+                showDialogCashOutOk();
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
+            });
+
     }
 
     @Override
@@ -331,18 +337,17 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
     private void reloadData() {
         if (WalletDatabase.numberRequest == 0) {
-            dismissProgress();
-            showDialogCashOutOk();
+            cashOutPresenter.getEDongInfo(accountInfo);
         } else {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() != null)
-                        getActivity().runOnUiThread(() -> reloadData());
+                    reloadData();
                 }
             }, 1000);
         }
     }
+
 
     @Override
     public void onDetach() {

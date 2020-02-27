@@ -11,6 +11,4 @@ public interface AddContactPresenter extends Presenter<AddContactView> {
     void requestSearchByPhone(String edtTextSearch, AccountInfo accountInfo);
 
     void requestSearchWalletID(String walletId, AccountInfo accountInfo);
-
-    void addContact(Context context, AccountInfo accountInfo, Contact contact);
 }

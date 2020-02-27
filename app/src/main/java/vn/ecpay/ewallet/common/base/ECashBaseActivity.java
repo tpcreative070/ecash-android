@@ -32,7 +32,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -478,7 +477,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         this.payment = payment;
         showProgressDialog();
         long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        long balanceEdong = 0;
+        Long balanceEdong;
 
         ArrayList<EdongInfo> listEDongInfo = ECashApplication.getListEDongInfo();
         if (null != listEDongInfo) {

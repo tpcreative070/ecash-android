@@ -58,7 +58,9 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
+import vn.ecpay.ewallet.ui.function.AddContactFunction;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
+import vn.ecpay.ewallet.ui.interfaceListener.AddContactListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
@@ -204,6 +206,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     if (contact.getWalletId().equals(accountInfo.getWalletId())) {
                         ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_conflict));
                     } else {
+                        showLoading();
                         // todo: can using funtion checkContactExist(contact)
                         List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
                         for (int i = 0; i < listContact.size(); i++) {
@@ -212,8 +215,21 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                                 return;
                             }
                         }
-                        DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
-                        Toast.makeText(getActivity(), getResources().getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+                        AddContactFunction addContactFunction = new AddContactFunction(getActivity());
+                        addContactFunction.addContact(accountInfo, contact, new AddContactListener() {
+                            @Override
+                            public void addContactSuccess() {
+                                dismissLoading();
+                                DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+                                Toast.makeText(getActivity(), getResources().getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void addContactFail() {
+                                dismissLoading();
+                                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_upload));
+                            }
+                        });
                     }
                 } else {
                     ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));

@@ -205,8 +205,20 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             return;
         }
 
+        if (userName.length() <= 3) {
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_user_name_lenght));
+            dismissProgress();
+            return;
+        }
+
         if (name.isEmpty()) {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_name_null));
+            dismissProgress();
+            return;
+        }
+
+        if (name.length() <= 2) {
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_name_lenght));
             dismissProgress();
             return;
         }

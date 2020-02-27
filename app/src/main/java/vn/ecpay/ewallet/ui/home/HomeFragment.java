@@ -526,7 +526,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        //  Log.e("Home Event Bus", new Gson().toJson(event.getData()));
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }
@@ -539,8 +538,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
                 || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)
                 || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
-            if (getActivity() != null)
-                getActivity().runOnUiThread(this::updateBalance);
+            updateBalance();
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
@@ -674,6 +672,10 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
+                        for (int i = 0; i < cashValuesList.size(); i++) {
+                            DatabaseUtil.saveCashValue(cashValuesList.get(i), getActivity());
+                        }
+
                         if (null != getActivity()) {
                             getActivity().startService(new Intent(getActivity(), SyncCashService.class));
                             if (DatabaseUtil.getAllCacheData(getActivity()).size() > 0) {
@@ -687,9 +689,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                             ECashApplication.setIsChangeDataBase(true);
                         }
 
-                        for (int i = 0; i < cashValuesList.size(); i++) {
-                            DatabaseUtil.saveCashValue(cashValuesList.get(i), getActivity());
-                        }
                         return null;
                     }
 

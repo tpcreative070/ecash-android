@@ -108,7 +108,7 @@ public class WebSocketsService extends Service {
                 }
             }, 500);
         }
-        if (event.getData().equals(Constant.EVENT_ACCOUNT_LOGOUT)) {
+        if (event.getData().equals(Constant.EVENT_CLOSE_SOCKET)) {
             stopSocket();
         }
         EventBus.getDefault().removeStickyEvent(event);

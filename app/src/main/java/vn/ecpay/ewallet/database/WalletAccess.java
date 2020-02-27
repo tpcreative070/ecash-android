@@ -195,6 +195,9 @@ public interface WalletAccess {
     @Query("UPDATE PROFILE SET large=:bIconLarge WHERE username =:userName")
     void updateAvatar(String bIconLarge, String userName);
 
+    @Query("UPDATE PROFILE SET lastAccessTime=:time WHERE username =:userName")
+    void updateAccessTime(String time, String userName);
+
     @Update
     void updateUser(Profile_Database accountInfo);
 

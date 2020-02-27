@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
@@ -48,6 +49,8 @@ import vn.ecpay.ewallet.ui.cashIn.module.CashInModule;
 import vn.ecpay.ewallet.ui.cashIn.presenter.CashInPresenter;
 import vn.ecpay.ewallet.ui.cashIn.view.CashInView;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
+import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
 
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
 
@@ -103,21 +106,6 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         setData();
     }
 
-    private void setData() {
-        setAdapter();
-        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
-        tvId.setText(String.valueOf(accountInfo.getWalletId()));
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
-
-        if (listEDongInfo.size() > 0) {
-            eDongInfoCashIn = listEDongInfo.get(0);
-            tvEdongWallet.setText(listEDongInfo.get(0).getAccountIdt());
-            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
-        }
-    }
-
     private void setAdapter() {
         valuesListAdapter = DatabaseUtil.getAllCashValues(getActivity());
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -134,20 +122,18 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         tvTotalCashIn.setText(CommonUtils.formatPriceVND(totalMoney));
     }
 
-    private void updateBalance() {
+    private void setData() {
+        setAdapter();
+        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
+        tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
         listEDongInfo = ECashApplication.getListEDongInfo();
+
         if (listEDongInfo.size() > 0) {
-            for (int i = 0; i < listEDongInfo.size(); i++) {
-                if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
-                    tvOverEdong.setText(CommonUtils.formatPriceVND(listEDongInfo.get(i).getUsableBalance()));
-                    tvEdongWallet.setText(listEDongInfo.get(i).getAccountIdt());
-                }
-            }
-        } else {
-            tvEdongWallet.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
+            eDongInfoCashIn = listEDongInfo.get(0);
+            tvEdongWallet.setText(listEDongInfo.get(0).getAccountIdt());
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
         }
     }
@@ -203,7 +189,20 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                 listValue.add(valuesListAdapter.get(i).getParValue());
             }
         }
-        cashInPresenter.transferMoneyEDongToECash(totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
+        showLoading();
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+            @Override
+            public void onUpdateMasterSuccess() {
+                cashInPresenter.transferMoneyEDongToECash(totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
+            }
+
+            @Override
+            public void onUpdateMasterFail() {
+                dismissLoading();
+                showDialogError(R.string.err_upload);
+            }
+        });
     }
 
     private void showDialogCashInOk() {
@@ -212,7 +211,6 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                     @Override
                     public void OnListenerOk() {
                         setData();
-                        updateBalance();
                         updateTotalMoney();
                     }
 
@@ -239,6 +237,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 
+    public void showDialogError(int err) {
+        DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(err));
+    }
+
     @Override
     public void transferMoneySuccess(CashInResponse cashInResponse) {
         Gson gson = new Gson();
@@ -249,6 +251,16 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
         DatabaseUtil.saveCacheData(cacheData_database, getActivity());
         EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
+    }
+
+    @Override
+    public void getEDongInfoSuccess() {
+        if (getActivity() != null)
+            getActivity().runOnUiThread(() -> {
+                dismissProgress();
+                showDialogCashInOk();
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
+            });
     }
 
     @Override
@@ -267,14 +279,12 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     private void reloadData() {
         if (WalletDatabase.numberRequest == 0) {
-            dismissProgress();
-            showDialogCashInOk();
+            cashInPresenter.getEDongInfo(accountInfo);
         } else {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() != null)
-                        getActivity().runOnUiThread(() -> reloadData());
+                    reloadData();
                 }
             }, 1000);
         }

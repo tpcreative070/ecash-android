@@ -130,7 +130,6 @@ public class SyncCashService extends Service {
             isRunning = false;
             if (!changeCashPayment) {
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
-
             } else {
                 changeCashPayment =false;
                 Log.e("C ","C");

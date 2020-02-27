@@ -145,7 +145,9 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS) || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
+                || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)
+                || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             if (getActivity() == null) return;
             getActivity().runOnUiThread(this::updateBalance);
         }
@@ -196,7 +198,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
 
     @Override
     public void onLogoutSuccess() {
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_ACCOUNT_LOGOUT));
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CLOSE_SOCKET));
         Intent intent = new Intent(getActivity(), AccountActivity.class);
         startActivity(intent);
         if (getActivity() != null)

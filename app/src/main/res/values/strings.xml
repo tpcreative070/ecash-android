@@ -108,7 +108,7 @@
     <string name="str_lixi_close">Not open yet</string>
     <string name="str_send_lixi">Send lixi</string>
     <string name="str_input_wish">Message wishes</string>
-    <string name="str_change_cash_success">Change cash success</string>
+    <string name="str_change_cash_success">Change eCash successfully. Would you like to proceed with the transaction?</string>
     <string name="str_total_lixi">Total lixi</string>
     <string name="str_wishes">Wishes</string>
     <string name="str_take_lixi_success">you receive a pack of Poker, please open the Packet Pack</string>
@@ -208,6 +208,8 @@
     <string name="err_new_pass_must_other_old_pass">The new password is different from the old password</string>
     <string name="err_pass_bigger_six_char">The password you entered is not valid</string>
     <string name="err_user_name_null">You did not enter an account name</string>
+    <string name="err_user_name_lenght">Length of account name must be greater than 3 characters</string>
+    <string name="err_name_lenght">Length of name must be greater than 2 characters</string>
     <string name="err_name_null">You have not entered your full name</string>
     <string name="err_cmnd_null">You have not entered your identity card</string>
     <string name="err_phone_null">You did not enter a phone number</string>
