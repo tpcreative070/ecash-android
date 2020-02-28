@@ -184,7 +184,7 @@
     <string name="err_device_acc_exit">Thiết bị của bạn đã được đăng ký 1 tài khoản khác!</string>
     <string name="err_otp_input_fail">OTP bạn nhập không đúng</string>
     <string name="err_out_of_money_change">Hết mệnh giá cần đổi</string>
-    <string name="err_end_of_the_session">Phiện làm việc của bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
+    <string name="err_end_of_the_session">Phiên làm việc của bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
     <string name="err_chose_money">bạn chưa chọn số tiền muốn chuyển</string>
     <string name="err_get_public_key_organize">không lấy được publickey của tổ chức phát hành</string>
     <string name="err_duplicate_wallet_id">Số ví chuyển phải khác số ví của bạn!</string>
@@ -313,6 +313,43 @@
     <string name="str_transfer_money_success">chuyển tiền thành công</string>
     <string name="str_error_you_cannot_pay_for_your_self">Bạn không thể thanh toán cho chính mình!</string>
     <string name="str_error_limited_select_contact">Bạn được chọn tối đa 10 người cho mỗi lần yêu cầu </string>
+
+<!--    <string name="error_message_code_0998">{Tên trường} không đúng định dạng</string>-->
+<!--    TODO CHECK CODE AGAIN-->
+    <string name="error_message_code_1003">Số giấy tờ tùy thân đã tồn tại</string>
+    <string name="error_message_code_3034">username đã tồn tại</string>
+    <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
+    <string name="error_message_code_3024">Số điện thoại đã tồn tại</string>
+    <string name="error_message_code_3019">Mật khẩu tối thiểu 6 ký tự</string>
+    <string name="error_message_code_3014">Mã xác thực không đúng</string>
+    <string name="error_message_code_3016">Hết thời gian xác thực </string>
+    <string name="error_message_code_3104">Quá số lần nhập mã xác thực cho phép</string>
+    <string name="error_message_code_0997">"Tilte: Lỗi kết nối:Bạn vui lòng kiểm tra kết nối mạng hoặc thử lại sau ít phút."</string>
+    <string name="error_message_code_3035">Tài khoản không tồn tại</string>
+<!--    <string name="error_message_code_3019">Mật khẩu không đúng</string>-->
+<!--    <string name="error_message_code_3029">Chữ ký không hợp lệ</string>-->
+    <string name="error_message_code_0000">"Title: Giao dịch thành công.
+Bạn đã nạp thành công số tiền xxxx .  Bạn có muốn tiếp tục thực hiện giao dịch? (Tiếp tục/ Bỏ qua)
+Click Tiếp tục-> chuyển màn hình Nạp eCash
+Click Bỏ qua -> chuyển về trang Home"</string>
+    <string name="error_message_code_4009">"icon Lỗi + Title: Giao dịch không thành công
+Có lỗi xảy ra. Vui lòng thử lại!
+Button: Tiếp tục/ Bỏ qua
+Click Tiếp tục-> chuyển màn hình Nạp eCash
+Click Bỏ qua -> chuyển về trang Home"</string>
+<!--    <string name="error_message_code_4010">"Title: Có lỗi xảy ra!-->
+<!--Content: eCash không hợp lệ-->
+<!--Button: Tiếp tục/ Bỏ qua"</string>-->
+    <string name="error_message_code_4008">"Title: Giao dịch that bai
+Hệ thống không giả mã được giao dịch
+"</string>
+    <string name="error_message_code_4010">"Title: Giao dịch thành công.
+Content:  Bạn đã Rút thành công số tiền xxxx .  Trong đó mệnh giá xxx không hợp lệ. Vui lòng liên hệ hotline ECPAY xxxx để biết thêm chi tiết (Bỏ qua)
+Click Đồng ý: Chuyển màn hình Rút eCash
+Click Bỏ qua: Chuyển màn hình trang Home"</string>
+    <string name="error_message_code_3029">Tổng mệnh giá nhận lớn hơn tổng mệnh giá đổi</string>
+    <string name="error_message_code_4011">"Title: Hết mệnh giá
+Content: Hết mệnh giá 5000, 10,000đ bạn cần đổi. Vui lòng chọn mệnh giá khác. button Tiếp tục/ Bỏ qua"</string>
 </resources>
 
 

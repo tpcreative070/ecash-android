@@ -9,6 +9,28 @@ public class Constant {
 
     public static final String app_name = "eCash App";
     public static final String sesion_expid = "3043";
+    public static final String ERROR_CODE_0998 = "0998";
+    public static final String ERROR_CODE_1003 = "1003";
+    public static final String ERROR_CODE_3034 = "3034";
+    public static final String ERROR_CODE_3024 = "3024";
+    public static final String ERROR_CODE_3019 = "3019";
+   // public static final String ERROR_CODE_0998 = "0998";
+    public static final String ERROR_CODE_3014 = "3014";
+    public static final String ERROR_CODE_3016 = "3016";
+    public static final String ERROR_CODE_3104 = "3104";
+    public static final String ERROR_CODE_0001 = "0001";
+    public static final String ERROR_CODE_0997 = "0997";
+    public static final String ERROR_CODE_3035 = "3035";
+   // public static final String ERROR_CODE_3019 = "3019";
+   // public static final String ERROR_CODE_0998 = "0998";
+    public static final String ERROR_CODE_3029 = "3029";
+  //  public static final String ERROR_CODE_3035 = "3035";
+    public static final String ERROR_CODE_0000 = "0000";
+    public static final String ERROR_CODE_4009 = "4009";
+    public static final String ERROR_CODE_4010 = "4010";
+    public static final String ERROR_CODE_4008 = "4008";
+   // public static final String ERROR_CODE_4010 = "4010";
+    public static final String ERROR_CODE_4012 = "4012";
     public static final int DEFAULT_LANGUAGE_ID = 0;
 
     public static final String DATABASE_NAME = "eWallet";
