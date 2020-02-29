@@ -92,7 +92,22 @@ public class LoginPresenterImpl implements LoginPresenter {
 
         String alphabe = CommonUtils.getStringAlphabe(requestLogin);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogin));
-        requestLogin.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        String channelSignature="";
+        try{
+             channelSignature =CommonUtils.generateSignature(dataSign);
+            if(channelSignature.isEmpty()){
+                loginView.showDialogError(application.getString(R.string.err_upload));
+                loginView.dismissLoading();
+                return;
+            }
+        }catch (Exception e){
+           Log.e("generateSignature ",e.getMessage());
+            loginView.showDialogError(application.getString(R.string.err_upload));
+            loginView.dismissLoading();
+            return;
+        }
+       // requestLogin.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        requestLogin.setChannelSignature(channelSignature);
         CommonUtils.logJson(requestLogin);
         Call<ResponseLoginAfterRegister> call = apiService.login(requestLogin);
         call.enqueue(new Callback<ResponseLoginAfterRegister>() {
