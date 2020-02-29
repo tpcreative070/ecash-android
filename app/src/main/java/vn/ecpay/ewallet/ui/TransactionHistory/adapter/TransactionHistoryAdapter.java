@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.TransactionHistory.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -136,16 +139,17 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                 itemViewHolder.tvTransactionAmount.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
                 break;
             case TYPE_PAYTO:
+                //Log.e("payto ",new Gson().toJson(transactionsHistoryModel));
                 if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
-                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
-                            transactionsHistoryModel.getSenderName(), String.valueOf(transactionsHistoryModel.getSenderAccountId())));
+//                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+//                            transactionsHistoryModel.getSenderName(), String.valueOf(transactionsHistoryModel.getSenderAccountId())));
                     itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_payment));
                     itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_payto_gray);
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 } else {
-                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
-                            transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
+//                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+//                            transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
                     itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_payment));
                     itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_payto_gray);
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,

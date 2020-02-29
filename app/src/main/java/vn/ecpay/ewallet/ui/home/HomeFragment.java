@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -149,11 +150,11 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         }
-        if(accountInfo==null){
-            accountInfo =ECashApplication.getAccountInfo();
+        if (accountInfo == null) {
+            accountInfo = ECashApplication.getAccountInfo();
         }
-        if(accountInfo.getUsername()==null){
-            accountInfo =CommonUtils.getAccountByUserName(getContext());
+        if (accountInfo.getUsername() == null) {
+            accountInfo = CommonUtils.getAccountByUserName(getContext());
         }
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
@@ -161,7 +162,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             updateNotification();
             updateNumberLixi();
             //todo sync data
-           // syncData();
+            // syncData();
             accountInfo = dbAccountInfo;
             tvHomeAccountName.setText(CommonUtils.getFullName(accountInfo));
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -263,6 +264,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         } else {
+            Log.e("updateBalance", "updateBalance");
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -551,7 +553,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-      //  Log.e("Home Event Bus", new Gson().toJson(event.getData()));
+        //Log.e("Home Event Bus", event.getData());
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }
@@ -564,8 +566,14 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
                 || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)
                 || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
-            if (getActivity() != null)
-                getActivity().runOnUiThread(this::updateBalance);
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> updateBalance());
+                }
+            }, 4000);
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
@@ -716,7 +724,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             dismissLoading();
         }
     }
-    private void checkPayment(){
+
+    private void checkPayment() {
         if (ECashApplication.getAccountInfo() != null) {
             if (dbAccountInfo != null) {
                 getPaymentDataBase();

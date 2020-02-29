@@ -160,9 +160,16 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
-            if (getActivity() != null)
-                getActivity().runOnUiThread(this::reloadData);
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)||event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
+//            if (getActivity() != null)
+//                getActivity().runOnUiThread(this::reloadData);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> reloadData());
+                }
+            }, 4000);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
