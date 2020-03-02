@@ -200,7 +200,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             @Override
             public void onUpdateMasterFail() {
                 dismissLoading();
-                showDialogError(R.string.err_upload);
+                showDialogError(R.string.err_change_database);
             }
         });
     }

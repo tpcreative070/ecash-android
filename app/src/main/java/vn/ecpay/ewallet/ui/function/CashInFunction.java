@@ -35,9 +35,6 @@ import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.Resp
 import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
-import static vn.ecpay.ewallet.common.utils.Constant.TYPE_SEND_EDONG_TO_ECASH;
-
 public class CashInFunction {
     private CashInResponse cashInResponse;
     private AccountInfo accountInfo;
@@ -75,6 +72,7 @@ public class CashInFunction {
                     deCryptECash = CommonUtils.decrypEcash(responseMessSocket.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
                     checkArrayCash();
                 } else {
+                    cashInSuccessListener.onCashInFail();
                     EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                 }
             }
@@ -165,12 +163,15 @@ public class CashInFunction {
                                     deCryptECash = CommonUtils.decrypEcash(responseMessSocket.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
                                     checkArrayCash();
                                 } else {
+                                    cashInSuccessListener.onCashInFail();
                                     EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                                 }
                             } else {
+                                cashInSuccessListener.onCashInFail();
                                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                             }
                         } else {
+                            cashInSuccessListener.onCashInFail();
                             EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
                         }
                     }
@@ -179,6 +180,7 @@ public class CashInFunction {
 
             @Override
             public void onFailure(Call<ResponseGetPublicKeyWallet> call, Throwable t) {
+                cashInSuccessListener.onCashInFail();
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
             }
         });

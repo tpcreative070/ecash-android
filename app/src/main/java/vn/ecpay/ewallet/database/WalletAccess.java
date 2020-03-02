@@ -141,7 +141,7 @@ public interface WalletAccess {
     @Query("SELECT * FROM CASH_LOGS WHERE id=:maxID")
     CashLogs_Database getCashByMaxID(int maxID);
 
-    @Query("SELECT SUM(parValue) FROM CASH_LOGS WHERE type LIKE :input")
+    @Query("SELECT SUM(parValue) FROM CASH_LOGS WHERE type =:input")
     int getTotalCash(String input);
 
     @Query("SELECT id,countryCode,issuerCode,decisionNo,serialNo,parValue,activeDate,expireDate,accSign,cycle,treSign,type,transactionSignature,previousHash  FROM CASH_LOGS WHERE type =:type AND (id + serialNo) IN (select max(id)+ serialNo from CASH_LOGS  group by serialNo having count(serialNo)%2 <> 0) AND parValue =:money")

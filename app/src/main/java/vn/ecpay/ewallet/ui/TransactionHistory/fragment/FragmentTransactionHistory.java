@@ -168,7 +168,8 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     }
 
     private void reloadData() {
-        if (WalletDatabase.numberRequest == 0) {
+        long numberCash = WalletDatabase.getAllCash().size();
+        if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
             setAdapter(transactionsHistoryModelList);
         } else {

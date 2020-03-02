@@ -300,11 +300,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     public static int getTotalCash(String type) {
-        try {
-            return walletDatabase.daoAccess().getTotalCash(type);
-        } catch (Exception e) {
-            return 0;
-        }
+        return walletDatabase.daoAccess().getTotalCash(type);
     }
 
     public static List<CashLogs_Database> getListCashForMoney(String money, String type) {

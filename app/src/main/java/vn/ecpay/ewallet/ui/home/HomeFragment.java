@@ -220,29 +220,34 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     private void updateBalance() {
-        if (WalletDatabase.numberRequest == 0) {
-            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-            tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
+        long numberCash = WalletDatabase.getAllCash().size();
+        if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
+            if (getActivity() != null)
+                getActivity().runOnUiThread(() -> {
+                    WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+                    String a = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_IN));
+                    String b = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_OUT));
+                    balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+                    tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
 
-            listEDongInfo = ECashApplication.getListEDongInfo();
-            if (listEDongInfo.size() > 0) {
-                for (int i = 0; i < listEDongInfo.size(); i++) {
-                    if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
-                        tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
+                    listEDongInfo = ECashApplication.getListEDongInfo();
+                    if (listEDongInfo.size() > 0) {
+                        for (int i = 0; i < listEDongInfo.size(); i++) {
+                            if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
+                                tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
+                                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
+                            }
+                        }
+                    } else {
+                        tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
                         tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
                     }
-                }
-            } else {
-                tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
-            }
+                });
         } else {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() != null)
-                        getActivity().runOnUiThread(() -> updateBalance());
+                    updateBalance();
                 }
             }, 1000);
         }

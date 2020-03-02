@@ -310,7 +310,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             @Override
             public void onUpdateMasterFail() {
                 dismissLoading();
-                showDialogError(getResources().getString(R.string.err_upload));
+                showDialogError(getResources().getString(R.string.err_change_database));
             }
         });
     }

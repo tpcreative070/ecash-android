@@ -26,6 +26,7 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -33,7 +34,9 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.payment.Payments;
+import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
@@ -110,6 +113,10 @@ public class WebSocketsService extends Service {
         }
         if (event.getData().equals(Constant.EVENT_CLOSE_SOCKET)) {
             stopSocket();
+        }
+
+        if (event.getData().equals(Constant.EVENT_VERIFY_CASH_FAIL)) {
+
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
@@ -233,10 +240,19 @@ public class WebSocketsService extends Service {
             if (!DatabaseUtil.isTransactionLogExit(listResponseMessSockets.get(0), getApplicationContext())) {
                 if (listResponseMessSockets.get(0).getCashEnc() != null) {
                     CashInFunction cashInFunction = new CashInFunction(accountInfo, getApplicationContext(), listResponseMessSockets.get(0));
-                    cashInFunction.handleCashIn(() -> {
-                        confirmMess(listResponseMessSockets.get(0));
-                        listResponseMessSockets.remove(0);
-                        handleListResponse();
+                    cashInFunction.handleCashIn(new CashInSuccessListener() {
+                        @Override
+                        public void onCashInSuccess() {
+                            confirmMess(listResponseMessSockets.get(0));
+                            listResponseMessSockets.remove(0);
+                            handleListResponse();
+                        }
+
+                        @Override
+                        public void onCashInFail() {
+                            listResponseMessSockets.remove(0);
+                            handleListResponse();
+                        }
                     });
                 } else {
                     listResponseMessSockets.remove(0);
@@ -285,6 +301,7 @@ public class WebSocketsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        isRunning = false;
         Toast.makeText(getApplicationContext(), "Socket server tèo rồi T_T", Toast.LENGTH_LONG).show();
         EventBus.getDefault().unregister(this);
     }

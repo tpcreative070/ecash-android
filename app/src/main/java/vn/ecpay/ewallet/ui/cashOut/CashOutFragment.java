@@ -47,6 +47,7 @@ import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
+import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
 import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
 import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
@@ -238,7 +239,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             @Override
             public void onUpdateMasterFail() {
                 dismissLoading();
-                showDialogError(getResources().getString(R.string.err_upload));
+                showDialogError(getResources().getString(R.string.err_change_database));
             }
         });
     }
@@ -314,11 +315,27 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     public void getEDongInfoSuccess() {
         if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
-                dismissProgress();
-                showDialogCashOutOk();
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
+                if (ECashApplication.isCancelAccount) {
+                    handleCancelAccount();
+                } else {
+                    dismissProgress();
+                    showDialogCashOutOk();
+                    EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
+                }
             });
+    }
 
+    private void handleCancelAccount() {
+        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+        if (balance == 0) {
+            dismissProgress();
+            if (getActivity() != null)
+                getActivity().onBackPressed();
+        } else {
+            dismissProgress();
+            showDialogCashOutOk();
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
+        }
     }
 
     @Override

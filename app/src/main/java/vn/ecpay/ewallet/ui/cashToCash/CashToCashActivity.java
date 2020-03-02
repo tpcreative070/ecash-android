@@ -15,6 +15,7 @@ import vn.ecpay.ewallet.ui.cashToCash.fragment.CashToCashFragment;
 
 public class CashToCashActivity extends ECashBaseActivity {
     private ArrayList<Contact> listContactTransfer;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.lixi_activity;
@@ -32,8 +33,9 @@ public class CashToCashActivity extends ECashBaseActivity {
         if (null != content) {
             listContactTransfer = content.getParcelableArrayList(Constant.CONTACT_TRANSFER_MODEL);
             addFragment(CashToCashFragment.newInstance(listContactTransfer), true);
+        } else {
+            addFragment(new CashToCashFragment(), false);
         }
-        addFragment(new CashToCashFragment(), false);
     }
 
     public void addFragment(Fragment pFragment, boolean isAnimation) {
