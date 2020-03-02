@@ -40,6 +40,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.GridSpacingItemDecoration;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -59,8 +60,8 @@ import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class CashChangeFragment extends ECashBaseFragment implements CashChangeView {
-    @BindView(R.id.tv_account_name)
-    TextView tvAccountName;
+//    @BindView(R.id.tv_account_name)
+//    TextView tvAccountName;
     @BindView(R.id.tv_id)
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
@@ -117,7 +118,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private void setData() {
         setAdapter();
-        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
+        //tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
@@ -126,8 +127,9 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private void setAdapter() {
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        rvCashValues.setLayoutManager(mLayoutManager);
+//        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+//        rvCashValues.setLayoutManager(mLayoutManager);
+        rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 10, false));
         cashValueAdapter = new CashTotalChangeAdapter(valuesListAdapter, getActivity());
         rvCashValues.setAdapter(cashValueAdapter);
     }

@@ -44,4 +44,5 @@
 
     <color name="color_dot_selected">#38BBE9</color>
     <color name="color_dot_unselected">#99E3FE</color>
+    <color name="color_bg_cash_to_cash">#F6FBFC</color>
 </resources>

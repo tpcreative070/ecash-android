@@ -22,7 +22,7 @@ public class CashChangeActivity extends ECashBaseActivity {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.cash_base_activity;
+        return R.layout.cash_base_activity_toolbar_blue;
     }
 
     @Override

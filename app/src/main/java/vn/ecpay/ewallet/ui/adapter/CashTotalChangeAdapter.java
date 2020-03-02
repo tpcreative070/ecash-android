@@ -26,7 +26,7 @@ public class CashTotalChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_cash_value_total_firm, parent, false);
+                .inflate(R.layout.item_cash_values_gridview, parent, false);
         return new CashTotalChangeAdapter.ItemValueHolder(view);
     }
 
@@ -37,7 +37,7 @@ public class CashTotalChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         CashTotalChangeAdapter.ItemValueHolder itemViewHolder = (CashTotalChangeAdapter.ItemValueHolder) holder;
         CashTotal cashTotal = listCashValue.get(position);
-        itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
+        itemViewHolder.tv_value.setText(CommonUtils.formatPrice(cashTotal.getParValue()));
         itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotalDatabase()));
     }
 
