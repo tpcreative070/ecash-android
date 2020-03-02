@@ -15,6 +15,11 @@ public class Constant {
     public static final int DATABASE_VERSION = 1;
     public static final byte ELEMENT_SPLIT = '$';
 
+    public static final String DIRECTORY_QR_MY_CONTACT= "/qr_my_account";
+    public static final String DIRECTORY_QR_MY_PAYMENT= "/qr_my_payment";
+    public static final String DIRECTORY_QR_IMAGE= "/qr_image";
+
+
     //type notification
     public static final String ON = "on";
     public static final String OFF = "off";
@@ -80,7 +85,7 @@ public class Constant {
     public static final String EVENT_SEND_REQUEST_PAYTO = "EVENT_SEND_REQUEST_PAYTO";
     public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
     public static final String EVENT_CLOSE_SOCKET = "EVENT_CLOSE_SOCKET";
-
+    public static final String EVENT_NEW_PAYMENT = "EVENT_NEW_PAYMENT";
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
     public static final String FUNCTION_LOGIN = "FU00004";

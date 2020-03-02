@@ -31,6 +31,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.payment.Payments;
@@ -40,6 +41,8 @@ import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
+
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
 public class WebSocketsService extends Service {
     private AccountInfo accountInfo;
@@ -284,18 +287,31 @@ public class WebSocketsService extends Service {
 
 
     private void handlePaymentRequest(Payments payToRequest) {
-        if (ECashApplication.getActivity() != null) {
-            if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
-                ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.showDialogNewPaymentRequest(payToRequest, true);
-                    }
-                });
+        Payment_DataBase payment_dataBase = new Payment_DataBase();
+        payment_dataBase.setSender(payToRequest.getSender());
+        payment_dataBase.setTime(payToRequest.getTime());
+        payment_dataBase.setType(payToRequest.getType());
+        payment_dataBase.setContent(payToRequest.getContent());
+        payment_dataBase.setSenderPublicKey(payToRequest.getSenderPublicKey());
+        payment_dataBase.setTotalAmount(payToRequest.getTotalAmount());
+        payment_dataBase.setChannelSignature(payToRequest.getChannelSignature());
+        payment_dataBase.setFullName(payToRequest.getFullName());
+        payment_dataBase.setToPay(true);
 
-            }
-        }
+        DatabaseUtil.insertPayment(getActivity(), payment_dataBase);
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_NEW_PAYMENT));
+//        if (ECashApplication.getActivity() != null) {
+//            if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
+//                ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
+//                activity.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        activity.showDialogNewPaymentRequest(payToRequest,true);
+//                    }
+//                });
+//
+//            }
+//        }
     }
 
     @Override

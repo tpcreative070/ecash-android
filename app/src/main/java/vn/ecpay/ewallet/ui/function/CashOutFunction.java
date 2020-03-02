@@ -23,10 +23,12 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.QRCodeUtil;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
@@ -37,7 +39,7 @@ import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
 public class CashOutFunction {
     private AccountInfo accountInfo;
-    private Context context;
+    private ECashBaseFragment context;
     private String contentSendMoney;
     private List<Contact> multiTransferList;
     private List<CashTotal> valuesList;
@@ -45,14 +47,14 @@ public class CashOutFunction {
     private CashOutListener cashOutListener;
     private boolean isConnectSuccess = false;
 
-    public CashOutFunction(Context context, List<CashTotal> valuesList, List<Contact> multiTransferList, String content, String typeSend) {
+    public CashOutFunction(ECashBaseFragment context, List<CashTotal> valuesList, List<Contact> multiTransferList, String content, String typeSend) {
         this.context = context;
         this.valuesList = valuesList;
         this.multiTransferList = multiTransferList;
         this.contentSendMoney = content;
         this.typeSend = typeSend;
         String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+        accountInfo = DatabaseUtil.getAccountInfo(userName, context.getActivity());
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -64,7 +66,7 @@ public class CashOutFunction {
                 for (int i = 0; i < multiTransferList.size(); i++) {
                     String currentTime = CommonUtils.getCurrentTime();
                     Gson gson = new Gson();
-                    ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(context, valuesList,
+                    ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(context.getActivity(), valuesList,
                             multiTransferList.get(i), contentSendMoney, i, typeSend, accountInfo);
                     String jsonCash = gson.toJson(responseMessSocket);
                     Contact contact = multiTransferList.get(i);
@@ -82,28 +84,13 @@ public class CashOutFunction {
                         //save image
                         if (codeSenderArrayList.size() > 0) {
                             for (int j = 0; j < codeSenderArrayList.size(); j++) {
-                                Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
-                                String root = Environment.getExternalStorageDirectory().toString();
-                                File mFolder = new File(root + "/qr_image");
-                                if (!mFolder.exists()) {
-                                    mFolder.mkdir();
-                                }
-                                String imageName = contact.getWalletId() + "_" + currentTime + "_" + j + ".jpg";
-                                File file = new File(mFolder, imageName);
-                                if (file.exists())
-                                    file.delete();
-                                try {
-                                    FileOutputStream out = new FileOutputStream(file);
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                                    out.flush();
-                                    out.close();
-                                } catch (Exception e) {
-                                    EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_FAIL));
-                                    e.printStackTrace();
-                                }
+                               Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
+                                String imageName = contact.getWalletId() + "_" + currentTime + "_" + j;
+                                QRCodeUtil.saveImageQRCode(context,bitmap,imageName, Constant.DIRECTORY_QR_IMAGE);
+
                             }
                             //save log
-                            DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, context);
+                            DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, context.getActivity());
                         }
                     }
                 }
@@ -122,7 +109,7 @@ public class CashOutFunction {
         isConnectSuccess = false;
         this.cashOutListener = mCashOutListener;
         OkHttpClient client = new OkHttpClient();
-        String url = SocketUtil.getUrl(accountInfo, context);
+        String url = SocketUtil.getUrl(accountInfo, context.getActivity());
         Request requestCoinPrice = new Request.Builder().url(url).build();
         client.newWebSocket(requestCoinPrice, new WebSocketListener() {
             @SuppressLint("StaticFieldLeak")
@@ -134,7 +121,7 @@ public class CashOutFunction {
                     protected Void doInBackground(Void... voids) {
                         Gson gson = new Gson();
                         for (int i = 0; i < multiTransferList.size(); i++) {
-                            String jsonSend = gson.toJson(CommonUtils.getObjectJsonSendCashToCash(context, valuesList,
+                            String jsonSend = gson.toJson(CommonUtils.getObjectJsonSendCashToCash(context.getActivity(), valuesList,
                                     multiTransferList.get(i), contentSendMoney, i, typeSend, accountInfo));
                             webSocket.send(jsonSend);
                             Log.e("send_money", "send money ok");

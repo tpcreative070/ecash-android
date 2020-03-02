@@ -138,6 +138,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         homePresenter.setView(this);
         homePresenter.onViewCreate();
         updateAccountInfo();
+        checkPayment();
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
             homePresenter.getCashValues(accountInfo, getActivity());
         }
@@ -154,7 +155,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         }
-
+        if(accountInfo==null){
+            accountInfo =ECashApplication.getAccountInfo();
+        }
+        if(accountInfo.getUsername()==null){
+            accountInfo =CommonUtils.getAccountByUserName(getContext());
+        }
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
             updateNotification();
@@ -705,6 +711,13 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             }
         } else {
             dismissLoading();
+        }
+    }
+    private void checkPayment(){
+        if (ECashApplication.getAccountInfo() != null) {
+            if (dbAccountInfo != null) {
+                getPaymentDataBase();
+            }
         }
     }
 }

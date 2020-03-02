@@ -294,6 +294,10 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                 try {
                     Contact contact =(Contact) data.getParcelableExtra(Constant.EVENT_SCAN_CONTACT_PAYTO);
                     if(contact!=null){
+                        if(CommonUtils.checkWalletIDisMe(getActivity(),String.valueOf(contact.getWalletId()))){
+                            showDialogError(getActivity().getString(R.string.str_error_you_cannot_pay_for_your_self));
+                            return;
+                        }
                         tvEcashNumber.setText(contact.getWalletId().toString());
                         multiTransferList = new ArrayList<>();
                         multiTransferList.add(contact);

@@ -26,7 +26,9 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
+import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
+import vn.ecpay.ewallet.common.utils.QRCodeUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -81,47 +83,11 @@ public class FragmentMyQRCode extends ECashBaseFragment {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private void saveImageQRCode() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPreExecute() {
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                String root = Environment.getExternalStorageDirectory().toString();
-                File mFolder = new File(root + "/qr_my_account");
-                if (!mFolder.exists()) {
-                    mFolder.mkdir();
-                }
-                String imageName = accountInfo.getWalletId() + ".jpg";
-                File file = new File(mFolder, imageName);
-                if (file.exists())
-                    file.delete();
-                try {
-                    FileOutputStream out = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                    out.flush();
-                    out.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                dismissProgress();
-                Toast.makeText(getActivity(), getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
-            }
-        }.execute();
-    }
-
     @OnClick(R.id.tv_download)
     public void onViewClicked() {
         if(bitmap!=null){
-            saveImageQRCode(bitmap,String.valueOf(accountInfo.getWalletId()));
+            QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT);
+
         }
     }
 
@@ -131,8 +97,10 @@ public class FragmentMyQRCode extends ECashBaseFragment {
         switch (requestCode) {
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showProgress();
-                    saveImageQRCode();
+                    if(bitmap!=null){
+                        QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT);
+                    }
+
                 }
             }
             default:

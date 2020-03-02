@@ -21,35 +21,19 @@ import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import vn.ecpay.ewallet.common.api_request.APIService;
-import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.CustomFragmentTabHost;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
-import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
-import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.network.NetworkChangeReceiver;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.payment.Payments;
-import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.RequestUpdateMasterKey;
-import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseDataUpdateMasterKey;
-import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseUpdateMasterKey;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.fragment.FragmentQRCodeTab;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionHistory;
 import vn.ecpay.ewallet.ui.contact.fragment.FragmentContact;
 import vn.ecpay.ewallet.ui.home.HomeFragment;
-import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.ui.wallet.fragment.FragmentWallet;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
@@ -328,9 +312,12 @@ public class MainActivity extends ECashBaseActivity {
     private void handleDataToPayResult(Intent data) {
         if (data != null) {
             Payments payment = (Payments) data.getSerializableExtra(Constant.SCAN_QR_TOPAY);
-            if (payment != null) {
-                //validatePayment(payment);
-                showDialogNewPaymentRequest(payment, false);
+            if(payment!=null){
+                if(CommonUtils.checkWalletIDisMe(getActivity(),payment.getSender())){
+                    showDialogError(getActivity().getString(R.string.str_error_you_cannot_pay_for_your_self));
+                    return;
+                }
+                showDialogNewPaymentRequest(payment,false);
             }
         }
     }

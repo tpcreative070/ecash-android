@@ -519,7 +519,6 @@ public class CommonUtils {
         }
         return "";
     }
-
     public static void loadAvatar(Context mContext, CircleImageView avatar, String image) {
         if (mContext != null) {
             Glide.get(mContext).clearMemory();
@@ -589,210 +588,6 @@ public class CommonUtils {
         }
         return true;
     }
-
-    public static CashValid getCashForPayment(List<CashTotal> cashDatabase, long totalAmount) {
-        List<CashTotal> list = new ArrayList<>();
-        CashValid cashValid = new CashValid();
-        for (CashTotal cashTotal : cashDatabase) {
-            // 20000 : 2
-//            Log.e("cashTotal getParValue()", cashTotal.getParValue() + "");// 20000
-//            Log.e("cashTotal getTotal()", cashTotal.getTotal() + "");// 0
-//            Log.e("cashTotal getTotalDatabase()", cashTotal.getTotalDatabase() + "");// 2
-            //Log.e("div ",cashTotal.getParValue()* cashTotal.getTotalDatabase()%totalAmount+"");
-            if (cashTotal.getParValue() == totalAmount) {
-                Log.e("checkListECash", "1");
-                cashTotal.setTotal(1);
-                cashTotal.setTotalDatabase(1);
-                list.add(cashTotal);
-
-                cashValid.getListCashValid().addAll(list);
-                cashValid.setCashRemain(0);
-
-                cashValid.setListCashRemain(cashDatabase);
-                // return list;
-                return cashValid;
-            } else if (cashTotal.getParValue() < totalAmount) {
-                //todo" working here
-                Log.e("checkListECash", "4");
-                int cash = (int) totalAmount / cashTotal.getParValue();
-                int moneyRemain = (int) totalAmount % cashTotal.getParValue();
-//                    Log.e("cash", cash+"");
-                Log.e("moneyLeft....", moneyRemain + "");
-                if (cash > 0 && moneyRemain == 0) {
-                    if (cashTotal.getTotalDatabase() >= cash) {
-                        cashTotal.setTotal(cash);
-                        cashTotal.setTotalDatabase(cash);
-                        list.add(cashTotal);
-                        Log.e("checkListECash", "4.1");
-                        cashValid.getListCashValid().addAll(list);
-                        cashValid.setCashRemain(0);
-                        cashValid.setListCashRemain(cashDatabase);
-                        return cashValid;
-                    } else if (cashTotal.getTotalDatabase() < cash) {
-                        cashTotal.setTotal(cashTotal.getTotalDatabase());
-                        cashTotal.setTotalDatabase(cashTotal.getTotalDatabase());
-                        cashValid.getListCashValid().add(cashTotal);
-                        int left = (cash - cashTotal.getTotalDatabase()) * cashTotal.getParValue();
-                        moneyRemain = moneyRemain + left;
-                        cashDatabase.remove(cashTotal);
-                        CashValid cashV = getCashValid(cashDatabase, moneyRemain);
-                        if (cashV != null) {
-                            if (cashV.getListCashValid() != null) {
-                                cashValid.getListCashValid().addAll(cashV.getListCashValid());
-                            }
-                            cashValid.setCashRemain(cashV.getCashRemain());
-
-                            return cashValid;
-                        }
-                    }
-
-                } else if (cash > 0 && moneyRemain > 0) {
-                    if (cashTotal.getTotalDatabase() >= cash) {
-                        //Log.e("checkListECash", "4.11");
-                        cashTotal.setTotal(cash);
-                        cashTotal.setTotalDatabase(cash);
-                        //list.add(cashTotal);
-                        cashValid.getListCashValid().add(cashTotal);
-                    } else if (cashTotal.getTotalDatabase() < cash) {
-                        // Log.e("checkListECash", "4.12");
-                        cashTotal.setTotal(cashTotal.getTotalDatabase());
-                        cashTotal.setTotalDatabase(cashTotal.getTotalDatabase());
-                        cashValid.getListCashValid().add(cashTotal);
-                        // list.add(cashTotal);
-                        int left = (cash - cashTotal.getTotalDatabase()) * cashTotal.getParValue();
-                        //  Log.e("left", left+"");
-                        moneyRemain = moneyRemain + left;
-                    }
-                    CashValid cashV = getCashValid(cashDatabase, moneyRemain);
-                    if (cashV != null) {
-                        if (cashV.getListCashValid() != null) {
-                            cashValid.getListCashValid().addAll(cashV.getListCashValid());
-                        }
-                        cashValid.setCashRemain(cashV.getCashRemain());
-
-
-                        return cashValid;
-                    }
-
-                } else if (cash == 0 && moneyRemain > 0) {
-                    Log.e("checkListECash", "cash==0&&b>moneyLeft");
-                } else if (cash == 0 && moneyRemain == 0) {
-                    Log.e("checkListECash", "cash==0&&b==moneyLeft");
-                }
-            }
-
-        }
-        if (cashValid.getListCashValid().size() == 0) {
-            cashValid.setCashRemain((int) totalAmount);
-            cashValid.setListCashRemain(cashDatabase);
-        }
-        return cashValid;
-    }
-
-
-    private static CashValid getCashValid(List<CashTotal> cashDatabase, int money) {// b: so tien con du
-        List<CashTotal> list = new ArrayList<>();
-        CashValid cashValid = new CashValid();
-        //  Collections.reverse(cashDatabase);
-        int moneyRemain = money;
-        cashValid.setCashRemain(moneyRemain);
-        for (CashTotal cashTotalTemp : cashDatabase) {
-            // Log.e("moneyRemain " + cashTotalTemp.getParValue(), moneyRemain + "");
-            if (cashValid.getCashRemain() == 0) {
-                // Log.e("moneyRemain =0 ","return ");
-                return cashValid;
-            }
-            if (moneyRemain == cashTotalTemp.getParValue()) {
-                cashTotalTemp.setTotal(1);
-                cashTotalTemp.setTotalDatabase(1);
-                // list.add(cashTotalTemp);
-                cashValid.getListCashValid().add(cashTotalTemp);
-                cashValid.setCashRemain(0);
-                cashValid.setListCashRemain(cashDatabase);
-                return cashValid;
-            } else if (moneyRemain > cashTotalTemp.getParValue() && cashTotalTemp.getTotal() == 0) {
-                if (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase() == moneyRemain) {
-                    //list.add(cashTotalTemp);
-                    moneyRemain = moneyRemain - (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase());
-                    cashValid.getListCashValid().add(cashTotalTemp);
-                    cashValid.setCashRemain(moneyRemain);
-
-                } else if (cashTotalTemp.getParValue() * cashTotalTemp.getTotalDatabase() % moneyRemain == 0) {
-                    Log.e("here 1", cashTotalTemp.getParValue() + "");
-                    boolean checklist = false;
-
-                    for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
-                        if (moneyRemain == cashTotalTemp.getParValue() * i) {
-                            cashTotalTemp.setTotal(i);
-                            cashTotalTemp.setTotalDatabase(i);
-                            //  list.add(cashTotalTemp);
-                            moneyRemain = moneyRemain - (cashTotalTemp.getParValue() * i);
-                            cashValid.getListCashValid().add(cashTotalTemp);
-                            cashValid.setCashRemain(moneyRemain);
-                            Log.e("moneyRemain 0", moneyRemain + "");
-                            checklist = true;
-                        }
-                    }
-                    if (!checklist) {
-                        boolean checked = false;
-                        for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
-                            if (!checked) {
-                                if (cashTotalTemp.getParValue() * i > moneyRemain) {
-                                    i = i - 1;
-                                    cashTotalTemp.setTotal(i);
-                                    cashTotalTemp.setTotalDatabase(i);
-                                    //  list.add(cashTotalTemp);
-                                    moneyRemain = moneyRemain - (cashTotalTemp.getParValue() * i);
-                                    cashValid.getListCashValid().add(cashTotalTemp);
-                                    cashValid.setCashRemain(moneyRemain);
-                                    checked = true;
-                                    Log.e("moneyRemain 0.1", moneyRemain + "");
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Log.e("cashTotalTemp", cashTotalTemp.getParValue() + "");
-                    boolean checklist = false;
-                    for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
-                        if (moneyRemain == cashTotalTemp.getParValue() * i) {
-                            cashTotalTemp.setTotal(i);
-                            cashTotalTemp.setTotalDatabase(i);
-                            //  list.add(cashTotalTemp);
-                            moneyRemain = moneyRemain - (cashTotalTemp.getParValue() * i);
-                            cashValid.getListCashValid().add(cashTotalTemp);
-                            cashValid.setCashRemain(moneyRemain);
-                            Log.e("moneyRemain 1.1", moneyRemain + "");
-                            checklist = true;
-                        }
-                    }
-
-                    if (!checklist) {
-                        boolean checked = false;
-                        for (int i = 1; i <= cashTotalTemp.getTotalDatabase(); i++) {
-                            if (!checked) {
-                                if (cashTotalTemp.getParValue() * i > moneyRemain) {
-                                    i = i - 1;
-                                    cashTotalTemp.setTotal(i);
-                                    cashTotalTemp.setTotalDatabase(i);
-                                    //  list.add(cashTotalTemp);
-                                    moneyRemain = moneyRemain - (cashTotalTemp.getParValue() * i);
-                                    cashValid.getListCashValid().add(cashTotalTemp);
-                                    cashValid.setCashRemain(moneyRemain);
-                                    checked = true;
-                                    Log.e("moneyRemain 1.2", moneyRemain + "");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        //  Log.e("moneyRemain ",cashValid.getCashRemain()+"");
-        cashValid.setListCashRemain(cashDatabase);
-        return cashValid;
-    }
-
     public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
                                                                  Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
@@ -870,5 +665,15 @@ public class CommonUtils {
     public static AccountInfo getAccountByUserName(Context context) {
         String username = ECashApplication.getAccountInfo().getUsername();
         return DatabaseUtil.getAccountInfo(username, context);
+    }
+    public static  boolean checkWalletIDisMe(Context context,String walletID){
+        String userName = ECashApplication.getAccountInfo().getUsername();
+        AccountInfo accountInfo =DatabaseUtil.getAccountInfo(userName, context);
+        if(accountInfo!=null&&walletID!=null){
+            if(walletID.equals(String.valueOf(accountInfo.getWalletId()))){
+                return true;
+            }
+        }
+        return false;
     }
 }

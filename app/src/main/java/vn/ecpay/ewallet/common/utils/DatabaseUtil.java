@@ -18,6 +18,7 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.BaseObject;
@@ -401,5 +402,21 @@ public class DatabaseUtil {
         }
 
         return isValid;
+    }
+
+    public static void insertPayment(Context context,final Payment_DataBase payment) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        WalletDatabase.insertPayment(payment);
+    }
+
+    public static Payment_DataBase getPayment(Context context) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        return WalletDatabase.getPayment();
+    }
+
+    public static void deletePayment(Context context,int id) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        WalletDatabase.deletePayment(id);
+
     }
 }

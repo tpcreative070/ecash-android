@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.database.table.CashValues_Database;
 import vn.ecpay.ewallet.database.table.Contact_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
 import vn.ecpay.ewallet.database.table.Notification_Database;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.database.table.Profile_Database;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
@@ -274,4 +275,17 @@ public interface WalletAccess {
 
     @RawQuery
     List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(SimpleSQLiteQuery strQuery);
+
+    // todo payment---------------------------------------------------------------------------------------
+    @Insert
+    void insertOnlySinglePayment(Payment_DataBase payment_dataBase);
+
+    @Delete
+    void deletePayment(Payment_DataBase payment_dataBase);
+
+    @Query("DELETE From PAYMENTS WHERE id = :id")
+    void deletePayment(int id);
+
+    @Query("SELECT * FROM PAYMENTS LIMIT 1")
+    Payment_DataBase getSinglePayment();
 }

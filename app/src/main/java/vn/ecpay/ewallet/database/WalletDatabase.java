@@ -30,6 +30,7 @@ import vn.ecpay.ewallet.database.table.Issuers_Database;
 import vn.ecpay.ewallet.database.table.MerchantsDiary_Database;
 import vn.ecpay.ewallet.database.table.Merchants_Database;
 import vn.ecpay.ewallet.database.table.Notification_Database;
+import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.database.table.Profile_Database;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
@@ -60,7 +61,8 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         IssuersDiary_Database.class,
         Merchants_Database.class,
         MerchantsDiary_Database.class,
-        CacheData_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
+        CacheData_Database.class,
+        Payment_DataBase.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -534,4 +536,23 @@ public abstract class WalletDatabase extends RoomDatabase {
 
         return walletDatabase.daoAccess().getAllTransactionsHistoryFilter(new SimpleSQLiteQuery(strTransactionsHistoryQuery));
     }
+
+    public static void insertPayment(final Payment_DataBase payment) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                walletDatabase.daoAccess().insertOnlySinglePayment(payment);
+                return null;
+            }
+        }.execute();
+    }
+
+    public static Payment_DataBase getPayment() {
+        return walletDatabase.daoAccess().getSinglePayment();
+    }
+
+    public static void deletePayment(int id) {
+        walletDatabase.daoAccess().deletePayment(id);
+    }
+
 }
