@@ -100,12 +100,10 @@ public class CashInPresenterImpl implements CashInPresenter {
 
         Gson gson = new Gson();
         String json = gson.toJson(requestEdongToECash);
-        Log.e("requestEdongToECash", json);
         Call<ResponseEdongToECash> call = apiService.transferMoneyEdongToECash(requestEdongToECash);
         call.enqueue(new Callback<ResponseEdongToECash>() {
             @Override
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
-                Log.e("done", "skdhghjk");
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
@@ -139,8 +137,6 @@ public class CashInPresenterImpl implements CashInPresenter {
             @Override
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashInView.dismissLoading();
-                Log.e("call ", call.toString());
-                Log.e("t ", t.getMessage());
                 cashInView.showDialogError(application.getString(R.string.err_upload));
             }
         });
@@ -161,7 +157,7 @@ public class CashInPresenterImpl implements CashInPresenter {
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEdongInfo));
         requestEdongInfo.setChannelSignature(CommonUtils.generateSignature(dataSign));
-        CommonUtils.logJson(requestEdongInfo);
+
         Call<ResponseEdongInfo> call = apiService.getEdongInfo(requestEdongInfo);
         call.enqueue(new Callback<ResponseEdongInfo>() {
             @Override
