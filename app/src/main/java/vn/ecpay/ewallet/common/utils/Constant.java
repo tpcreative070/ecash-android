@@ -106,9 +106,8 @@ public class Constant {
     public static final String EVENT_PAYMENT_SUCCESS = "EVENT_PAYMENT_SUCCESS";
     public static final String EVENT_SEND_REQUEST_PAYTO = "EVENT_SEND_REQUEST_PAYTO";
     public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
-    public static final String EVENT_ACCOUNT_LOGOUT = "EVENT_ACCOUNT_LOGOUT";
+    public static final String EVENT_CLOSE_SOCKET = "EVENT_CLOSE_SOCKET";
     public static final String EVENT_NEW_PAYMENT = "EVENT_NEW_PAYMENT";
-
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
     public static final String FUNCTION_LOGIN = "FU00004";
@@ -138,6 +137,7 @@ public class Constant {
     public static final String FUNCTION_UPDATE_ACCOUNT_INFO = "GWEC0021";
     public static final String FUNCTION_UPDATE_AVARTAR = "GWEC0022";
     public static final String FUNCTION_GET_MONEY_VALUE = "GWEC0031";
+    public static final String FUNCTION_UPDATE_MASTER_KEY = "GWEC0008";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";

@@ -41,6 +41,7 @@ public class ECashApplication extends Application {
     private static ECashApplication sInstance;
     private Gson mGSon;
     public static boolean isChangeDataBase = false;
+    public static boolean isCancelAccount = false;
 
     public static boolean isIsChangeDataBase() {
         return isChangeDataBase;
@@ -186,7 +187,7 @@ public class ECashApplication extends Application {
 
     }
 
-    public void showDialogSwitchLogin(final String messenger) {
+    public static void showDialogSwitchLogin(final String messenger) {
         if (DialogUtil.getInstance().isShowing()) {
             DialogUtil.getInstance().dismissDialog();
         }

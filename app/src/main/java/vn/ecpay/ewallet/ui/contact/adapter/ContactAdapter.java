@@ -25,6 +25,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
+import vn.ecpay.ewallet.ui.interfaceListener.ContactTransferListener;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
 public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -36,15 +37,17 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     WeakReference<Context> mContextWeakReference;
     private onDeleteItem onDeleteItem;
     ArrayList<Contact> multiTransferList;
+    private ContactTransferListener contactTransferListener;
 
     public interface onDeleteItem {
         void onDeleteOK(int pos);
     }
 
-    public ContactAdapter(List<Contact> mCountriesModelList, Context context, onDeleteItem mOnDeleteItem) {
+    public ContactAdapter(List<Contact> mCountriesModelList, Context context, onDeleteItem mOnDeleteItem, ContactTransferListener contactTransferListener) {
         this.mCountriesModelList = mCountriesModelList;
         this.mContextWeakReference = new WeakReference<>(context);
         this.onDeleteItem = mOnDeleteItem;
+        this.contactTransferListener = contactTransferListener;
     }
 
     @Override
@@ -92,21 +95,16 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         itemViewHolder.tvName.setText(context.getString(R.string.str_item_transfer_cash,
                 contactTransferModel.getFullName(), String.valueOf(contactTransferModel.getWalletId())));
         itemViewHolder.tvPhone.setText(contactTransferModel.getPhone());
-        itemViewHolder.layoutEdit.setOnClickListener(new View.OnClickListener() {
+        itemViewHolder.layoutEdit.setOnClickListener(v -> DialogUtil.getInstance().showDialogEditContact(context, contactTransferModel, new DialogUtil.OnContactUpdate() {
             @Override
-            public void onClick(View v) {
-                DialogUtil.getInstance().showDialogEditContact(context, contactTransferModel, new DialogUtil.OnContactUpdate() {
-                    @Override
-                    public void OnListenerOk(String name) {
-                        DatabaseUtil.updateNameContact(context, name, contactTransferModel.getWalletId());
-                        if (!contactTransferModel.getFullName().equals(name)) {
-                            mCountriesModelList.get(position).setFullName(name);
-                            notifyItemChanged(position);
-                        }
-                    }
-                });
+            public void OnListenerOk(String name) {
+                DatabaseUtil.updateNameContact(context, name, contactTransferModel.getWalletId());
+                if (!contactTransferModel.getFullName().equals(name)) {
+                    mCountriesModelList.get(position).setFullName(name);
+                    notifyItemChanged(position);
+                }
             }
-        });
+        }));
 
         itemViewHolder.layoutDelete.setOnClickListener(v -> {
             if (null != onDeleteItem) {
@@ -138,6 +136,7 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 mCountriesModelList.get(position).setAddTransfer(true);
                 itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
             }
+            contactTransferListener.addContactChange();
         });
     }
 
@@ -166,6 +165,7 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class SectionHeaderViewHolder extends RecyclerView.ViewHolder {
         TextView tvHeader;
+
         SectionHeaderViewHolder(View itemView) {
             super(itemView);
             tvHeader = itemView.findViewById(R.id.tv_header);

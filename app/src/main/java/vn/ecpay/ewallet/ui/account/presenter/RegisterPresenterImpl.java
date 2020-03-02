@@ -22,6 +22,7 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
@@ -220,6 +221,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         accountInfo.setPersonMiddleName(requestRegister.getPersonMiddleName());
                         accountInfo.setPersonLastName(requestRegister.getPersonLastName());
                         accountInfo.setEcKeyPublicValue(requestRegister.getEcKeyPublicValue());
+                        accountInfo.setLastAccessTime(accountInfo.getLastAccessTime());
                         registerView.registerSuccess(accountInfo, privateKeyBase64, publicKeyBase64);
                     } else {
                         if(response.body().getResponseCode()!=null){

@@ -154,15 +154,9 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     // todo Cash_Value-------------------------------------------------------------------------------
     public static void insertCashValue(Denomination cashValues) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                CashValues_Database cashValues_database = new CashValues_Database();
-                cashValues_database.setParValue(cashValues.getValue());
-                walletDatabase.daoAccess().insertCashValue(cashValues_database);
-                return null;
-            }
-        }.execute();
+        CashValues_Database cashValues_database = new CashValues_Database();
+        cashValues_database.setParValue(cashValues.getValue());
+        walletDatabase.daoAccess().insertCashValue(cashValues_database);
     }
 
     public static void deleteAllCashValue() {
@@ -308,11 +302,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     public static int getTotalCash(String type) {
-        try {
-            return walletDatabase.daoAccess().getTotalCash(type);
-        } catch (Exception e) {
-            return 0;
-        }
+        return walletDatabase.daoAccess().getTotalCash(type);
     }
 
     public static List<CashLogs_Database> getListCashForMoney(String money, String type) {
@@ -395,6 +385,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         user.setPersonEmail(accountInfo.getPersonEmail());
         user.setPersonCurrentAddress(accountInfo.getPersonCurrentAddress());
         user.setLarge(accountInfo.getLarge());
+        user.setLastAccessTime(accountInfo.getLastAccessTime());
         insertAccountInfoTask(user, Constant.STR_EMPTY);
     }
 
@@ -432,6 +423,10 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static void updateAccountAvatar(String bIconLarge, String userName) {
         walletDatabase.daoAccess().updateAvatar(bIconLarge, userName);
+    }
+
+    public static void updateAccountLastAccessTime(String time, String userName) {
+        walletDatabase.daoAccess().updateAccessTime(time, userName);
     }
 
     // todo transaction_log_QR_code-------------------------------------------------------------------------------

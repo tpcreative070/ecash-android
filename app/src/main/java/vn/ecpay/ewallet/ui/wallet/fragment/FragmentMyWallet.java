@@ -145,9 +145,10 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
-                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS) || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
-            if (getActivity() == null) return;
-            getActivity().runOnUiThread(this::updateBalance);
+                || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
+                || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)
+                || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
+            updateBalance();
         }
 
         if (event.getData().equals(Constant.EVENT_UPDATE_ACCOUNT_INFO)) {
@@ -163,8 +164,26 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
         EventBus.getDefault().removeStickyEvent(event);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (ECashApplication.isCancelAccount) {
+            handleCancelAccount();
+        }
+    }
+
+    private void handleCancelAccount() {
+        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+        if (balance == 0) {
+            myWalletPresenter.validateCancelAccount(balance, accountInfo);
+        } else {
+            ECashApplication.isCancelAccount = false;
+        }
+    }
+
     private void updateBalance() {
-        if (WalletDatabase.numberRequest == 0) {
+        long numberCash = WalletDatabase.getAllCash().size();
+        if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
             balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
             tvPrice.setText(CommonUtils.formatPriceVND(balance));
@@ -196,7 +215,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
 
     @Override
     public void onLogoutSuccess() {
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_ACCOUNT_LOGOUT));
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CLOSE_SOCKET));
         Intent intent = new Intent(getActivity(), AccountActivity.class);
         startActivity(intent);
         if (getActivity() != null)
@@ -208,6 +227,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
         DialogUtil.getInstance().showDialogCancelAccount(getActivity(), balance, new DialogUtil.OnCancelAccount() {
             @Override
             public void OnListenerTransferCash() {
+                ECashApplication.isCancelAccount = true;
                 Intent intentTransferCash = new Intent(getActivity(), CashToCashActivity.class);
                 getActivity().startActivity(intentTransferCash);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -215,6 +235,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
 
             @Override
             public void OnListenerCashOut() {
+                ECashApplication.isCancelAccount = true;
                 Intent intentCashOut = new Intent(getActivity(), CashOutActivity.class);
                 getActivity().startActivity(intentCashOut);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

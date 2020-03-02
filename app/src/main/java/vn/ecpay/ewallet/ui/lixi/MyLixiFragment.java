@@ -38,6 +38,7 @@ import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.AdapterCashLogTransactionsHistory;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 import vn.ecpay.ewallet.ui.lixi.adapter.MyLixiAdapter;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
@@ -76,17 +77,28 @@ public class MyLixiFragment extends ECashBaseFragment {
                 if (!DatabaseUtil.isTransactionLogExit(responseMess, getActivity())) {
                     if (responseMess.getCashEnc() != null) {
                         CashInFunction cashInFunction = new CashInFunction(accountInfo, getActivity(), responseMess);
-                        cashInFunction.handleCashIn(() -> new Timer().schedule(new TimerTask() {
+                        cashInFunction.handleCashIn(new CashInSuccessListener() {
                             @Override
-                            public void run() {
-                                if (getActivity() == null) return;
-                                getActivity().runOnUiThread(() -> {
-                                    dismissProgress();
-                                    DatabaseUtil.updateStatusLixi(getActivity(), Constant.OPEN, cashTemp.getId());
-                                    showDialogLixiDetail(cashTemp, responseMess.getContent());
-                                });
+                            public void onCashInSuccess() {
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        if (getActivity() == null) return;
+                                        getActivity().runOnUiThread(() -> {
+                                            dismissProgress();
+                                            DatabaseUtil.updateStatusLixi(getActivity(), Constant.OPEN, cashTemp.getId());
+                                            showDialogLixiDetail(cashTemp, responseMess.getContent());
+                                        });
+                                    }
+                                }, 1000);
                             }
-                        }, 1000));
+
+                            @Override
+                            public void onCashInFail() {
+                                dismissProgress();
+                                showDialogError(getResources().getString(R.string.err_upload));
+                            }
+                        });
                     }
                 } else {
                     dismissProgress();

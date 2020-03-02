@@ -8,4 +8,6 @@ public interface CashOutView extends BaseView {
     void showDialogError(String err);
 
     void sendECashToEDongSuccess();
+
+    void getEDongInfoSuccess();
 }

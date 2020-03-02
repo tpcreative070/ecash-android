@@ -50,6 +50,7 @@ import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.contact.adapter.ContactAdapter;
+import vn.ecpay.ewallet.ui.interfaceListener.ContactTransferListener;
 import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
 public class FragmentContact extends ECashBaseFragment {
@@ -112,12 +113,12 @@ public class FragmentContact extends ECashBaseFragment {
     }
 
     private void setAdapter(List<Contact> listContact) {
+        mSectionList = new ArrayList<>();
         if (listContact.size() == 0) {
             recyclerView.setVisibility(View.GONE);
             return;
         }
         recyclerView.setVisibility(View.VISIBLE);
-        mSectionList = new ArrayList<>();
         getHeaderListLatter(listContact);
         recyclerView.setHasFixedSize(true);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -125,8 +126,18 @@ public class FragmentContact extends ECashBaseFragment {
         mAdapter = new ContactAdapter(mSectionList, getActivity(), pos -> {
             showProgress();
             deleteContact(mSectionList.get(pos));
-        });
+        }, this::checkListContactTransfer);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void checkListContactTransfer() {
+        for (int i = 0; i < mSectionList.size(); i++) {
+            if (mSectionList.get(i).isAddTransfer) {
+                tvDone.setVisibility(View.VISIBLE);
+                return;
+            }
+        }
+        tvDone.setVisibility(View.GONE);
     }
 
     private void getHeaderListLatter(List<Contact> usersList) {

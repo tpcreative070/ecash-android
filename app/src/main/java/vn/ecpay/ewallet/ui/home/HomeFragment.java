@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
+import com.google.gson.Gson;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -137,6 +139,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         homePresenter.onViewCreate();
         updateAccountInfo();
         checkPayment();
+        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
+            homePresenter.getCashValues(accountInfo, getActivity());
+        }
     }
 
     private void updateAccountInfo() {
@@ -158,11 +163,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
         dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
-            homePresenter.getCashValues(accountInfo, getActivity());
             updateNotification();
             updateNumberLixi();
-            //todo sync data
-            // syncData();
             accountInfo = dbAccountInfo;
             tvHomeAccountName.setText(CommonUtils.getFullName(accountInfo));
             tvHomeAccountId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -185,28 +187,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             layoutActiveAccount.setVisibility(View.VISIBLE);
             layoutFullInfo.setVisibility(View.GONE);
         }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private void syncData() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                if (null != getActivity()) {
-                    getActivity().startService(new Intent(getActivity(), SyncCashService.class));
-                    if (DatabaseUtil.getAllCacheData(getActivity()).size() > 0) {
-                        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
-                    }
-                }
-
-                if (DatabaseUtil.checkTransactionsLogs(getActivity()) && DatabaseUtil.checkCashLogs(getActivity())) {
-                    ECashApplication.setIsChangeDataBase(false);
-                } else {
-                    ECashApplication.setIsChangeDataBase(true);
-                }
-                return null;
-            }
-        }.execute();
     }
 
     private void updateNotification() {
@@ -246,30 +226,34 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     private void updateBalance() {
-        if (WalletDatabase.numberRequest == 0) {
-            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-            tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
+        long numberCash = WalletDatabase.getAllCash().size();
+        if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
+            if (getActivity() != null)
+                getActivity().runOnUiThread(() -> {
+                    WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+                    String a = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_IN));
+                    String b = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_OUT));
+                    balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+                    tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
 
-            listEDongInfo = ECashApplication.getListEDongInfo();
-            if (listEDongInfo.size() > 0) {
-                for (int i = 0; i < listEDongInfo.size(); i++) {
-                    if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
-                        tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
+                    listEDongInfo = ECashApplication.getListEDongInfo();
+                    if (listEDongInfo.size() > 0) {
+                        for (int i = 0; i < listEDongInfo.size(); i++) {
+                            if (listEDongInfo.get(i).getAccountIdt().equals(eDongInfoCashIn.getAccountIdt())) {
+                                tvHomeAccountEdong.setText(listEDongInfo.get(i).getAccountIdt());
+                                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
+                            }
+                        }
+                    } else {
+                        tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
                         tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
                     }
-                }
-            } else {
-                tvHomeAccountEdong.setText(String.valueOf(listEDongInfo.get(0).getAccountIdt()));
-                tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
-            }
+                });
         } else {
-            Log.e("updateBalance", "updateBalance");
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (getActivity() != null)
-                        getActivity().runOnUiThread(() -> updateBalance());
+                    updateBalance();
                 }
             }, 1000);
         }
@@ -553,7 +537,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-        //Log.e("Home Event Bus", event.getData());
+      //  Log.e("Home Event Bus", new Gson().toJson(event.getData()));
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }
@@ -566,14 +550,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)
                 || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)
                 || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)) {
-
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (getActivity() != null)
-                        getActivity().runOnUiThread(() -> updateBalance());
-                }
-            }, 4000);
+            updateBalance();
         }
 
         if (event.getData().equals(Constant.UPDATE_NOTIFICATION)) {
@@ -628,6 +605,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         ECashApplication.setAccountInfo(mAccountInfo);
         DatabaseUtil.saveAccountInfo(mAccountInfo, getActivity());
         updateActiveAccount();
+        homePresenter.getCashValues(accountInfo, getActivity());
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
         Toast.makeText(getActivity(), getString(R.string.str_active_account_success), Toast.LENGTH_LONG).show();
     }
@@ -693,7 +671,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
             @Override
             public void onCancel() {
-                //((AccountActivity) getActivity()).onBackPressed();//todo crash app
+                ((AccountActivity) getActivity()).onBackPressed();
             }
         });
     }
@@ -703,20 +681,32 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     public void getCashValuesSuccess(List<Denomination> cashValuesList) {
         if (null != cashValuesList) {
             if (cashValuesList.size() > 0) {
-                DatabaseUtil.deleteAllCashValue(getActivity());
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         for (int i = 0; i < cashValuesList.size(); i++) {
                             DatabaseUtil.saveCashValue(cashValuesList.get(i), getActivity());
                         }
+
+                        if (null != getActivity()) {
+                            getActivity().startService(new Intent(getActivity(), SyncCashService.class));
+                            if (DatabaseUtil.getAllCacheData(getActivity()).size() > 0) {
+                                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CASH_IN));
+                            }
+                        }
+
+                        if (DatabaseUtil.checkTransactionsLogs(getActivity()) && DatabaseUtil.checkCashLogs(getActivity())) {
+                            ECashApplication.setIsChangeDataBase(false);
+                        } else {
+                            ECashApplication.setIsChangeDataBase(true);
+                        }
+
                         return null;
                     }
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
-                        dismissProgress();
+                        dismissLoading();
                     }
                 }.execute();
             }

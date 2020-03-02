@@ -155,7 +155,7 @@ public class DatabaseUtil {
         return CommonUtils.generateSignature(dataSign, CommonUtils.getPrivateChannelKey());
     }
 
-    public static void changePassDatabase(Context context, String masterKey) {
+    public static void changeMasterKeyDatabase(Context context, String masterKey) {
         if (null != KeyStoreUtils.getMasterKey(context)) {
             WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
             WalletDatabase.changeKey(masterKey);

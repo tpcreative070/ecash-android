@@ -205,8 +205,20 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             return;
         }
 
+        if (userName.length() <= 3) {
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_user_name_lenght));
+            dismissProgress();
+            return;
+        }
+
         if (name.isEmpty()) {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_name_null));
+            dismissProgress();
+            return;
+        }
+
+        if (name.length() <= 2) {
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_name_lenght));
             dismissProgress();
             return;
         }
@@ -327,7 +339,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void registerSuccess(AccountInfo mAccountInfo, String privateKeyBase64, String publicKeyBase64) {
-        DatabaseUtil.changePassDatabase(getActivity(), mAccountInfo.getMasterKey());
+        DatabaseUtil.changeMasterKeyDatabase(getActivity(), mAccountInfo.getMasterKey());
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

@@ -207,22 +207,25 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (response.body().getResponseData().getListAcc().size() > 0) {
                                 ECashApplication.setListEDongInfo(response.body().getResponseData().getListAcc());
+                                cashOutView.getEDongInfoSuccess();
                             }
                         } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             cashOutView.dismissLoading();
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            cashOutView.dismissLoading();
-                            cashOutView.showDialogError(response.body().getResponseMessage());
+                            cashOutView.getEDongInfoSuccess();
                         }
+                    } else {
+                        cashOutView.getEDongInfoSuccess();
                     }
+                } else {
+                    cashOutView.getEDongInfoSuccess();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
-                cashOutView.dismissLoading();
-                cashOutView.showDialogError(application.getString(R.string.err_upload));
+                cashOutView.getEDongInfoSuccess();
             }
         });
     }
