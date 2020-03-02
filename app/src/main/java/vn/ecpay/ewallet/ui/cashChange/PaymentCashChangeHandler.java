@@ -43,9 +43,13 @@ import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrgan
 import vn.ecpay.ewallet.ui.cashChange.component.CashChangeSuccess;
 import vn.ecpay.ewallet.ui.cashChange.component.GetFullNameAccountRequest;
 import vn.ecpay.ewallet.ui.cashChange.component.PublicKeyOrganization;
+import vn.ecpay.ewallet.ui.cashToCash.fragment.CashToCashFragment;
+import vn.ecpay.ewallet.ui.function.CashOutFunction;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
 import vn.ecpay.ewallet.ui.function.ToPayFuntion;
+import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
 import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
+import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
@@ -521,16 +525,22 @@ public class PaymentCashChangeHandler {
         Contact contact = new Contact();
         contact.setWalletId(Long.parseLong(payToRequest.getSender()));
         listContact.add(contact);
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(activity);
         ToPayFuntion toPayFuntion = new ToPayFuntion(activity, listCash, contact, payToRequest);
-        toPayFuntion.handlePayToSocket(new ToPayListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
-            public void onToPaySuccess() {
+            public void onUpdateMasterSuccess() {
+                toPayFuntion.handlePayToSocket(() -> {
+                    activity.dismissLoading();
+                    showDialogPaymentSuccess(payToRequest);
+                });
+            }
+            @Override
+            public void onUpdateMasterFail() {
                 activity.dismissLoading();
-
-                showDialogPaymentSuccess(payToRequest);
+                activity.showDialogError(activity.getResources().getString(R.string.err_change_database));
             }
         });
-
     }
     public void showDialogPaymentSuccess(Payment_DataBase payment_dataBase) {
        // DatabaseUtil.deletePayment(activity,payment_dataBase.getId());
