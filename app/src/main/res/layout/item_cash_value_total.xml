@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="10dp"
+    android:padding="7dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
@@ -18,20 +18,22 @@
 
     <TextView
         android:id="@+id/tv_sl_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="28dp"
+        android:layout_height="25dp"
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/tv_value"
-        android:text="Số lượng: 20"
-        android:textColor="@color/red"
+        android:text="20"
+        android:gravity="center"
+        android:background="@drawable/bg_circle_blue_border"
+        android:textColor="@color/blue"
         android:textSize="@dimen/text_normal" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/bg_gray_rectangle_border"
+        android:background="@drawable/bg_blue_rectangle_boder"
         android:orientation="horizontal">
 
         <ImageView
@@ -40,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="15dp"
-            android:src="@drawable/ic_minus" />
+            android:src="@drawable/ic_minus_blue" />
 
         <TextView
             android:id="@+id/tv_total"
@@ -48,9 +50,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="0"
-            android:textColor="@color/black"
+            android:textColor="@color/black_two"
             android:textSize="@dimen/text_xlarge"
-            android:textStyle="bold" />
+             />
 
         <ImageView
             android:id="@+id/iv_up"
@@ -58,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="15dp"
-            android:src="@drawable/ic_plus" />
+            android:src="@drawable/ic_plus_blue" />
 
     </LinearLayout>
 </RelativeLayout>

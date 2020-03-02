@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -328,7 +327,7 @@ public class DialogUtil {
     public void showDialogCashChange(Context pContext, final OnResultChoseCash onResultChoseCash) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_chose_cash);
+            mDialog.setContentView(R.layout.dialog_chose_cash_change);
 
             Button btnOk;
             TextView tvTotalMoney, tvTitle;
@@ -369,7 +368,7 @@ public class DialogUtil {
     public void showDialogCashTake(Context pContext, final OnResultChoseCash onResultChoseCash) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_chose_cash);
+            mDialog.setContentView(R.layout.dialog_chose_cash_change);
 
             Button btnOk;
             TextView tvTotalMoney, tvTitle;
@@ -683,7 +682,8 @@ public class DialogUtil {
             TextView tv_title=mDialog.findViewById(R.id.tv_title);
             RecyclerView rvCashValues=mDialog.findViewById(R.id.rv_cash_values);
 
-            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash, context);
+            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash,false, context);
+            //rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
             rvCashValues.setAdapter(cashValueAdapter);
             TextView tvTotalAmount=mDialog.findViewById(R.id.tv_total_payment);
             TextView tvContent=mDialog.findViewById(R.id.tv_content_payment);

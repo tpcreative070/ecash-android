@@ -320,4 +320,13 @@
     <string name="str_error_you_cannot_pay_for_your_self">You cannot pay for yourself!</string>
     <string name="str_error_limited_select_contact">You may select up to 10 people for each request</string>
     <string name="str_denominations_available">the denominations available</string>
+    <string name="str_ecash_wants_to_change">eCash wants to change:</string>
+    <string name="str_ecash_wants_to_receive">eCash wants to receive:</string>
+    <string name="str_choose_face_value">Choose face value</string>
+    <string name="str_select_the_face_value_you_want_to_change">Select the eCash face value you want to change</string>
+    <string name="str_select_the_face_value_you_want_to_receive">Select the eCash face value you want to receive</string>
+    <string name="str_total_money_change">Total money change:</string>
+    <string name="str_total_money_receive">Total money receive:</string>
+    <string name="str_change_norm">Change norm:</string>
+    <string name="str_the_total_number_of_eCash_that_you_want_to_receive_is_exceeded">Tổng số eCash muốn nhận vượt định mức</string>
 </resources>

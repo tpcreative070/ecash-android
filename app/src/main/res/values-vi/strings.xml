@@ -314,6 +314,15 @@
     <string name="str_error_you_cannot_pay_for_your_self">Bạn không thể thanh toán cho chính mình!</string>
     <string name="str_error_limited_select_contact">Bạn được chọn tối đa 10 người cho mỗi lần yêu cầu </string>
     <string name="str_denominations_available">Các mệnh giá đang có</string>
+    <string name="str_ecash_wants_to_change">eCash muốn đổi:</string>
+    <string name="str_ecash_wants_to_receive">eCash muốn nhận:</string>
+    <string name="str_choose_face_value">Chọn mệnh giá</string>
+    <string name="str_select_the_face_value_you_want_to_change">Chọn mệnh giá eCash muốn đổi</string>
+    <string name="str_select_the_face_value_you_want_to_receive">Chọn mệnh giá eCash muốn nhận</string>
+    <string name="str_total_money_change">Tổng tiền đổi:</string>
+    <string name="str_total_money_receive">Tổng tiền nhận:</string>
+    <string name="str_change_norm">Định mức đổi:</string>
+    <string name="str_the_total_number_of_eCash_that_you_want_to_receive_is_exceeded">Tổng số eCash muốn nhận vượt định mức</string>
 </resources>
 
 
