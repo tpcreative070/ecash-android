@@ -302,7 +302,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             return;
         }
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
-       // showLoading();
+        showLoading();
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
@@ -362,10 +362,17 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         tvTotalMoneyCashChange.setText(getString(R.string.str_choose_face_value));
                         tvTotalMoneyCashChange.setTextColor(getResources().getColor(R.color.blue));
                         tvTotalMoneyCashTake.setText(getString(R.string.str_choose_face_value));
-                        tvTotalMoneyCashChange.setTextColor(getResources().getColor(R.color.color_dot_unselected));
+                        tvTotalMoneyCashTake.setTextColor(getResources().getColor(R.color.color_dot_unselected));
+                        tv_titleTotalMoneyTake.setTextColor(getResources().getColor(R.color.pinkish_grey));
                         if(valueListCashTake!=null){
                             valueListCashTake.clear();
                         }
+                        if(valueListCashChange!=null){
+                            valueListCashChange.clear();
+                        }
+                        totalMoneyChange=0;
+                        totalMoneyTake=0;
+
                     }
                     @Override
                     public void onExit() {
@@ -384,6 +391,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+   //     Log.e("updateData ", event.getData());
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
             reloadData();
         }
