@@ -39,21 +39,22 @@
     <string name="str_account_name">Tên tài khoản</string>
     <string name="str_ecash_id">eCash ID</string>
     <string name="str_account_balance">Số dư eCash</string>
-    <string name="str_use_qr_code">Sử dụng QR code</string>
+    <string name="str_use_qr_code">Sử dụng QR Code</string>
     <string name="str_account_balance_edong">Số dư eDong</string>
     <string name="str_account_edong">Ví eDong</string>
     <string name="str_cash_in">Nạp eCash</string>
     <string name="str_cash_out">Rút eCash</string>
     <string name="str_change_cash">Đổi eCash</string>
     <string name="str_lixi">Lixi</string>
-    <string name="str_transfer">Chuyển khoản</string>
+    <string name="str_transfer">Chuyển Tiền</string>
     <string name="str_payment_service">Dịch vụ thanh toán</string>
     <string name="str_electron_pay">Thanh toán EVN</string>
     <string name="str_water_pay">Thanh toán nước</string>
     <string name="str_shop_pay">Thanh toán siêu thị</string>
     <string name="str_cable_pay">Thanh toán VTVcab</string>
     <string name="str_help">Trợ giúp</string>
-    <string name="str_transfer_success">Giao dịch thành công</string>
+    <string name="str_transfer_success">Giao dịch hoàn tất!</string>
+    <string name="str_eCash_money_transfer_successfully">giao dịch  chuyển tiền eCash thành công</string>
     <string name="str_chose_edong_account">Chọn tài khoản Edong</string>
     <string name="str_active_account_success">Bạn đã kích hoạt tài khoản thành công</string>
     <string name="str_mess_logout">Bạn có muốn thoát khỏi phiên làm việc này?</string>
@@ -102,7 +103,7 @@
     <string name="str_lixi_close">Chưa mở</string>
     <string name="str_send_lixi">Gửi lì xì</string>
     <string name="str_input_wish">Nhắn lời chúc</string>
-    <string name="str_change_cash_success">Đổi tiền thành công</string>
+    <string name="str_change_cash_success">Đổi eCash thành công. Bạn có muốn tiếp tục thực hiện giao dịch</string>
     <string name="str_total_lixi">Tổng lì xì</string>
     <string name="str_wishes">Lời chúc</string>
     <string name="str_take_lixi_success">Bạn nhận được một gói Lì Xi bạn vui lòng mở gói Lì Xì</string>
@@ -111,7 +112,7 @@
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
     <string name="str_input_account_ecash">Nhập số tài khoản eCash</string>
     <string name="str_input_money">Nhập số tiền</string>
-    <string name="str_input_content">Nhập nội dung</string>
+    <string name="str_input_content">Nhập nội dung chuyển tiền</string>
     <string name="str_input_cmnd">Nhập số chứng minh thư</string>
     <string name="str_input_phone">Nhập số điện thoại</string>
     <string name="str_account_receive">Tài khoản nhận</string>
@@ -145,7 +146,7 @@
     <string name="number_total_money_send">Tổng tiền đổi</string>
     <string name="str_number_recharge">Số tiền nạp</string>
     <string name="str_number_take">Số tiền nhận</string>
-    <string name="str_number_out">Số tiền chuyển</string>
+    <string name="str_number_out">Tổng số tiền: </string>
     <string name="str_number_in">Số tiền rút</string>
     <string name="str_phone_number">Số điện thoại</string>
     <string name="str_email">Email</string>
@@ -155,7 +156,7 @@
     <string name="str_edit_info">Sửa thông tin</string>
 
     //login
-    <string name="str_dialog_cancel">Hủy</string>
+    <string name="str_dialog_cancel">Thoát</string>
     <string name="str_change_pass">Đổi mật khẩu</string>
     <string name="str_cancel_account">Huỷ tài khoản</string>
     <string name="str_logout_account">Thoát tài khoản</string>
@@ -185,7 +186,7 @@
     <string name="err_device_acc_exit">Thiết bị của bạn đã được đăng ký 1 tài khoản khác!</string>
     <string name="err_otp_input_fail">OTP bạn nhập không đúng</string>
     <string name="err_out_of_money_change">Hết mệnh giá cần đổi</string>
-    <string name="err_end_of_the_session">Phiện làm việc của bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
+    <string name="err_end_of_the_session">Phiên làm việc của bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
     <string name="err_chose_money">bạn chưa chọn số tiền muốn chuyển</string>
     <string name="err_get_public_key_organize">không lấy được publickey của tổ chức phát hành</string>
     <string name="err_duplicate_wallet_id">Số ví chuyển phải khác số ví của bạn!</string>
@@ -201,6 +202,8 @@
     <string name="err_new_pass_must_other_old_pass">Mật khẩu mới phái khác mật khẩu cũ</string>
     <string name="err_pass_bigger_six_char">Mật khẩu bạn nhập không hợp lệ</string>
     <string name="err_user_name_null">bạn chưa nhập tên tài khoản</string>
+    <string name="err_user_name_lenght">Độ dài tên tài khoản phải lớn hơn 3 ký tự</string>
+    <string name="err_name_lenght">Độ dài tên phải lớn hơn 2 ký tự</string>
     <string name="err_name_null">bạn chưa nhập họ tên</string>
     <string name="err_cmnd_null">bạn chưa nhập chứng minh nhân dân</string>
     <string name="err_phone_null">bạn chưa nhập số điện thoại</string>
@@ -238,21 +241,12 @@
     <string name="str_type_cash_in">+%s</string>
     <string name="str_number_scan_qr_code">Bạn đã quét thành công %s QR code</string>
     <string name="str_total_money_transfer">+ %s</string>
-    <string name="str_money">Số lượng: %s</string>
     <string name="str_history_date_header">Tháng %s/%s</string>
     <string name="str_date">%s/%s/%s</string>
     <string name="str_total_money">%s VNĐ</string>
-    <string name="str_dialog_cash_in_success">bạn đã nạp thành công số tiền: %s từ tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
-    <string name="str_dialog_cash_out_success">bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
-    <string name="str_dialog_cash_to_cash_success">bạn đã chuyển thành công số tiền: %s sang tài khoản: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
-
-    //money check
-    <string name="str_10000">10000</string>
-    <string name="str_20000">20000</string>
-    <string name="str_50000">50000</string>
-    <string name="str_100000">100000</string>
-    <string name="str_200000">200000</string>
-    <string name="str_500000">500000</string>
+    <string name="str_dialog_cash_in_success">Bạn đã nạp thành công số tiền: %s từ tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_out_success">Bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_to_cash_success">Bạn đã chuyển thành công số tiền: %s sang tài khoản: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
 
     //key store
     <string name="str_key_store_provider">AndroidKeyStore</string>
@@ -314,6 +308,43 @@
     <string name="str_transfer_money_success">chuyển tiền thành công</string>
     <string name="str_error_you_cannot_pay_for_your_self">Bạn không thể thanh toán cho chính mình!</string>
     <string name="str_error_limited_select_contact">Bạn được chọn tối đa 10 người cho mỗi lần yêu cầu </string>
+
+<!--    <string name="error_message_code_0998">{Tên trường} không đúng định dạng</string>-->
+<!--    TODO CHECK CODE AGAIN-->
+    <string name="error_message_code_1003">Số giấy tờ tùy thân đã tồn tại</string>
+    <string name="error_message_code_3034">username đã tồn tại</string>
+    <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
+    <string name="error_message_code_3024">Số điện thoại đã tồn tại</string>
+    <string name="error_message_code_3019">Mật khẩu tối thiểu 6 ký tự</string>
+    <string name="error_message_code_3014">Mã xác thực không đúng</string>
+    <string name="error_message_code_3016">Hết thời gian xác thực </string>
+    <string name="error_message_code_3104">Quá số lần nhập mã xác thực cho phép</string>
+    <string name="error_message_code_0997">"Tilte: Lỗi kết nối:Bạn vui lòng kiểm tra kết nối mạng hoặc thử lại sau ít phút."</string>
+    <string name="error_message_code_3035">Tài khoản không tồn tại</string>
+<!--    <string name="error_message_code_3019">Mật khẩu không đúng</string>-->
+<!--    <string name="error_message_code_3029">Chữ ký không hợp lệ</string>-->
+    <string name="error_message_code_0000">"Title: Giao dịch thành công.
+Bạn đã nạp thành công số tiền xxxx .  Bạn có muốn tiếp tục thực hiện giao dịch? (Tiếp tục/ Bỏ qua)
+Click Tiếp tục-> chuyển màn hình Nạp eCash
+Click Bỏ qua -> chuyển về trang Home"</string>
+    <string name="error_message_code_4009">"icon Lỗi + Title: Giao dịch không thành công
+Có lỗi xảy ra. Vui lòng thử lại!
+Button: Tiếp tục/ Bỏ qua
+Click Tiếp tục-> chuyển màn hình Nạp eCash
+Click Bỏ qua -> chuyển về trang Home"</string>
+<!--    <string name="error_message_code_4010">"Title: Có lỗi xảy ra!-->
+<!--Content: eCash không hợp lệ-->
+<!--Button: Tiếp tục/ Bỏ qua"</string>-->
+    <string name="error_message_code_4008">"Title: Giao dịch that bai
+Hệ thống không giả mã được giao dịch
+"</string>
+    <string name="error_message_code_4010">"Title: Giao dịch thành công.
+Content:  Bạn đã Rút thành công số tiền xxxx .  Trong đó mệnh giá xxx không hợp lệ. Vui lòng liên hệ hotline ECPAY xxxx để biết thêm chi tiết (Bỏ qua)
+Click Đồng ý: Chuyển màn hình Rút eCash
+Click Bỏ qua: Chuyển màn hình trang Home"</string>
+    <string name="error_message_code_3029">Tổng mệnh giá nhận lớn hơn tổng mệnh giá đổi</string>
+    <string name="error_message_code_4011">"Title: Hết mệnh giá
+Content: Hết mệnh giá 5000, 10,000đ bạn cần đổi. Vui lòng chọn mệnh giá khác. button Tiếp tục/ Bỏ qua"</string>
     <string name="str_denominations_available">Các mệnh giá đang có</string>
     <string name="str_ecash_wants_to_change">eCash muốn đổi:</string>
     <string name="str_ecash_wants_to_receive">eCash muốn nhận:</string>

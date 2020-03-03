@@ -55,6 +55,8 @@ import vn.ecpay.ewallet.model.getPublicKeyOrganization.ResponseGetPublickeyOrgan
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseGetPublicKeyByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
+import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.RequestUpdateMasterKey;
+import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseUpdateMasterKey;
 
 public interface APIService {
 
@@ -141,4 +143,7 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0031")
     Call<ResponseGetMoneyValue> getMoneyValue(@Body RequestGetMoneyValue body);
+
+    @POST("ecgateway/execute/GWEC0008")
+    Call<ResponseUpdateMasterKey> updateLastTimeAndMasterKey(@Body RequestUpdateMasterKey body);
 }

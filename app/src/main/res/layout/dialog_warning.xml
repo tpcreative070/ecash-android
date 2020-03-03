@@ -22,7 +22,7 @@
         android:layout_margin="10dp"
         android:text="@string/str_have_warning"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_xlarge"
+        android:textSize="@dimen/text_xxlarge"
         android:textStyle="bold" />
 
     <TextView

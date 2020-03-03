@@ -160,15 +160,16 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)
+                || event.getData().equals(Constant.EVENT_UPDATE_BALANCE)
                 || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
-            if (getActivity() != null)
-                getActivity().runOnUiThread(this::reloadData);
+            reloadData();
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
     private void reloadData() {
-        if (WalletDatabase.numberRequest == 0) {
+        long numberCash = WalletDatabase.getAllCash().size();
+        if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
             setAdapter(transactionsHistoryModelList);
         } else {

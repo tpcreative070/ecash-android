@@ -59,7 +59,7 @@
                 android:padding="10dp"
                 android:text="@string/str_cash_take_info"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_xlarge"
+                android:textSize="@dimen/text_xxlarge"
                 android:background="@color/gray_light"
                 android:layout_height="wrap_content"/>
             <LinearLayout
@@ -203,7 +203,7 @@
                 android:padding="10dp"
                 android:text="@string/str_number_cash"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_xlarge"
+                android:textSize="@dimen/text_xxlarge"
                 android:background="@color/gray_light"
                 android:layout_height="wrap_content"/>
             <androidx.recyclerview.widget.RecyclerView
@@ -221,7 +221,7 @@
                     android:padding="10dp"
                     android:text="@string/str_qr_code"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_xlarge"
+                    android:textSize="@dimen/text_xxlarge"
                     android:background="@color/gray_light"
                     android:layout_height="wrap_content"/>
 

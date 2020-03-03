@@ -26,4 +26,5 @@
         android:textColor="@color/black"
         android:textSize="@dimen/text_xlarge" />
 <!--    android:background="@drawable/bg_radius_grey"-->
+        android:textSize="@dimen/text_xxlarge" />
 </RelativeLayout>

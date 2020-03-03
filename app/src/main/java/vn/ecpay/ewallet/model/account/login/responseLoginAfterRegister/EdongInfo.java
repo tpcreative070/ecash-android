@@ -22,11 +22,11 @@ public class EdongInfo {
 
     @ColumnInfo(name = "accBalance")
     @SerializedName("accBalance")
-    private Float accBalance;
+    private Long accBalance;
 
     @ColumnInfo(name = "accLock")
     @SerializedName("accLock")
-    private Float accLock;
+    private Long accLock;
 
     @ColumnInfo(name = "accountStatus")
     @SerializedName("accountStatus")
@@ -35,19 +35,20 @@ public class EdongInfo {
     @ColumnInfo(name = "accountType")
     @SerializedName("accountType")
     private Long accountType;
+
     @SerializedName("usableBalance")
     private Float usableBalance;
 
 
     public Long getAccBalance() {
-        return accBalance.longValue();
+        return accBalance;
     }
 
-    public Float getAccLock() {
+    public Long getAccLock() {
         return accLock;
     }
 
-    public void setAccLock(Float accLock) {
+    public void setAccLock(Long accLock) {
         this.accLock = accLock;
     }
 

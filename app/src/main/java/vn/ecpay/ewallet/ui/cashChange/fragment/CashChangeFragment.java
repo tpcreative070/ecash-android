@@ -62,6 +62,8 @@ import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
 import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
+import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
@@ -248,12 +250,13 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         });
         confirm.show(getChildFragmentManager(), "confirm");
     }
+
     private void getListCashSend() {
         listQualitySend = new ArrayList<>();
         listValueSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
-               // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
+                // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
                 listQualitySend.add(valueListCashChange.get(i).getTotal());
                 listValueSend.add(valueListCashChange.get(i).getParValue());
             }
@@ -265,7 +268,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         listValueTake = new ArrayList<>();
         for (int i = 0; i < valueListCashTake.size(); i++) {
             if (valueListCashTake.get(i).getTotal() > 0) {
-                Log.e("valueListCashTake ",valueListCashTake.get(i).getParValue()+"");
+                Log.e("valueListCashTake ", valueListCashTake.get(i).getParValue() + "");
                 listQualityTake.add(valueListCashTake.get(i).getTotal());
                 listValueTake.add(valueListCashTake.get(i).getParValue());
             }
@@ -277,7 +280,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         listCashSend = new ArrayList<>();
         for (int i = 0; i < valueListCashChange.size(); i++) {
             if (valueListCashChange.get(i).getTotal() > 0) {
-               // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
+                // Log.e("valueListCashChange ",valueListCashChange.get(i).getParValue()+"");
                 List<CashLogs_Database> cashList = WalletDatabase.getListCashForMoney(String.valueOf(valueListCashChange.get(i).getParValue()), Constant.STR_CASH_IN);
                 for (int j = 0; j < valueListCashChange.get(i).getTotal(); j++) {
                     listCashSend.add(cashList.get(j));
@@ -299,8 +302,20 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
             return;
         }
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
+        showLoading();
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+            @Override
+            public void onUpdateMasterSuccess() {
+                cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
+            }
 
-        cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
+            @Override
+            public void onUpdateMasterFail() {
+                dismissLoading();
+                showDialogError(getResources().getString(R.string.err_change_database));
+            }
+        });
     }
 
     @Override
@@ -371,9 +386,9 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
-           reloadData();
+            reloadData();
         }
-        if(event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)){
+        if (event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {

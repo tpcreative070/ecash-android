@@ -9,6 +9,28 @@ public class Constant {
 
     public static final String app_name = "eCash App";
     public static final String sesion_expid = "3043";
+    public static final String ERROR_CODE_0998 = "0998";
+    public static final String ERROR_CODE_1003 = "1003";
+    public static final String ERROR_CODE_3034 = "3034";
+    public static final String ERROR_CODE_3024 = "3024";
+    public static final String ERROR_CODE_3019 = "3019";
+   // public static final String ERROR_CODE_0998 = "0998";
+    public static final String ERROR_CODE_3014 = "3014";
+    public static final String ERROR_CODE_3016 = "3016";
+    public static final String ERROR_CODE_3104 = "3104";
+    public static final String ERROR_CODE_0001 = "0001";
+    public static final String ERROR_CODE_0997 = "0997";
+    public static final String ERROR_CODE_3035 = "3035";
+   // public static final String ERROR_CODE_3019 = "3019";
+   // public static final String ERROR_CODE_0998 = "0998";
+    public static final String ERROR_CODE_3029 = "3029";
+  //  public static final String ERROR_CODE_3035 = "3035";
+    public static final String ERROR_CODE_0000 = "0000";
+    public static final String ERROR_CODE_4009 = "4009";
+    public static final String ERROR_CODE_4010 = "4010";
+    public static final String ERROR_CODE_4008 = "4008";
+   // public static final String ERROR_CODE_4010 = "4010";
+    public static final String ERROR_CODE_4012 = "4012";
     public static final int DEFAULT_LANGUAGE_ID = 0;
 
     public static final String DATABASE_NAME = "eWallet";
@@ -84,9 +106,8 @@ public class Constant {
     public static final String EVENT_PAYMENT_SUCCESS = "EVENT_PAYMENT_SUCCESS";
     public static final String EVENT_SEND_REQUEST_PAYTO = "EVENT_SEND_REQUEST_PAYTO";
     public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
-    public static final String EVENT_ACCOUNT_LOGOUT = "EVENT_ACCOUNT_LOGOUT";
+    public static final String EVENT_CLOSE_SOCKET = "EVENT_CLOSE_SOCKET";
     public static final String EVENT_NEW_PAYMENT = "EVENT_NEW_PAYMENT";
-
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
     public static final String FUNCTION_LOGIN = "FU00004";
@@ -116,6 +137,7 @@ public class Constant {
     public static final String FUNCTION_UPDATE_ACCOUNT_INFO = "GWEC0021";
     public static final String FUNCTION_UPDATE_AVARTAR = "GWEC0022";
     public static final String FUNCTION_GET_MONEY_VALUE = "GWEC0031";
+    public static final String FUNCTION_UPDATE_MASTER_KEY = "GWEC0008";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";

@@ -40,6 +40,8 @@
             android:textColor="@color/black"
             android:textSize="@dimen/text_xlarge"
              />
+            android:textSize="@dimen/text_xxlarge"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/iv_up"

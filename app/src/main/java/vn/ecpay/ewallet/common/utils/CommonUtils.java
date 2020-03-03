@@ -1,8 +1,6 @@
 package vn.ecpay.ewallet.common.utils;
 
 import android.app.ActivityManager;
-import android.app.Application;
-import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -72,8 +70,6 @@ import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.Resp
 import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 public class CommonUtils {
     public static String getModelName() {
@@ -286,6 +282,18 @@ public class CommonUtils {
         return fmt.format(money);
     }
 
+    public static String formatPriceVND(Double money) {
+        DecimalFormat fmt = new DecimalFormat();
+        DecimalFormatSymbols fmts = new DecimalFormatSymbols();
+
+        fmts.setGroupingSeparator('.');
+
+        fmt.setGroupingSize(3);
+        fmt.setGroupingUsed(true);
+        fmt.setDecimalFormatSymbols(fmts);
+        return fmt.format(money) + " VNĐ";
+    }
+
     public static String getCurrentTime() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat(Constant.FORMAT_DATE_SEND_CASH);
@@ -455,8 +463,8 @@ public class CommonUtils {
         return userList;
     }
 
-    public static long getMoneyEDong(EdongInfo edongInfo) {
-        return (long) (edongInfo.getAccBalance() - edongInfo.getAccLock());
+    public static Long getMoneyEDong(EdongInfo edongInfo) {
+        return (edongInfo.getAccBalance() - edongInfo.getAccLock());
     }
 
     public static Bitmap generateQRCode(String value) {
@@ -491,12 +499,10 @@ public class CommonUtils {
     }
 
     private static String getPublicServerKey() {
-        Log.e("channelKp", SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class));
         return SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class);
     }
 
     static String getPrivateChannelKey() {
-        Log.e("clientKs", SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class));
         return SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class);
     }
 
@@ -644,8 +650,9 @@ public class CommonUtils {
         }
         return multiTransferList;
     }
+
     public static int getCountTransfer(List<Contact> mSectionList) {
-        int count=0;
+        int count = 0;
         for (Contact contact : mSectionList) {
             if (contact.isAddTransfer) {
                 count++;
@@ -664,8 +671,8 @@ public class CommonUtils {
         return false;
     }
 
-    public static  AccountInfo getAccountByUserName(Context context){
-        String username =ECashApplication.getAccountInfo().getUsername();
+    public static AccountInfo getAccountByUserName(Context context) {
+        String username = ECashApplication.getAccountInfo().getUsername();
         return DatabaseUtil.getAccountInfo(username, context);
     }
     public static  boolean checkWalletIDisMe(Context context,String walletID){

@@ -22,8 +22,10 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
 import vn.ecpay.ewallet.model.OTP.RequestGetOTP;
 import vn.ecpay.ewallet.model.OTP.response.ResponseGetOTP;
 import vn.ecpay.ewallet.model.account.register.RequestRegister;
@@ -219,9 +221,15 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         accountInfo.setPersonMiddleName(requestRegister.getPersonMiddleName());
                         accountInfo.setPersonLastName(requestRegister.getPersonLastName());
                         accountInfo.setEcKeyPublicValue(requestRegister.getEcKeyPublicValue());
+                        accountInfo.setLastAccessTime(accountInfo.getLastAccessTime());
                         registerView.registerSuccess(accountInfo, privateKeyBase64, publicKeyBase64);
                     } else {
-                        registerView.registerFail(response.body().getResponseMessage());
+                        if(response.body().getResponseCode()!=null){
+                            registerView.registerFail(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode()));
+                        }else{
+                            registerView.registerFail(response.body().getResponseMessage());
+                        }
+
                     }
                 } else {
                     registerView.registerFail(application.getString(R.string.err_upload));
@@ -462,11 +470,12 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
-                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            registerView.onSyncContactSuccess();
-                        } else {
-                            registerView.onSyncContactFail(response.body().getResponseMessage());
-                        }
+//                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+//                            registerView.onSyncContactSuccess();
+//                        } else {
+//                            registerView.onSyncContactFail(response.body().getResponseMessage());
+//                        }
+                        registerView.onSyncContactFail(response.body().getResponseMessage());
                     }
                 } else {
                     registerView.onSyncContactFail(application.getString(R.string.err_upload));

@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,7 +17,6 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
-import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
@@ -103,12 +100,10 @@ public class CashInPresenterImpl implements CashInPresenter {
 
         Gson gson = new Gson();
         String json = gson.toJson(requestEdongToECash);
-        Log.e("requestEdongToECash", json);
         Call<ResponseEdongToECash> call = apiService.transferMoneyEdongToECash(requestEdongToECash);
         call.enqueue(new Callback<ResponseEdongToECash>() {
             @Override
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
-                Log.e("done","skdhghjk");
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
@@ -142,8 +137,6 @@ public class CashInPresenterImpl implements CashInPresenter {
             @Override
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashInView.dismissLoading();
-                Log.e("call ",call.toString());
-                Log.e("t ",t.getMessage());
                 cashInView.showDialogError(application.getString(R.string.err_upload));
             }
         });
@@ -175,14 +168,22 @@ public class CashInPresenterImpl implements CashInPresenter {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (response.body().getResponseData().getListAcc().size() > 0) {
                                 ECashApplication.setListEDongInfo(response.body().getResponseData().getListAcc());
+                                cashInView.getEDongInfoSuccess();
                             }
+                        } else {
+                            cashInView.getEDongInfoSuccess();
                         }
+                    } else {
+                        cashInView.getEDongInfoSuccess();
                     }
+                } else {
+                    cashInView.getEDongInfoSuccess();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
+                cashInView.getEDongInfoSuccess();
             }
         });
     }

@@ -115,7 +115,6 @@ public class PayToFuntion {
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(channelSignature));
 
         payToRequest.setChannelSignature(CommonUtils.generateSignature(dataSign));
-
         CommonUtils.logJson(payToRequest);
         return payToRequest;
     }

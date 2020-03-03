@@ -118,11 +118,21 @@
                     android:id="@+id/iv_receive"
                     android:layout_width="15dp"
                     android:layout_height="13dp"
+                <TextView
+                    android:id="@+id/tv_total_money_cash_change"
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/text_xxlarge"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:alpha="0.5"
                     android:src="@drawable/ic_arrow_right_gray"
                     />
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/text_xxlarge"
+                    android:layout_alignParentEnd="true"
+                    android:layout_height="wrap_content"/>
             </RelativeLayout>
 
         </LinearLayout>

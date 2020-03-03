@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:padding="7dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
@@ -14,7 +16,7 @@
         android:layout_centerVertical="true"
         android:text="500.000VNĐ"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_normal" />
+        android:textSize="@dimen/text_xlarge" />
 
     <TextView
         android:id="@+id/tv_sl_value"
@@ -26,6 +28,13 @@
         android:text="20"
         android:gravity="center"
         android:background="@drawable/bg_circle_blue_border"
+        android:textColor="@color/blue"
+        android:layout_marginStart="100dp"
+        android:background="@drawable/tv_boder_number_money"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:paddingRight="10dp"
         android:textColor="@color/blue"
         android:textSize="@dimen/text_normal" />
 
@@ -43,6 +52,7 @@
             android:layout_gravity="center_vertical"
             android:padding="15dp"
             android:src="@drawable/ic_minus_blue" />
+            android:src="@drawable/ic_icon_minus_blue" />
 
         <TextView
             android:id="@+id/tv_total"
@@ -53,6 +63,9 @@
             android:textColor="@color/black_two"
             android:textSize="@dimen/text_xlarge"
              />
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_xxlarge"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/iv_up"
@@ -60,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="15dp"
+            android:src="@drawable/ic_icon_plus_blue" />
             android:src="@drawable/ic_plus_blue" />
 
     </LinearLayout>

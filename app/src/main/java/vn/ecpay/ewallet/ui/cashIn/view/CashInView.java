@@ -7,4 +7,6 @@ public interface CashInView extends BaseView {
     void showDialogError(String err);
 
     void transferMoneySuccess(CashInResponse eDongToECash);
+
+    void getEDongInfoSuccess();
 }

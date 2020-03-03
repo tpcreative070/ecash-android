@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationModule;
 import vn.ecpay.ewallet.common.dependencyInjection.DaggerApplicationComponent;
@@ -40,6 +41,7 @@ public class ECashApplication extends Application {
     private static ECashApplication sInstance;
     private Gson mGSon;
     public static boolean isChangeDataBase = false;
+    public static boolean isCancelAccount = false;
 
     public static boolean isIsChangeDataBase() {
         return isChangeDataBase;
@@ -118,8 +120,32 @@ public class ECashApplication extends Application {
 
     public void checkSessionByErrorCode(String error_code) {
         switch (error_code) {
-            case "3043":
+            case Constant.sesion_expid:
                 showDialogSwitchLogin(getString(R.string.err_end_of_the_session));
+                break;
+            case  Constant.ERROR_CODE_1003:
+                showDialogError(getString(R.string.error_message_code_1003));
+                break;
+            case  Constant.ERROR_CODE_3034:
+                showDialogError(getString(R.string.error_message_code_3034));
+                break;
+            case  Constant.ERROR_CODE_0998:
+                showDialogError(getString(R.string.error_message_code_0998));
+                break;
+            case  Constant.ERROR_CODE_3024:
+                showDialogError(getString(R.string.error_message_code_3024));
+                break;
+            case  Constant.ERROR_CODE_3019:
+                showDialogError(getString(R.string.error_message_code_3019));
+                break;
+            case  Constant.ERROR_CODE_3014:
+                showDialogError(getString(R.string.error_message_code_3014));
+                break;
+            case  Constant.ERROR_CODE_3016:
+                showDialogError(getString(R.string.error_message_code_3016));
+                break;
+            case  Constant.ERROR_CODE_3104:
+                showDialogError(getString(R.string.error_message_code_3104));
                 break;
             default:
                 break;
@@ -161,7 +187,7 @@ public class ECashApplication extends Application {
 
     }
 
-    public void showDialogSwitchLogin(final String messenger) {
+    public static void showDialogSwitchLogin(final String messenger) {
         if (DialogUtil.getInstance().isShowing()) {
             DialogUtil.getInstance().dismissDialog();
         }
@@ -198,5 +224,13 @@ public class ECashApplication extends Application {
                         getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     }
                 });
+    }
+    private void showDialogError(final String messenger){
+        if(getActivity()!=null){
+            if(getActivity() instanceof ECashBaseActivity){
+                ((ECashBaseActivity)getActivity()).showDialogError(messenger);
+            }
+        }
+
     }
 }

@@ -319,7 +319,7 @@
                     android:padding="10dp"
                     android:text="@string/str_qr_code"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_xlarge" />
+                    android:textSize="@dimen/text_xxlarge" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_list_qr_code"
@@ -334,7 +334,7 @@
                 android:padding="10dp"
                 android:text="@string/str_number_cash"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_xlarge" />
+                android:textSize="@dimen/text_xxlarge" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -343,7 +343,7 @@
                 android:padding="10dp"
                 android:text="@string/str_cash_take_info"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_xlarge" />
+                android:textSize="@dimen/text_xxlarge" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_list_cash_transfer"

@@ -27,11 +27,14 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
+import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.contact.adapter.AddContactAdapter;
 import vn.ecpay.ewallet.ui.contact.module.AddContactModule;
 import vn.ecpay.ewallet.ui.contact.presenter.AddContactPresenter;
 import vn.ecpay.ewallet.ui.contact.view.AddContactView;
+import vn.ecpay.ewallet.ui.function.AddContactFunction;
+import vn.ecpay.ewallet.ui.interfaceListener.AddContactListener;
 
 public class FragmentAddContact extends ECashBaseFragment implements AddContactView {
     @BindView(R.id.edt_search)
@@ -149,8 +152,21 @@ public class FragmentAddContact extends ECashBaseFragment implements AddContactV
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new AddContactAdapter(transferModelArrayList, getActivity(), contact -> {
             showProgress();
-            DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
-            addContactPresenter.addContact(getActivity(), accountInfo, contact);
+            AddContactFunction addContactFunction = new AddContactFunction(getActivity());
+            addContactFunction.addContact(accountInfo, contact, new AddContactListener() {
+                @Override
+                public void addContactSuccess() {
+                    dismissLoading();
+                    DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+                    Toast.makeText(getActivity(), getResources().getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void addContactFail() {
+                    dismissLoading();
+                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_upload));
+                }
+            });
         });
         recyclerView.setAdapter(mAdapter);
     }

@@ -25,6 +25,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
+import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
 
 
 public class SyncCashService extends Service {
@@ -32,7 +33,8 @@ public class SyncCashService extends Service {
     private List<CacheData> listResponseMessSockets;
     private AccountInfo accountInfo;
 
-    private boolean changeCashPayment=false;
+    private boolean changeCashPayment = false;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -59,7 +61,7 @@ public class SyncCashService extends Service {
             }
         }
         if (event.getData().equals(Constant.EVENT_CASH_IN_CHANGE)) {
-            changeCashPayment =true;
+            changeCashPayment = true;
             syncData();
 
         }
@@ -110,10 +112,19 @@ public class SyncCashService extends Service {
             if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
                 if (responseMess.getCashEnc() != null) {
                     CashInFunction cashInFunction = new CashInFunction(responseMess, accountInfo, getApplicationContext());
-                    cashInFunction.handleCash(() -> {
-                        DatabaseUtil.deleteCacheData(responseMess.getId(), getApplicationContext());
-                        listResponseMessSockets.remove(0);
-                        handleListResponse();
+                    cashInFunction.handleCash(new CashInSuccessListener() {
+                        @Override
+                        public void onCashInSuccess() {
+                            DatabaseUtil.deleteCacheData(responseMess.getId(), getApplicationContext());
+                            listResponseMessSockets.remove(0);
+                            handleListResponse();
+                        }
+
+                        @Override
+                        public void onCashInFail() {
+                            listResponseMessSockets.remove(0);
+                            handleListResponse();
+                        }
                     });
                 } else {
                     listResponseMessSockets.remove(0);
@@ -129,13 +140,11 @@ public class SyncCashService extends Service {
             isRunning = false;
             if (!changeCashPayment) {
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
-
             } else {
-                changeCashPayment =false;
-                Log.e("C ","C");
+                changeCashPayment = false;
+                Log.e("C ", "C");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
-
         }
     }
 
