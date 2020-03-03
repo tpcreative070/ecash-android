@@ -22,18 +22,6 @@
             android:textColor="@color/black"
             android:text="@string/str_denominations_available"
             />
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="15dp"-->
-<!--            app:cardCornerRadius="3dp"-->
-<!--            app:cardElevation="4dp"-->
-<!--            android:background="@color/transparent"-->
-<!--          -->
-<!--            app:cardPreventCornerOverlap="false"-->
-<!--            >-->
-<!--            -->
-<!--        </androidx.cardview.widget.CardView>-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_cash_values"
             android:layout_width="match_parent"
@@ -44,8 +32,6 @@
             android:elevation="4dp"
             android:layout_margin="15dp"
             android:layout_height="wrap_content"/>
-
-<!--        android:background="@drawable/bg_white_rectangle_border"-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,23 +104,11 @@
                     android:id="@+id/iv_receive"
                     android:layout_width="15dp"
                     android:layout_height="13dp"
-                <TextView
-                    android:id="@+id/tv_total_money_cash_change"
-                    android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/blue"
-                    android:textSize="@dimen/text_xxlarge"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
                     android:alpha="0.5"
+                    android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_arrow_right_gray"
                     />
-                    android:textColor="@color/blue"
-                    android:textSize="@dimen/text_xxlarge"
-                    android:layout_alignParentEnd="true"
-                    android:layout_height="wrap_content"/>
             </RelativeLayout>
-
         </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -153,11 +127,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_alignParentBottom="true"
                 android:textSize="@dimen/text_xlarge" />
-            <!--         style="@style/btn_submit_full"-->
-            />
         </RelativeLayout>
-
-
 
     </LinearLayout>
 </ScrollView>

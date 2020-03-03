@@ -54,10 +54,6 @@
                 android:text="@string/str_total"
                 android:textColor="@color/emperor"
                 android:textSize="@dimen/text_normal" />
-                android:text="@string/str_number_money_change"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_xxlarge" />
-
             <TextView
                 android:id="@+id/tv_total_money_send"
                 android:layout_width="wrap_content"
@@ -113,10 +109,6 @@
                 android:text="@string/str_total"
                 android:textColor="@color/emperor"
                 android:textSize="@dimen/text_normal" />
-                android:text="@string/str_number_take"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_xxlarge" />
-
             <TextView
                 android:id="@+id/tv_total_money_take"
                 android:layout_width="wrap_content"

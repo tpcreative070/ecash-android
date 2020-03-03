@@ -56,9 +56,7 @@ public class CashTotalChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public static class ItemValueHolder extends RecyclerView.ViewHolder {
-
         TextView tv_value, tv_total;
-
         public ItemValueHolder(View itemView) {
             super(itemView);
             tv_value = itemView.findViewById(R.id.tv_value);

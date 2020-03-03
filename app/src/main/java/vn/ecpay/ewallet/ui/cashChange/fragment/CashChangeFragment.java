@@ -223,7 +223,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             return;
         }
         showDialogConfirm();
-        //showDialog();
     }
     @SuppressLint("StaticFieldLeak")
     private void showDialogConfirm(){
@@ -303,7 +302,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             return;
         }
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
-        showLoading();
+       // showLoading();
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
