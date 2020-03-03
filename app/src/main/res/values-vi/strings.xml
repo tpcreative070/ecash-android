@@ -38,21 +38,22 @@
     <string name="str_account_name">Tên tài khoản</string>
     <string name="str_ecash_id">eCash ID</string>
     <string name="str_account_balance">Số dư eCash</string>
-    <string name="str_use_qr_code">Sử dụng QR code</string>
+    <string name="str_use_qr_code">Sử dụng QR Code</string>
     <string name="str_account_balance_edong">Số dư eDong</string>
     <string name="str_account_edong">Ví eDong</string>
     <string name="str_cash_in">Nạp eCash</string>
     <string name="str_cash_out">Rút eCash</string>
     <string name="str_change_cash">Đổi eCash</string>
     <string name="str_lixi">Lixi</string>
-    <string name="str_transfer">Chuyển khoản</string>
+    <string name="str_transfer">Chuyển Tiền</string>
     <string name="str_payment_service">Dịch vụ thanh toán</string>
     <string name="str_electron_pay">Thanh toán EVN</string>
     <string name="str_water_pay">Thanh toán nước</string>
     <string name="str_shop_pay">Thanh toán siêu thị</string>
     <string name="str_cable_pay">Thanh toán VTVcab</string>
     <string name="str_help">Trợ giúp</string>
-    <string name="str_transfer_success">Giao dịch thành công</string>
+    <string name="str_transfer_success">Giao dịch hoàn tất!</string>
+    <string name="str_eCash_money_transfer_successfully">giao dịch  chuyển tiền eCash thành công</string>
     <string name="str_chose_edong_account">Chọn tài khoản Edong</string>
     <string name="str_active_account_success">Bạn đã kích hoạt tài khoản thành công</string>
     <string name="str_mess_logout">Bạn có muốn thoát khỏi phiên làm việc này?</string>
@@ -110,7 +111,7 @@
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
     <string name="str_input_account_ecash">Nhập số tài khoản eCash</string>
     <string name="str_input_money">Nhập số tiền</string>
-    <string name="str_input_content">Nhập nội dung</string>
+    <string name="str_input_content">Nhập nội dung chuyển tiền</string>
     <string name="str_input_cmnd">Nhập số chứng minh thư</string>
     <string name="str_input_phone">Nhập số điện thoại</string>
     <string name="str_account_receive">Tài khoản nhận</string>
@@ -144,7 +145,7 @@
     <string name="number_total_money_send">Tổng tiền đổi</string>
     <string name="str_number_recharge">Số tiền nạp</string>
     <string name="str_number_take">Số tiền nhận</string>
-    <string name="str_number_out">Số tiền chuyển</string>
+    <string name="str_number_out">Tổng số tiền: </string>
     <string name="str_number_in">Số tiền rút</string>
     <string name="str_phone_number">Số điện thoại</string>
     <string name="str_email">Email</string>
@@ -154,7 +155,7 @@
     <string name="str_edit_info">Sửa thông tin</string>
 
     //login
-    <string name="str_dialog_cancel">Hủy</string>
+    <string name="str_dialog_cancel">Thoát</string>
     <string name="str_change_pass">Đổi mật khẩu</string>
     <string name="str_cancel_account">Huỷ tài khoản</string>
     <string name="str_logout_account">Thoát tài khoản</string>
@@ -239,7 +240,6 @@
     <string name="str_type_cash_in">+%s</string>
     <string name="str_number_scan_qr_code">Bạn đã quét thành công %s QR code</string>
     <string name="str_total_money_transfer">+ %s</string>
-    <string name="str_money">Số lượng: %s</string>
     <string name="str_history_date_header">Tháng %s/%s</string>
     <string name="str_date">%s/%s/%s</string>
     <string name="str_total_money">%s VNĐ</string>

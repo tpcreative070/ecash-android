@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
@@ -14,17 +15,20 @@
         android:layout_centerVertical="true"
         android:text="500.000VNĐ"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_normal" />
+        android:textSize="@dimen/text_xlarge" />
 
     <TextView
         android:id="@+id/tv_sl_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@id/tv_value"
-        android:text="Số lượng: 20"
-        android:textColor="@color/red"
+        android:layout_marginStart="100dp"
+        android:background="@drawable/tv_boder_number_money"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/blue"
         android:textSize="@dimen/text_normal" />
 
     <LinearLayout
@@ -40,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="15dp"
-            android:src="@drawable/ic_minus" />
+            android:src="@drawable/ic_icon_minus_blue" />
 
         <TextView
             android:id="@+id/tv_total"
@@ -49,7 +53,7 @@
             android:layout_gravity="center_vertical"
             android:text="0"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_xlarge"
+            android:textSize="@dimen/text_xxlarge"
             android:textStyle="bold" />
 
         <ImageView
@@ -58,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="15dp"
-            android:src="@drawable/ic_plus" />
+            android:src="@drawable/ic_icon_plus_blue" />
 
     </LinearLayout>
 </RelativeLayout>

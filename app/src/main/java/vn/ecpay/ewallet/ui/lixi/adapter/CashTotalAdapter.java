@@ -49,16 +49,14 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ItemValueHolder itemViewHolder = (ItemValueHolder) holder;
         CashTotal cashTotal = listCashValue.get(position);
         itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
-        itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
-                String.valueOf(cashTotal.getTotalDatabase())));
+        itemViewHolder.tv_sl_value.setText(String.valueOf(cashTotal.getTotalDatabase()));
 
         itemViewHolder.iv_down.setOnClickListener(v -> {
             if (cashTotal.getTotal() > 0) {
                 cashTotal.setTotal(cashTotal.getTotal() - 1);
                 cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() + numberTransfer);
                 itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
-                itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
-                        String.valueOf(cashTotal.getTotalDatabase())));
+                itemViewHolder.tv_sl_value.setText(String.valueOf(cashTotal.getTotalDatabase()));
                 if (null != upDownMoneyListener) {
                     upDownMoneyListener.onUpDownMoneyListener();
                 }
@@ -75,8 +73,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     cashTotal.setTotal(cashTotal.getTotal() + 1);
                     cashTotal.setTotalDatabase(cashTotal.getTotalDatabase() - numberTransfer);
                     itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
-                    itemViewHolder.tv_sl_value.setText(context.getString(R.string.str_money,
-                            String.valueOf(cashTotal.getTotalDatabase())));
+                    itemViewHolder.tv_sl_value.setText(String.valueOf(cashTotal.getTotalDatabase()));
                     if (null != upDownMoneyListener) {
                         upDownMoneyListener.onUpDownMoneyListener();
                     }

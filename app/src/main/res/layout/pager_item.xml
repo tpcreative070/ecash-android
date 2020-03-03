@@ -21,7 +21,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:text="Lì xì may mắn"
-        android:textSize="@dimen/text_xlarge" />
+        android:textSize="@dimen/text_xxlarge" />
 
     <ImageView
         android:id="@+id/image"

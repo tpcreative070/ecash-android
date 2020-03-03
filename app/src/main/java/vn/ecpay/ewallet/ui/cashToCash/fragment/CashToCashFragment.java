@@ -20,6 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,8 +49,6 @@ import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 
 public class CashToCashFragment extends ECashBaseFragment implements MultiTransferListener {
-    @BindView(R.id.tv_account_name)
-    TextView tvAccountName;
     @BindView(R.id.tv_id)
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
@@ -114,7 +113,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     protected void setData() {
         setAdapter();
-        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
@@ -123,6 +121,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     private void setAdapter() {
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
+        Collections.reverse(valuesListAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvCashValues.setLayoutManager(mLayoutManager);
         cashValueAdapter = new CashTotalAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
@@ -253,8 +252,8 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             if (ECashApplication.isCancelAccount) {
                 handleCancelAccount();
             } else {
-                showDialogSendOk();
                 dismissProgress();
+                showDialogSendOk();
                 restartSocket();
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
             }
@@ -353,8 +352,8 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     protected void showDialogSendOk() {
-        DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
-                "chuyển tiền thành công", new DialogUtil.OnConfirm() {
+        DialogUtil.getInstance().showDialogTransferSuccess(getActivity(), getResources().getString(R.string.str_transfer_success),
+                getResources().getString(R.string.str_eCash_money_transfer_successfully), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();

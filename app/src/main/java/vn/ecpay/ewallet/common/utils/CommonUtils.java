@@ -488,12 +488,10 @@ public class CommonUtils {
     }
 
     private static String getPublicServerKey() {
-        Log.e("channelKp", SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class));
         return SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class);
     }
 
     static String getPrivateChannelKey() {
-        Log.e("clientKs", SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class));
         return SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class);
     }
 

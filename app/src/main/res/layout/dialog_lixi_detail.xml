@@ -41,7 +41,7 @@
                 android:layout_centerVertical="true"
                 android:text="@string/str_total_lixi"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_xlarge" />
+                android:textSize="@dimen/text_xxlarge" />
 
             <TextView
                 android:id="@+id/tv_total_money_take"
