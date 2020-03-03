@@ -22,6 +22,7 @@ import java.util.List;
 
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.utils.interfaces.ContinueAndExitListener;
 import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -722,6 +723,34 @@ public class DialogUtil {
         }
     }
 
+    public void showDialogContinueAndExit(Context context, String title, String message, final ContinueAndExitListener listener) {
+        if (!isShowing() && context != null) {
+            initDialog(context);
+            mDialog.setContentView(R.layout.dialog_continue_exit);
+            TextView tvTitle, tvMessage,tvExit,tvContinue;
+            tvTitle = mDialog.findViewById(R.id.tv_title);
+            tvMessage = mDialog.findViewById(R.id.tv_message);
+            tvExit = mDialog.findViewById(R.id.tv_exit);
+            tvContinue = mDialog.findViewById(R.id.tv_continue);
+            tvTitle.setText(title);
+            tvMessage.setText(message);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            tvContinue.setOnClickListener(v -> {
+                dismissDialog();
+                if (listener != null) {
+                    listener.onContinue();
+                }
+            });
+            tvExit.setOnClickListener(v -> {
+                dismissDialog();
+                if (listener != null) {
+                    listener.onExit();
+                }
+            });
+        }
+    }
     public void dismissDialog() {
         if (mDialog != null) {
             mDialog.dismiss();

@@ -37,7 +37,8 @@ public class CashTotalConfirmAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
         CashTotalConfirmAdapter.ItemValueHolder itemViewHolder = (CashTotalConfirmAdapter.ItemValueHolder) holder;
         CashTotal cashTotal = listCashValue.get(position);
-        itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
+        //itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
+        itemViewHolder.tv_value.setText(CommonUtils.formatPrice(cashTotal.getParValue()));
         itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
     }
 

@@ -19,6 +19,7 @@
     <string name="str_skip">Bỏ qua</string>
     <string name="str_close">Đóng</string>
     <string name="str_done">Xong</string>
+    <string name="str_exit">Thoát</string>
     <string name="str_continute">Tiếp tục</string>
     <string name="str_clear_filter">Xoá tìm kiếm</string>
     <string name="str_delete_all_notification">Bạn đã xoá hết thông báo</string>
@@ -323,6 +324,13 @@
     <string name="str_total_money_receive">Tổng tiền nhận:</string>
     <string name="str_change_norm">Định mức đổi:</string>
     <string name="str_the_total_number_of_eCash_that_you_want_to_receive_is_exceeded">Tổng số eCash muốn nhận vượt định mức</string>
+    <string name="str_number_ecash_you_want_to_change">Số eCash muốn đổi</string>
+    <string name="str_number_ecash_will_be_received">Số eCash sẽ nhận</string>
+    <string name="str_denominations">Mệnh giá:</string>
+    <string name="str_amount">Số lượng:</string>
+    <string name="str_total">Tổng:</string>
+    <string name="str_transaction_completed">Giao dịch hoàn tất!</string>
+    <string name="str_ecash_exchange_transaction_successfull">Giao dịch đổi eCash thành công</string>
 </resources>
 
 

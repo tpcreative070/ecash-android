@@ -52,8 +52,6 @@ public class CashChangeBottomSheet extends BaseBottomSheetDialogFragment {
         super.initView();
         tvTitle.setText(getString(R.string.str_select_the_face_value_you_want_to_change));
         valuesList = DatabaseUtil.getAllCashTotal(getActivity());
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        rv_cash_change.setLayoutManager(mLayoutManager);
         rv_cash_change.setAdapter(new CashOutAdapter(valuesList, getActivity(), new UpDownMoneyListener() {
             @Override
             public void onUpDownMoneyListener() {

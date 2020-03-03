@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.common.utils.bottomSheet;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import java.lang.reflect.Field;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -29,7 +32,7 @@ abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
             if (bottomSheet != null) {
                 BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
                 behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                // behavior.setPeekHeight(0);//dismiss when scroll to bottom
+                 //behavior.setPeekHeight(0);//dismiss when scroll to bottom
             }
         });
         initView();
@@ -40,7 +43,7 @@ abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
         //setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.BottomSheetDialog);
         setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme);
     }
-    protected void initView(){
 
+    protected void initView(){
     }
 }

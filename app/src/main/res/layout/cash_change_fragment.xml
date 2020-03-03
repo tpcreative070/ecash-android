@@ -22,22 +22,30 @@
             android:textColor="@color/black"
             android:text="@string/str_denominations_available"
             />
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="15dp"-->
+<!--            app:cardCornerRadius="3dp"-->
+<!--            app:cardElevation="4dp"-->
+<!--            android:background="@color/transparent"-->
+<!--          -->
+<!--            app:cardPreventCornerOverlap="false"-->
+<!--            >-->
+<!--            -->
+<!--        </androidx.cardview.widget.CardView>-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_cash_values"
             android:layout_width="match_parent"
-            android:layout_margin="15dp"
             app:spanCount="2"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             tools:listitem="@layout/item_cash_values_gridview"
+            android:background="@drawable/bg_transparent_shadow"
+            android:elevation="4dp"
+            android:layout_margin="15dp"
             android:layout_height="wrap_content"/>
+
 <!--        android:background="@drawable/bg_white_rectangle_border"-->
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/gray_light" />
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
