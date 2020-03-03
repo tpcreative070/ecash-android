@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/str_get_an_account_with_qr_code"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/text_xlarge"
+                android:textSize="@dimen/text_xxlarge"
                />
             <ImageView
                 android:id="@+id/iv_qr_code"

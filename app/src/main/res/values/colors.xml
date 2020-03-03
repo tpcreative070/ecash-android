@@ -44,4 +44,6 @@
 
     <color name="color_dot_selected">#38BBE9</color>
     <color name="color_dot_unselected">#99E3FE</color>
+    <color name="bg_transfer_blue">#F6FCFC</color>
+    <color name="bg_number_money">#E9F8FF</color>
 </resources>

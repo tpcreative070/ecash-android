@@ -36,7 +36,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/str_scan_qr_to_pay"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_xlarge" />
+            android:textSize="@dimen/text_xxlarge" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,7 +68,7 @@
                         android:drawablePadding="10dp"
                         android:text="@string/str_share"
                         android:textColor="@color/blue"
-                        android:textSize="@dimen/text_xlarge" />
+                        android:textSize="@dimen/text_xxlarge" />
                 </RelativeLayout>
 
                 <View
@@ -90,7 +90,7 @@
                         android:drawablePadding="10dp"
                         android:text="@string/str_save_to_device"
                         android:textColor="@color/blue"
-                        android:textSize="@dimen/text_xlarge" />
+                        android:textSize="@dimen/text_xxlarge" />
                 </RelativeLayout>
 
             </LinearLayout>

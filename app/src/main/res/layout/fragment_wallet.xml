@@ -18,7 +18,7 @@
         android:layout_marginTop="20dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:pstTextSelectedColor="@color/blue"
-        app:pstTextSize="@dimen/text_xlarge"
+        app:pstTextSize="@dimen/text_xxlarge"
         app:pstTextUnselectedColor="@color/grey_light"
         app:pstsDividerColor="#00000000"
         app:pstsDividerPadding="10dp"
