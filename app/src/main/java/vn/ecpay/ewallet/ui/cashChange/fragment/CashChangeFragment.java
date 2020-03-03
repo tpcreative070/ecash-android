@@ -355,9 +355,9 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private void showDialogCashChangeOk() {
         DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getString(R.string.str_transaction_completed),
-                getResources().getString(R.string.str_ecash_exchange_transaction_successfull), new ContinueAndExitListener() {
+                getResources().getString(R.string.str_ecash_exchange_transaction_successfull), new DialogUtil.OnConfirm() {
                     @Override
-                    public void onContinue() {
+                    public void OnListenerOk() {
                         setData();
                         tvTotalMoneyCashChange.setText(getString(R.string.str_choose_face_value));
                         tvTotalMoneyCashChange.setTextColor(getResources().getColor(R.color.blue));
@@ -372,13 +372,14 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         }
                         totalMoneyChange=0;
                         totalMoneyTake=0;
-
                     }
+
                     @Override
-                    public void onExit() {
+                    public void OnListenerCancel() {
                         if (getActivity() != null)
                             getActivity().finish();
                     }
+
 
                 });
     }

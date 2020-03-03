@@ -138,37 +138,6 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogTransferSuccess(Context pContext, String title, String message, final OnConfirm pOnConfirm) {
-        if (!isShowing() && pContext != null) {
-            initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_transfer_sucess);
-            TextView tvTitle, tvMessage,btnOk, btnCancel;
-            btnOk = mDialog.findViewById(R.id.btnOk);
-            btnCancel = mDialog.findViewById(R.id.btnCancel);
-            tvTitle = mDialog.findViewById(R.id.tvTitle);
-            tvMessage = mDialog.findViewById(R.id.tvContent);
-            tvTitle.setText(title);
-            tvMessage.setText(message);
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.setCancelable(false);
-            mDialog.show();
-            btnOk.setOnClickListener(v -> {
-                dismissDialog();
-                if (pOnConfirm != null) {
-                    pOnConfirm.OnListenerOk();
-                }
-            });
-            btnCancel.setOnClickListener(v -> {
-                dismissDialog();
-                if (pOnConfirm != null) {
-                    pOnConfirm.OnListenerCancel();
-                }
-            });
-            ((ECashBaseActivity) pContext).dismissLoading();
-        }
-    }
-
-
     public void showDialogChangePassSuccess(Context pContext, String title, String message, final OnResult pOnConfirm) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
@@ -754,7 +723,7 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogContinueAndExit(Context context, String title, String message, final ContinueAndExitListener listener) {
+    public void showDialogContinueAndExit(Context context, String title, String message, final OnConfirm listener) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_continue_exit);
@@ -771,13 +740,13 @@ public class DialogUtil {
             tvContinue.setOnClickListener(v -> {
                 dismissDialog();
                 if (listener != null) {
-                    listener.onContinue();
+                    listener.OnListenerOk();
                 }
             });
             tvExit.setOnClickListener(v -> {
                 dismissDialog();
                 if (listener != null) {
-                    listener.onExit();
+                    listener.OnListenerCancel();
                 }
             });
         }

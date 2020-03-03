@@ -352,7 +352,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     protected void showDialogSendOk() {
-        DialogUtil.getInstance().showDialogTransferSuccess(getActivity(), getResources().getString(R.string.str_transfer_success),
+        DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getResources().getString(R.string.str_transfer_success),
                 getResources().getString(R.string.str_eCash_money_transfer_successfully), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
