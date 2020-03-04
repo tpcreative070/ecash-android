@@ -3,6 +3,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_border_gray"
     android:padding="10dp"
     android:layout_margin="20dp"
@@ -12,20 +13,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="@string/number_money"
-            android:textColor="@color/blue"
+            android:text="@string/str_select_the_face_value_you_want_to_change"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_header"
-            android:textStyle="bold" />
-
+           />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/gray"
+            />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_cash_change"
             android:layout_width="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_height="wrap_content"/>
 
         <View
@@ -43,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="@string/str_number_money_change"
+                android:text="@string/str_total_money_change"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_xxlarge" />
 
@@ -60,7 +67,7 @@
         <Button
             android:id="@+id/btn_confirm"
             android:layout_marginTop="20dp"
-            android:text="@string/str_apply"
+            android:text="@string/str_continute"
             android:textAllCaps="true"
             style="@style/btn_submit_full"
             android:textStyle="bold" />

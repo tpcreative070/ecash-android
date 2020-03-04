@@ -19,6 +19,7 @@
     <string name="str_skip">Bỏ qua</string>
     <string name="str_close">Đóng</string>
     <string name="str_done">Xong</string>
+    <string name="str_exit">Thoát</string>
     <string name="str_continute">Tiếp tục</string>
     <string name="str_clear_filter">Xoá tìm kiếm</string>
     <string name="str_delete_all_notification">Bạn đã xoá hết thông báo</string>
@@ -308,8 +309,8 @@
     <string name="str_error_you_cannot_pay_for_your_self">Bạn không thể thanh toán cho chính mình!</string>
     <string name="str_error_limited_select_contact">Bạn được chọn tối đa 10 người cho mỗi lần yêu cầu </string>
 
-<!--    <string name="error_message_code_0998">{Tên trường} không đúng định dạng</string>-->
-<!--    TODO CHECK CODE AGAIN-->
+    <!--    <string name="error_message_code_0998">{Tên trường} không đúng định dạng</string>-->
+    <!--    TODO CHECK CODE AGAIN-->
     <string name="error_message_code_1003">Số giấy tờ tùy thân đã tồn tại</string>
     <string name="error_message_code_3034">username đã tồn tại</string>
     <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
@@ -320,8 +321,8 @@
     <string name="error_message_code_3104">Quá số lần nhập mã xác thực cho phép</string>
     <string name="error_message_code_0997">"Tilte: Lỗi kết nối:Bạn vui lòng kiểm tra kết nối mạng hoặc thử lại sau ít phút."</string>
     <string name="error_message_code_3035">Tài khoản không tồn tại</string>
-<!--    <string name="error_message_code_3019">Mật khẩu không đúng</string>-->
-<!--    <string name="error_message_code_3029">Chữ ký không hợp lệ</string>-->
+    <!--    <string name="error_message_code_3019">Mật khẩu không đúng</string>-->
+    <!--    <string name="error_message_code_3029">Chữ ký không hợp lệ</string>-->
     <string name="error_message_code_0000">"Title: Giao dịch thành công.
 Bạn đã nạp thành công số tiền xxxx .  Bạn có muốn tiếp tục thực hiện giao dịch? (Tiếp tục/ Bỏ qua)
 Click Tiếp tục-> chuyển màn hình Nạp eCash
@@ -331,9 +332,9 @@ Có lỗi xảy ra. Vui lòng thử lại!
 Button: Tiếp tục/ Bỏ qua
 Click Tiếp tục-> chuyển màn hình Nạp eCash
 Click Bỏ qua -> chuyển về trang Home"</string>
-<!--    <string name="error_message_code_4010">"Title: Có lỗi xảy ra!-->
-<!--Content: eCash không hợp lệ-->
-<!--Button: Tiếp tục/ Bỏ qua"</string>-->
+    <!--    <string name="error_message_code_4010">"Title: Có lỗi xảy ra!-->
+    <!--Content: eCash không hợp lệ-->
+    <!--Button: Tiếp tục/ Bỏ qua"</string>-->
     <string name="error_message_code_4008">"Title: Giao dịch that bai
 Hệ thống không giả mã được giao dịch
 "</string>
@@ -344,6 +345,23 @@ Click Bỏ qua: Chuyển màn hình trang Home"</string>
     <string name="error_message_code_3029">Tổng mệnh giá nhận lớn hơn tổng mệnh giá đổi</string>
     <string name="error_message_code_4011">"Title: Hết mệnh giá
 Content: Hết mệnh giá 5000, 10,000đ bạn cần đổi. Vui lòng chọn mệnh giá khác. button Tiếp tục/ Bỏ qua"</string>
+    <string name="str_denominations_available">Các mệnh giá đang có</string>
+    <string name="str_ecash_wants_to_change">eCash muốn đổi:</string>
+    <string name="str_ecash_wants_to_receive">eCash muốn nhận:</string>
+    <string name="str_choose_face_value">Chọn mệnh giá</string>
+    <string name="str_select_the_face_value_you_want_to_change">Chọn mệnh giá eCash muốn đổi</string>
+    <string name="str_select_the_face_value_you_want_to_receive">Chọn mệnh giá eCash muốn nhận</string>
+    <string name="str_total_money_change">Tổng tiền đổi:</string>
+    <string name="str_total_money_receive">Tổng tiền nhận:</string>
+    <string name="str_change_norm">Định mức đổi:</string>
+    <string name="str_the_total_number_of_eCash_that_you_want_to_receive_is_exceeded">Tổng số eCash muốn nhận vượt định mức</string>
+    <string name="str_number_ecash_you_want_to_change">Số eCash muốn đổi</string>
+    <string name="str_number_ecash_will_be_received">Số eCash sẽ nhận</string>
+    <string name="str_denominations">Mệnh giá:</string>
+    <string name="str_amount">Số lượng:</string>
+    <string name="str_total">Tổng:</string>
+    <string name="str_transaction_completed">Giao dịch hoàn tất!</string>
+    <string name="str_ecash_exchange_transaction_successfull">Giao dịch đổi eCash thành công</string>
 </resources>
 
 

@@ -26,6 +26,7 @@
     <string name="str_close">Closed</string>
     <string name="str_skip">Skip</string>
     <string name="str_done">Accomplished</string>
+    <string name="str_exit">Exit</string>
     <string name="str_continute">Continue</string>
     <string name="str_clear_filter">Clear search</string>
     <string name="str_delete_all_notification">You have deleted all notifications</string>
@@ -349,4 +350,22 @@ Click Bỏ qua: Chuyển màn hình trang Home"</string>
     <string name="error_message_code_3029">Tổng mệnh giá nhận lớn hơn tổng mệnh giá đổi</string>
     <string name="error_message_code_4011">"Title: Hết mệnh giá
 Content: Hết mệnh giá 5000, 10,000đ bạn cần đổi. Vui lòng chọn mệnh giá khác. button Tiếp tục/ Bỏ qua"</string>
+    <string name="str_denominations_available">the denominations available</string>
+    <string name="str_ecash_wants_to_change">eCash wants to change:</string>
+    <string name="str_ecash_wants_to_receive">eCash wants to receive:</string>
+    <string name="str_choose_face_value">Choose face value</string>
+    <string name="str_select_the_face_value_you_want_to_change">Select the eCash face value you want to change</string>
+    <string name="str_select_the_face_value_you_want_to_receive">Select the eCash face value you want to receive</string>
+    <string name="str_total_money_change">Total money change:</string>
+    <string name="str_total_money_receive">Total money receive:</string>
+    <string name="str_change_norm">Change norm:</string>
+    <string name="str_the_total_number_of_eCash_that_you_want_to_receive_is_exceeded">The total number of eCash that you want to receive is exceeded</string>
+
+    <string name="str_number_ecash_you_want_to_change">Number of eCash you want to change</string>
+    <string name="str_number_ecash_will_be_received">The eCash number will be received</string>
+    <string name="str_denominations">Denominations:</string>
+    <string name="str_amount">Amount:</string>
+    <string name="str_total">Total:</string>
+    <string name="str_transaction_completed">Transaction completed!</string>
+    <string name="str_ecash_exchange_transaction_successfull">ECash exchange transaction successful</string>
 </resources>

@@ -1,40 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_border_gray"
-    android:layout_height="wrap_content">
+    android:padding="10dp"
+    android:layout_margin="20dp"
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:padding="10dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="@string/str_number_ecash_you_want_to_change"
-            android:textColor="@color/blue"
+            android:text="@string/str_select_the_face_value_you_want_to_receive"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_header"
-            android:textStyle="bold" />
+            />
         <View
             android:layout_width="match_parent"
-            android:layout_height="1px"
+            android:layout_height="0.5dp"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/gray_light" />
-        <include layout="@layout/view_total_amount_confirm_change_cash"/>
-
-        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:background="@color/gray"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_cash_change"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_cash_change"
-                android:layout_width="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_height="wrap_content"/>
+        
+        <TextView
+            android:id="@+id/tv_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_normal"
+            android:textColor="@color/red"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            />
 
         <View
             android:layout_width="match_parent"
@@ -51,11 +61,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="@string/str_total"
-                android:textColor="@color/emperor"
-                android:textSize="@dimen/text_normal" />
+                android:text="@string/str_total_money_receive"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_xlarge" />
+
             <TextView
-                android:id="@+id/tv_total_money_send"
+                android:id="@+id/tv_total_receive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -64,38 +75,10 @@
                 android:textSize="@dimen/text_header"/>
 
         </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:text="@string/str_number_ecash_will_be_received"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/text_header"
-            android:textStyle="bold" />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/gray_light" />
-        <include layout="@layout/view_total_amount_confirm_change_cash"/>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_cash_take"
-                android:layout_width="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/gray_light" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -106,11 +89,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="@string/str_total"
-                android:textColor="@color/emperor"
-                android:textSize="@dimen/text_normal" />
+                android:text="@string/str_change_norm"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_xlarge" />
+
             <TextView
-                android:id="@+id/tv_total_money_take"
+                android:id="@+id/tv_change_norm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -122,11 +106,9 @@
         <Button
             android:id="@+id/btn_confirm"
             android:layout_marginTop="20dp"
-            android:text="@string/str_change_cash"
+            android:text="@string/str_continute"
             android:textAllCaps="true"
             style="@style/btn_submit_full"
-            android:textSize="@dimen/text_xlarge"
-           />
+            android:textStyle="bold" />
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>

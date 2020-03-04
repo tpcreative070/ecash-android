@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +22,7 @@ import java.util.List;
 
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.utils.interfaces.ContinueAndExitListener;
 import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -137,37 +137,6 @@ public class DialogUtil {
             ((ECashBaseActivity) pContext).dismissLoading();
         }
     }
-
-    public void showDialogTransferSuccess(Context pContext, String title, String message, final OnConfirm pOnConfirm) {
-        if (!isShowing() && pContext != null) {
-            initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_transfer_sucess);
-            TextView tvTitle, tvMessage,btnOk, btnCancel;
-            btnOk = mDialog.findViewById(R.id.btnOk);
-            btnCancel = mDialog.findViewById(R.id.btnCancel);
-            tvTitle = mDialog.findViewById(R.id.tvTitle);
-            tvMessage = mDialog.findViewById(R.id.tvContent);
-            tvTitle.setText(title);
-            tvMessage.setText(message);
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.setCancelable(false);
-            mDialog.show();
-            btnOk.setOnClickListener(v -> {
-                dismissDialog();
-                if (pOnConfirm != null) {
-                    pOnConfirm.OnListenerOk();
-                }
-            });
-            btnCancel.setOnClickListener(v -> {
-                dismissDialog();
-                if (pOnConfirm != null) {
-                    pOnConfirm.OnListenerCancel();
-                }
-            });
-            ((ECashBaseActivity) pContext).dismissLoading();
-        }
-    }
-
 
     public void showDialogChangePassSuccess(Context pContext, String title, String message, final OnResult pOnConfirm) {
         if (!isShowing() && pContext != null) {
@@ -359,7 +328,7 @@ public class DialogUtil {
     public void showDialogCashChange(Context pContext, final OnResultChoseCash onResultChoseCash) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_chose_cash);
+            mDialog.setContentView(R.layout.dialog_chose_cash_change);
 
             Button btnOk;
             TextView tvTotalMoney, tvTitle;
@@ -400,7 +369,7 @@ public class DialogUtil {
     public void showDialogCashTake(Context pContext, final OnResultChoseCash onResultChoseCash) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_chose_cash);
+            mDialog.setContentView(R.layout.dialog_chose_cash_change);
 
             Button btnOk;
             TextView tvTotalMoney, tvTitle;
@@ -714,7 +683,8 @@ public class DialogUtil {
             TextView tv_title=mDialog.findViewById(R.id.tv_title);
             RecyclerView rvCashValues=mDialog.findViewById(R.id.rv_cash_values);
 
-            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash, context);
+            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash,false, context);
+            //rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
             rvCashValues.setAdapter(cashValueAdapter);
             TextView tvTotalAmount=mDialog.findViewById(R.id.tv_total_payment);
             TextView tvContent=mDialog.findViewById(R.id.tv_content_payment);
@@ -753,6 +723,34 @@ public class DialogUtil {
         }
     }
 
+    public void showDialogContinueAndExit(Context context, String title, String message, final OnConfirm listener) {
+        if (!isShowing() && context != null) {
+            initDialog(context);
+            mDialog.setContentView(R.layout.dialog_continue_exit);
+            TextView tvTitle, tvMessage,tvExit,tvContinue;
+            tvTitle = mDialog.findViewById(R.id.tv_title);
+            tvMessage = mDialog.findViewById(R.id.tv_message);
+            tvExit = mDialog.findViewById(R.id.tv_exit);
+            tvContinue = mDialog.findViewById(R.id.tv_continue);
+            tvTitle.setText(title);
+            tvMessage.setText(message);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            tvContinue.setOnClickListener(v -> {
+                dismissDialog();
+                if (listener != null) {
+                    listener.OnListenerOk();
+                }
+            });
+            tvExit.setOnClickListener(v -> {
+                dismissDialog();
+                if (listener != null) {
+                    listener.OnListenerCancel();
+                }
+            });
+        }
+    }
     public void dismissDialog() {
         if (mDialog != null) {
             mDialog.dismiss();
