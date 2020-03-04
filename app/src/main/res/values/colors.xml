@@ -47,4 +47,5 @@
     <color name="color_bg_cash_to_cash">#F6FBFC</color>
     <color name="bg_transfer_blue">#F6FCFC</color>
     <color name="bg_number_money">#E9F8FF</color>
+    <color name="bg_total">#EFF9FD</color>
 </resources>
