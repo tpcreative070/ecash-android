@@ -124,6 +124,8 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         cashChangePresenter.onViewCreate();
         setData();
         cashChangePresenter.getPublicKeyOrganization(getActivity(), accountInfo);
+        //rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 2, false));
+        rvCashValues.addItemDecoration(new GridSpacingItem(2,  false));
     }
 
     private void setData() {
@@ -141,8 +143,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         if(valuesListAdapter!=null&&valuesListAdapter.size()>0){
             Collections.reverse(valuesListAdapter);
         }
-        //rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 2, false));
-        rvCashValues.addItemDecoration(new GridSpacingItem(2,  false));
+
         cashValueAdapter = new CashTotalChangeAdapter(valuesListAdapter,true, getActivity());
         rvCashValues.setAdapter(cashValueAdapter);
     }
