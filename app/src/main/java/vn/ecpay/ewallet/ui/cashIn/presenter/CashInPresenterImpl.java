@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.cashIn.presenter;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -19,6 +20,7 @@ import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
@@ -73,7 +75,7 @@ public class CashInPresenterImpl implements CashInPresenter {
     }
 
     @Override
-    public void transferMoneyEDongToECash(Long totalMoney, EdongInfo eDongInfoCashIn,
+    public void transferMoneyEDongToECash(Context context,Long totalMoney, EdongInfo eDongInfoCashIn,
                                           List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue) {
         cashInView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
@@ -124,7 +126,8 @@ public class CashInPresenterImpl implements CashInPresenter {
                                 break;
                             default:
                                 cashInView.dismissLoading();
-                                cashInView.showDialogError(response.body().getResponseMessage());
+                              //  cashInView.showDialogError(response.body().getResponseMessage());
+                                cashInView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                                 break;
                         }
                     }

@@ -9,8 +9,9 @@ import vn.ecpay.ewallet.R;
 
 public class GetStringErrorCode {
 
-    public String errorMessage(Context context, String error_code){
-        String message=context.getString(R.string.err_upload);
+    public String errorMessage(Context context, String error_code,String messageError){
+       // String message=context.getString(R.string.err_upload);
+        String message=messageError;
 
         switch (error_code) {
             case Constant.sesion_expid:
@@ -40,7 +41,32 @@ public class GetStringErrorCode {
             case  Constant.ERROR_CODE_3104:
                 message= context.getString(R.string.error_message_code_3104);
                 break;
+            case  Constant.ERROR_CODE_0001:
+                message= context.getString(R.string.error_message_code_0001);
+                break;
+            case  Constant.ERROR_CODE_0997:
+                message= context.getString(R.string.error_message_code_0997);
+                break;
+            case  Constant.ERROR_CODE_3029:
+                message= context.getString(R.string.error_message_code_3029);
+                break;
+            case  Constant.ERROR_CODE_4009:
+                message= context.getString(R.string.error_message_code_4009);
+                break;
+            case  Constant.ERROR_CODE_4010:
+                message= context.getString(R.string.error_message_code_4010);
+                break;
+            case  Constant.ERROR_CODE_4008:
+                message= context.getString(R.string.error_message_code_4008);
+                break;
+            case  Constant.ERROR_CODE_4012:
+                message= context.getString(R.string.error_message_code_4012);
+                break;
+            case  Constant.ERROR_CODE_4011:
+                message= context.getString(R.string.error_message_code_4011);
+                break;
             default:
+                message=messageError;
                 break;
         }
         return message;

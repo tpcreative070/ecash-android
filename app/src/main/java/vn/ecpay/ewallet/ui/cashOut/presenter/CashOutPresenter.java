@@ -10,7 +10,7 @@ import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
 public interface CashOutPresenter extends Presenter<CashOutView> {
     void getPublicKeyOrganization(Context context, AccountInfo accountInfo);
 
-    void sendECashToEDong(String encData, String idSender, long totalMoney, EdongInfo edongInfo, AccountInfo accountInfo);
+    void sendECashToEDong(Context context,String encData, String idSender, long totalMoney, EdongInfo edongInfo, AccountInfo accountInfo);
 
     void getEDongInfo(AccountInfo accountInfo);
 }
