@@ -280,7 +280,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_upload));
                 return;
             }
-            cashOutPresenter.sendECashToEDong(encData, refId, totalMoney, edongInfo, accountInfo);
+            cashOutPresenter.sendECashToEDong(getActivity(),encData, refId, totalMoney, edongInfo, accountInfo);
         }
     }
 

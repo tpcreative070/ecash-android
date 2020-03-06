@@ -13,13 +13,13 @@ public interface RegisterPresenter extends Presenter<RegisterView> {
 
     void requestRegister(Context context, String userName, String CMND, String pass, String name, String phone);
 
-    void retryOTP(AccountInfo accountInfo);
+    void retryOTP(Context context,AccountInfo accountInfo);
 
-    void activeAccount(AccountInfo accountInfo, String otp);
+    void activeAccount(Context context,AccountInfo accountInfo, String otp);
 
-    void loginAccount(AccountInfo accountInfo);
+    void loginAccount(Context context,AccountInfo accountInfo);
 
-    void getEDongInfo(AccountInfo accountInfo);
+    void getEDongInfo(Context context,AccountInfo accountInfo);
 
     void syncContact(Context context, AccountInfo mAccountInfo);
 }
