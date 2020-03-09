@@ -9,8 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +24,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,6 +41,14 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.GridSpacingItem;
+import vn.ecpay.ewallet.common.utils.GridSpacingItemDecoration;
+import vn.ecpay.ewallet.common.utils.Utils;
+import vn.ecpay.ewallet.common.utils.bottomSheet.CashChangeBottomSheet;
+import vn.ecpay.ewallet.common.utils.bottomSheet.CashTakeBottomSheet;
+import vn.ecpay.ewallet.common.utils.bottomSheet.ConfirmChangeCashBottomSheet;
+import vn.ecpay.ewallet.common.utils.interfaces.ConfirmChangeCashListener;
+import vn.ecpay.ewallet.common.utils.interfaces.ContinueAndExitListener;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -47,7 +56,6 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
-import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashChange.module.CashChangeModule;
 import vn.ecpay.ewallet.ui.cashChange.presenter.CashChangePresenter;
@@ -61,24 +69,25 @@ import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class CashChangeFragment extends ECashBaseFragment implements CashChangeView {
-    @BindView(R.id.tv_account_name)
-    TextView tvAccountName;
     @BindView(R.id.tv_id)
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
     TextView tvOverECash;
     @BindView(R.id.rv_cash_values)
     RecyclerView rvCashValues;
-    @BindView(R.id.tv_total_money_cash_change)
+    @BindView(R.id.tv_totalMoneyChange)
     TextView tvTotalMoneyCashChange;
-    @BindView(R.id.tv_total_money_cash_take)
+
+    @BindView(R.id.tv_totalMoneyTake)
     TextView tvTotalMoneyCashTake;
-    @BindView(R.id.layout_change)
-    LinearLayout layoutChange;
-    @BindView(R.id.btn_cash_change)
-    Button btnCashChange;
-    @BindView(R.id.btn_cash_take)
-    Button btnCashTake;
+
+    @BindView(R.id.tv_titleTotalMoneyTake)
+    TextView tv_titleTotalMoneyTake;
+
+    @BindView(R.id.view_cash_change)
+    View btnCashChange;
+    @BindView(R.id.view_cash_take)
+    View btnCashTake;
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
 
@@ -115,11 +124,14 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         cashChangePresenter.onViewCreate();
         setData();
         cashChangePresenter.getPublicKeyOrganization(getActivity(), accountInfo);
+        //rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 2, false));
+        rvCashValues.addItemDecoration(new GridSpacingItem(2,  false));
     }
 
     private void setData() {
         setAdapter();
-        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
+        //tvAccountName.setText(CommonUtils.getFullName(accountInfo));
+        Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
@@ -128,9 +140,11 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private void setAdapter() {
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        rvCashValues.setLayoutManager(mLayoutManager);
-        cashValueAdapter = new CashTotalChangeAdapter(valuesListAdapter, getActivity());
+        if(valuesListAdapter!=null&&valuesListAdapter.size()>0){
+            Collections.reverse(valuesListAdapter);
+        }
+
+        cashValueAdapter = new CashTotalChangeAdapter(valuesListAdapter,true, getActivity());
         rvCashValues.setAdapter(cashValueAdapter);
     }
 
@@ -142,36 +156,34 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             ((CashChangeActivity) getActivity()).updateTitle(getString(R.string.str_change_cash));
     }
 
-    @OnClick({R.id.btn_cash_change, R.id.btn_cash_take, R.id.btn_confirm})
+    @OnClick({R.id.view_cash_change, R.id.view_cash_take, R.id.btn_confirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.btn_cash_change:
+            case R.id.view_cash_change:
                 if (valuesListAdapter.size() == 0)
                     return;
-                DialogUtil.getInstance().showDialogCashChange(getActivity(), valuesListCash -> {
-                    valueListCashChange = valuesListCash;
-                    layoutChange.setVisibility(View.VISIBLE);
-                    btnCashChange.setBackgroundResource(R.drawable.bg_border_red);
-                    btnCashChange.setTextColor(getResources().getColor(R.color.red));
-                    btnCashTake.setBackgroundResource(R.drawable.bg_border_red);
-                    btnCashTake.setTextColor(getResources().getColor(R.color.red));
-                    updateTotalMoneyChangeAndTake();
+                CashChangeBottomSheet cashChange = new CashChangeBottomSheet(new DialogUtil.OnResultChoseCash() {
+                    @Override
+                    public void OnListenerOk(List<CashTotal> valuesListCashChange) {
+                        valueListCashChange = valuesListCashChange;
+
+                        updateTotalMoneyChangeAndTake();
+                    }
                 });
+                cashChange.show(getChildFragmentManager(), "cashChange");
                 break;
-            case R.id.btn_cash_take:
+            case R.id.view_cash_take:
                 if (totalMoneyChange == 0) {
                     DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_chose_money_transfer));
                     return;
                 }
-                DialogUtil.getInstance().showDialogCashTake(getActivity(), valuesListCash -> {
-                    valueListCashTake = valuesListCash;
-                    layoutChange.setVisibility(View.VISIBLE);
-                    btnCashChange.setBackgroundResource(R.drawable.bg_border_red);
-                    btnCashChange.setTextColor(getResources().getColor(R.color.red));
-                    btnCashTake.setBackgroundResource(R.drawable.bg_border_red);
-                    btnCashTake.setTextColor(getResources().getColor(R.color.red));
+                CashTakeBottomSheet cashTake = new CashTakeBottomSheet(totalMoneyChange, valuesListCashChange -> {
+                    valueListCashTake = valuesListCashChange;
                     updateTotalMoneyChangeAndTake();
+                    Utils.disableButtonConfirm(getActivity(),btnConfirm,false);
+                    showDialogConfirm();
                 });
+                cashTake.show(getChildFragmentManager(), "cashTake");
                 break;
             case R.id.btn_confirm:
                 validateData();
@@ -183,7 +195,15 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         totalMoneyChange = CommonUtils.getTotalMoney(valueListCashChange);
         totalMoneyTake = CommonUtils.getTotalMoney(valueListCashTake);
         tvTotalMoneyCashChange.setText(CommonUtils.formatPriceVND(totalMoneyChange));
-        tvTotalMoneyCashTake.setText(CommonUtils.formatPriceVND(totalMoneyTake));
+        tvTotalMoneyCashChange.setTextColor(getResources().getColor(R.color.black));
+        tvTotalMoneyCashTake.setTextColor(getResources().getColor(R.color.blue));
+        tv_titleTotalMoneyTake.setTextColor(getResources().getColor(R.color.black));
+        if(totalMoneyTake!=0){
+            tvTotalMoneyCashTake.setText(CommonUtils.formatPriceVND(totalMoneyTake));
+            tvTotalMoneyCashTake.setTextColor(getResources().getColor(R.color.black));
+        }
+
+
     }
 
     private void validateData() {
@@ -203,49 +223,32 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_conflict_take_and_change));
             return;
         }
-        showDialog();
+        showDialogConfirm();
     }
-
     @SuppressLint("StaticFieldLeak")
-    private void showDialog() {
-        Dialog mDialog = new Dialog(getActivity());
-        mDialog.setContentView(R.layout.dialog_confirm_change_cash);
-
-        Button btnConfirm;
-        RecyclerView rv_cash_take, rv_cash_change;
-        btnConfirm = mDialog.findViewById(R.id.btn_confirm);
-        TextView tv_total_money_send = mDialog.findViewById(R.id.tv_total_money_send);
-        TextView tv_total_money_take = mDialog.findViewById(R.id.tv_total_money_take);
-        rv_cash_take = mDialog.findViewById(R.id.rv_cash_take);
-        rv_cash_change = mDialog.findViewById(R.id.rv_cash_change);
-
-        tv_total_money_send.setText(CommonUtils.formatPriceVND(CommonUtils.getTotalMoney(valueListCashChange)));
-        tv_total_money_take.setText(CommonUtils.formatPriceVND(CommonUtils.getTotalMoney(valueListCashTake)));
-
-        rv_cash_take.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rv_cash_change.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rv_cash_change.setAdapter(new CashTotalConfirmAdapter(CommonUtils.getListCashConfirm(valueListCashChange), getActivity()));
-        rv_cash_take.setAdapter(new CashTotalConfirmAdapter(CommonUtils.getListCashConfirm(valueListCashTake), getActivity()));
-
-        btnConfirm.setOnClickListener(v -> {
-            mDialog.dismiss();
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected void onPreExecute() {
-                    showProgress();
-                }
-
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    getListCashSend();
-                    getListCashTake();
-                    getCashChangeEncrypt(publicKeyOrganization);
-                    return null;
-                }
-            }.execute();
+    private void showDialogConfirm(){
+        if(valueListCashChange==null||valueListCashChange.size()==0||valueListCashTake==null||valueListCashTake.size()==0){
+            Toast.makeText(getActivity(),getString(R.string.err_upload),Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ConfirmChangeCashBottomSheet confirm = new ConfirmChangeCashBottomSheet(valueListCashChange, valueListCashTake, new ConfirmChangeCashListener() {
+            public void onConfirmChangeCash() {
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected void onPreExecute() {
+                        showProgress();
+                    }
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        getListCashSend();
+                        getListCashTake();
+                        getCashChangeEncrypt(publicKeyOrganization);
+                        return null;
+                    }
+                }.execute();
+            }
         });
-
-        mDialog.show();
+        confirm.show(getChildFragmentManager(), "confirm");
     }
 
     private void getListCashSend() {
@@ -304,7 +307,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
-                cashChangePresenter.requestChangeCash(encData, listQualityTake, accountInfo, listValueTake);
+                cashChangePresenter.requestChangeCash(getActivity(),encData, listQualityTake, accountInfo, listValueTake);
             }
 
             @Override
@@ -358,20 +361,24 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     }
 
     private void showDialogCashChangeOk() {
-        DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
-                getResources().getString(R.string.str_change_cash_success), new DialogUtil.OnConfirm() {
+        DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getString(R.string.str_transaction_completed),
+                getResources().getString(R.string.str_ecash_exchange_transaction_successfull), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();
-                        layoutChange.setVisibility(View.GONE);
-                        btnCashChange.setBackgroundResource(R.drawable.bg_border_blue);
-                        btnCashChange.setTextColor(getResources().getColor(R.color.blue));
-                        btnCashTake.setBackgroundResource(R.drawable.bg_border_blue);
-                        btnCashTake.setTextColor(getResources().getColor(R.color.blue));
-                        if (valueListCashTake != null) {
+                        tvTotalMoneyCashChange.setText(getString(R.string.str_choose_face_value));
+                        tvTotalMoneyCashChange.setTextColor(getResources().getColor(R.color.blue));
+                        tvTotalMoneyCashTake.setText(getString(R.string.str_choose_face_value));
+                        tvTotalMoneyCashTake.setTextColor(getResources().getColor(R.color.color_dot_unselected));
+                        tv_titleTotalMoneyTake.setTextColor(getResources().getColor(R.color.pinkish_grey));
+                        if(valueListCashTake!=null){
                             valueListCashTake.clear();
                         }
-
+                        if(valueListCashChange!=null){
+                            valueListCashChange.clear();
+                        }
+                        totalMoneyChange=0;
+                        totalMoneyTake=0;
                     }
 
                     @Override
@@ -379,6 +386,8 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                         if (getActivity() != null)
                             getActivity().finish();
                     }
+
+
                 });
     }
 
@@ -390,6 +399,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+   //     Log.e("updateData ", event.getData());
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
             reloadData();
         }

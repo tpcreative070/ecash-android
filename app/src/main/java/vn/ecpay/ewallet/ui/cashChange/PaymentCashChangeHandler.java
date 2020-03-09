@@ -24,6 +24,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -107,7 +108,9 @@ public class PaymentCashChangeHandler {
                         }else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            activity.showDialogError(response.body().getResponseMessage());
+                           // activity.showDialogError(response.body().getResponseMessage());
+                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
+
                         }
                     }
                 } else {
@@ -159,11 +162,14 @@ public class PaymentCashChangeHandler {
                                 application.checkSessionByErrorCode(response.body().getResponseCode());
                             } else {
                                 activity.dismissLoading();
-                                activity.showDialogError(response.body().getResponseMessage());
+                                //activity.showDialogError(response.body().getResponseMessage());
+                                activity.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
                             }
                         } else {
                             activity.dismissLoading();
-                            activity.showDialogError(response.body().getResponseMessage());
+                           // activity.showDialogError(response.body().getResponseMessage());
+                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
+
                         }
                     }else {
                         activity.showDialogError(response.body().getResponseMessage());

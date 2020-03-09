@@ -298,12 +298,12 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
-                registerPresenter.activeAccount(accountInfo, otp);
+                registerPresenter.activeAccount(getActivity(),accountInfo, otp);
             }
 
             @Override
             public void onRetryOTP() {
-                registerPresenter.retryOTP(accountInfo);
+                registerPresenter.retryOTP(getActivity(),accountInfo);
             }
 
             @Override
@@ -317,12 +317,12 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", err, "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
-                registerPresenter.activeAccount(accountInfo, otp);
+                registerPresenter.activeAccount(getActivity(),accountInfo, otp);
             }
 
             @Override
             public void onRetryOTP() {
-                registerPresenter.retryOTP(accountInfo);
+                registerPresenter.retryOTP(getActivity(),accountInfo);
             }
 
             @Override
@@ -392,7 +392,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     public void activeAccountSuccess(AccountInfo accountInfo) {
         accountInfo.setUsername(userName);
         accountInfo.setPassword(CommonUtils.encryptPassword(pass));
-        registerPresenter.loginAccount(accountInfo);
+        registerPresenter.loginAccount(getActivity(),accountInfo);
     }
 
     @Override
@@ -403,7 +403,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                 registerPresenter.syncContact(getActivity(), accountInfo);
             }
         }
-        registerPresenter.getEDongInfo(accountInfo);
+        registerPresenter.getEDongInfo(getActivity(),accountInfo);
 //        getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
     }
 

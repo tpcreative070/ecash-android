@@ -271,6 +271,17 @@ public class CommonUtils {
         fmt.setDecimalFormatSymbols(fmts);
         return fmt.format(money) + " VNĐ";
     }
+    public static String formatPrice(long money) {
+        DecimalFormat fmt = new DecimalFormat();
+        DecimalFormatSymbols fmts = new DecimalFormatSymbols();
+
+        fmts.setGroupingSeparator('.');
+
+        fmt.setGroupingSize(3);
+        fmt.setGroupingUsed(true);
+        fmt.setDecimalFormatSymbols(fmts);
+        return fmt.format(money);
+    }
 
     public static String formatPriceVND(Double money) {
         DecimalFormat fmt = new DecimalFormat();

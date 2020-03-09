@@ -200,7 +200,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
-                cashInPresenter.transferMoneyEDongToECash(totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
+                cashInPresenter.transferMoneyEDongToECash(getActivity(),totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
             }
 
             @Override

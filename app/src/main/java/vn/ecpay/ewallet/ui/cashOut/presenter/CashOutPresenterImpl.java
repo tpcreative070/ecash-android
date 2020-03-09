@@ -18,6 +18,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
@@ -105,7 +106,8 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             cashOutView.dismissLoading();
-                            cashOutView.showDialogError(response.body().getResponseMessage());
+                            //cashOutView.showDialogError(response.body().getResponseMessage());
+                            cashOutView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
                     }
                 } else {
@@ -123,7 +125,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
     }
 
     @Override
-    public void sendECashToEDong(String encData, String idSender, long totalMoney, EdongInfo edongInfo, AccountInfo accountInfo) {
+    public void sendECashToEDong(Context context,String encData, String idSender, long totalMoney, EdongInfo edongInfo, AccountInfo accountInfo) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -163,7 +165,9 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             cashOutView.dismissLoading();
-                            cashOutView.showDialogError(response.body().getResponseMessage());
+                            //cashOutView.showDialogError(response.body().getResponseMessage());
+                            cashOutView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+
                         }
                     }
                 } else {

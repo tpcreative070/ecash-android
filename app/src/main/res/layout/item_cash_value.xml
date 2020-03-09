@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="10dp"
+    android:padding="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/bg_gray_rectangle_border"
+        android:background="@drawable/bg_blue_rectangle_boder"
         android:orientation="horizontal">
 
         <ImageView
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="15dp"
-            android:src="@drawable/ic_minus" />
+            android:src="@drawable/ic_minus_blue" />
 
         <TextView
             android:id="@+id/tv_total"
@@ -38,6 +38,8 @@
             android:layout_gravity="center_vertical"
             android:text="0"
             android:textColor="@color/black"
+            android:textSize="@dimen/text_xlarge"
+             />
             android:textSize="@dimen/text_xxlarge"
             android:textStyle="bold" />
 
@@ -47,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="15dp"
-            android:src="@drawable/ic_plus" />
+            android:src="@drawable/ic_plus_blue" />
 
     </LinearLayout>
 </RelativeLayout>

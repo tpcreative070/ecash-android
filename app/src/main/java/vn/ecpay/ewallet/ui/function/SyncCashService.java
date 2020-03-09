@@ -51,7 +51,7 @@ public class SyncCashService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-       // Log.e("B ", event.getData());
+   //     Log.e("B ", event.getData());
         if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
             if (!isRunning) {
                 isRunning = true;
@@ -138,6 +138,7 @@ public class SyncCashService extends Service {
         } else {
             isRunning = false;
             if (!changeCashPayment) {
+   //             Log.e("C1 ", "C1");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
             } else {
                 changeCashPayment = false;

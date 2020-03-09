@@ -225,9 +225,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         registerView.registerSuccess(accountInfo, privateKeyBase64, publicKeyBase64);
                     } else {
                         if(response.body().getResponseCode()!=null){
-                            registerView.registerFail(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode()));
-                        }else{
-                            registerView.registerFail(response.body().getResponseMessage());
+                            registerView.registerFail(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
 
                     }
@@ -245,7 +243,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void retryOTP(AccountInfo accountInfo) {
+    public void retryOTP(Context context,AccountInfo accountInfo) {
         registerView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -275,7 +273,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         } else if (response.body().getResponseCode().equals("3015")) {
                             registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
                         } else {
-                            registerView.showDialogError(response.body().getResponseMessage());
+                          //  registerView.showDialogError(response.body().getResponseMessage());
+                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
                     } else {
                         registerView.showDialogError(application.getString(R.string.err_upload));
@@ -294,7 +293,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void activeAccount(AccountInfo accountInfo, String otp) {
+    public void activeAccount(Context context,AccountInfo accountInfo, String otp) {
         registerView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -332,7 +331,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             registerView.requestOtpErr(accountInfo, application.getString(R.string.err_otp_fail));
                         } else {
                             registerView.dismissLoading();
-                            registerView.showDialogError(response.body().getResponseMessage());
+                           // registerView.showDialogError(response.body().getResponseMessage());
+                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
                     } else {
                         registerView.dismissLoading();
@@ -353,7 +353,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void loginAccount(AccountInfo accountInfo) {
+    public void loginAccount(Context context,AccountInfo accountInfo) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -378,7 +378,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             registerView.loginSuccess(accountInfo);
                         } else {
                             registerView.dismissLoading();
-                            registerView.showDialogError(response.body().getResponseMessage());
+                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
                     } else {
                         registerView.dismissLoading();
@@ -399,7 +399,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void getEDongInfo(AccountInfo accountInfo) {
+    public void getEDongInfo(Context context,AccountInfo accountInfo) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -426,7 +426,9 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             registerView.getEDongInfoSuccess(accountInfo, response.body().getResponseData());
                         } else {
-                            registerView.showDialogError(response.body().getResponseMessage());
+                           // registerView.showDialogError(response.body().getResponseMessage());
+                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+
                         }
                     } else {
                         registerView.showDialogError(application.getString(R.string.err_upload));

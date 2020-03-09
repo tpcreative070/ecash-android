@@ -41,8 +41,8 @@ public class CashOutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         CashOutAdapter.ItemValueHolder itemViewHolder = (CashOutAdapter.ItemValueHolder) holder;
         CashTotal cashTotal = listCashValue.get(position);
-        itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
         itemViewHolder.tv_sl_value.setText(String.valueOf(cashTotal.getTotalDatabase()));
+        itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
 
         itemViewHolder.iv_down.setOnClickListener(v -> {
             if (cashTotal.getTotal() > 0) {
@@ -75,10 +75,8 @@ public class CashOutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public static class ItemValueHolder extends RecyclerView.ViewHolder {
-
         TextView tv_value, tv_sl_value, tv_total;
         ImageView iv_down, iv_up;
-
         public ItemValueHolder(View itemView) {
             super(itemView);
             tv_value = itemView.findViewById(R.id.tv_value);

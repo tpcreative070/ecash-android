@@ -1,5 +1,7 @@
 package vn.ecpay.ewallet.ui.cashChange.presenter;
 
+import android.content.Context;
+
 import androidx.fragment.app.FragmentActivity;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -70,7 +73,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
     }
 
     @Override
-    public void requestChangeCash(String cashEnc, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue) {
+    public void requestChangeCash(Context context, String cashEnc, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -105,11 +108,13 @@ public class CashChangePresenterImpl implements CashChangePresenter {
                                 application.checkSessionByErrorCode(response.body().getResponseCode());
                             } else {
                                 cashChangeView.dismissLoading();
-                                cashChangeView.showDialogError(response.body().getResponseMessage());
+                               // cashChangeView.showDialogError(response.body().getResponseMessage());
+                                cashChangeView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                             }
                         } else {
                             cashChangeView.dismissLoading();
-                            cashChangeView.showDialogError(response.body().getResponseMessage());
+                           // cashChangeView.showDialogError(response.body().getResponseMessage());
+                            cashChangeView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
                     }
                 } else {
@@ -158,7 +163,8 @@ public class CashChangePresenterImpl implements CashChangePresenter {
                         }else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            cashChangeView.showDialogError(response.body().getResponseMessage());
+                          //  cashChangeView.showDialogError(response.body().getResponseMessage());
+                            cashChangeView.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
                     }
                 } else {

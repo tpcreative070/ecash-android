@@ -31,6 +31,8 @@ public class Constant {
     public static final String ERROR_CODE_4008 = "4008";
    // public static final String ERROR_CODE_4010 = "4010";
     public static final String ERROR_CODE_4012 = "4012";
+    public static final String ERROR_CODE_4011 = "4011";
+
     public static final int DEFAULT_LANGUAGE_ID = 0;
 
     public static final String DATABASE_NAME = "eWallet";
