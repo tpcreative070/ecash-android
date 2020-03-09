@@ -294,10 +294,12 @@ public class HomePresenterImpl implements HomePresenter {
         call.enqueue(new Callback<ResponseSyncContact>() {
             @Override
             public void onResponse(Call<ResponseSyncContact> call, Response<ResponseSyncContact> response) {
+                homeView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            SharedPrefs.getInstance().put(SharedPrefs.contactMaxDate, ECashApplication.lastTimeAddContact);
                             homeView.onSyncContactSuccess();
                         } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
@@ -312,6 +314,7 @@ public class HomePresenterImpl implements HomePresenter {
 
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
+                homeView.dismissLoading();
                 homeView.onSyncContactFail(application.getString(R.string.err_upload));
             }
         });

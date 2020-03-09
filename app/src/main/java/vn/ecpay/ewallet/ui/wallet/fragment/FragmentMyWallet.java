@@ -245,16 +245,13 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
 
     @Override
     public void onCancelAccountSuccess() {
-        DialogUtil.getInstance().showDialogCancelAccountSuccess(getActivity(), Constant.STR_EMPTY, Constant.STR_EMPTY, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-                WalletDatabase.clearAllTable();
-                Intent intent = new Intent(getActivity(), AccountActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                getActivity().startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-            }
+        DialogUtil.getInstance().showDialogCancelAccountSuccess(getActivity(), Constant.STR_EMPTY, Constant.STR_EMPTY, () -> {
+            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+            WalletDatabase.clearAllTable();
+            Intent intent = new Intent(getActivity(), AccountActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         });
     }
 }

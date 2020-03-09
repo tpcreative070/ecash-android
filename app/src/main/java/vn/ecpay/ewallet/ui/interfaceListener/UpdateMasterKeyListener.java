@@ -4,4 +4,6 @@ public interface UpdateMasterKeyListener {
     void onUpdateMasterSuccess();
 
     void onUpdateMasterFail();
+
+    void onRequestTimeout();
 }

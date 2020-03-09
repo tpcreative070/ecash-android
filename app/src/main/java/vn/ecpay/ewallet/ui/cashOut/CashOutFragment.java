@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -93,6 +94,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     private ArrayList<CashLogs_Database> listCashSend;
     private List<CashTotal> valuesListAdapter;
     private CashOutAdapter cashOutAdapter;
+    private long mLastClickTime = 0;
 
     @Inject
     CashOutPresenter cashOutPresenter;
@@ -198,6 +200,10 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 }
                 break;
             case R.id.btn_confirm:
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 validateData();
                 break;
         }
@@ -216,8 +222,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             return;
         }
 
-        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
         showLoading();
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
@@ -239,6 +245,12 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             public void onUpdateMasterFail() {
                 dismissLoading();
                 showDialogError(getResources().getString(R.string.err_change_database));
+            }
+
+            @Override
+            public void onRequestTimeout() {
+                dismissLoading();
+                showDialogError(getResources().getString(R.string.err_upload));
             }
         });
     }

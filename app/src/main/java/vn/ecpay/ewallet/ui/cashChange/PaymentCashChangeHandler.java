@@ -540,6 +540,12 @@ public class PaymentCashChangeHandler {
                 activity.dismissLoading();
                 activity.showDialogError(activity.getResources().getString(R.string.err_change_database));
             }
+
+            @Override
+            public void onRequestTimeout() {
+                activity.dismissLoading();
+                activity.showDialogError(activity.getResources().getString(R.string.err_upload));
+            }
         });
     }
     public void showDialogPaymentSuccess(Payment_DataBase payment_dataBase) {
