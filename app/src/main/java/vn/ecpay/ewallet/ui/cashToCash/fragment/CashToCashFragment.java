@@ -50,6 +50,8 @@ import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 
 public class CashToCashFragment extends ECashBaseFragment implements MultiTransferListener {
+    @BindView(R.id.tv_account_name)
+    TextView tvAccountName;
     @BindView(R.id.tv_id)
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
@@ -116,6 +118,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     protected void setData() {
         setAdapter();
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
+        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverECash.setText(CommonUtils.formatPriceVND(balance));
@@ -371,7 +374,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     protected void showDialogSendOk() {
         DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getResources().getString(R.string.str_transfer_success),
-                getResources().getString(R.string.str_eCash_money_transfer_successfully), new DialogUtil.OnConfirm() {
+                getResources().getString(R.string.str_eCash_money_transfer_successfully),getResources().getColor(R.color.black), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();

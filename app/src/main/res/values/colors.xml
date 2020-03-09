@@ -15,6 +15,7 @@
 
     <color name="green_darker">#006C3B</color>
     <color name="green_light">#76ff03</color>
+    <color name="green">#43d8b4</color>
     <color name="slide_background">#006c3b</color>
     <color name="slide_button">#EF5222</color>
     <color name="grey_background">#ffe9e9e9</color>

@@ -168,8 +168,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     }
 
     private void showDialogCashOutOk() {
-        DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
-                getString(R.string.str_dialog_cash_out_success, CommonUtils.formatPriceVND(totalMoney), String.valueOf(edongInfo.getAccountIdt())), new DialogUtil.OnConfirm() {
+        DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getString(R.string.str_transaction_success),
+                getResources().getString(R.string.str_dialog_cash_out_success, CommonUtils.formatPriceVND(totalMoney)),getResources().getColor(R.color.green), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();
@@ -181,6 +181,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                         if (getActivity() != null)
                             getActivity().finish();
                     }
+
+
                 });
     }
 

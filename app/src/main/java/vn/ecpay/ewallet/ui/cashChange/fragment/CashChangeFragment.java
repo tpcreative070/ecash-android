@@ -69,6 +69,8 @@ import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class CashChangeFragment extends ECashBaseFragment implements CashChangeView {
+    @BindView(R.id.tv_account_name)
+    TextView tvAccountName;
     @BindView(R.id.tv_id)
     TextView tvId;
     @BindView(R.id.tv_over_ecash)
@@ -118,6 +120,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         super.onViewCreated(view, savedInstanceState);
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         if (getActivity() != null)
             ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashChangeModule(this)).inject(this);
         cashChangePresenter.setView(this);
@@ -362,7 +365,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
 
     private void showDialogCashChangeOk() {
         DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getString(R.string.str_transaction_completed),
-                getResources().getString(R.string.str_ecash_exchange_transaction_successfull), new DialogUtil.OnConfirm() {
+                getResources().getString(R.string.str_ecash_exchange_transaction_successfull),getResources().getColor(R.color.black), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();

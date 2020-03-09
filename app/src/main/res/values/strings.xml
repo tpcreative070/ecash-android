@@ -252,8 +252,8 @@
     <string name="str_history_date_header">Month %s  / %s </string>
     <string name="str_date"> %s  / %s  / %s </string>
     <string name="str_total_money"> %s  VND</string>
-    <string name="str_dialog_cash_in_success">You have successfully deposited the amount: %s from your eDong account: %s . Do you want to continue making transactions?</string>
-    <string name="str_dialog_cash_out_success">You have successfully withdrawn amount: %s  to eDong account: %s . Do you want to continue making transactions?</string>
+    <string name="str_dialog_cash_in_success"><![CDATA[You have successfully deposited the amount<b> %s</b>. Do you want to continue making other transactions?]]></string>
+    <string name="str_dialog_cash_out_success"><![CDATA[You have successfully withdrawn amount<b> %s</b>. Do you want to continue making other transactions?]]></string>
     <string name="str_dialog_cash_to_cash_success">You have successfully transferred the amount: %s  to your account: %s . Do you want to continue making transactions?</string>
 
     //key store
@@ -292,7 +292,7 @@
     <string name="str_get_an_account_with_qr_code">Get an account with QR code</string>
     <string name="str_total_payment_ecash">Total payment eCash</string>
     <string name="str_payment_success">Payment success</string>
-    <string name="str_transaction_success">Successful transaction</string>
+    <string name="str_transaction_success">Successful transaction!</string>
     <string name="str_you_have_paid">You have paid</string>
     <string name="str_view_info">view thông tin</string>
     <string name="str_payment_info">Payment info</string>
@@ -352,4 +352,5 @@
     <string name="str_total">Total:</string>
     <string name="str_transaction_completed">Transaction completed!</string>
     <string name="str_ecash_exchange_transaction_successfull">ECash exchange transaction successful</string>
+    <string name="str_cash_in_to_ecash">Cash into Ecash wallet</string>
 </resources>
