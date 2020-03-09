@@ -353,4 +353,7 @@
     <string name="str_transaction_completed">Transaction completed!</string>
     <string name="str_ecash_exchange_transaction_successfull">ECash exchange transaction successful</string>
     <string name="str_cash_in_to_ecash">Cash into Ecash wallet</string>
+    <string name="str_you_have_successfully_qr_press_arrow_to_view_other_qr">You have successfully created %s QR codes, press the arrow to see other codes.</string>
+    <string name="str_scan_qr_to_receive_money">Scan the code to receive money</string>
+    <string name="str_wallet_receive">Wallet receive:</string>
 </resources>
