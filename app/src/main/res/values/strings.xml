@@ -179,7 +179,8 @@
     <string name="str_dialog_active_acc">Please activate your account to use this function</string>
 
     //err
-    <string name="err_change_database">Your data has been edited</string>
+    <string name="err_contact_empty">Your name must not be blank</string>
+    <string name="err_change_database">eCash DB is invalid, Please contact support team</string>
     <string name="error">Connection errors. Something went wrong. Please try again later</string>
     <string name="err_socket_timeout" translatable="false">Kết nối thất bại. Xin vui lòng thử lại sau</string>
     <string name="err_upload" translatable="false">Đã có lỗi xảy ra.Xin vui lòng thử lại</string>

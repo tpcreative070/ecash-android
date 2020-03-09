@@ -13,6 +13,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.cancelAccount.RequestCancelAccount;
@@ -134,18 +135,20 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
             @Override
             public void onResponse(@NotNull Call<ResponseCancelAccount> call, @NotNull Response<ResponseCancelAccount> response) {
                 myWalletView.dismissLoading();
+                ECashApplication.isCancelAccount = false;
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
                         String code = response.body().getResponseCode();
                         if (code.equals(Constant.CODE_SUCCESS)) {
                             myWalletView.onCancelAccountSuccess();
+                            SharedPrefs.getInstance().put(SharedPrefs.contactMaxDate, 0L);
                         } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
                             myWalletView.showDialogError(response.body().getResponseMessage());
                         }
-                    }else {
+                    } else {
                         myWalletView.showDialogError(application.getString(R.string.err_upload));
                     }
                 }
@@ -153,6 +156,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
 
             @Override
             public void onFailure(Call<ResponseCancelAccount> call, Throwable t) {
+                ECashApplication.isCancelAccount = false;
                 myWalletView.dismissLoading();
                 myWalletView.showDialogError(application.getString(R.string.err_upload));
             }

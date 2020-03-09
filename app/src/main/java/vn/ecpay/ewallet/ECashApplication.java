@@ -42,6 +42,7 @@ public class ECashApplication extends Application {
     private Gson mGSon;
     public static boolean isChangeDataBase = false;
     public static boolean isCancelAccount = false;
+    public static Long lastTimeAddContact;
 
     public static boolean isIsChangeDataBase() {
         return isChangeDataBase;

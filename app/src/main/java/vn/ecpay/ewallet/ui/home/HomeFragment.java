@@ -139,9 +139,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         homePresenter.onViewCreate();
         updateAccountInfo();
         checkPayment();
-//        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
-//            homePresenter.getCashValues(accountInfo, getActivity());
-//        }
+        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
+            homePresenter.getCashValues(accountInfo, getActivity());
+        }
     }
 
     private void updateAccountInfo() {
@@ -537,7 +537,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-      //  Log.e("Home Event Bus", new Gson().toJson(event.getData()));
+        //  Log.e("Home Event Bus", new Gson().toJson(event.getData()));
         if (event.getData().equals(Constant.UPDATE_ACCOUNT_LOGIN)) {
             updateAccountInfo();
         }
@@ -706,9 +706,23 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
-                        dismissLoading();
+                        syncContact();
                     }
                 }.execute();
+            }
+        } else {
+            dismissLoading();
+        }
+    }
+
+    private void syncContact() {
+        if (PermissionUtils.isReadContact(getActivity())) {
+            if (getActivity() != null) {
+                if (CommonUtils.getListPhoneNumber(getActivity()).size() > 0) {
+                    homePresenter.syncContact(getActivity(), accountInfo);
+                } else {
+                    dismissLoading();
+                }
             }
         } else {
             dismissLoading();

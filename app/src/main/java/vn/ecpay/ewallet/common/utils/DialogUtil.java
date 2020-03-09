@@ -465,6 +465,8 @@ public class DialogUtil {
                     if (onContactUpdate != null) {
                         onContactUpdate.OnListenerOk(name);
                     }
+                } else {
+                    Toast.makeText(pContext, pContext.getResources().getString(R.string.err_contact_empty), Toast.LENGTH_SHORT).show();
                 }
             });
             mDialog.show();
@@ -627,14 +629,15 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentSuccess(Context context, Payments payToRequest, final OnResult pOnConfirm){
+
+    public void showDialogPaymentSuccess(Context context, Payments payToRequest, final OnResult pOnConfirm) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_success);
             Button btnOk;
-            TextView tvTitle=mDialog.findViewById(R.id.tvTitle);
-            TextView tvAmount=mDialog.findViewById(R.id.tv_amount);
-            TextView tvECashID=mDialog.findViewById(R.id.tv_ecash_id);
+            TextView tvTitle = mDialog.findViewById(R.id.tvTitle);
+            TextView tvAmount = mDialog.findViewById(R.id.tv_amount);
+            TextView tvECashID = mDialog.findViewById(R.id.tv_ecash_id);
             tvAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())));
             tvECashID.setText(String.format("%s - %s", payToRequest.getFullName(), payToRequest.getSender()));
             btnOk = mDialog.findViewById(R.id.btn_main_screen);
@@ -649,15 +652,16 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogPaymentRequest(Context context, Payment_DataBase payToRequest, final OnResult pOnConfirm){
+
+    public void showDialogPaymentRequest(Context context, Payment_DataBase payToRequest, final OnResult pOnConfirm) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_request);
             Button btnOk;
-            TextView tvTitle=mDialog.findViewById(R.id.tvTitle);
-            tvTitle.setText(String.format(context.getString(R.string.str_payment_request)," "));
-            TextView tvContent=mDialog.findViewById(R.id.tv_content);
-            tvContent.setText(Html.fromHtml(String.format(context.getString(R.string.str_content_payment_request), payToRequest.getFullName(), payToRequest.getSender(),CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())),payToRequest.getContent())));
+            TextView tvTitle = mDialog.findViewById(R.id.tvTitle);
+            tvTitle.setText(String.format(context.getString(R.string.str_payment_request), " "));
+            TextView tvContent = mDialog.findViewById(R.id.tv_content);
+            tvContent.setText(Html.fromHtml(String.format(context.getString(R.string.str_content_payment_request), payToRequest.getFullName(), payToRequest.getSender(), CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())), payToRequest.getContent())));
 
             btnOk = mDialog.findViewById(R.id.btn_payment);
             mDialog.setCanceledOnTouchOutside(false);
@@ -672,23 +676,24 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogConfirmPayment(Context context, List<CashTotal> valueListCash, Payment_DataBase payToRequest, final OnResult pOnConfirm){
+
+    public void showDialogConfirmPayment(Context context, List<CashTotal> valueListCash, Payment_DataBase payToRequest, final OnResult pOnConfirm) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_confirm_payment);
             Button btnOk;
 
-            TextView tv_info=mDialog.findViewById(R.id.tv_info);
+            TextView tv_info = mDialog.findViewById(R.id.tv_info);
             tv_info.setText(context.getString(R.string.str_payment_info));
-            TextView tv_title=mDialog.findViewById(R.id.tv_title);
-            RecyclerView rvCashValues=mDialog.findViewById(R.id.rv_cash_values);
+            TextView tv_title = mDialog.findViewById(R.id.tv_title);
+            RecyclerView rvCashValues = mDialog.findViewById(R.id.rv_cash_values);
 
             CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash,false, context);
             //rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
             rvCashValues.setAdapter(cashValueAdapter);
-            TextView tvTotalAmount=mDialog.findViewById(R.id.tv_total_payment);
-            TextView tvContent=mDialog.findViewById(R.id.tv_content_payment);
-            tv_title.setText(Html.fromHtml(String.format(context.getString(R.string.str_review_payment_content), CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())),payToRequest.getFullName(), payToRequest.getSender())));
+            TextView tvTotalAmount = mDialog.findViewById(R.id.tv_total_payment);
+            TextView tvContent = mDialog.findViewById(R.id.tv_content_payment);
+            tv_title.setText(Html.fromHtml(String.format(context.getString(R.string.str_review_payment_content), CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())), payToRequest.getFullName(), payToRequest.getSender())));
             tvTotalAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())));
             tvContent.setText(payToRequest.getContent());
             btnOk = mDialog.findViewById(R.id.btn_confirm);
@@ -705,12 +710,12 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogCannotPayment(Context context){
+    public void showDialogCannotPayment(Context context) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_cannot_payment);
             Button btnOk;
-            TextView tv_content=mDialog.findViewById(R.id.tv_content);
+            TextView tv_content = mDialog.findViewById(R.id.tv_content);
             tv_content.setText(Html.fromHtml(context.getString(R.string.str_cannot_payment_content)));
             btnOk = mDialog.findViewById(R.id.btn_close);
             mDialog.setCanceledOnTouchOutside(false);

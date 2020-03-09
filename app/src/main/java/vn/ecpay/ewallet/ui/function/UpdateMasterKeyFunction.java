@@ -78,16 +78,16 @@ public class UpdateMasterKeyFunction {
                             updateMasterKeyListener.onUpdateMasterFail();
                         }
                     } else {
-                        updateMasterKeyListener.onUpdateMasterFail();
+                        updateMasterKeyListener.onRequestTimeout();
                     }
                 } else {
-                    updateMasterKeyListener.onUpdateMasterFail();
+                    updateMasterKeyListener.onRequestTimeout();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseUpdateMasterKey> call, Throwable t) {
-                updateMasterKeyListener.onUpdateMasterFail();
+                updateMasterKeyListener.onRequestTimeout();
             }
         });
     }

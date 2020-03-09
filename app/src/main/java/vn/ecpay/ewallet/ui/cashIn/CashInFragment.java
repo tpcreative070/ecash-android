@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -82,6 +83,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     private List<Integer> listValue;
     private List<CashTotal> valuesListAdapter;
     private CashValueAdapter cashValueAdapter;
+    private long mLastClickTime = 0;
 
     @Inject
     CashInPresenter cashInPresenter;
@@ -171,6 +173,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                 }
                 break;
             case R.id.btn_confirm:
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 validateData();
                 break;
         }
@@ -201,6 +207,12 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             public void onUpdateMasterFail() {
                 dismissLoading();
                 showDialogError(R.string.err_change_database);
+            }
+
+            @Override
+            public void onRequestTimeout() {
+                dismissLoading();
+                showDialogError(getResources().getString(R.string.err_upload));
             }
         });
     }

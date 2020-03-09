@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.ui.cashToCash.fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -74,6 +75,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     private List<Contact> multiTransferList;
     protected long totalMoney;
     protected String typeSend;
+    private long mLastClickTime = 0;
 
     public static CashToCashFragment newInstance(ArrayList<Contact> listContactTransfer) {
         Bundle args = new Bundle();
@@ -151,6 +153,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 }
                 break;
             case R.id.btn_confirm:
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 validateData();
                 break;
             case R.id.iv_back:
@@ -217,6 +223,12 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                         dismissProgress();
                         showDialogError(getResources().getString(R.string.err_change_database));
                     }
+
+                    @Override
+                    public void onRequestTimeout() {
+                        dismissProgress();
+                        showDialogError(getResources().getString(R.string.err_upload));
+                    }
                 });
             }
         } else {
@@ -234,6 +246,12 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 public void onUpdateMasterFail() {
                     dismissProgress();
                     showDialogError(getResources().getString(R.string.err_change_database));
+                }
+
+                @Override
+                public void onRequestTimeout() {
+                    dismissProgress();
+                    showDialogError(getResources().getString(R.string.err_upload));
                 }
             });
         }

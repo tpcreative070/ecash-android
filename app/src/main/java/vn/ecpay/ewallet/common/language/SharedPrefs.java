@@ -12,6 +12,7 @@ public class SharedPrefs {
     public static final String channelKp = "channelKp";
     public static final String clientKs = "clientKs";
     public static final String clientKp = "clientKp";
+    public static final String contactMaxDate = "contactMaxDate";
 
     private static SharedPrefs mInstance;
     private SharedPreferences mSharedPreferences;

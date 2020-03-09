@@ -63,7 +63,6 @@ public class SyncCashService extends Service {
         if (event.getData().equals(Constant.EVENT_CASH_IN_CHANGE)) {
             changeCashPayment = true;
             syncData();
-
         }
 
         if (event.getData().equals(Constant.EVENT_CASH_OUT_MONEY)) {

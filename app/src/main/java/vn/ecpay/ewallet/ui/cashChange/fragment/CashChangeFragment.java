@@ -315,6 +315,12 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 dismissLoading();
                 showDialogError(getResources().getString(R.string.err_change_database));
             }
+
+            @Override
+            public void onRequestTimeout() {
+                dismissLoading();
+                showDialogError(getResources().getString(R.string.err_upload));
+            }
         });
     }
 

@@ -38,6 +38,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -445,19 +446,43 @@ public class CommonUtils {
     }
 
     public static List<String> getListPhoneNumber(Context context) {
-        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER};
+        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_LAST_UPDATED_TIMESTAMP};
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
         List<String> userList = new ArrayList<>();
-        assert phones != null;
-        if (phones.getCount() > 0) {
-            while (phones.moveToNext()) {
-                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                        .replace("+84", "0")
-                        .replace(" ", "");
-                if (CommonUtils.isValidatePhoneNumber(phoneNumber)) {
-                    userList.add(phoneNumber);
+        List<Long> dateList = new ArrayList<>();
+        Long maxDateSharedPrefs = SharedPrefs.getInstance().get(SharedPrefs.contactMaxDate, Long.class);
+        if (maxDateSharedPrefs > 0 && null != phones) {
+            if (phones.getCount() > 0) {
+                while (phones.moveToNext()) {
+                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                            .replace("+84", "0")
+                            .replace(" ", "");
+                    Long date = Long.valueOf(phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_LAST_UPDATED_TIMESTAMP)));
+                    dateList.add(date);
+                    if (CommonUtils.isValidatePhoneNumber(phoneNumber) && date > maxDateSharedPrefs) {
+                        userList.add(phoneNumber);
+                    }
                 }
             }
+
+        } else {
+            assert phones != null;
+            if (phones.getCount() > 0) {
+                while (phones.moveToNext()) {
+                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                            .replace("+84", "0")
+                            .replace(" ", "");
+                    Long date = Long.valueOf(phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_LAST_UPDATED_TIMESTAMP)));
+                    dateList.add(date);
+                    if (CommonUtils.isValidatePhoneNumber(phoneNumber)) {
+                        userList.add(phoneNumber);
+                    }
+                }
+            }
+        }
+        if (dateList.size() > 0) {
+            ECashApplication.lastTimeAddContact = Collections.max(dateList);
         }
         phones.close();
         return userList;
@@ -528,6 +553,7 @@ public class CommonUtils {
         }
         return "";
     }
+
     public static void loadAvatar(Context mContext, CircleImageView avatar, String image) {
         if (mContext != null) {
             Glide.get(mContext).clearMemory();
@@ -597,6 +623,7 @@ public class CommonUtils {
         }
         return true;
     }
+
     public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
                                                                  Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
@@ -675,11 +702,12 @@ public class CommonUtils {
         String username = ECashApplication.getAccountInfo().getUsername();
         return DatabaseUtil.getAccountInfo(username, context);
     }
-    public static  boolean checkWalletIDisMe(Context context,String walletID){
+
+    public static boolean checkWalletIDisMe(Context context, String walletID) {
         String userName = ECashApplication.getAccountInfo().getUsername();
-        AccountInfo accountInfo =DatabaseUtil.getAccountInfo(userName, context);
-        if(accountInfo!=null&&walletID!=null){
-            if(walletID.equals(String.valueOf(accountInfo.getWalletId()))){
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+        if (accountInfo != null && walletID != null) {
+            if (walletID.equals(String.valueOf(accountInfo.getWalletId()))) {
                 return true;
             }
         }

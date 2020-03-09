@@ -207,7 +207,9 @@ public class DatabaseUtil {
             Contact contact = listContact.get(i);
             contact.setStatus(Constant.CONTACT_ON);
             contact.setFullName(getNameContact(context, listContact.get(i).getPhone()));
-            WalletDatabase.insertContactTask(contact);
+            if (!checkContactExit(context, String.valueOf(contact.getWalletId()))) {
+                WalletDatabase.insertContactTask(contact);
+            }
         }
         EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_CONTACT));
     }
@@ -404,7 +406,7 @@ public class DatabaseUtil {
         return isValid;
     }
 
-    public static void insertPayment(Context context,final Payment_DataBase payment) {
+    public static void insertPayment(Context context, final Payment_DataBase payment) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         WalletDatabase.insertPayment(payment);
     }
@@ -414,7 +416,7 @@ public class DatabaseUtil {
         return WalletDatabase.getPayment();
     }
 
-    public static void deletePayment(Context context,int id) {
+    public static void deletePayment(Context context, int id) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         WalletDatabase.deletePayment(id);
 

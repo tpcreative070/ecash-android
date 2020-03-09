@@ -171,7 +171,8 @@
     <string name="str_dialog_active_acc">Bạn vui lòng kích hoạt tài khoản để sử dụng chức năng này</string>
 
     //err
-    <string name="err_change_database">Dữ liệu của bạn đã bị chỉnh sửa</string>
+    <string name="err_contact_empty">Họ tên không được để trống</string>
+    <string name="err_change_database">Dữ liệu ví eCash không hợp lệ, Vui lòng liên hệ bộ phận hỗ trợ</string>
     <string name="error">Lỗi kết nối. Xin vui lòng thử lại sau</string>
     <string name="err_socket_timeout" translatable="false">Kết nối thất bại. Xin vui lòng thử lại sau</string>
     <string name="err_upload" translatable="false">Đã có lỗi xảy ra.Xin vui lòng thử lại</string>
