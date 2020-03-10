@@ -40,6 +40,7 @@ public class SlideQRCodeAdapter extends PagerAdapter {
     private String content;
     private String typeSend;
     private AccountInfo accountInfo;
+    private Bitmap bitmap;
 
     public SlideQRCodeAdapter(Context context, List<CashTotal> listCashTotal, List<Contact> multiTransferList, String content, String typeSend) {
         this.context = context;
@@ -83,13 +84,11 @@ public class SlideQRCodeAdapter extends PagerAdapter {
                     qrCodeSender.setContent(stringList.get(j));
                     codeSenderArrayList.add(qrCodeSender);
                 }
-
-                //save image
                 tv_wallet_receive.setText(String.valueOf(contact.getWalletId()));
                 if (codeSenderArrayList.size() > 0) {
                     for (int j = 0; j < codeSenderArrayList.size(); j++) {
-                        Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
-                        String imageName = contact.getWalletId() + "_" + currentTime + "_" + j;
+                        bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
+                       // String imageName = contact.getWalletId() + "_" + currentTime + "_" + j;
                         //QRCodeUtil.saveImageQRCode(context,bitmap,imageName, Constant.DIRECTORY_QR_IMAGE);
                         iv_qr_code.setImageBitmap(bitmap);
                     }
@@ -101,6 +100,9 @@ public class SlideQRCodeAdapter extends PagerAdapter {
         view.addView(imageLayout, 0);
 
         return imageLayout;
+    }
+    public Bitmap getBitmap(){
+        return this.bitmap;
     }
 
     @Override

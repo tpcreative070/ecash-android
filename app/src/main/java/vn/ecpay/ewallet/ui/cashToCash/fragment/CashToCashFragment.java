@@ -295,6 +295,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void cashOutSuccess() {
+        tvNumberWallet.setText(getString(R.string.str_chose_wallet_transfer));
         if (WalletDatabase.numberRequest == 0) {
             if (ECashApplication.isCancelAccount) {
                 handleCancelAccount();
