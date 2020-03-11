@@ -728,7 +728,7 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogContinueAndExit(Context context, String title, String message, final OnConfirm listener) {
+    public void showDialogContinueAndExit(Context context, String title, String message,int color, final OnConfirm listener) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_continue_exit);
@@ -737,8 +737,9 @@ public class DialogUtil {
             tvMessage = mDialog.findViewById(R.id.tv_message);
             tvExit = mDialog.findViewById(R.id.tv_exit);
             tvContinue = mDialog.findViewById(R.id.tv_continue);
+            tvTitle.setTextColor(color);
             tvTitle.setText(title);
-            tvMessage.setText(message);
+            tvMessage.setText(Html.fromHtml(message));
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();

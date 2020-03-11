@@ -45,93 +45,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <include layout="@layout/view_header_info_ecash_wallet"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="100dp">
-                <View
-                    android:background="@color/blue"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="0dp"/>
-
-                <View
-                    android:background="@color/bg_transfer_blue"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"/>
-            </LinearLayout>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:background="@color/white"
-                android:layout_marginStart="10dp"
-                app:cardCornerRadius="3dp"
-                app:cardElevation="4dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                app:cardUseCompatPadding="true"
-                android:layout_height="wrap_content">
-
-                <RelativeLayout
-                    android:padding="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/tv_ecash_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:text="@string/str_ecash_id"
-                        android:textSize="@dimen/text_normal"
-                        android:textColor="@color/grey_light" />
-
-                    <TextView
-                        android:id="@+id/tv_id"
-                        android:layout_below="@+id/tv_ecash_id"
-                        android:text="892345923875"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_large"
-                        android:textColor="@color/black"/>
-
-
-                    <TextView
-                        android:id="@+id/tv_balance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:textSize="@dimen/text_normal"
-                        android:text="@string/str_account_balance"
-                        android:textColor="@color/grey_light" />
-
-                    <TextView
-                        android:id="@+id/tv_over_ecash"
-                        android:text="38965893"
-                        android:layout_below="@+id/tv_balance"
-                        android:layout_alignParentEnd="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_large"
-                        android:textColor="@color/black"/>
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-        </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/transfer_to_cash"
-            android:paddingStart="10dp"
+            android:paddingStart="15dp"
             android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:background="@color/bg_transfer_blue"
-            android:textColor="@color/black"
+            android:textColor="@color/blue"
+            android:textStyle="bold"
             android:textSize="@dimen/text_xxlarge"
             tools:ignore="RtlSymmetry" />
 
@@ -147,22 +73,29 @@
                 <RelativeLayout
                     android:id="@+id/layout_chose_wallet"
                     android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/tv_number_wallet"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:padding="10dp"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:layout_toStartOf="@+id/iv_contact"
                         android:layout_centerVertical="true"
                         android:text="@string/str_chose_wallet_transfer"
                         android:textColor="@color/grey_light" />
 
                     <ImageView
+                        android:id="@+id/iv_contact"
                         android:layout_width="wrap_content"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/ic_contact_active"
                         android:layout_alignParentEnd="true"
-                        android:padding="15dp"
+                        android:padding="10dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_centerVertical="true"
                         android:layout_height="wrap_content"/>
 

@@ -218,8 +218,8 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     }
 
     private void showDialogCashInOk() {
-        DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
-                getString(R.string.str_dialog_cash_in_success, CommonUtils.formatPriceVND(totalMoney), eDongInfoCashIn.getAccountIdt()), new DialogUtil.OnConfirm() {
+        DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getString(R.string.str_transaction_success),
+                getResources().getString(R.string.str_dialog_cash_in_success, CommonUtils.formatPriceVND(totalMoney)),getResources().getColor(R.color.green), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();
@@ -231,6 +231,8 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                         if (getActivity() != null)
                             getActivity().finish();
                     }
+
+
                 });
     }
 

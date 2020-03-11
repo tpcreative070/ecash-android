@@ -245,8 +245,8 @@
     <string name="str_history_date_header">Tháng %s/%s</string>
     <string name="str_date">%s/%s/%s</string>
     <string name="str_total_money">%s VNĐ</string>
-    <string name="str_dialog_cash_in_success">Bạn đã nạp thành công số tiền: %s từ tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
-    <string name="str_dialog_cash_out_success">Bạn đã rút thành công số tiền: %s sang tài khoản eDong: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
+    <string name="str_dialog_cash_in_success"><![CDATA[Bạn đã nạp thành công số tiền<b> %s</b>. Bạn có muốn tiếp tục thực hiện giao dịch?]]></string>
+    <string name="str_dialog_cash_out_success"><![CDATA[Bạn đã rút thành công số tiền<b> %s</b>. Bạn có muốn tiếp tục thực hiện giao dịch khác?]]></string>
     <string name="str_dialog_cash_to_cash_success">Bạn đã chuyển thành công số tiền: %s sang tài khoản: %s. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
 
     //key store
@@ -286,7 +286,7 @@
     <string name="str_get_an_account_with_qr_code">Lấy tài khoản bằng QR code</string>
     <string name="str_total_payment_ecash">Tổng eCash thanh toán</string>
     <string name="str_payment_success">Thanh toán thành công</string>
-    <string name="str_transaction_success">Giao dịch thành công</string>
+    <string name="str_transaction_success">Giao dịch thành công!</string>
     <string name="str_you_have_paid">Bạn đã thanh toán</string>
     <string name="str_view_info">Xem thông tin</string>
     <string name="str_payment_info">Thông tin thanh toán</string>
@@ -346,6 +346,10 @@
     <string name="str_total">Tổng:</string>
     <string name="str_transaction_completed">Giao dịch hoàn tất!</string>
     <string name="str_ecash_exchange_transaction_successfull">Giao dịch đổi eCash thành công</string>
+    <string name="str_cash_in_to_ecash">Nạp vào ví eCash</string>
+    <string name="str_you_have_successfully_qr_press_arrow_to_view_other_qr">Bạn đã tạo thành công %s mã QR\n Nhấn mũi tên để xem các mã khác.</string>
+    <string name="str_scan_qr_to_receive_money">Quét mã để nhận tiền</string>
+    <string name="str_wallet_receive">Ví nhận:</string>
 </resources>
 
 

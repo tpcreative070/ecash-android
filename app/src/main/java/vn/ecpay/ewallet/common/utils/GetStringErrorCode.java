@@ -10,8 +10,8 @@ import vn.ecpay.ewallet.R;
 public class GetStringErrorCode {
 
     public String errorMessage(Context context, String error_code,String messageError){
-       // String message=context.getString(R.string.err_upload);
-        String message=messageError;
+        String message=context.getString(R.string.err_upload);
+        //String message=messageError;
 
         switch (error_code) {
             case Constant.sesion_expid:
@@ -66,7 +66,7 @@ public class GetStringErrorCode {
                 message= context.getString(R.string.error_message_code_4011);
                 break;
             default:
-                message=messageError;
+                message=context.getString(R.string.err_upload);;
                 break;
         }
         return message;

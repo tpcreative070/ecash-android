@@ -60,6 +60,9 @@ public class Constant {
     public static final String TRANSACTIONS_HISTORY_MODEL = "TRANSACTIONS_HISTORY_MODEL";
     public static final String IS_SESSION_TIMEOUT = "IS_SESSION_TIMEOUT";
     public static final String CONTACT_MULTIPLE_CHOICE = "CONTACT_MULTIPLE_CHOICE";
+    public static final String CASH_TOTAL_TRANSFER = "CASH_TOTAL_TRANSFER";
+    public static final String CONTENT_TRANSFER = "CONTENT_TRANSFER";
+    public static final String TYPE_TRANSFER = "TYPE_TRANSFER";
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
