@@ -14,7 +14,7 @@ import java.util.List;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
-import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpDownMoneyListener;
 
 public class CashOutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;

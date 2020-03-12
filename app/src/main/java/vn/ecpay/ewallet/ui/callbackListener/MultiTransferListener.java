@@ -1,8 +1,7 @@
-package vn.ecpay.ewallet.ui.interfaceListener;
+package vn.ecpay.ewallet.ui.callbackListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 

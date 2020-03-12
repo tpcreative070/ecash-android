@@ -1,26 +1,18 @@
 package vn.ecpay.ewallet.ui.TransactionHistory.fragment;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Index;
-
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,9 +32,9 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.bottomSheet.TransactionHistoryBottomSheet;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
-import vn.ecpay.ewallet.ui.TransactionHistory.MonthYearPickerDialog;
 import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.TransactionHistoryAdapter;
 
@@ -51,19 +43,8 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
     EditText edtSearch;
-    @BindView(R.id.tv_date)
-    TextView tvDate;
-    @BindView(R.id.tv_type)
-    TextView tvType;
-    @BindView(R.id.tv_status)
-    TextView tvStatus;
-    @BindView(R.id.layout_filter)
-    RelativeLayout layoutFilter;
     private TransactionHistoryAdapter mAdapter;
     private List<TransactionsHistoryModel> mSectionList;
-    private String dateFilter = null,
-            typeFilter = null,
-            statusFilter = null;
 
     @Override
     protected int getLayoutResId() {
@@ -189,110 +170,17 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         super.onDetach();
     }
 
-    @OnClick({R.id.layout_date, R.id.layout_type, R.id.layout_status, R.id.btn_apply, R.id.iv_filter, R.id.layout_transparent, R.id.btn_clear, R.id.layout_content_filter})
+    @OnClick({R.id.iv_filter})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.layout_transparent:
-                if (layoutFilter.getVisibility() == View.VISIBLE) {
-                    layoutFilter.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.layout_date:
-                showDialogDate();
-                break;
-            case R.id.layout_type:
-                showDialogChoseType();
-                break;
-            case R.id.layout_status:
-                showDialogChoseStatus();
-                break;
-            case R.id.btn_apply:
+        if (view.getId() == R.id.iv_filter) {
+            TransactionHistoryBottomSheet cashChange = new TransactionHistoryBottomSheet((date, type, status) -> {
                 List<TransactionsHistoryModel> transactionsHistoryModelList =
-                        WalletDatabase.getAllTransactionsHistoryFilter(dateFilter, typeFilter, statusFilter);
+                        WalletDatabase.getAllTransactionsHistoryFilter(date, type, status);
                 setAdapter(transactionsHistoryModelList);
-                layoutFilter.setVisibility(View.GONE);
-                break;
-            case R.id.btn_clear:
-                dateFilter = null;
-                typeFilter = null;
-                statusFilter = null;
-
-                tvDate.setText(Constant.STR_EMPTY);
-                tvType.setText(Constant.STR_EMPTY);
-                tvStatus.setText(Constant.STR_EMPTY);
-                break;
-            case R.id.iv_filter:
-                if (layoutFilter.getVisibility() == View.VISIBLE) {
-                    layoutFilter.setVisibility(View.GONE);
-                } else {
-                    layoutFilter.setVisibility(View.VISIBLE);
-                }
-                break;
-            case R.id.layout_content_filter:
-                break;
+            });
+            cashChange.show(getChildFragmentManager(), "historyFilter");
         }
     }
 
-    private void showDialogDate() {
-        MonthYearPickerDialog pd = new MonthYearPickerDialog();
-        pd.setListener((view, year, month, dayOfMonth) -> {
-            tvDate.setText(getString(R.string.str_history_date_header, String.valueOf(month), String.valueOf(year)));
-            String monthCF = String.valueOf(month);
-            if (month < 10) {
-                monthCF = "0" + month;
-            }
-            dateFilter = year + monthCF;
-        });
-        pd.show(getChildFragmentManager(), "MonthYearPickerDialog");
-    }
 
-    private void showDialogChoseType() {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
-        arrayAdapter.add(getResources().getString(R.string.str_cash_in));
-        arrayAdapter.add(getResources().getString(R.string.str_cash_out));
-        arrayAdapter.add(getResources().getString(R.string.str_transfer));
-        arrayAdapter.add(getResources().getString(R.string.str_change_cash));
-        arrayAdapter.add(getResources().getString(R.string.str_lixi));
-        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
-            typeFilter = getTypeFilter(arrayAdapter.getItem(which));
-            tvType.setText(arrayAdapter.getItem(which));
-        });
-        builderSingle.show();
-    }
-
-    private String getTypeFilter(String type) {
-        if (type.equals(getResources().getString(R.string.str_cash_in))) {
-            return Constant.TYPE_SEND_EDONG_TO_ECASH;
-        } else if (type.equals(getResources().getString(R.string.str_cash_out))) {
-            return Constant.TYPE_SEND_ECASH_TO_EDONG;
-        } else if (type.equals(getResources().getString(R.string.str_transfer))) {
-            return Constant.TYPE_ECASH_TO_ECASH;
-        } else if (type.equals(getResources().getString(R.string.str_change_cash))) {
-            return Constant.TYPE_CASH_EXCHANGE;
-        } else if (type.equals(getResources().getString(R.string.str_lixi))) {
-            return Constant.TYPE_LIXI;
-        } else return Constant.STR_EMPTY;
-    }
-
-    private void showDialogChoseStatus() {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
-        arrayAdapter.add(getResources().getString(R.string.str_cash_take_success));
-        arrayAdapter.add(getResources().getString(R.string.str_fail));
-
-        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
-            statusFilter = getStatusFilter(arrayAdapter.getItem(which));
-            tvStatus.setText(arrayAdapter.getItem(which));
-        });
-        builderSingle.show();
-    }
-
-    private String getStatusFilter(String status) {
-        if (status.equals(getResources().getString(R.string.str_cash_take_success))) {
-            return "0";
-        } else if (status.equals(getResources().getString(R.string.str_fail))) {
-            return "1";
-        } else return Constant.STR_EMPTY;
-    }
 }

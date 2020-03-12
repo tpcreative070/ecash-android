@@ -16,7 +16,7 @@ import java.util.List;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
-import vn.ecpay.ewallet.ui.interfaceListener.OnItemLixiClickListener;
+import vn.ecpay.ewallet.ui.callbackListener.OnItemLixiClickListener;
 
 public class MyLixiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;

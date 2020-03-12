@@ -22,9 +22,9 @@ public class RetroClientApi {
             Request request = requestBuilder.build();
             return chain.proceed(request);
         });
-        httpClient.connectTimeout(15, TimeUnit.SECONDS);
-        httpClient.readTimeout(15, TimeUnit.SECONDS);
-        httpClient.writeTimeout(15, TimeUnit.SECONDS);
+        httpClient.connectTimeout(20, TimeUnit.SECONDS);
+        httpClient.readTimeout(20, TimeUnit.SECONDS);
+        httpClient.writeTimeout(20, TimeUnit.SECONDS);
 
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()

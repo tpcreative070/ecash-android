@@ -25,7 +25,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
+import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
 
 
 public class SyncCashService extends Service {

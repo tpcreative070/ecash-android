@@ -245,8 +245,8 @@
     <string name="err_amount_not_enough_to_transfer">The amount in the wallet is not enough to transfer</string>
 
     //%s
-    <string name="str_type_cash_out">-%S</string>
-    <string name="str_type_cash_in">+%S</string>
+    <string name="str_type_cash_out">- %S</string>
+    <string name="str_type_cash_in">+ %S</string>
     <string name="str_number_scan_qr_code">You have successfully scanned %s  QR code</string>
     <string name="str_total_money_transfer">  %S</string>
     <string name="str_history_date_header">Month %s  / %s </string>

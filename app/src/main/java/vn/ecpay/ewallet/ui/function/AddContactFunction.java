@@ -20,7 +20,7 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactAdd.RequestAddContact;
 import vn.ecpay.ewallet.model.contactAdd.ResponseAddContact;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.ui.interfaceListener.AddContactListener;
+import vn.ecpay.ewallet.ui.callbackListener.AddContactListener;
 
 public class AddContactFunction {
     private Context context;

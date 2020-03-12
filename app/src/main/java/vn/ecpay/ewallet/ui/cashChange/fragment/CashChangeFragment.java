@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.cashChange.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
@@ -42,13 +40,11 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.GridSpacingItem;
-import vn.ecpay.ewallet.common.utils.GridSpacingItemDecoration;
 import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.common.utils.bottomSheet.CashChangeBottomSheet;
 import vn.ecpay.ewallet.common.utils.bottomSheet.CashTakeBottomSheet;
 import vn.ecpay.ewallet.common.utils.bottomSheet.ConfirmChangeCashBottomSheet;
 import vn.ecpay.ewallet.common.utils.interfaces.ConfirmChangeCashListener;
-import vn.ecpay.ewallet.common.utils.interfaces.ContinueAndExitListener;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -63,7 +59,7 @@ import vn.ecpay.ewallet.ui.cashChange.view.CashChangeView;
 import vn.ecpay.ewallet.ui.cashOut.CashOutActivity;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
 import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 
 import static vn.ecpay.ewallet.common.utils.CommonUtils.getEncrypData;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;

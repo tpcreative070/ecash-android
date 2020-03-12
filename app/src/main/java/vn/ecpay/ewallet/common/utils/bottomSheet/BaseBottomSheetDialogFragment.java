@@ -1,10 +1,7 @@
 package vn.ecpay.ewallet.common.utils.bottomSheet;
 
-import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -14,10 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.lang.reflect.Field;
-
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import vn.ecpay.ewallet.R;
 
 abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
