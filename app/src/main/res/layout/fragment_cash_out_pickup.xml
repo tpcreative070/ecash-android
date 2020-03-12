@@ -4,185 +4,185 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_gray_rectangle_border"
-            android:orientation="vertical"
-            android:padding="10dp">
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/bg_gray_rectangle_border"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="10dp">-->
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/str_account_name"
-                    android:textColor="@color/grey_light" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentLeft="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:text="@string/str_account_name"-->
+<!--                    android:textColor="@color/grey_light" />-->
 
-                <TextView
-                    android:id="@+id/tv_account_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
-                    android:textColor="@color/black" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_account_name"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentRight="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:paddingStart="10dp"-->
+<!--                    android:textColor="@color/black" />-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_below="@+id/tv_account_name"
-                    android:layout_marginTop="25dp"
-                    android:background="@color/white" />
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1px"-->
+<!--                    android:layout_below="@+id/tv_account_name"-->
+<!--                    android:layout_marginTop="25dp"-->
+<!--                    android:background="@color/white" />-->
 
-            </RelativeLayout>
+<!--            </RelativeLayout>-->
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/str_ecash_id"
-                    android:textColor="@color/grey_light" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentStart="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:text="@string/str_ecash_id"-->
+<!--                    android:textColor="@color/grey_light" />-->
 
-                <TextView
-                    android:id="@+id/tv_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
-                    android:textColor="@color/black"
-                    tools:ignore="RtlSymmetry" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_id"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentEnd="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:paddingStart="10dp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    tools:ignore="RtlSymmetry" />-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_below="@+id/tv_id"
-                    android:layout_marginTop="25dp"
-                    android:background="@color/white" />
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1px"-->
+<!--                    android:layout_below="@+id/tv_id"-->
+<!--                    android:layout_marginTop="25dp"-->
+<!--                    android:background="@color/white" />-->
 
-            </RelativeLayout>
+<!--            </RelativeLayout>-->
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/str_account_balance"
-                    android:textColor="@color/grey_light" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentStart="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:text="@string/str_account_balance"-->
+<!--                    android:textColor="@color/grey_light" />-->
 
-                <TextView
-                    android:id="@+id/tv_over_ecash"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
-                    android:textColor="@color/black"
-                    tools:ignore="RtlSymmetry" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_over_ecash"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentEnd="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:paddingStart="10dp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    tools:ignore="RtlSymmetry" />-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_below="@+id/tv_over_ecash"
-                    android:layout_marginTop="25dp"
-                    android:background="@color/white" />
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1px"-->
+<!--                    android:layout_below="@+id/tv_over_ecash"-->
+<!--                    android:layout_marginTop="25dp"-->
+<!--                    android:background="@color/white" />-->
 
-            </RelativeLayout>
+<!--            </RelativeLayout>-->
 
-            <RelativeLayout
-                android:id="@+id/layout_eDong"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/layout_eDong"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
 
-                <ImageView
-                    android:id="@+id/iv_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
-                    android:src="@drawable/ic_drop_down" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/iv_drop_down"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentEnd="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:paddingStart="10dp"-->
+<!--                    android:src="@drawable/ic_drop_down" />-->
 
-                <TextView
-                    android:id="@+id/tv_eDong_wallet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/iv_drop_down"
-                    android:paddingStart="10dp"
-                    android:textColor="@color/black"
-                    tools:ignore="RtlSymmetry" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_eDong_wallet"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:layout_toStartOf="@+id/iv_drop_down"-->
+<!--                    android:paddingStart="10dp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    tools:ignore="RtlSymmetry" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/str_account_edong"
-                    android:textColor="@color/grey_light" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentStart="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:text="@string/str_account_edong"-->
+<!--                    android:textColor="@color/grey_light" />-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_below="@+id/tv_eDong_wallet"
-                    android:layout_marginTop="25dp"
-                    android:background="@color/white" />
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1px"-->
+<!--                    android:layout_below="@+id/tv_eDong_wallet"-->
+<!--                    android:layout_marginTop="25dp"-->
+<!--                    android:background="@color/white" />-->
 
-            </RelativeLayout>
+<!--            </RelativeLayout>-->
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/str_account_balance_edong"
-                    android:textColor="@color/grey_light" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentStart="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:text="@string/str_account_balance_edong"-->
+<!--                    android:textColor="@color/grey_light" />-->
 
-                <TextView
-                    android:id="@+id/tv_over_edong"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:paddingStart="10dp"
-                    android:textColor="@color/black"
-                    tools:ignore="RtlSymmetry" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_over_edong"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentEnd="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:paddingStart="10dp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    tools:ignore="RtlSymmetry" />-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_below="@+id/tv_over_edong"
-                    android:layout_marginTop="25dp"
-                    android:background="@color/gray_light" />
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1px"-->
+<!--                    android:layout_below="@+id/tv_over_edong"-->
+<!--                    android:layout_marginTop="25dp"-->
+<!--                    android:background="@color/gray_light" />-->
 
-            </RelativeLayout>
-        </LinearLayout>
+<!--            </RelativeLayout>-->
+<!--        </LinearLayout>-->
+        <include layout="@layout/view_header_account_info"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -191,6 +191,7 @@
             android:text="@string/str_withdraw_edong"
             android:textColor="@color/blue"
             android:textSize="@dimen/text_header"
+            android:layout_marginStart="10dp"
             android:textStyle="bold" />
 
 
@@ -198,6 +199,7 @@
             android:id="@+id/layout_eDong_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:padding="10dp">
 
             <ImageView
@@ -206,7 +208,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:paddingStart="10dp"
-                android:src="@drawable/ic_drop_down" />
+                android:src="@drawable/ic_drop_down"
+                tools:ignore="RtlSymmetry" />
 
 
             <TextView
@@ -216,7 +219,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:text="@string/str_account_edong"
-                android:textColor="@color/black"
+                android:textColor="@color/gray"
                 android:textSize="@dimen/text_normal" />
 
         </RelativeLayout>
@@ -226,18 +229,11 @@
             android:layout_height="1px"
             android:background="@color/gray_light" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:text="@string/number_money"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/text_header"
-            android:textStyle="bold" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_cash_values"
             android:layout_width="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_height="wrap_content"/>
 
         <View
@@ -256,7 +252,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:text="@string/str_number_in"
-                android:textColor="@color/black"
+                android:textColor="@color/gray"
                 android:textSize="@dimen/text_xxlarge" />
 
             <TextView
@@ -278,6 +274,10 @@
             android:layout_marginTop="30dp"
             style="@style/btn_submit_full"
             android:text="@string/confirm"
-            android:textStyle="bold" />
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:textAllCaps="true"
+            android:textSize="@dimen/text_header"
+             />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
