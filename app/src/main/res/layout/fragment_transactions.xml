@@ -2,12 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bg_transfer_blue"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/layout_toolbar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@color/blue"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:gravity="center"
@@ -15,37 +17,77 @@
         android:text="@string/str_history_transfer"
         android:layout_centerHorizontal="true"
         android:textAppearance="@style/TextAppearance.Title"
-        android:textColor="@color/blue"
+        android:textColor="@color/white"
         android:textSize="@dimen/text_header"
         android:textStyle="normal" />
 
     <RelativeLayout
         android:id="@+id/view_search"
-        android:layout_below="@+id/layout_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/bg_search">
-
-        <EditText
-            android:id="@+id/edt_search"
+        android:layout_below="@+id/layout_toolbar"
+        android:layout_height="wrap_content">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/edt_boder_gray"
-            android:drawableStart="@drawable/ic_search"
-            android:drawablePadding="10dp"
-            android:layout_toLeftOf="@+id/iv_filter"
-            android:hint="@string/str_input_transaction_search"
-            android:padding="10dp" />
+            android:orientation="vertical"
+            android:layout_height="70dp">
+            <View
+                android:background="@color/blue"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp"/>
 
-        <ImageView
-            android:id="@+id/iv_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:layout_alignParentEnd="true"
+            <View
+                android:background="@color/bg_transfer_blue"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_marginStart="10dp"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="4dp"
+            android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_filter" />
+            app:cardUseCompatPadding="true"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <EditText
+                    android:id="@+id/edt_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/edt_boder_gray"
+                    android:drawableStart="@drawable/ic_search"
+                    android:drawablePadding="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/iv_filter"
+                    android:hint="@string/str_input_transaction_search"
+                    android:padding="10dp" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="1dp"
+                    android:background="@color/gray_light"
+                    android:layout_toEndOf="@+id/edt_search"
+                    android:layout_height="match_parent"/>
+
+                <ImageView
+                    android:id="@+id/iv_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_filter" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -55,154 +97,5 @@
         android:layout_below="@+id/view_search"
         android:layout_marginTop="1dp"
         android:clipToPadding="false" />
-
-    <RelativeLayout
-        android:visibility="gone"
-        android:id="@+id/layout_filter"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/view_search"
-        android:background="@color/transparent_gray"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/layout_content_filter"
-            android:padding="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:id="@+id/layout_date"
-                android:layout_width="match_parent"
-                android:padding="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="@string/str_time"
-                    android:textSize="@dimen/text_normal"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_height="wrap_content"/>
-
-                <ImageView
-                    android:id="@+id/vi_drop_down"
-                    android:layout_width="wrap_content"
-                    android:src="@drawable/ic_drop_down"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/tv_date"
-                    android:paddingEnd="10dp"
-                    android:textSize="@dimen/text_normal"
-                    android:textColor="@color/black"
-                    android:layout_toStartOf="@+id/vi_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </RelativeLayout>
-            <View
-                android:background="@color/gray_light"
-                android:layout_width="match_parent"
-                android:layout_height="1px"/>
-
-            <RelativeLayout
-                android:id="@+id/layout_type"
-                android:layout_width="match_parent"
-                android:padding="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="@string/str_type_transfer"
-                    android:textSize="@dimen/text_normal"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_height="wrap_content"/>
-
-                <ImageView
-                    android:id="@+id/vi_drop_down_time"
-                    android:layout_width="wrap_content"
-                    android:src="@drawable/ic_drop_down"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/tv_type"
-                    android:paddingEnd="10dp"
-                    android:textColor="@color/black"
-                    android:layout_toStartOf="@+id/vi_drop_down_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </RelativeLayout>
-            <View
-                android:background="@color/gray_light"
-                android:layout_width="match_parent"
-                android:layout_height="1px"/>
-            <RelativeLayout
-                android:id="@+id/layout_status"
-                android:layout_width="match_parent"
-                android:padding="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="@string/str_status"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_height="wrap_content"/>
-
-                <ImageView
-                    android:id="@+id/vi_drop_down_status"
-                    android:layout_width="wrap_content"
-                    android:src="@drawable/ic_drop_down"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/tv_status"
-                    android:paddingEnd="10dp"
-                    android:textSize="@dimen/text_normal"
-                    android:textColor="@color/black"
-                    android:layout_toStartOf="@+id/vi_drop_down_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </RelativeLayout>
-            <View
-                android:background="@color/gray_light"
-                android:layout_width="match_parent"
-                android:layout_height="1px"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:layout_height="wrap_content">
-                <Button
-                    android:id="@+id/btn_apply"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="40dp"
-                    android:layout_marginTop="30dp"
-                    style="@style/btn_submit_full"
-                    android:text="@string/str_apply"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/btn_clear"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginTop="30dp"
-                    style="@style/btn_submit_full"
-                    android:text="@string/str_clear_filter"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-        <View
-            android:id="@+id/layout_transparent"
-            android:layout_width="match_parent"
-            android:layout_below="@+id/layout_content_filter"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
 
 </RelativeLayout>

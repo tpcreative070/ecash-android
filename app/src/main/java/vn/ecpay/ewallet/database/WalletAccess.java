@@ -273,6 +273,11 @@ public interface WalletAccess {
             "group by parValue")
     List<CashLogTransaction> getAllCashByTransactionLog(String transactionSignatureLog);
 
+    @Query("select parValue, count(parValue) as validCount, 1 as status from CASH_LOGS where type = :typeMoney AND transactionSignature = :transactionSignatureLog group by parValue union " +
+            "select parValue,count(parValue) as validCount , 0 as status from CASH_INVALID where transactionSignature = :transactionSignatureLog " +
+            "group by parValue")
+    List<CashLogTransaction> getAllCashByTransactionLogByType(String transactionSignatureLog, String typeMoney);
+
     @RawQuery
     List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(SimpleSQLiteQuery strQuery);
 

@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.TransactionHistory.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,11 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,10 +43,10 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
-import vn.ecpay.ewallet.ui.TransactionHistory.TransactionsHistoryDetailActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.AdapterCashLogTransactionsHistory;
-import vn.ecpay.ewallet.ui.TransactionHistory.adapter.TransactionQRCodeAdapter;
 
+import static vn.ecpay.ewallet.common.utils.Constant.STR_CASH_IN;
+import static vn.ecpay.ewallet.common.utils.Constant.STR_CASH_OUT;
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_FAIL;
 import static vn.ecpay.ewallet.common.utils.Constant.TRANSACTION_SUCCESS;
 import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
@@ -90,15 +87,23 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     TextView tvTransactionsStatus;
     @BindView(R.id.layout_qr_code)
     LinearLayout layoutQrCode;
-    @BindView(R.id.rv_list_qr_code)
-    RecyclerView rvListQrCode;
     @BindView(R.id.layout_content)
     RelativeLayout layoutContent;
     @BindView(R.id.tv_sender_receiver)
     TextView tvSenderReceiver;
+    @BindView(R.id.iv_qr_code)
+    ImageView ivQrCode;
+    @BindView(R.id.tv_cash_take)
+    TextView tvCashTake;
+    @BindView(R.id.rv_list_cash_take)
+    RecyclerView rvListCashTake;
+    @BindView(R.id.cv_cash_take)
+    CardView cvCashTake;
+    @BindView(R.id.tv_cash_change)
+    TextView tvCashChange;
     private TransactionsHistoryModel transactionsHistoryModel;
-    private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistory;
-    private TransactionQRCodeAdapter transactionQRCodeAdapter;
+    private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistoryIn;
+    private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistoryOut;
     private String currentTime;
     private boolean isSaveQR = false;
     private List<QRCodeSender> listQRCodeSender;
@@ -157,7 +162,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 layoutContent.setVisibility(View.GONE);
                 break;
             case TYPE_ECASH_TO_ECASH:
-                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                if (transactionsHistoryModel.getCashLogType().equals(STR_CASH_IN)) {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                     tvSenderReceiver.setText(getResources().getString(R.string.sender));
@@ -174,7 +179,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 tvHistoryType.setText(getResources().getString(R.string.str_transfer));
                 break;
             case TYPE_LIXI:
-                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                if (transactionsHistoryModel.getCashLogType().equals(STR_CASH_IN)) {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                     tvSenderReceiver.setText(getResources().getString(R.string.sender));
@@ -195,9 +200,13 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 tvHumanCode.setText(transactionsHistoryModel.getReceiverAccountId());
                 tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
                 layoutContent.setVisibility(View.GONE);
+
+                tvCashChange.setText(getResources().getString(R.string.str_number_cash_transfer));
+                tvCashTake.setVisibility(View.VISIBLE);
+                cvCashTake.setVisibility(View.VISIBLE);
                 break;
             case TYPE_PAYTO:
-                if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
+                if (transactionsHistoryModel.getCashLogType().equals(STR_CASH_IN)) {
                     tvSenderReceiver.setText(getResources().getString(R.string.sender));
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
@@ -241,21 +250,32 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         }
     }
 
-    private void setAdapterQRCode(List<QRCodeSender> listQRCodeSender) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        rvListQrCode.setLayoutManager(layoutManager);
-        transactionQRCodeAdapter = new TransactionQRCodeAdapter(listQRCodeSender, getActivity());
-        rvListQrCode.setAdapter(transactionQRCodeAdapter);
-    }
-
     private void setAdapterListCash() {
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<CashLogTransaction> listCashLogTransaction = WalletDatabase.getAllCashByTransactionLog(transactionsHistoryModel.getTransactionSignature());
+        if (transactionsHistoryModel.getTransactionType().equals(TYPE_CASH_EXCHANGE)) {
+            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+            List<CashLogTransaction> listCashLogTransactionIn = WalletDatabase.getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_IN);
+            List<CashLogTransaction> listCashLogTransactionOut = WalletDatabase.getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_OUT);
 
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        rvListCashTransfer.setLayoutManager(mLayoutManager);
-        adapterCashLogTransactionsHistory = new AdapterCashLogTransactionsHistory(listCashLogTransaction, getActivity());
-        rvListCashTransfer.setAdapter(adapterCashLogTransactionsHistory);
+            LinearLayoutManager mLayoutManagerOut = new LinearLayoutManager(getActivity());
+            LinearLayoutManager mLayoutManagerIn = new LinearLayoutManager(getActivity());
+            rvListCashTransfer.setLayoutManager(mLayoutManagerOut);
+            rvListCashTake.setLayoutManager(mLayoutManagerIn);
+
+            adapterCashLogTransactionsHistoryIn = new AdapterCashLogTransactionsHistory(listCashLogTransactionIn, getActivity());
+            adapterCashLogTransactionsHistoryOut = new AdapterCashLogTransactionsHistory(listCashLogTransactionOut, getActivity());
+
+            rvListCashTransfer.setAdapter(adapterCashLogTransactionsHistoryOut);
+            rvListCashTake.setAdapter(adapterCashLogTransactionsHistoryIn);
+
+        } else {
+            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+            List<CashLogTransaction> listCashLogTransaction = WalletDatabase.getAllCashByTransactionLog(transactionsHistoryModel.getTransactionSignature());
+
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            rvListCashTransfer.setLayoutManager(mLayoutManager);
+            adapterCashLogTransactionsHistoryIn = new AdapterCashLogTransactionsHistory(listCashLogTransaction, getActivity());
+            rvListCashTransfer.setAdapter(adapterCashLogTransactionsHistoryIn);
+        }
     }
 
     private ArrayList<Uri> uris;
@@ -314,7 +334,20 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         }.execute();
     }
 
-    @OnClick({R.id.layout_share, R.id.layout_download})
+    private ArrayList<Bitmap> listQR = new ArrayList<>();
+    private int index = 0;
+
+    private void setAdapterQRCode(List<QRCodeSender> listQRCodeSender) {
+        Gson gson = new Gson();
+        for (QRCodeSender qrCodeSender : listQRCodeSender) {
+            listQR.add(CommonUtils.generateQRCode(gson.toJson(qrCodeSender)));
+        }
+        ivQrCode.setImageBitmap(listQR.get(0));
+        ivQrCode.setOnClickListener(v -> DialogUtil.getInstance()
+                .showDialogViewQRCode(getActivity(), listQR.get(index)));
+    }
+
+    @OnClick({R.id.layout_share, R.id.layout_download, R.id.iv_back, R.id.bt_back, R.id.bt_next})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_share:
@@ -343,6 +376,26 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                     }
                 }
                 break;
+            case R.id.bt_back:
+                if (index == 0) {
+                    return;
+                } else {
+                    ivQrCode.setImageBitmap(listQR.get(index - 1));
+                    index = index - 1;
+                }
+                break;
+            case R.id.bt_next:
+                if (index == listQR.size() - 1) {
+                    return;
+                } else {
+                    ivQrCode.setImageBitmap(listQR.get(index + 1));
+                    index = index + 1;
+                }
+                break;
+            case R.id.iv_back:
+                if (getActivity() != null)
+                    getActivity().onBackPressed();
+                break;
         }
     }
 
@@ -359,54 +412,5 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
             default:
                 break;
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        try {
-            ((TransactionsHistoryDetailActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
-        } catch (ClassCastException e) {
-//            ((QRCodeActivity) getActivity()).updateTitle(getResources().getString(R.string.str_transactions_history_detail));
-        }
-    }
-
-    private void exPortDBFile(Context context) {
-        try {
-            exportFile(context.getDatabasePath(Constant.DATABASE_NAME).getAbsolutePath(), Constant.DATABASE_NAME);
-            exportFile(context.getDatabasePath(Constant.DATABASE_NAME + "-shm").getAbsolutePath(), Constant.DATABASE_NAME + "-shm");
-            exportFile(context.getDatabasePath(Constant.DATABASE_NAME + "-wal").getAbsolutePath(), Constant.DATABASE_NAME + "-wal");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private File exportFile(String input, String dst) throws IOException {
-        FileChannel inChannel = null;
-        FileChannel outChannel = null;
-
-        File mFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/eCash_DB");
-        if (!mFolder.exists()) {
-            mFolder.mkdir();
-        }
-        File expFile = new File(mFolder, dst);
-
-        try {
-            inChannel = new FileInputStream(input).getChannel();
-            outChannel = new FileOutputStream(expFile).getChannel();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } finally {
-            if (inChannel != null)
-                inChannel.close();
-            if (outChannel != null)
-                outChannel.close();
-        }
-
-        return expFile;
     }
 }

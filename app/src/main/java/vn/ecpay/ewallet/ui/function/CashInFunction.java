@@ -32,7 +32,7 @@ import vn.ecpay.ewallet.model.getPublicKeyCash.ResponseGetPublicKeyCash;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
+import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CashInFunction {

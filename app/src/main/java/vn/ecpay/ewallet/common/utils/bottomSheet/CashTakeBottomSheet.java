@@ -22,7 +22,7 @@ import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
-import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpDownMoneyListener;
 
 public class CashTakeBottomSheet extends BaseBottomSheetDialogFragment {
     @BindView(R.id.tv_title)

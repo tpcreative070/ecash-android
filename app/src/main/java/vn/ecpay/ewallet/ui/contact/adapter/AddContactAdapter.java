@@ -1,13 +1,11 @@
 package vn.ecpay.ewallet.ui.contact.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,14 +16,12 @@ import java.util.List;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
-import vn.ecpay.ewallet.ui.interfaceListener.OnItemContactClickListener;
+import vn.ecpay.ewallet.ui.callbackListener.OnItemContactClickListener;
 
 public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final AccountInfo accountInfo;

@@ -136,8 +136,8 @@
     <string name="str_cash_have_in_wallet">Cash có trong ví</string>
     <string name="str_cash_change">Cash đổi</string>
     <string name="str_cash_take">Cash nhận</string>
-    <string name="str_number_cash_transfer">Số cash muốn đổi</string>
-    <string name="str_number_cash_take">Số cash chuyển sang</string>
+    <string name="str_number_cash_transfer">Số lượng eCash đổi</string>
+    <string name="str_number_cash_take">Số lượng eCash nhận</string>
 
     //rút eCash
     <string name="str_withdraw_edong">Rút về ví eDong</string>
@@ -238,8 +238,8 @@
 
     //%s
     <string name="str_lixi_sender">Lì xì được gửi từ: %s</string>
-    <string name="str_type_cash_out">-%s</string>
-    <string name="str_type_cash_in">+%s</string>
+    <string name="str_type_cash_out">- %s</string>
+    <string name="str_type_cash_in">+ %s</string>
     <string name="str_number_scan_qr_code">Bạn đã quét thành công %s QR code</string>
     <string name="str_total_money_transfer">+ %s</string>
     <string name="str_history_date_header">Tháng %s/%s</string>

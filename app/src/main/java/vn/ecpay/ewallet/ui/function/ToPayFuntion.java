@@ -30,7 +30,7 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.payment.Payments;
-import vn.ecpay.ewallet.ui.interfaceListener.ToPayListener;
+import vn.ecpay.ewallet.ui.callbackListener.ToPayListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 

@@ -50,8 +50,6 @@ import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.contact.adapter.ContactAdapter;
-import vn.ecpay.ewallet.ui.interfaceListener.ContactTransferListener;
-import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
 
 public class FragmentContact extends ECashBaseFragment {
     @BindView(R.id.recyclerView)

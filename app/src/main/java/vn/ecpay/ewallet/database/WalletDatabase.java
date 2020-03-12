@@ -514,6 +514,10 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getAllCashByTransactionLog(filter);
     }
 
+    public static List<CashLogTransaction> getAllCashByTransactionLogByType(String filter, String type){
+        return walletDatabase.daoAccess().getAllCashByTransactionLogByType(filter, type);
+    }
+
     public static List<TransactionsHistoryModel> getAllTransactionsHistoryFilter(String date, String type, String status) {
         String strTransactionsHistoryQuery = "SELECT 0 as isSection, IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') as senderName, TRAN.senderAccountId, " +
                 "IFNULL((SELECT CONTACTS.fullName FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') as receiverName, TRAN.receiverAccountId, " +

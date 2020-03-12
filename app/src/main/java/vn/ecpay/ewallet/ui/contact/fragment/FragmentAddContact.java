@@ -34,7 +34,7 @@ import vn.ecpay.ewallet.ui.contact.module.AddContactModule;
 import vn.ecpay.ewallet.ui.contact.presenter.AddContactPresenter;
 import vn.ecpay.ewallet.ui.contact.view.AddContactView;
 import vn.ecpay.ewallet.ui.function.AddContactFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.AddContactListener;
+import vn.ecpay.ewallet.ui.callbackListener.AddContactListener;
 
 public class FragmentAddContact extends ECashBaseFragment implements AddContactView {
     @BindView(R.id.edt_search)

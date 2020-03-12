@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.payTo;
 
 import android.app.Activity;
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,9 +42,7 @@ import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
 import vn.ecpay.ewallet.ui.function.PayToFuntion;
-import vn.ecpay.ewallet.ui.interfaceListener.MultiTransferListener;
-
-import static vn.ecpay.ewallet.ECashApplication.getActivity;
+import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
 
 public class PayToFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.iv_back)

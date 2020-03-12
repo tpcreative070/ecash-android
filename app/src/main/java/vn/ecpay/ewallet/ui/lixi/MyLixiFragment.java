@@ -38,7 +38,7 @@ import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.adapter.AdapterCashLogTransactionsHistory;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
-import vn.ecpay.ewallet.ui.interfaceListener.CashInSuccessListener;
+import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
 import vn.ecpay.ewallet.ui.lixi.adapter.MyLixiAdapter;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 

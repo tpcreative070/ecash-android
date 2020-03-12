@@ -22,7 +22,7 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.RequestUpdateMasterKey;
 import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseDataUpdateMasterKey;
 import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseUpdateMasterKey;
-import vn.ecpay.ewallet.ui.interfaceListener.UpdateMasterKeyListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 
 public class UpdateMasterKeyFunction {
     private Context context;

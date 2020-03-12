@@ -22,7 +22,6 @@ import java.util.List;
 
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
-import vn.ecpay.ewallet.common.utils.interfaces.ContinueAndExitListener;
 import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -32,7 +31,7 @@ import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
 import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
-import vn.ecpay.ewallet.ui.interfaceListener.UpDownMoneyListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpDownMoneyListener;
 
 public class DialogUtil {
     private static DialogUtil mInsance;

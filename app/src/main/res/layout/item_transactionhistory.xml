@@ -9,7 +9,7 @@
         android:id="@+id/layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp">
+        android:padding="8dp">
 
         <LinearLayout
             android:id="@+id/layout_content"
