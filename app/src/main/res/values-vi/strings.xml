@@ -110,6 +110,7 @@
 
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
+    <string name="transfer_to_account">Chuyển đến tài khoản</string>
     <string name="str_input_account_ecash">Nhập số tài khoản eCash</string>
     <string name="str_input_money">Nhập số tiền</string>
     <string name="str_input_content">Nhập nội dung chuyển tiền</string>
@@ -350,6 +351,7 @@
     <string name="str_you_have_successfully_qr_press_arrow_to_view_other_qr">Bạn đã tạo thành công %s mã QR\n Nhấn mũi tên để xem các mã khác.</string>
     <string name="str_scan_qr_to_receive_money">Quét mã để nhận tiền</string>
     <string name="str_wallet_receive">Ví nhận:</string>
+    <string name="str_saved">Đã lưu</string>
 </resources>
 
 

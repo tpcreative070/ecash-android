@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.ui.cashToCash.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 public class SlideQRCodeAdapter extends PagerAdapter {
     private List<CashTotal> listCashTotal;
     private List<Contact> listContact;
+    private List<Uri> listUri;
     private LayoutInflater inflater;
     private Context context;
     private String content;
@@ -42,8 +44,9 @@ public class SlideQRCodeAdapter extends PagerAdapter {
     private AccountInfo accountInfo;
     private Bitmap bitmap;
 
-    public SlideQRCodeAdapter(Context context, List<CashTotal> listCashTotal, List<Contact> multiTransferList, String content, String typeSend) {
+    public SlideQRCodeAdapter(Context context,List<Uri> listUri, List<CashTotal> listCashTotal, List<Contact> multiTransferList, String content, String typeSend) {
         this.context = context;
+        this.listUri = listUri;
         this.listCashTotal = listCashTotal;
         this.listContact = multiTransferList;
         this.typeSend = typeSend;
@@ -59,7 +62,7 @@ public class SlideQRCodeAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return listContact.size();
+        return listUri.size();
     }
 
     @Override
@@ -68,33 +71,12 @@ public class SlideQRCodeAdapter extends PagerAdapter {
         if (imageLayout != null) {
             ImageView iv_qr_code = imageLayout.findViewById(R.id.iv_qr_code);
             TextView tv_wallet_receive = imageLayout.findViewById(R.id.tv_wallet_receive);
-            String currentTime = CommonUtils.getCurrentTime();
             Gson gson = new Gson();
-            Contact contact =listContact.get(position);
-            ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(context, listCashTotal,
-                    contact, content, position, typeSend, accountInfo);
-            String jsonCash = gson.toJson(responseMessSocket);
-            List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
-            ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
-            if (stringList.size() > 0) {
-                for (int j = 0; j < stringList.size(); j++) {
-                    QRCodeSender qrCodeSender = new QRCodeSender();
-                    qrCodeSender.setCycle(j + 1);
-                    qrCodeSender.setTotal(stringList.size());
-                    qrCodeSender.setContent(stringList.get(j));
-                    codeSenderArrayList.add(qrCodeSender);
-                }
+         //   bitmap =listUri.get(position);
+            iv_qr_code.setImageURI(listUri.get(position));
+            if(position<listContact.size()){
+                Contact contact =listContact.get(position);
                 tv_wallet_receive.setText(String.valueOf(contact.getWalletId()));
-                if (codeSenderArrayList.size() > 0) {
-                    for (int j = 0; j < codeSenderArrayList.size(); j++) {
-                        bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
-                       // String imageName = contact.getWalletId() + "_" + currentTime + "_" + j;
-                        //QRCodeUtil.saveImageQRCode(context,bitmap,imageName, Constant.DIRECTORY_QR_IMAGE);
-                        iv_qr_code.setImageBitmap(bitmap);
-                    }
-                    //save log
-                   // DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, context);
-                }
             }
         }
         view.addView(imageLayout, 0);

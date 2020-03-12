@@ -80,15 +80,20 @@ public class QRCodeUtil {
             out.flush();
             out.close();
           } catch (Exception e) {
-            Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
+          //  if(fragment!=null){
+              Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
+           // }
             e.printStackTrace();
           }
           return null;
         }
         @Override
         protected void onPostExecute(Void aVoid) {
-          fragment.dismissProgress();
-          Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+          //if(fragment!=null){
+            fragment.dismissProgress();
+            Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+         // }
+
         }
       }.execute();
     }

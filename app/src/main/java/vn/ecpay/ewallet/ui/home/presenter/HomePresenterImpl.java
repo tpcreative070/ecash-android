@@ -28,6 +28,7 @@ import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.RequestOTPActiveAccount;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseData;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseOTPActiveAccount;
@@ -131,7 +132,9 @@ public class HomePresenterImpl implements HomePresenter {
                         } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            homeView.showDialogError(response.body().getResponseMessage());
+                            //homeView.showDialogError(response.body().getResponseMessage());
+                            homeView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+
                         }
                     }
                 } else {
@@ -251,7 +254,9 @@ public class HomePresenterImpl implements HomePresenter {
                             homeView.requestOTPFail(context.getResources().getString(R.string.err_otp_fail), responseData);
                         } else {
                             homeView.dismissLoading();
-                            homeView.showDialogError(response.body().getResponseMessage());
+                           // homeView.showDialogError(response.body().getResponseMessage());
+                            homeView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+
                         }
                     } else {
                         homeView.dismissLoading();
@@ -304,7 +309,8 @@ public class HomePresenterImpl implements HomePresenter {
                         } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            homeView.showDialogError(response.body().getResponseMessage());
+                            //homeView.showDialogError(response.body().getResponseMessage());
+                            homeView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
                         }
                     }
                 } else {

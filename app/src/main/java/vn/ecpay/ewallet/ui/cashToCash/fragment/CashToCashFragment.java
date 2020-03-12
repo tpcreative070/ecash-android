@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -118,6 +119,12 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         typeSend = Constant.TYPE_ECASH_TO_ECASH;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        dismissProgress();
+    }
+
     protected void setData() {
         setAdapter();
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -205,85 +212,43 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 showDialogErr(R.string.err_dit_not_content);
             return;
         }
-
-        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
-        showProgress();
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
-            @Override
-            public void onUpdateMasterSuccess() {
-                CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
-                        multiTransferList, edtContent.getText().toString(), typeSend);
-                cashOutSocketFunction.handleCashOutSocket(() -> cashOutSuccess());
-            }
-
-            @Override
-            public void onUpdateMasterFail() {
+        if (swQrCode.isChecked()) {
+            if (PermissionUtils.checkPermissionWriteStore(this, null)) {
+                Intent intent = new Intent(getActivity(), CashToCashSuccessWithQRCodeActivity.class);
+                intent.putExtra(Constant.CASH_TOTAL_TRANSFER, (Serializable) valuesListAdapter);
+                intent.putExtra(Constant.CONTACT_MULTI_TRANSFER, (Serializable) multiTransferList);
+                intent.putExtra(Constant.CONTENT_TRANSFER, edtContent.getText().toString());
+                intent.putExtra(Constant.TYPE_TRANSFER, typeSend);
+                getActivity().startActivity(intent);
+            }else{
                 dismissProgress();
-                showDialogError(getResources().getString(R.string.err_change_database));
             }
 
-            @Override
-            public void onRequestTimeout() {
-                dismissProgress();
-                showDialogError(getResources().getString(R.string.err_upload));
-            }
-        });
 
-//        if (swQrCode.isChecked()) {
-//            if (PermissionUtils.checkPermissionWriteStore(this, null)) {
-//                if (!CommonUtils.isExternalStorageWritable()) {
-//                    dismissProgress();
-//                    if (getActivity() != null)
-//                        showDialogErr(R.string.err_store_image);
-//                    return;
-//                }
-//                UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
-//                showProgress();
-//                updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
-//                    @Override
-//                    public void onUpdateMasterSuccess() {
-//                        CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
-//                                multiTransferList, edtContent.getText().toString(), typeSend);
-//                        cashOutSocketFunction.handleCashOutQRCode(() -> cashOutSuccess());
-//                    }
-//
-//                    @Override
-//                    public void onUpdateMasterFail() {
-//                        dismissProgress();
-//                        showDialogError(getResources().getString(R.string.err_change_database));
-//                    }
-//
-//                    @Override
-//                    public void onRequestTimeout() {
-//                        dismissProgress();
-//                        showDialogError(getResources().getString(R.string.err_upload));
-//                    }
-//                });
-//            }
-//        } else {
-//            UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
-//            showProgress();
-//            updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
-//                @Override
-//                public void onUpdateMasterSuccess() {
-//                    CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
-//                            multiTransferList, edtContent.getText().toString(), typeSend);
-//                    cashOutSocketFunction.handleCashOutSocket(() -> cashOutSuccess());
-//                }
-//
-//                @Override
-//                public void onUpdateMasterFail() {
-//                    dismissProgress();
-//                    showDialogError(getResources().getString(R.string.err_change_database));
-//                }
-//
-//                @Override
-//                public void onRequestTimeout() {
-//                    dismissProgress();
-//                    showDialogError(getResources().getString(R.string.err_upload));
-//                }
-//            });
-//        }
+        } else {
+            UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
+            showProgress();
+            updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+                @Override
+                public void onUpdateMasterSuccess() {
+                    CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
+                            multiTransferList, edtContent.getText().toString(), typeSend);
+                    cashOutSocketFunction.handleCashOutSocket(() -> cashOutSuccess());
+                }
+
+                @Override
+                public void onUpdateMasterFail() {
+                    dismissProgress();
+                    showDialogError(getResources().getString(R.string.err_change_database));
+                }
+
+                @Override
+                public void onRequestTimeout() {
+                    dismissProgress();
+                    showDialogError(getResources().getString(R.string.err_upload));
+                }
+            });
+        }
     }
 
     private void showDialogErr(int err) {
@@ -301,19 +266,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 handleCancelAccount();
             } else {
                 dismissProgress();
-                if(swQrCode.isChecked()){
-                    Intent intent = new Intent(getActivity(), CashToCashSuccessWithQRCodeActivity.class);
-                    intent.putExtra(Constant.CASH_TOTAL_TRANSFER, (Serializable) valuesListAdapter);
-                    intent.putExtra(Constant.CONTACT_MULTI_TRANSFER, (Serializable) multiTransferList);
-                    intent.putExtra(Constant.CONTENT_TRANSFER, edtContent.getText().toString());
-                    intent.putExtra(Constant.TYPE_TRANSFER, typeSend);
-                    getActivity().startActivity(intent);
-                    setData();
-                    updateTotalMoney();
-                }else{
-                    showDialogSendOk();
-                }
-
+                showDialogSendOk();
                 restartSocket();
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
             }
@@ -348,10 +301,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         switch (requestCode) {
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showProgress();
-                    CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
-                            multiTransferList, edtContent.getText().toString(), typeSend);
-                    cashOutSocketFunction.handleCashOutQRCode(this::cashOutSuccess);
+//                    CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
+//                            multiTransferList, edtContent.getText().toString(), typeSend);
+//                    cashOutSocketFunction.handleCashOutQRCode(this::cashOutSuccess);
+                    validateData();
                 }
             }
             default:
@@ -383,12 +336,13 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+        Log.e("CashToCash",event.getData());
         if (event.getData().equals(Constant.CASH_OUT_MONEY_FAIL)) {
             dismissProgress();
             Toast.makeText(getActivity(), getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
         }
 
-        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS) || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)) {
+        if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS) || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS)|| event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
