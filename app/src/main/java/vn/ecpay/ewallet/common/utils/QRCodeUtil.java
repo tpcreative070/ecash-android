@@ -89,10 +89,10 @@ public class QRCodeUtil {
         }
         @Override
         protected void onPostExecute(Void aVoid) {
-          //if(fragment!=null){
+          if(fragment!=null){
             fragment.dismissProgress();
             Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
-         // }
+          }
 
         }
       }.execute();

@@ -51,6 +51,7 @@ import java.util.TreeMap;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.CircleImageView;
+import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.ECElGamal;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
@@ -62,10 +63,12 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
+import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.contactTransfer.ContactTransfer;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.payment.CashValid;
@@ -625,7 +628,50 @@ public class CommonUtils {
     }
 
     public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
-                                                                 Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
+                                                                  Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
+
+        for (int i = 0; i < valuesListAdapter.size(); i++) {
+            if (valuesListAdapter.get(i).getTotal() > 0) {
+                List<CashLogs_Database> cashList = DatabaseUtil.getListCashForMoney(context, String.valueOf(valuesListAdapter.get(i).getParValue()));
+                int totalCashSend = valuesListAdapter.get(i).getTotal();
+                for (int j = 0; j < valuesListAdapter.get(i).getTotal(); j++) {
+                    if (index > 0) {
+                        int location = j + index * totalCashSend;
+                        listCashSend.add(cashList.get(location));
+                    } else {
+                        listCashSend.add(cashList.get(j));
+                    }
+                }
+            }
+        }
+
+        if (listCashSend.size() > 0) {
+            String[][] cashArray = new String[listCashSend.size()][3];
+            for (int i = 0; i < listCashSend.size(); i++) {
+                CashLogs_Database cash = listCashSend.get(i);
+                String[] moneyItem = {CommonUtils.getAppenItemCash(cash), cash.getAccSign(), cash.getTreSign()};
+                cashArray[i] = moneyItem;
+            }
+            String encData = CommonUtils.getEncrypData(cashArray, contact.getPublicKeyValue());
+            ResponseMessSocket responseMess = new ResponseMessSocket();
+            responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
+            responseMess.setReceiver(String.valueOf(contact.getWalletId()));
+            responseMess.setTime(CommonUtils.getCurrentTime());
+            responseMess.setType(typeSend);
+            responseMess.setContent(contentSendMoney);
+            responseMess.setCashEnc(encData);
+            responseMess.setId(CommonUtils.getIdSender(responseMess, context));
+
+            CommonUtils.logJson(responseMess);
+            DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());
+            return responseMess;
+        }
+        return null;
+    }
+    public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
+                                                                 ContactTransfer contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
 
@@ -712,5 +758,41 @@ public class CommonUtils {
             }
         }
         return false;
+    }
+    public static ArrayList<Uri> genericListUri(Context context, List<Contact> multiTransferList, List<CashTotal> valuesListAdapter, String content, String type){
+        ArrayList<Uri> listUri = new ArrayList<>();
+        try {
+            String userName = ECashApplication.getAccountInfo().getUsername();
+            AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+            for (int i = 0; i < multiTransferList.size(); i++) {
+                Gson gson = new Gson();
+                ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash( context, valuesListAdapter,
+                        multiTransferList.get(i), content, i, type, accountInfo);
+                String jsonCash = gson.toJson(responseMessSocket);
+                List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
+                ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
+                if (stringList.size() > 0) {
+                    for (int j = 0; j < stringList.size(); j++) {
+                        QRCodeSender qrCodeSender = new QRCodeSender();
+                        qrCodeSender.setCycle(j + 1);
+                        qrCodeSender.setTotal(stringList.size());
+                        qrCodeSender.setContent(stringList.get(j));
+                        codeSenderArrayList.add(qrCodeSender);
+                    }
+                    if (codeSenderArrayList.size() > 0) {
+                        for (int j = 0; j < codeSenderArrayList.size(); j++) {
+                            Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
+                            listUri.add(CommonUtils.getBitmapUri(context, bitmap));
+                        }
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+           /// showDialogErr(R.string.err_upload);
+            Log.e("Error genericListUri ",e.getMessage());
+        }
+
+        return listUri;
     }
 }
