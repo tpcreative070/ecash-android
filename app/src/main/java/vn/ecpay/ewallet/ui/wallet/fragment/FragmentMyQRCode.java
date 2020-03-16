@@ -86,7 +86,7 @@ public class FragmentMyQRCode extends ECashBaseFragment {
     @OnClick(R.id.tv_download)
     public void onViewClicked() {
         if(bitmap!=null){
-            QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT);
+            QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT,true);
 
         }
     }
@@ -98,7 +98,7 @@ public class FragmentMyQRCode extends ECashBaseFragment {
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if(bitmap!=null){
-                        QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT);
+                        QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT,true);
                     }
 
                 }

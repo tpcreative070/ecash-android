@@ -129,12 +129,12 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
 
     @Override
     public void handleResult(Result result) {
-        Log.e("result ", result.toString());
+      //  Log.e("result ", result.toString());
         Gson gson = new Gson();
-        // Log.e("gson ", gson.toJson(result));
+         Log.e("gson ", gson.toJson(result));
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
-            //  Log.e("qrScanBase ", gson.toJson(qrScanBase));
+              Log.e("qrScanBase ", gson.toJson(qrScanBase));
             if (qrScanBase != null) {
                 if (qrScanBase.getType() != null) {
                     switch (qrScanBase.getType()) {
@@ -156,6 +156,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
 
                             break;
                         default:
+                            Log.e("Eee 0","Eee 0");
                             dismissProgress();
                             if (getActivity() != null)
                                 ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
@@ -165,6 +166,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     if (null != qrScanBase.getContent()) {
                         handleCash(result.getText());
                     } else {
+                        Log.e("Eee ","Eee ");
                         dismissProgress();
                         if (getActivity() != null)
                             ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
@@ -172,12 +174,14 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 }
             } else {
                 dismissProgress();
+                Log.e("Eee1 ","Eee1 ");
                 if (getActivity() != null)
                     ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
             }
 
         } catch (JsonSyntaxException e) {
             dismissProgress();
+            Log.e("JsonSyntaxException ",e.getMessage());
             if (getActivity() != null)
                 ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
         }
@@ -241,13 +245,13 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
-        //    Log.e("result",result);
+      //      Log.e("result 1",result);
         Gson gson = new Gson();
         try {
-            // QRCodeSender qrCodeSender = new QRCodeSender();
+           //  QRCodeSender qrCodeSender = new QRCodeSender();
             QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
             if (qrCodeSender != null) {
-                //  Log.e("scan_qr_code",qrCodeSender.toString());
+                  Log.e("scan_qr_code",qrCodeSender.toString());
                 cashMap.put(qrCodeSender.getCycle(), qrCodeSender.getContent());
                 String numberScan = cashMap.size() + "/" + qrCodeSender.getTotal();
                 tvNumberScan.setText(getResources().getString(R.string.str_number_scan_qr_code, numberScan));
@@ -297,12 +301,13 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             } else {
                 dismissProgress();
                 if (null != getActivity())
-                    ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ");
+                    ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ.");
             }
         } catch (JsonSyntaxException e) {
             dismissProgress();
+            Log.e("JsonSyntaxException 1",e.getMessage());
             if (null != getActivity())
-                ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ");
+                ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ!");
         }
     }
 

@@ -78,7 +78,7 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
     }
     private void handleSave(){
         if(bitmap!=null&& qrScanBase !=null){
-            QRCodeUtil.saveImageQRCode(this,bitmap,CommonUtils.getCurrentTime(Constant.FORMAT_DATE_SEND_CASH), Constant.DIRECTORY_QR_MY_PAYMENT);
+            QRCodeUtil.saveImageQRCode(this,bitmap,CommonUtils.getCurrentTime(Constant.FORMAT_DATE_SEND_CASH), Constant.DIRECTORY_QR_MY_PAYMENT,true);
 
         }
     }

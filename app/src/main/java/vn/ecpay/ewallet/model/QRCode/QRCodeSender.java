@@ -19,7 +19,8 @@ public class QRCodeSender {
     private int mCycle;
     @SerializedName("total")
     private int mTotal;
-
+    @SerializedName("type")
+    private String type;
     public String getContent() {
         return mContent;
     }
@@ -44,12 +45,21 @@ public class QRCodeSender {
         mTotal = total;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "QRCodeSender{" +
                 "mContent='" + mContent + '\'' +
                 ", mCycle=" + mCycle +
                 ", mTotal=" + mTotal +
+                ", type='" + type + '\'' +
                 '}';
     }
 

@@ -1,11 +1,14 @@
 package vn.ecpay.ewallet.ui.cashToCash.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +20,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,22 +31,22 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 
+import vn.ecpay.ewallet.common.utils.QRCodeUtil;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransfer;
-import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashSuccessWithQRCodeActivity;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.SlideQRCodeAdapter;
-import vn.ecpay.ewallet.ui.function.CashOutFunction;
-import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 
@@ -63,6 +68,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     private List<CashTotal> valuesListAdapter;
     private List<Contact> multiTransferList;
     private List<ContactTransfer> contactsList;
+    private ArrayList<Bitmap> listBitmap;
     private ArrayList<Uri> listUri;
     private String content;
     private String type;
@@ -76,7 +82,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
         args.putSerializable(Constant.CONTACT_MULTI_TRANSFER, (Serializable) multiTransferList);
         args.putSerializable(Constant.CONTENT_TRANSFER, content);
         args.putSerializable(Constant.TYPE_TRANSFER, type);
-     //   args.putSerializable(Constant.URI_TRANSFER, listUri);
+
         CashToCashSuccessWithQRCodeFragment fragment = new CashToCashSuccessWithQRCodeFragment();
         fragment.setArguments(args);
         return fragment;
@@ -97,12 +103,13 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
             multiTransferList = (List<Contact>) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
             content = bundle.getString(Constant.CONTENT_TRANSFER);
             type = bundle.getString(Constant.TYPE_TRANSFER);
-            listUri = new ArrayList<>();
+           // listUri = (ArrayList<Bitmap>) bundle.getSerializable(Constant.URI_TRANSFER);
             showProgress();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mappingContact();
+                    //setData();
                 }
             },2000);
 
@@ -123,6 +130,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     }
 
     private void mappingContact(){
+        listBitmap = new ArrayList<>();
+        listUri = new ArrayList<>();
         contactsList= new ArrayList<>();
 
         if (valuesListAdapter != null && multiTransferList != null) {
@@ -144,8 +153,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
         }
     }
     private void setData() {
-        if (valuesListAdapter != null && multiTransferList != null) {
-            tv_title.setText(String.format(getString(R.string.str_you_have_successfully_qr_press_arrow_to_view_other_qr), multiTransferList.size() + ""));
+        if (valuesListAdapter != null && contactsList != null) {
+            tv_title.setText(String.format(getString(R.string.str_you_have_successfully_qr_press_arrow_to_view_other_qr), contactsList.size() + ""));
             adapter = new SlideQRCodeAdapter(getActivity(), valuesListAdapter, contactsList, content, type);
 
             view_pager.setAdapter(adapter);
@@ -207,20 +216,20 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                 }
                 break;
             case R.id.view_share:
-                if(valuesListAdapter == null && multiTransferList == null)
+                if(valuesListAdapter == null && contactsList == null)
                     return;
-                getBitmap(true);
+                handleShareSave(true);
                 break;
             case R.id.view_download:
-                if(valuesListAdapter == null && multiTransferList == null)
+                if(valuesListAdapter == null && contactsList == null)
                     return;
-                getBitmap(false);
+                handleShareSave(false);
                 break;
         }
     }
 
 
-    private void getBitmap(boolean share){
+    private void handleShareSave(boolean share){
        // bitmap = adapter.getBitmap();
         if(share){
             if (PermissionUtils.checkPermissionWriteStore(this, null)) {
@@ -234,29 +243,21 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                         showDialogErr(R.string.err_store_image);
                     return;
                 }
-                UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
-                showProgress();
-                updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
-                    @Override
-                    public void onUpdateMasterSuccess() {
-                        CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashSuccessWithQRCodeFragment.this, valuesListAdapter,
-                                multiTransferList, content, type);
-                        cashOutSocketFunction.handleCashOutQRCode(() -> cashOutSuccess());
-
+                if(contactsList.size()==0){
+                    showDialogErr(R.string.err_upload);
+                    return;
+                }
+                boolean showToast=false;
+                for(int i=0;i<contactsList.size();i++){
+                    String currentTime = CommonUtils.getCurrentTime();
+                    String imageName = contactsList.get(i).getWalletId() + "_" + currentTime + "_" + i;
+                    if(i== listBitmap.size()-1){
+                        showToast=true;
                     }
-
-                    @Override
-                    public void onUpdateMasterFail() {
-                        dismissProgress();
-                        showDialogError(getResources().getString(R.string.err_change_database));
+                    if(contactsList.get(i).getBitmap()!=null){
+                        QRCodeUtil.saveImageQRCode(this,contactsList.get(i).getBitmap(),imageName, Constant.DIRECTORY_QR_IMAGE,showToast);
                     }
-
-                    @Override
-                    public void onRequestTimeout() {
-                        dismissProgress();
-                        showDialogError(getResources().getString(R.string.err_upload));
-                    }
-                });
+                }
             }
         }
     }
@@ -271,44 +272,68 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
         return CommonUtils.genericListUri(getActivity(),multiTransferList,valuesListAdapter,content,type);
 
     }
+    @SuppressLint("StaticFieldLeak")
     private void createBitmap(){
         String userName = ECashApplication.getAccountInfo().getUsername();
        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        for (int i = 0; i < contactsList.size(); i++) {
-            ContactTransfer contact = contactsList.get(i);
-            Gson gson = new Gson();
-            ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(getActivity(), valuesListAdapter,
-                    contact, content, i, type, accountInfo);
-            String jsonCash = gson.toJson(responseMessSocket);
-            List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
-            ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
-            if (stringList.size() > 0) {
-                for (int j = 0; j < stringList.size(); j++) {
-                    QRCodeSender qrCodeSender = new QRCodeSender();
-                    qrCodeSender.setCycle(j + 1);
-                    qrCodeSender.setTotal(stringList.size());
-                    qrCodeSender.setContent(stringList.get(j));
-                    codeSenderArrayList.add(qrCodeSender);
-                }
-                if (codeSenderArrayList.size() > 0) {
-                    for (int j = 0; j < codeSenderArrayList.size(); j++) {
-                        Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
-                        contact.setBitmap(bitmap);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                for (int i = 0; i < contactsList.size(); i++) {
+                    ContactTransfer contact = contactsList.get(i);
+                    Gson gson = new Gson();
+                    ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(getActivity(), valuesListAdapter,
+                            contact, content, i, type, accountInfo);
+                    String jsonCash = gson.toJson(responseMessSocket);
+                  //  Log.e("jsonCash",jsonCash);
+                    List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
+                  //  ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
+                    ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
+                    if (stringList.size() > 0) {
+                        for (int j = 0; j < stringList.size(); j++) {
+                            QRCodeSender qrCodeSender = new QRCodeSender();
+//                            qrCodeSender.setCycle(j + 1);
+//                            qrCodeSender.setTotal(stringList.size());
+                            qrCodeSender.setContent(stringList.get(j));
+                            QRScanBase qrScanBase =new QRScanBase();
+                            qrScanBase.setCycle(j + 1);
+                            qrScanBase.setTotal(stringList.size());
+                           // qrScanBase.setContent(gson.toJson(qrCodeSender));
+                            qrScanBase.setContent(qrCodeSender.toString());
+                            qrScanBase.setType(null);
+                            codeSenderArrayList.add(qrScanBase);
+                        }
+                        if (codeSenderArrayList.size() > 0) {
+                            for (int j = 0; j < codeSenderArrayList.size(); j++) {
+                                Log.e("codeSenderArrayList",gson.toJson(codeSenderArrayList.get(j)));
+                                Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
+                                contact.setBitmap(bitmap);
+                                listUri.add(CommonUtils.getBitmapUri(getActivity(),bitmap));
+                                listBitmap.add(bitmap);
+                                DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, getActivity());
+//                                if(j==codeSenderArrayList.size()-1){
+//                                    setData();
+//                                }
+                            }
+                        }
                     }
                 }
-            }
-            if(i==contactsList.size()-1){
 
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                setData();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        setData();
+                        EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
                     }
-                },3000);
+                },1000);
+
             }
-        }
-
-
+        }.execute();
     }
     private void handleShareList(){
         if(listUri.size()>0){
@@ -317,16 +342,15 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
             shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, listUri);
             shareIntent.setType("image/jpeg");
             startActivity(Intent.createChooser(shareIntent, getString(R.string.str_share)));
-        }else{
-            getUriToShare();
         }
+
 
     }
     private void getUriToShare(){
         if(contactsList.size()>0){
             for(ContactTransfer contact: contactsList){
                 if(contact.getBitmap()!=null){
-                    listUri.add(CommonUtils.getBitmapUri(getActivity(),contact.getBitmap()));
+                  //  listUri.add(CommonUtils.getBitmapUri(getActivity(),contact.getBitmap()));
                 }
             }
             handleShareList();
@@ -343,7 +367,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 //                    CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashSuccessWithQRCodeFragment.this, valuesListAdapter,
 //                            multiTransferList, content, type);
 //                    cashOutSocketFunction.handleCashOutQRCode(() -> cashOutSuccess());
-                    getBitmap(false);
+                    handleShareSave(false);
                 }
             }
             default:

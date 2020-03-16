@@ -27,6 +27,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.QRCodeUtil;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -42,6 +43,7 @@ public class CashOutFunction {
     private List<CashTotal> valuesList;
     private String typeSend;
     private CashOutListener cashOutListener;
+    private ArrayList<Bitmap>listUri;
     private boolean isConnectSuccess = false;
 
     public CashOutFunction(ECashBaseFragment context, List<CashTotal> valuesList, List<Contact> multiTransferList, String content, String typeSend) {
@@ -50,6 +52,7 @@ public class CashOutFunction {
         this.multiTransferList = multiTransferList;
         this.contentSendMoney = content;
         this.typeSend = typeSend;
+     //   this.listUri = listUri;
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, context.getActivity());
     }
@@ -69,23 +72,34 @@ public class CashOutFunction {
                         String jsonCash = gson.toJson(responseMessSocket);
                         Contact contact = multiTransferList.get(i);
                         List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
-                        ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
+                        //ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
+                        ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
                         if (stringList.size() > 0) {
                             for (int j = 0; j < stringList.size(); j++) {
                                 QRCodeSender qrCodeSender = new QRCodeSender();
-                                qrCodeSender.setCycle(j + 1);
-                                qrCodeSender.setTotal(stringList.size());
+//                            qrCodeSender.setCycle(j + 1);
+//                            qrCodeSender.setTotal(stringList.size());
                                 qrCodeSender.setContent(stringList.get(j));
-                                codeSenderArrayList.add(qrCodeSender);
+                                QRScanBase qrScanBase =new QRScanBase();
+                                qrScanBase.setCycle(j + 1);
+                                qrScanBase.setTotal(stringList.size());
+                                qrScanBase.setContent(gson.toJson(qrCodeSender));
+                                qrScanBase.setType(null);
+                                codeSenderArrayList.add(qrScanBase);
                             }
 
                             //save image
                             if (codeSenderArrayList.size() > 0) {
+                                boolean toast =false;
                                 for (int j = 0; j < codeSenderArrayList.size(); j++) {
                                     Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
                                     String imageName = contact.getWalletId() + "_" + currentTime + "_" + j;
-                                    QRCodeUtil.saveImageQRCode(context,bitmap,imageName, Constant.DIRECTORY_QR_IMAGE);
-
+                                    if(j==codeSenderArrayList.size()-1){
+                                        toast =true;
+                                    }
+                                    QRCodeUtil.saveImageQRCode(context,bitmap,imageName, Constant.DIRECTORY_QR_IMAGE,toast);
+                                    //listUri.add(CommonUtils.getBitmapUri(context.getActivity(),bitmap));
+                                   //listUri.add(bitmap);
                                 }
                                 //save log
                                 DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, context.getActivity());
@@ -94,7 +108,7 @@ public class CashOutFunction {
                     }
                 }catch (Exception e){
                     Log.e("Err handleCashOutQRCode",e.getMessage());
-                    cashOutListener.onCashOutSuccess();
+                  //  cashOutListener.onCashOutSuccess();
                     EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
                 }
 
