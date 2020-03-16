@@ -48,7 +48,8 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
         ItemValueHolder itemViewHolder = (ItemValueHolder) holder;
         CashTotal cashTotal = listCashValue.get(position);
-        itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
+        //itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
+        itemViewHolder.tv_value.setText(CommonUtils.formatPrice(cashTotal.getParValue()));
         itemViewHolder.tv_sl_value.setText(String.valueOf(cashTotal.getTotalDatabase()));
 
         itemViewHolder.iv_down.setOnClickListener(v -> {

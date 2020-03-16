@@ -118,6 +118,7 @@
     //chuyển khoản
     <string name="str_lixi_sender">Lixi is sent from: %s</string>
     <string name="transfer_to_cash">Transfer to eCash account</string>
+    <string name="transfer_to_account">Transfer to account</string>
     <string name="str_input_account_ecash">Enter your eCash account number</string>
     <string name="str_input_money">Enter the amount</string>
     <string name="str_input_content">Import content transfer money</string>
@@ -356,4 +357,5 @@
     <string name="str_you_have_successfully_qr_press_arrow_to_view_other_qr">You have successfully created %s QR codes, press the arrow to see other codes.</string>
     <string name="str_scan_qr_to_receive_money">Scan the code to receive money</string>
     <string name="str_wallet_receive">Wallet receive:</string>
+    <string name="str_saved">Saved</string>
 </resources>

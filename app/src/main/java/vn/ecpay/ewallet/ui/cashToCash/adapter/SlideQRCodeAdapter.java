@@ -2,48 +2,37 @@ package vn.ecpay.ewallet.ui.cashToCash.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.common.utils.CommonUtils;
-import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
-import vn.ecpay.ewallet.common.utils.QRCodeUtil;
-import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
-import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
+import vn.ecpay.ewallet.model.contactTransfer.ContactTransfer;
 
 public class SlideQRCodeAdapter extends PagerAdapter {
     private List<CashTotal> listCashTotal;
-    private List<Contact> listContact;
+    private List<ContactTransfer> listContact;
+    private List<Bitmap> listUri;
     private LayoutInflater inflater;
     private Context context;
     private String content;
     private String typeSend;
     private AccountInfo accountInfo;
-    private Bitmap bitmap;
 
-    public SlideQRCodeAdapter(Context context, List<CashTotal> listCashTotal, List<Contact> multiTransferList, String content, String typeSend) {
+    public SlideQRCodeAdapter(Context context, List<CashTotal> listCashTotal, List<ContactTransfer> multiTransferList, String content, String typeSend) {
         this.context = context;
+       // this.listUri = listUri;
         this.listCashTotal = listCashTotal;
         this.listContact = multiTransferList;
         this.typeSend = typeSend;
@@ -68,42 +57,17 @@ public class SlideQRCodeAdapter extends PagerAdapter {
         if (imageLayout != null) {
             ImageView iv_qr_code = imageLayout.findViewById(R.id.iv_qr_code);
             TextView tv_wallet_receive = imageLayout.findViewById(R.id.tv_wallet_receive);
-            String currentTime = CommonUtils.getCurrentTime();
-            Gson gson = new Gson();
-            Contact contact =listContact.get(position);
-            ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(context, listCashTotal,
-                    contact, content, position, typeSend, accountInfo);
-            String jsonCash = gson.toJson(responseMessSocket);
-            List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
-            ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
-            if (stringList.size() > 0) {
-                for (int j = 0; j < stringList.size(); j++) {
-                    QRCodeSender qrCodeSender = new QRCodeSender();
-                    qrCodeSender.setCycle(j + 1);
-                    qrCodeSender.setTotal(stringList.size());
-                    qrCodeSender.setContent(stringList.get(j));
-                    codeSenderArrayList.add(qrCodeSender);
-                }
-                tv_wallet_receive.setText(String.valueOf(contact.getWalletId()));
-                if (codeSenderArrayList.size() > 0) {
-                    for (int j = 0; j < codeSenderArrayList.size(); j++) {
-                        bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
-                       // String imageName = contact.getWalletId() + "_" + currentTime + "_" + j;
-                        //QRCodeUtil.saveImageQRCode(context,bitmap,imageName, Constant.DIRECTORY_QR_IMAGE);
-                        iv_qr_code.setImageBitmap(bitmap);
-                    }
-                    //save log
-                   // DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, context);
-                }
+            ContactTransfer contact =listContact.get(position);
+            tv_wallet_receive.setText(String.valueOf(contact.getWalletId()));
+            if(contact.getBitmap()!=null){
+                iv_qr_code.setImageBitmap(contact.getBitmap());
             }
         }
         view.addView(imageLayout, 0);
 
         return imageLayout;
     }
-    public Bitmap getBitmap(){
-        return this.bitmap;
-    }
+
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
@@ -118,4 +82,5 @@ public class SlideQRCodeAdapter extends PagerAdapter {
     public Parcelable saveState() {
         return null;
     }
+
 }

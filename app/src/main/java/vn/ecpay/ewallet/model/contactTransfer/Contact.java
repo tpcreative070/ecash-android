@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.model.contactTransfer;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Contact implements Serializable, Parcelable {
+public class Contact implements Serializable,Parcelable {
     @SerializedName("customerId")
     private Long customerId;
     @SerializedName("ecPublicKey")
