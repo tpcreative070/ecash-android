@@ -3,6 +3,7 @@ package vn.ecpay.ewallet.ui.cashToCash.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.viewpager.widget.PagerAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.ecpay.ewallet.ECashApplication;
@@ -18,12 +20,13 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransfer;
 
 public class SlideQRCodeAdapter extends PagerAdapter {
     private List<CashTotal> listCashTotal;
     private List<ContactTransfer> listContact;
-    private List<Bitmap> listUri;
+    private ArrayList<Bitmap> listUri;
     private LayoutInflater inflater;
     private Context context;
     private String content;
@@ -32,7 +35,7 @@ public class SlideQRCodeAdapter extends PagerAdapter {
 
     public SlideQRCodeAdapter(Context context, List<CashTotal> listCashTotal, List<ContactTransfer> multiTransferList, String content, String typeSend) {
         this.context = context;
-       // this.listUri = listUri;
+    //    this.listUri = listUri;
         this.listCashTotal = listCashTotal;
         this.listContact = multiTransferList;
         this.typeSend = typeSend;
@@ -62,6 +65,8 @@ public class SlideQRCodeAdapter extends PagerAdapter {
             if(contact.getBitmap()!=null){
                 iv_qr_code.setImageBitmap(contact.getBitmap());
             }
+
+
         }
         view.addView(imageLayout, 0);
 
