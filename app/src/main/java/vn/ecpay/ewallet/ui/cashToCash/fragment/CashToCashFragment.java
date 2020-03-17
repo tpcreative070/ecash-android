@@ -88,7 +88,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     private CashTotalAdapter cashValueAdapter;
     private List<CashTotal> valuesListAdapter;
     private List<Contact> multiTransferList;
-    private ArrayList<Bitmap> listUri;
     protected long totalMoney;
     protected String typeSend;
     private long mLastClickTime = 0;
@@ -121,7 +120,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         updateType();
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        listUri = new ArrayList<>();
         setData();
     }
 
@@ -140,6 +138,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void setAdapter() {
+        totalMoney=0;
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
         Collections.reverse(valuesListAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -189,9 +188,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void validateData() {
-        if (listUri.size() > 0) {
-            listUri.clear();
-        }
         showProgress();
         if (totalMoney == 0) {
             dismissProgress();
@@ -299,11 +295,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 handleCancelAccount();
             } else {
                 dismissProgress();
-                if(swQrCode.isChecked()){
-                    gotoQRCode();
-                }else{
-                    showDialogSendOk();
-                }
+                showDialogSendOk();
                 restartSocket();
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
             }
@@ -392,7 +384,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                         return;
                     }
                 }
-            }, 500);
+            }, 4000);
         }
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
@@ -424,7 +416,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         intent.putExtra(Constant.CONTACT_MULTI_TRANSFER, (Serializable) multiTransferList);
         intent.putExtra(Constant.CONTENT_TRANSFER, edtContent.getText().toString());
         intent.putExtra(Constant.TYPE_TRANSFER, typeSend);
-        intent.putExtra(Constant.URI_TRANSFER, listUri);
         getActivity().startActivity(intent);
         setData();
         updateTotalMoney();

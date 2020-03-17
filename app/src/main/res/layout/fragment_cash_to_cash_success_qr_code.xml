@@ -23,6 +23,7 @@
           android:gravity="center"
           />
        <RelativeLayout
+           android:id="@+id/view_qr_code"
            android:layout_width="match_parent"
            android:layout_marginTop="30dp"
            android:layout_height="230dp">
@@ -52,6 +53,7 @@
        </RelativeLayout>
 
       <TextView
+          android:id="@+id/tv_scan_receive"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textSize="@dimen/text_xlarge"

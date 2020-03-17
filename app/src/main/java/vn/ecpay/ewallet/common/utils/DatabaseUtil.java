@@ -55,7 +55,7 @@ public class DatabaseUtil {
         return WalletDatabase.getAllProfile();
     }
 
-    public static void saveTransactionLogQR(ArrayList<QRScanBase> codeSenderArrayList, ResponseMessSocket responseMess, Context activity) {
+    public static void saveTransactionLogQR(ArrayList<QRCodeSender> codeSenderArrayList, ResponseMessSocket responseMess, Context activity) {
         WalletDatabase.getINSTANCE(activity, ECashApplication.masterKey);
         for (int i = 0; i < codeSenderArrayList.size(); i++) {
             TransactionLogQR_Database transactionLog = new TransactionLogQR_Database();

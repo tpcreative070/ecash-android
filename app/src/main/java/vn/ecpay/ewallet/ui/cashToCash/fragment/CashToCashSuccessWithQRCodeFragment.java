@@ -60,6 +60,10 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     @BindView(R.id.iv_right)
     ImageView iv_right;
 
+    @BindView(R.id.tv_scan_receive)
+    TextView tv_scan_receive;
+    @BindView(R.id.view_qr_code)
+    View view_qr_code;
     @BindView(R.id.view_share)
     View view_share;
     @BindView(R.id.view_download)
@@ -104,15 +108,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
             content = bundle.getString(Constant.CONTENT_TRANSFER);
             type = bundle.getString(Constant.TYPE_TRANSFER);
            // listUri = (ArrayList<Bitmap>) bundle.getSerializable(Constant.URI_TRANSFER);
-            showProgress();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mappingContact();
-                    //setData();
-                }
-            },2000);
 
+            initUI();
         }
     }
 
@@ -120,6 +117,20 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     public void onStart() {
         super.onStart();
 
+    }
+    private void initUI(){
+        tv_title.setText("");
+        view_qr_code.setVisibility(View.GONE);
+        tv_scan_receive.setVisibility(View.GONE);
+        showProgress();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mappingContact();
+                //setData();
+            }
+        },2000);
     }
 
     @Override
@@ -154,6 +165,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     }
     private void setData() {
         if (valuesListAdapter != null && contactsList != null) {
+            view_qr_code.setVisibility(View.VISIBLE);
+            tv_scan_receive.setVisibility(View.VISIBLE);
             tv_title.setText(String.format(getString(R.string.str_you_have_successfully_qr_press_arrow_to_view_other_qr), contactsList.size() + ""));
             adapter = new SlideQRCodeAdapter(getActivity(), valuesListAdapter, contactsList, content, type);
 
@@ -287,25 +300,20 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                     String jsonCash = gson.toJson(responseMessSocket);
                   //  Log.e("jsonCash",jsonCash);
                     List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
-                  //  ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
-                    ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
+                    ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
+                   // ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
                     if (stringList.size() > 0) {
                         for (int j = 0; j < stringList.size(); j++) {
                             QRCodeSender qrCodeSender = new QRCodeSender();
-//                            qrCodeSender.setCycle(j + 1);
-//                            qrCodeSender.setTotal(stringList.size());
+                            qrCodeSender.setCycle(j + 1);
+                            qrCodeSender.setTotal(stringList.size());
                             qrCodeSender.setContent(stringList.get(j));
-                            QRScanBase qrScanBase =new QRScanBase();
-                            qrScanBase.setCycle(j + 1);
-                            qrScanBase.setTotal(stringList.size());
-                           // qrScanBase.setContent(gson.toJson(qrCodeSender));
-                            qrScanBase.setContent(qrCodeSender.toString());
-                            qrScanBase.setType(null);
-                            codeSenderArrayList.add(qrScanBase);
+                            qrCodeSender.setType(null);
+                            codeSenderArrayList.add(qrCodeSender);
                         }
                         if (codeSenderArrayList.size() > 0) {
                             for (int j = 0; j < codeSenderArrayList.size(); j++) {
-                                Log.e("codeSenderArrayList",gson.toJson(codeSenderArrayList.get(j)));
+                               // Log.e("codeSenderArrayList",gson.toJson(codeSenderArrayList.get(j)));
                                 Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
                                 contact.setBitmap(bitmap);
                                 listUri.add(CommonUtils.getBitmapUri(getActivity(),bitmap));
@@ -343,20 +351,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
             shareIntent.setType("image/jpeg");
             startActivity(Intent.createChooser(shareIntent, getString(R.string.str_share)));
         }
-
-
     }
-    private void getUriToShare(){
-        if(contactsList.size()>0){
-            for(ContactTransfer contact: contactsList){
-                if(contact.getBitmap()!=null){
-                  //  listUri.add(CommonUtils.getBitmapUri(getActivity(),contact.getBitmap()));
-                }
-            }
-            handleShareList();
-        }
 
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

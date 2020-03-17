@@ -131,7 +131,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     public void handleResult(Result result) {
       //  Log.e("result ", result.toString());
         Gson gson = new Gson();
-         Log.e("gson ", gson.toJson(result));
+         //Log.e("gson ", gson.toJson(result));
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
               Log.e("qrScanBase ", gson.toJson(qrScanBase));
@@ -247,8 +247,9 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     private void handleCash(String result) {
       //      Log.e("result 1",result);
         Gson gson = new Gson();
-        try {
+      //  try {
            //  QRCodeSender qrCodeSender = new QRCodeSender();
+           // QRScanBase qrScanBase = gson.fromJson(result, QRScanBase.class);
             QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
             if (qrCodeSender != null) {
                   Log.e("scan_qr_code",qrCodeSender.toString());
@@ -303,12 +304,13 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 if (null != getActivity())
                     ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ.");
             }
-        } catch (JsonSyntaxException e) {
-            dismissProgress();
-            Log.e("JsonSyntaxException 1",e.getMessage());
-            if (null != getActivity())
-                ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ!");
-        }
+       // }
+//        catch (JsonSyntaxException e) {
+//            dismissProgress();
+//            Log.e("JsonSyntaxException 1",e.getMessage());
+//            if (null != getActivity())
+//                ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ!");
+//        }
     }
 
     private void handleQRCodeToPay(String result) {
@@ -388,6 +390,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     private String transactionSignatureCashInQR;
 
     private void handleCashIn(ResponseMessSocket responseMess) {
+        Log.e("handleCashIn","handleCashIn");
         mScannerView.stopCamera();
         transactionSignatureCashInQR = responseMess.getId();
         Gson gson = new Gson();

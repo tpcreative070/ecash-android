@@ -320,11 +320,40 @@
                     android:text="@string/str_qr_code"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_xxlarge" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_list_qr_code"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+                    android:background="@color/white"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/iv_qr_code"
+                        android:src="@drawable/icon_qr_code"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"/>
+
+                    <ImageView
+                        android:id="@+id/bt_back"
+                        android:src="@drawable/ic_icon_back"
+                        android:layout_centerVertical="true"
+                        android:padding="10dp"
+                        android:layout_toStartOf="@+id/iv_qr_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:id="@+id/bt_next"
+                        android:src="@drawable/ic_icon_next"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/iv_qr_code"
+                        android:layout_width="wrap_content"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content"/>
+
+                </RelativeLayout>
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/rv_list_qr_code"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="200dp" />-->
             </LinearLayout>
 
             <TextView

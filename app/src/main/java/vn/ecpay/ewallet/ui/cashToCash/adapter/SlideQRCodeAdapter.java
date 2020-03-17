@@ -65,13 +65,7 @@ public class SlideQRCodeAdapter extends PagerAdapter {
             if(contact.getBitmap()!=null){
                 iv_qr_code.setImageBitmap(contact.getBitmap());
             }
-//            try {
-//                if(listUri.get(position)!=null){
-//                    iv_qr_code.setImageBitmap(listUri.get(position));
-//                }
-//            }catch (Exception e){
-//                Log.e("Error Adapter ",e.getMessage());
-//            }
+
 
         }
         view.addView(imageLayout, 0);

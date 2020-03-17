@@ -72,20 +72,16 @@ public class CashOutFunction {
                         String jsonCash = gson.toJson(responseMessSocket);
                         Contact contact = multiTransferList.get(i);
                         List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
-                        //ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
-                        ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
+                        ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
+                        //ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
                         if (stringList.size() > 0) {
                             for (int j = 0; j < stringList.size(); j++) {
                                 QRCodeSender qrCodeSender = new QRCodeSender();
-//                            qrCodeSender.setCycle(j + 1);
-//                            qrCodeSender.setTotal(stringList.size());
+                                qrCodeSender.setCycle(j + 1);
+                                qrCodeSender.setTotal(stringList.size());
                                 qrCodeSender.setContent(stringList.get(j));
-                                QRScanBase qrScanBase =new QRScanBase();
-                                qrScanBase.setCycle(j + 1);
-                                qrScanBase.setTotal(stringList.size());
-                                qrScanBase.setContent(gson.toJson(qrCodeSender));
-                                qrScanBase.setType(null);
-                                codeSenderArrayList.add(qrScanBase);
+                                qrCodeSender.setType(null);
+                                codeSenderArrayList.add(qrCodeSender);
                             }
 
                             //save image
