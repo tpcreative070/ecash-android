@@ -567,6 +567,23 @@ public class DialogUtil {
             btnClose.setOnClickListener(v -> dismissDialog());
         }
     }
+    public void showDialogError(Context pContext,String title, String mess) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_warning);
+            Button btnClose;
+            TextView tv_title,tv_mess;
+            btnClose = mDialog.findViewById(R.id.btn_close);
+            tv_title = mDialog.findViewById(R.id.tv_title);
+            tv_mess = mDialog.findViewById(R.id.tv_mess);
+            tv_title.setText(title);
+            tv_mess.setText(mess);
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
+            mDialog.show();
+            btnClose.setOnClickListener(v -> dismissDialog());
+        }
+    }
 
     public void showDialogChangeAvatar(Context pContext, final OnChangeAvatar onChangeAvatar) {
         if (!isShowing() && pContext != null) {
@@ -652,17 +669,18 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogPaymentRequest(Context context, Payment_DataBase payToRequest, final OnResult pOnConfirm) {
+    public void showDialogPaymentRequest(Context context, Payment_DataBase payToRequest, final OnConfirm pOnConfirm) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_request);
-            Button btnOk;
+            Button btnOk,btClose;
             TextView tvTitle = mDialog.findViewById(R.id.tvTitle);
             tvTitle.setText(String.format(context.getString(R.string.str_payment_request), " "));
             TextView tvContent = mDialog.findViewById(R.id.tv_content);
             tvContent.setText(Html.fromHtml(String.format(context.getString(R.string.str_content_payment_request), payToRequest.getFullName(), payToRequest.getSender(), CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())), payToRequest.getContent())));
 
             btnOk = mDialog.findViewById(R.id.btn_payment);
+            btClose = mDialog.findViewById(R.id.btn_close);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();
@@ -673,14 +691,20 @@ public class DialogUtil {
                 }
 
             });
+            btClose.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerCancel();
+                }
+            });
         }
     }
 
-    public void showDialogConfirmPayment(Context context, List<CashTotal> valueListCash, Payment_DataBase payToRequest, final OnResult pOnConfirm) {
+    public void showDialogConfirmPayment(Context context, List<CashTotal> valueListCash, Payment_DataBase payToRequest, final OnConfirm pOnConfirm) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_confirm_payment);
-            Button btnOk;
+            Button btnOk,btClose;
 
             TextView tv_info = mDialog.findViewById(R.id.tv_info);
             tv_info.setText(context.getString(R.string.str_payment_info));
@@ -696,6 +720,7 @@ public class DialogUtil {
             tvTotalAmount.setText(CommonUtils.formatPriceVND(Long.parseLong(payToRequest.getTotalAmount())));
             tvContent.setText(payToRequest.getContent());
             btnOk = mDialog.findViewById(R.id.btn_confirm);
+            btClose = mDialog.findViewById(R.id.btn_close);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();
@@ -705,6 +730,12 @@ public class DialogUtil {
                     pOnConfirm.OnListenerOk();
                 }
 
+            });
+            btClose.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerCancel();
+                }
             });
         }
     }

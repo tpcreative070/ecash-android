@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,6 +52,9 @@ public class CashChangeBottomSheet extends BaseBottomSheetDialogFragment {
         super.initView();
         tvTitle.setText(getString(R.string.str_select_the_face_value_you_want_to_change));
         valuesList = DatabaseUtil.getAllCashTotal(getActivity());
+        if(valuesList!=null&&valuesList.size()>0){
+            Collections.reverse(valuesList);
+        }
         rv_cash_change.setAdapter(new CashOutAdapter(valuesList, getActivity(), new UpDownMoneyListener() {
             @Override
             public void onUpDownMoneyListener() {

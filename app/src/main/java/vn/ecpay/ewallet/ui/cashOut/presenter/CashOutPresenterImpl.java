@@ -119,7 +119,8 @@ public class CashOutPresenterImpl implements CashOutPresenter {
             @Override
             public void onFailure(Call<ResponseGetPublickeyOrganization> call, Throwable t) {
                 cashOutView.dismissLoading();
-                cashOutView.showDialogError(application.getString(R.string.err_upload));
+                //cashOutView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
@@ -179,7 +180,8 @@ public class CashOutPresenterImpl implements CashOutPresenter {
             @Override
             public void onFailure(Call<ResponseECashToEdong> call, Throwable t) {
                 cashOutView.dismissLoading();
-                cashOutView.showDialogError(application.getString(R.string.err_upload));
+               // cashOutView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
