@@ -49,10 +49,5 @@ public class RetroClientApi {
         }
         return retrofit;
     }
-    private static boolean isConnected() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) ECashApplication.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+
 }

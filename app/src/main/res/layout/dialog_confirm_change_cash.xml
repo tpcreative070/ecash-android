@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bg_border_gray"
     android:layout_height="wrap_content">
     <LinearLayout
@@ -29,11 +30,16 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_cash_change"
                 android:layout_width="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_height="wrap_content"/>
+                android:layout_height="100dp"
+                android:fadeScrollbars="false"
+                android:scrollbarSize="5dp"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_cash_value_total_firm"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </RelativeLayout>
 
         <View
@@ -87,8 +93,13 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_cash_take"
                 android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:fadeScrollbars="false"
+                android:scrollbarSize="5dp"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_cash_value_total_firm"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_height="wrap_content"/>
+               />
         </RelativeLayout>
 
         <View

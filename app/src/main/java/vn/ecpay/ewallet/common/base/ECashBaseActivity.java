@@ -292,7 +292,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     protected abstract void setupActivityComponent();
 
 
-    protected Fragment getCurrentFragment() {
+    public Fragment getCurrentFragment() {
         try {
             return fragmentStack.lastElement();
         } catch (NoSuchElementException e) {

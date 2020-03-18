@@ -33,6 +33,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
@@ -232,19 +233,24 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         }
         ConfirmChangeCashBottomSheet confirm = new ConfirmChangeCashBottomSheet(valueListCashChange, valueListCashTake, new ConfirmChangeCashListener() {
             public void onConfirmChangeCash() {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected void onPreExecute() {
-                        showProgress();
-                    }
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        getListCashSend();
-                        getListCashTake();
-                        getCashChangeEncrypt(publicKeyOrganization);
-                        return null;
-                    }
-                }.execute();
+                if(ECashApplication.getInstance().isConnected()){
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected void onPreExecute() {
+                            showProgress();
+                        }
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            getListCashSend();
+                            getListCashTake();
+                            getCashChangeEncrypt(publicKeyOrganization);
+                            return null;
+                        }
+                    }.execute();
+                }else{
+                    DialogUtil.getInstance().showDialogError(getActivity(), getString(R.string.str_error_connection),getString(R.string.str_error_connection_internet));
+                }
+
             }
         });
         confirm.show(getChildFragmentManager(), "confirm");
@@ -301,7 +307,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 ((CashOutActivity) getActivity()).showDialogError("không lấy được endCrypt data và ID");
             return;
         }
-        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
         showLoading();
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override

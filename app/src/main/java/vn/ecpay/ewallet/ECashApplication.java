@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -107,7 +109,7 @@ public class ECashApplication extends Application {
 
     static AppCompatActivity activity;
 
-    public static Activity getActivity() {
+    public static AppCompatActivity getActivity() {
         return activity;
     }
 
@@ -220,6 +222,12 @@ public class ECashApplication extends Application {
             }
         }
 
+    }
+    public  boolean isConnected() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) ECashApplication.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     public void showStatusErrorConnection(Throwable t){
         ErrorStatusConnectionModel errorConnect =new GetStatusErrorConnection().error(getActivity(),t);
