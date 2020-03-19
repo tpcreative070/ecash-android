@@ -24,7 +24,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -104,12 +104,8 @@ public class PaymentCashChangeHandler {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             publicKeyOrganization = response.body().getResponseData().getIssuerKpValue();
                             publicKey.getPublicKeyOrganization(publicKeyOrganization);
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            // activity.showDialogError(response.body().getResponseMessage());
-                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity, response.body().getResponseCode(), response.body().getResponseMessage()));
-
+                            CheckErrCodeUtil.errorMessage(activity, response.body().getResponseCode());
                         }
                     }
                 } else {
@@ -157,21 +153,16 @@ public class PaymentCashChangeHandler {
                             if (null != response.body().getResponseData()) {
                                 CashInResponse responseData = response.body().getResponseData();
                                 cashChangeSuccess.changeCashSuccess(responseData);
-                            } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                                activity.dismissLoading();
-                                application.checkSessionByErrorCode(response.body().getResponseCode());
                             } else {
                                 activity.dismissLoading();
-                                //activity.showDialogError(response.body().getResponseMessage());
-                                activity.showDialogError(new GetStringErrorCode().errorMessage(activity, response.body().getResponseCode(), response.body().getResponseMessage()));
+                                activity.showDialogError(response.body().getResponseMessage());
                             }
                         } else {
                             activity.dismissLoading();
-                            // activity.showDialogError(response.body().getResponseMessage());
-                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity, response.body().getResponseCode(), response.body().getResponseMessage()));
-
+                            CheckErrCodeUtil.errorMessage(activity, response.body().getResponseCode());
                         }
                     } else {
+                        activity.dismissLoading();
                         activity.showDialogError(response.body().getResponseMessage());
                     }
                 } else {
@@ -575,9 +566,9 @@ public class PaymentCashChangeHandler {
             }
 
             @Override
-            public void onUpdateMasterFail() {
+            public void onUpdateMasterFail(String code) {
                 activity.dismissLoading();
-                activity.showDialogError(activity.getResources().getString(R.string.err_change_database));
+                CheckErrCodeUtil.errorMessage(getActivity(), code);
             }
 
             @Override

@@ -51,6 +51,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         //itemViewHolder.tv_value.setText(CommonUtils.formatPriceVND(cashTotal.getParValue()));
         itemViewHolder.tv_value.setText(CommonUtils.formatPrice(cashTotal.getParValue()));
         itemViewHolder.tv_sl_value.setText(String.valueOf(cashTotal.getTotalDatabase()));
+        itemViewHolder.tv_total.setText(String.valueOf(cashTotal.getTotal()));
 
         itemViewHolder.iv_down.setOnClickListener(v -> {
             if (cashTotal.getTotal() > 0) {

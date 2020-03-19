@@ -18,6 +18,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -40,7 +41,7 @@ public class UpdateMasterKeyFunction {
     public void updateLastTimeAndMasterKey(UpdateMasterKeyListener updateMasterKeyListener) {
         AccountInfo accountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), activity);
         if (null == accountInfo) {
-            updateMasterKeyListener.onUpdateMasterFail();
+            updateMasterKeyListener.onUpdateMasterFail("xxx");
         }
         String masterKey = KeyStoreUtils.getMasterKey(activity);
 
@@ -76,10 +77,8 @@ public class UpdateMasterKeyFunction {
                             DatabaseUtil.changeMasterKeyDatabase(activity, responseData.getMasterKey());
                             KeyStoreUtils.saveMasterKey(responseData.getMasterKey(), activity);
                             updateMasterKeyListener.onUpdateMasterSuccess();
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            ECashApplication.getInstance().checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            updateMasterKeyListener.onUpdateMasterFail();
+                            updateMasterKeyListener.onUpdateMasterFail(response.body().getResponseCode());
                         }
                     } else {
                         updateMasterKeyListener.onRequestTimeout();

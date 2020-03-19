@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.cashIn.presenter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -20,7 +19,7 @@ import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
@@ -108,28 +107,22 @@ public class CashInPresenterImpl implements CashInPresenter {
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
-                        switch (response.body().getResponseCode()) {
-                            case Constant.CODE_SUCCESS:
-                                if (response.body().getResponseData() != null) {
-                                    CashInResponse responseData = response.body().getResponseData();
-                                    cashInView.transferMoneySuccess(responseData);
-                                }
-                                break;
-                            case "4011":
+                    if (null != response.body().getResponseCode()) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            if (null != response.body().getResponseData()) {
+                                CashInResponse responseData = response.body().getResponseData();
+                                cashInView.transferMoneySuccess(responseData);
+                            } else {
                                 cashInView.dismissLoading();
-                                cashInView.showDialogError(application.getString(R.string.err_out_of_money_change));
-                                break;
-                            case Constant.sesion_expid:
-                                cashInView.dismissLoading();
-                                application.checkSessionByErrorCode(response.body().getResponseCode());
-                                break;
-                            default:
-                                cashInView.dismissLoading();
-                              //  cashInView.showDialogError(response.body().getResponseMessage());
-                                cashInView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
-                                break;
+                                cashInView.showDialogError(application.getString(R.string.err_upload));
+                            }
+                        } else {
+                            cashInView.dismissLoading();
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        cashInView.dismissLoading();
+                        cashInView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
                     cashInView.dismissLoading();

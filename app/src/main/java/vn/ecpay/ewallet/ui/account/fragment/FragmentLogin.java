@@ -36,6 +36,7 @@ import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -172,7 +173,6 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     public void onResume() {
         super.onResume();
         loginPresenter.onViewResume();
-        ((AccountActivity) getActivity()).updateTitle("Đăng nhập");
         checkAccountExit();
     }
 
@@ -231,7 +231,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             editor.putString(Constant.DEVICE_IMEI, IMEI);
             editor.apply();
         }
-        loginPresenter.requestLogin(getActivity(),accountInfo, userName, pass);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
@@ -239,12 +239,12 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
-                loginPresenter.activeAccount(getActivity(),accountInfo, otp);
+                loginPresenter.activeAccount(getActivity(), accountInfo, otp);
             }
 
             @Override
             public void onRetryOTP() {
-                loginPresenter.requestOTPActiveAccount(getActivity(),accountInfo, pass);
+                loginPresenter.requestOTPActiveAccount(getActivity(), accountInfo, pass);
             }
 
             @Override
@@ -257,12 +257,12 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", err, "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
-                loginPresenter.activeAccount(getActivity(),accountInfo, otp);
+                loginPresenter.activeAccount(getActivity(), accountInfo, otp);
             }
 
             @Override
             public void onRetryOTP() {
-                loginPresenter.requestOTPActiveAccount(getActivity(),accountInfo, pass);
+                loginPresenter.requestOTPActiveAccount(getActivity(), accountInfo, pass);
             }
 
             @Override
@@ -294,7 +294,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void activeAccountSuccess() {
-        loginPresenter.requestLogin(getActivity(),accountInfo, userName, pass);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
     }
 
     @Override
@@ -344,7 +344,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         restartSocket();
         mAccountInfo.setUsername(userName);
         mAccountInfo.setToken(mAccountInfo.getToken());
-        loginPresenter.getEDongInfo(getActivity(),mAccountInfo);
+        loginPresenter.getEDongInfo(getActivity(), mAccountInfo);
         if (KeyStoreUtils.getMasterKey(getActivity()) != null &&
                 KeyStoreUtils.getPrivateKey(getActivity()) != null) {
             ECashApplication.masterKey = KeyStoreUtils.getMasterKey(getActivity());
@@ -359,6 +359,6 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void requestActiveAccount() {
-        loginPresenter.requestOTPActiveAccount(getActivity(),accountInfo, pass);
+        loginPresenter.requestOTPActiveAccount(getActivity(), accountInfo, pass);
     }
 }

@@ -1,5 +1,7 @@
 package vn.ecpay.ewallet.ui.wallet.presenter;
 
+import android.content.Context;
+
 import com.google.firebase.database.annotations.NotNull;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.language.SharedPrefs;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.cancelAccount.RequestCancelAccount;
@@ -103,16 +106,16 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
     }
 
     @Override
-    public void validateCancelAccount(long balance, AccountInfo accountInfo) {
+    public void validateCancelAccount(long balance, AccountInfo accountInfo, Context context) {
         if (balance > 0) {
             myWalletView.transferMoneyToCancel();
         } else {
-            cancelAccount(accountInfo);
+            cancelAccount(accountInfo, context);
         }
     }
 
     @Override
-    public void cancelAccount(AccountInfo accountInfo) {
+    public void cancelAccount(AccountInfo accountInfo, Context context) {
         myWalletView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -139,19 +142,22 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
                 ECashApplication.isCancelAccount = false;
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
-                        String code = response.body().getResponseCode();
-                        if (code.equals(Constant.CODE_SUCCESS)) {
-                            myWalletView.onCancelAccountSuccess();
-                            SharedPrefs.getInstance().put(SharedPrefs.contactMaxDate, 0L);
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                    if (null != response.body().getResponseCode()) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            if (null != response.body().getResponseData()) {
+                                myWalletView.onCancelAccountSuccess();
+                                SharedPrefs.getInstance().put(SharedPrefs.contactMaxDate, 0L);
+                            } else {
+                                myWalletView.showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
-                            myWalletView.showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         myWalletView.showDialogError(application.getString(R.string.err_upload));
                     }
+                } else {
+                    myWalletView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 

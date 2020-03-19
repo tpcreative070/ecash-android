@@ -101,6 +101,10 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     CardView cvCashTake;
     @BindView(R.id.tv_cash_change)
     TextView tvCashChange;
+    @BindView(R.id.bt_back)
+    ImageView btBack;
+    @BindView(R.id.bt_next)
+    ImageView btNext;
     private TransactionsHistoryModel transactionsHistoryModel;
     private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistoryIn;
     private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistoryOut;
@@ -132,6 +136,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
             checkIsHaveQRCode();
             currentTime = CommonUtils.getCurrentTime();
         }
+        dismissProgress();
     }
 
     private void updateView() {
@@ -342,6 +347,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         for (QRCodeSender qrCodeSender : listQRCodeSender) {
             listQR.add(CommonUtils.generateQRCode(gson.toJson(qrCodeSender)));
         }
+        btBack.setVisibility(View.GONE);
         ivQrCode.setImageBitmap(listQR.get(0));
         ivQrCode.setOnClickListener(v -> DialogUtil.getInstance()
                 .showDialogViewQRCode(getActivity(), listQR.get(index)));
@@ -378,16 +384,22 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 break;
             case R.id.bt_back:
                 if (index == 0) {
+                    btBack.setVisibility(View.GONE);
                     return;
                 } else {
+                    btBack.setVisibility(View.VISIBLE);
+                    btNext.setVisibility(View.VISIBLE);
                     ivQrCode.setImageBitmap(listQR.get(index - 1));
                     index = index - 1;
                 }
                 break;
             case R.id.bt_next:
                 if (index == listQR.size() - 1) {
+                    btNext.setVisibility(View.GONE);
                     return;
                 } else {
+                    btNext.setVisibility(View.VISIBLE);
+                    btBack.setVisibility(View.VISIBLE);
                     ivQrCode.setImageBitmap(listQR.get(index + 1));
                     index = index + 1;
                 }

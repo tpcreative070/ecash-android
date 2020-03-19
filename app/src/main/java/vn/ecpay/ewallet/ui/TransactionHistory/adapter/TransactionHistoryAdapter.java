@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.TransactionHistory.adapter;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
     List<TransactionsHistoryModel> mTransactionHistory;
     WeakReference<Context> mContextWeakReference;
     private OnItemClickListener onItemClickListener;
+    private long mLastClickTime = 0;
 
     public interface OnItemClickListener {
         void onItemClick(TransactionsHistoryModel transactionsHistoryModel);
@@ -160,6 +162,10 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         }
 
         itemViewHolder.item_view.setOnClickListener(v -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
             if (onItemClickListener != null) {
                 onItemClickListener.onItemClick(transactionsHistoryModel);
             }
