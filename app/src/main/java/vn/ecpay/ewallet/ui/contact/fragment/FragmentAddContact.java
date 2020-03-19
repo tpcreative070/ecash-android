@@ -91,9 +91,9 @@ public class FragmentAddContact extends ECashBaseFragment implements AddContactV
             return;
         }
         if (CommonUtils.isValidatePhoneNumber(edtTextSearch)) {
-            addContactPresenter.requestSearchByPhone(edtTextSearch, accountInfo);
+            addContactPresenter.requestSearchByPhone(edtTextSearch, accountInfo, getActivity());
         } else {
-            addContactPresenter.requestSearchWalletID(edtTextSearch, accountInfo);
+            addContactPresenter.requestSearchWalletID(edtTextSearch, accountInfo, getActivity());
         }
     }
 

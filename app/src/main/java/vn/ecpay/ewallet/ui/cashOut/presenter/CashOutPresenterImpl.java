@@ -2,8 +2,6 @@ package vn.ecpay.ewallet.ui.cashOut.presenter;
 
 import android.content.Context;
 
-import org.greenrobot.eventbus.EventBus;
-
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -15,10 +13,9 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
-import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
@@ -98,17 +95,21 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                 cashOutView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            cashOutView.loadPublicKeyOrganizeSuccess(response.body().getResponseData().getIssuerKpValue());
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            cashOutView.dismissLoading();
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                            if (null != response.body().getResponseData()) {
+                                cashOutView.loadPublicKeyOrganizeSuccess(response.body().getResponseData().getIssuerKpValue());
+                            } else {
+                                cashOutView.dismissLoading();
+                                cashOutView.showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
                             cashOutView.dismissLoading();
-                            //cashOutView.showDialogError(response.body().getResponseMessage());
-                            cashOutView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        cashOutView.dismissLoading();
+                        cashOutView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
                     cashOutView.dismissLoading();
@@ -157,18 +158,21 @@ public class CashOutPresenterImpl implements CashOutPresenter {
             public void onResponse(Call<ResponseECashToEdong> call, Response<ResponseECashToEdong> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            cashOutView.sendECashToEDongSuccess();
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            cashOutView.dismissLoading();
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                            if (null != response.body().getResponseData()) {
+                                cashOutView.sendECashToEDongSuccess();
+                            } else {
+                                cashOutView.dismissLoading();
+                                cashOutView.showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
                             cashOutView.dismissLoading();
-                            //cashOutView.showDialogError(response.body().getResponseMessage());
-                            cashOutView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
-
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        cashOutView.dismissLoading();
+                        cashOutView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
                     cashOutView.dismissLoading();
@@ -185,7 +189,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
     }
 
     @Override
-    public void getEDongInfo(AccountInfo accountInfo) {
+    public void getEDongInfo(AccountInfo accountInfo, Context context) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -207,23 +211,23 @@ public class CashOutPresenterImpl implements CashOutPresenter {
             public void onResponse(Call<ResponseEdongInfo> call, Response<ResponseEdongInfo> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (response.body().getResponseData().getListAcc().size() > 0) {
                                 ECashApplication.setListEDongInfo(response.body().getResponseData().getListAcc());
                                 cashOutView.getEDongInfoSuccess();
                             }
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            cashOutView.dismissLoading();
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            cashOutView.getEDongInfoSuccess();
+                            cashOutView.dismissLoading();
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
-                        cashOutView.getEDongInfoSuccess();
+                        cashOutView.dismissLoading();
+                        cashOutView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
-                    cashOutView.getEDongInfoSuccess();
+                    cashOutView.dismissLoading();
+                    cashOutView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 

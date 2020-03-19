@@ -2,9 +2,6 @@ package vn.ecpay.ewallet.ui.contact.presenter;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -16,17 +13,13 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
-import vn.ecpay.ewallet.model.contact.RequestSyncContact;
-import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
-import vn.ecpay.ewallet.model.contactAdd.RequestAddContact;
-import vn.ecpay.ewallet.model.contactAdd.ResponseAddContact;
-import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseGetPublicKeyByPhone;
+import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseGetPublicKeyWallet;
 import vn.ecpay.ewallet.ui.contact.view.AddContactView;
 
 public class AddContactPresenterImpl implements AddContactPresenter {
@@ -75,7 +68,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
     }
 
     @Override
-    public void requestSearchByPhone(String phoneNumber, AccountInfo accountInfo) {
+    public void requestSearchByPhone(String phoneNumber, AccountInfo accountInfo, Context context) {
         addContactView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -98,17 +91,16 @@ public class AddContactPresenterImpl implements AddContactPresenter {
             public void onResponse(Call<ResponseGetPublicKeyByPhone> call, Response<ResponseGetPublicKeyByPhone> response) {
                 addContactView.dismissLoading();
                 if (response.isSuccessful()) {
-                    if (null != response.body()) {
-                        if (null != response.body().getResponseCode()) {
-                            if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                    assert response.body() != null;
+                    if (null != response.body().getResponseCode()) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            if (null != response.body().getResponseData()) {
                                 addContactView.onSearchByPhoneSuccess(response.body().getResponseData());
-                            } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                                application.checkSessionByErrorCode(response.body().getResponseCode());
                             } else {
-                                addContactView.getWalletFail(response.body().getResponseMessage());
+                                addContactView.getWalletFail(application.getString(R.string.err_upload));
                             }
                         } else {
-                            addContactView.getWalletFail(application.getString(R.string.err_upload));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         addContactView.getWalletFail(application.getString(R.string.err_upload));
@@ -127,7 +119,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
     }
 
     @Override
-    public void requestSearchWalletID(String walletId, AccountInfo accountInfo) {
+    public void requestSearchWalletID(String walletId, AccountInfo accountInfo, Context context) {
         addContactView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -151,14 +143,18 @@ public class AddContactPresenterImpl implements AddContactPresenter {
                 addContactView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            addContactView.onSearchByWalletSuccess(response.body().getResponseData());
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                            if (null != response.body().getResponseData()) {
+                                addContactView.onSearchByWalletSuccess(response.body().getResponseData());
+                            } else {
+                                addContactView.getWalletFail(application.getString(R.string.err_upload));
+                            }
                         } else {
-                            addContactView.getWalletFail(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        addContactView.getWalletFail(application.getString(R.string.err_upload));
                     }
                 } else {
                     addContactView.getWalletFail(application.getString(R.string.err_upload));

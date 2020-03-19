@@ -27,6 +27,7 @@
 
     <string name="login_no_account">Bạn chưa có tài khoản?</string>
     <string name="register_now">Đăng ký ngay!</string>
+    <string name="str_register_account">Đăng ký tài khoản</string>
     <string name="can_not_login">Quên mật khẩu</string>
     <string name="confirm">Xác nhận</string>
     <string name="re_pass">Nhập lại mật khẩu</string>
@@ -84,7 +85,7 @@
     <string name="str_edt_search_empty">Bạn chưa nhập từ khoá tìm kiếm</string>
     <string name="str_input_add_contact">Nhập số điện thoại hoặc số ví</string>
     <string name="str_add_contact_success">Thêm mới Contact thành công</string>
-    <string name="str_confirm_delete">Bạn có chắc muốn xoá ?</string>
+    <string name="str_confirm_delete">Bạn có chắc muốn xoá số ví không?</string>
     <string name="str_my_qr_code">Mã QR của tôi</string>
     <string name="str_scan_qr_code_to_add_wallet">Quét mã QR code để thêm eWallet</string>
     <string name="str_save_to_device">Lưu về máy</string>
@@ -171,6 +172,7 @@
     <string name="str_dialog_active_acc">Bạn vui lòng kích hoạt tài khoản để sử dụng chức năng này</string>
 
     //err
+    <string name="network_err">Đã có lỗi xảy ra.Bạn vui lòng kiểm tra kết nối mạng!</string>
     <string name="err_contact_empty">Họ tên không được để trống</string>
     <string name="err_change_database">Dữ liệu ví eCash không hợp lệ, Vui lòng liên hệ bộ phận hỗ trợ</string>
     <string name="error">Lỗi kết nối. Xin vui lòng thử lại sau</string>
@@ -181,56 +183,56 @@
     <string name="err_not_received">Bạn không nhận được?</string>
     <string name="err_doing">Chức năng đang được phát triển?</string>
     <string name="err_user_not_exit">Tài khoản không tồn tại</string>
-    <string name="err_not_input_username">bạn chưa nhập tài khoản</string>
-    <string name="err_not_input_number_username">bạn chưa chọn ví nhận</string>
-    <string name="err_not_input_pass">bạn chưa nhập mật khẩu</string>
+    <string name="err_not_input_username">Bạn chưa nhập tài khoản</string>
+    <string name="err_not_input_number_username">Bạn chưa chọn ví nhận</string>
+    <string name="err_not_input_pass">Bạn chưa nhập mật khẩu</string>
     <string name="err_device_acc_exit">Thiết bị của bạn đã được đăng ký 1 tài khoản khác!</string>
     <string name="err_otp_input_fail">OTP bạn nhập không đúng</string>
     <string name="err_out_of_money_change">Hết mệnh giá cần đổi</string>
-    <string name="err_end_of_the_session">Phiên làm việc của bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
-    <string name="err_chose_money">bạn chưa chọn số tiền muốn chuyển</string>
+    <string name="err_end_of_the_session">Phiên làm việc của Bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
+    <string name="err_chose_money">Bạn chưa chọn số tiền muốn chuyển</string>
     <string name="err_get_public_key_organize">không lấy được publickey của tổ chức phát hành</string>
-    <string name="err_duplicate_wallet_id">Số ví chuyển phải khác số ví của bạn!</string>
-    <string name="err_dit_not_content">bạn chưa nhập nội dung</string>
-    <string name="err_dit_not_money_transfer">bạn chưa chọn số tiền muốn chuyển</string>
-    <string name="err_dit_not_get_key_transfer">không lấy được key của người nhận</string>
-    <string name="err_connect_socket_fail">kết nối socket không thành công. Bạn vui lòng kiểm tra kết nối!</string>
+    <string name="err_duplicate_wallet_id">Số ví chuyển phải khác số ví của Bạn!</string>
+    <string name="err_dit_not_content">Bạn chưa nhập nội dung</string>
+    <string name="err_dit_not_money_transfer">Bạn chưa chọn số tiền muốn chuyển</string>
+    <string name="err_dit_not_get_key_transfer">Không lấy được key của người nhận</string>
+    <string name="err_connect_socket_fail">Kết nối socket không thành công. Bạn vui lòng kiểm tra kết nối!</string>
     <string name="err_validate_user_name_fail">Tên đăng nhập không chưa ký tự đặc biệt hoặc khoảng trắng</string>
     <string name="err_validate_name_fail">Họ và tên không chứa số và ký tự đặc biệt!</string>
-    <string name="err_validate_cmnd_fail">số chứng minh là số = 9 hoặc 12 số!</string>
-    <string name="err_validate_phone_fail">Số điện thoại bạn vừa nhập không hợp lệ vui lòng nhập lại</string>
+    <string name="err_validate_cmnd_fail">Số chứng minh là số = 9 hoặc 12 số!</string>
+    <string name="err_validate_phone_fail">Số điện thoại Bạn vừa nhập không hợp lệ vui lòng nhập lại</string>
     <string name="err_pass_duplicate_fail">2 mật khẩu phải giống nhau</string>
-    <string name="err_new_pass_must_other_old_pass">Mật khẩu mới phái khác mật khẩu cũ</string>
-    <string name="err_pass_bigger_six_char">Mật khẩu bạn nhập không hợp lệ</string>
-    <string name="err_user_name_null">bạn chưa nhập tên tài khoản</string>
+    <string name="err_new_pass_must_other_old_pass">Mật khẩu mới phải khác mật khẩu cũ</string>
+    <string name="err_pass_bigger_six_char">Mật khẩu Bạn nhập không hợp lệ</string>
+    <string name="err_user_name_null">Bạn chưa nhập tên tài khoản</string>
     <string name="err_user_name_lenght">Độ dài tên tài khoản phải lớn hơn 3 ký tự</string>
     <string name="err_name_lenght">Độ dài tên phải lớn hơn 2 ký tự</string>
-    <string name="err_name_null">bạn chưa nhập họ tên</string>
-    <string name="err_cmnd_null">bạn chưa nhập chứng minh nhân dân</string>
-    <string name="err_phone_null">bạn chưa nhập số điện thoại</string>
+    <string name="err_name_null">Bạn chưa nhập họ tên</string>
+    <string name="err_cmnd_null">Bạn chưa nhập chứng minh nhân dân</string>
+    <string name="err_phone_null">Bạn chưa nhập số điện thoại</string>
     <string name="err_old_pass_null">Bạn chưa nhập mật khẩu cũ</string>
     <string name="err_new_pass_null">Bạn chưa nhập mật khẩu mới</string>
     <string name="err_renew_pass_null">Bạn chưa nhập lại mật khẩu mới</string>
-    <string name="err_pass_null">bạn chưa nhập mật khẩu</string>
-    <string name="err_repass_null">bạn chưa nhập lại mật khẩu</string>
+    <string name="err_pass_null">Bạn chưa nhập mật khẩu</string>
+    <string name="err_repass_null">Bạn chưa nhập lại mật khẩu</string>
     <string name="err_nmnd_is_exit">số CMND hoặc sdt đã tồn tại trên hệ thống</string>
     <string name="err_user_is_exit">tên đăng nhập đã tồn tại trên hệ thống</string>
-    <string name="err_otp_fail">OTP bạn nhập không đúng</string>
-    <string name="err_wallet_is_exit">Thiết bị của bạn đã được đăng ký ví!</string>
+    <string name="err_otp_fail">OTP Bạn nhập không đúng</string>
+    <string name="err_wallet_is_exit">Thiết bị của Bạn đã được đăng ký ví!</string>
     <string name="err_store_image">Bộ nhớ không đủ để lưu ảnh</string>
-    <string name="err_pass_fail">Mật khẩu bạn nhập không đúng</string>
+    <string name="err_pass_fail">Mật khẩu Bạn nhập không đúng</string>
     <string name="err_confirm_cancel_account">Bạn có chắc muốn huỷ tài khoản?</string>
-    <string name="err_chose_money_transfer">bạn chưa chọn số tiền muốn đổi</string>
-    <string name="err_chose_money_take">bạn chưa chọn số tiền muốn chuyến sang</string>
+    <string name="err_chose_money_transfer">Bạn chưa chọn số tiền muốn đổi</string>
+    <string name="err_chose_money_take">Bạn chưa chọn số tiền muốn chuyến sang</string>
     <string name="err_conflict_take_and_change">Số tiền đổi và số tiền nhận phải bằng nhau</string>
     <string name="err_filter_add_contact">Số điện thoại hoặc số ví không chứa ký tự đặc biệt và chỉ có 10 chữ số</string>
-    <string name="err_qr_code_fail">Mã QR của bạn không hợp lệ</string>
+    <string name="err_qr_code_fail">Mã QR của Bạn không hợp lệ</string>
     <string name="err_add_contact_conflict">Bạn không thể add chính ví của mình</string>
     <string name="err_add_contact_duplicate">Đã tồn tại tài khoản này trong danh bạ</string>
     <string name="err_transfer_conflict">Bạn không thể chuyển cho chính ví của mình</string>
-    <string name="err_old_pass_invalid">Mật khẩu cũ bạn nhập không đúng</string>
+    <string name="err_old_pass_invalid">Mật khẩu cũ Bạn nhập không đúng</string>
     <string name="err_input_otp_null">Bạn chưa nhập OTP</string>
-    <string name="err_email_validate_fail">Email bạn nhập không hợp lệ</string>
+    <string name="err_email_validate_fail">Email Bạn nhập không hợp lệ</string>
     <string name="err_update_avatar_fails">"Cập nhật avatar không thành công"</string>
     <string name="err_device_un_support">Thiết bị không hỗ trợ chức năng này.</string>
     <string name="err_un_chose_wallet_send">Chưa chọn tài khoản nhận</string>
@@ -270,7 +272,7 @@
 
     <string name="str_my_wallet">Ví của tôi</string>
     <string name="str_account_info">Thông tin tài khoản</string>
-    <string name="str_chose_language_change">Chọn ngôn ngữ mà bạn muốn thay đổi bên dưới</string>
+    <string name="str_chose_language_change">Chọn ngôn ngữ mà Bạn muốn thay đổi bên dưới</string>
     <string name="err_current_language_conflict">Ngôn ngữ hiện tại đang là Tiếng Việt</string>
 
     <string name="str_start">Bắt đầu</string>
@@ -302,7 +304,7 @@
     <string name="str_scan_qr_to_pay">Quét mã để thanh toán</string>
     <string name="str_create_qr_code_success">Đã tạo thành công mã QR</string>
     <string name="str_share">Chia sẻ</string>
-    <string name="err_anount_null">bạn chưa nhập số tiền</string>
+    <string name="err_anount_null">Bạn chưa nhập số tiền</string>
     <string name="err_amount_validate">Số tiền không hợp lệ</string>
     <string name="err_amount_does_not_exceed_twenty_million">Số tiền không vượt quá 20 triệu</string>
     <string name="str_send_request_success">Gửi yêu cầu thành công</string>
@@ -322,7 +324,7 @@
     <string name="error_message_code_3034">username đã tồn tại</string>
     <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
     <string name="error_message_code_3024">Số điện thoại đã tồn tại</string>
-    <string name="error_message_code_3019">Mật khẩu tối thiểu 6 ký tự</string>
+    <string name="error_message_code_3019">Mật khẩu đã được thay đổi. Bạn vui lòng đăng nhập lại</string>
     <string name="error_message_code_3014">Mã xác thực không đúng</string>
     <string name="error_message_code_3016">Hết thời gian xác thực </string>
     <string name="error_message_code_3104">Quá số lần nhập mã xác thực cho phép</string>

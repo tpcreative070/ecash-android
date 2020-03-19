@@ -34,6 +34,7 @@
 
     <string name="login_no_account">Do not have an account?</string>
     <string name="register_now">Register now!</string>
+    <string name="str_register_account">Register</string>
     <string name="can_not_login">Forgot password</string>
     <string name="confirm">Confirm</string>
     <string name="re_pass">Enter the password</string>
@@ -91,7 +92,7 @@
     <string name="str_edt_search_empty">You have not entered a search keyword</string>
     <string name="str_input_add_contact">Enter phone number or wallet number</string>
     <string name="str_add_contact_success">Add new Contact successfully</string>
-    <string name="str_confirm_delete">Are you sure you want to delete?</string>
+    <string name="str_confirm_delete">Are you sure you want to delete the wallet number?</string>
     <string name="str_my_qr_code">My QR code</string>
     <string name="str_scan_qr_code_to_add_wallet">Scan the QR code to add eWallet</string>
     <string name="str_save_to_device">Save to the machine</string>
@@ -179,6 +180,7 @@
     <string name="str_dialog_active_acc">Please activate your account to use this function</string>
 
     //err
+    <string name="network_err">An error has occurred. Please check the network connection!</string>
     <string name="err_contact_empty">Your name must not be blank</string>
     <string name="err_change_database">eCash DB is invalid, Please contact support team</string>
     <string name="error">Connection errors. Something went wrong. Please try again later</string>
@@ -327,7 +329,7 @@
     <string name="error_message_code_3034">The username already exists</string>
     <string name="error_message_code_0998">user name is at least 3 characters</string>
     <string name="error_message_code_3024">Phone number already exists</string>
-    <string name="error_message_code_3019">Password is at least 6 characters</string>
+    <string name="error_message_code_3019">Password is changed. Please log in again</string>
     <string name="error_message_code_3014">Incorrect authentication code</string>
     <string name="error_message_code_3016">Validation timeout </string>
     <string name="error_message_code_3104">Exceeding the number of allowed attempts to enter the verification code</string>

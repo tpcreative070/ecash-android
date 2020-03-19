@@ -3,8 +3,6 @@ package vn.ecpay.ewallet.ui.account.presenter;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -18,7 +16,7 @@ import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.model.OTP.RequestGetOTP;
 import vn.ecpay.ewallet.model.OTP.response.ResponseGetOTP;
 import vn.ecpay.ewallet.model.account.active.RequestActiveAccount;
@@ -133,8 +131,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                             loginView.showDialogError(application.getString(R.string.err_user_not_exit));
                         } else {
                             loginView.dismissLoading();
-                          //  loginView.showDialogError(response.body().getResponseMessage());
-                            loginView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     }
                 } else {
@@ -180,7 +177,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                             loginView.requestGetEDongInfoSuccess(responseDataEdong, accountInfo);
                         } else {
                             loginView.dismissLoading();
-                            loginView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         loginView.dismissLoading();
@@ -232,9 +229,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                             //quá thời hạn gửi OTP
                             loginView.showDialogError(response.body().getResponseMessage());
                         } else {
-                            //loginView.showDialogError(response.body().getResponseMessage());
-                            loginView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
-
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         loginView.showDialogError(application.getString(R.string.err_upload));
@@ -288,9 +283,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                             loginView.requestOTPFail(application.getString(R.string.err_otp_input_fail), accountInfo);
                         } else {
                             loginView.dismissLoading();
-                           // loginView.showDialogError(response.body().getResponseMessage());
-                            loginView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
-
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         loginView.dismissLoading();

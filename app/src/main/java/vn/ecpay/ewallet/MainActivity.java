@@ -110,6 +110,10 @@ public class MainActivity extends ECashBaseActivity {
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                 return;
             }
+            if (CommonUtils.isAccountExit(this)) {
+                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+                return;
+            }
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);
             startActivityForResult(intentCashIn, Constant.REQUEST_QR_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

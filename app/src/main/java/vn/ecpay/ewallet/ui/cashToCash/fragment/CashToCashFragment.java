@@ -34,6 +34,8 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -129,6 +131,13 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     private void setAdapter() {
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
+        if (ECashApplication.isCancelAccount) {
+            for (int i = 0; i < valuesListAdapter.size(); i++) {
+                valuesListAdapter.get(i).setTotal(valuesListAdapter.get(i).getTotalDatabase());
+                valuesListAdapter.get(i).setTotalDatabase(0);
+            }
+            updateTotalMoneyCancelAccount();
+        }
         Collections.reverse(valuesListAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvCashValues.setLayoutManager(mLayoutManager);
@@ -136,6 +145,14 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         rvCashValues.setAdapter(cashValueAdapter);
         if (null != multiTransferList)
             cashValueAdapter.setNumberTransfer(multiTransferList.size());
+    }
+
+    private void updateTotalMoneyCancelAccount() {
+        totalMoney = 0;
+        for (int i = 0; i < valuesListAdapter.size(); i++) {
+            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
+        }
+        tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
     }
 
     protected void updateTotalMoney() {
@@ -159,10 +176,14 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 }
                 break;
             case R.id.btn_confirm:
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
+                if (!CheckNetworkUtil.isConnected(getActivity())) {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
+                    return;
+                }
                 validateData();
                 break;
             case R.id.iv_back:
@@ -217,9 +238,9 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             }
 
             @Override
-            public void onUpdateMasterFail() {
+            public void onUpdateMasterFail(String code) {
                 dismissProgress();
-                showDialogError(getResources().getString(R.string.err_change_database));
+                CheckErrCodeUtil.errorMessage(getActivity(), code);
             }
 
             @Override
@@ -301,7 +322,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 handleCancelAccount();
             } else {
                 dismissProgress();
-                if(swQrCode.isChecked()){
+                if (swQrCode.isChecked()) {
                     Intent intent = new Intent(getActivity(), CashToCashSuccessWithQRCodeActivity.class);
                     intent.putExtra(Constant.CASH_TOTAL_TRANSFER, (Serializable) valuesListAdapter);
                     intent.putExtra(Constant.CONTACT_MULTI_TRANSFER, (Serializable) multiTransferList);
@@ -310,7 +331,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     getActivity().startActivity(intent);
                     setData();
                     updateTotalMoney();
-                }else{
+                } else {
                     showDialogSendOk();
                 }
 
@@ -413,7 +434,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     protected void showDialogSendOk() {
         DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getResources().getString(R.string.str_transfer_success),
-                getResources().getString(R.string.str_eCash_money_transfer_successfully),getResources().getColor(R.color.black), new DialogUtil.OnConfirm() {
+                getResources().getString(R.string.str_eCash_money_transfer_successfully), getResources().getColor(R.color.black), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();

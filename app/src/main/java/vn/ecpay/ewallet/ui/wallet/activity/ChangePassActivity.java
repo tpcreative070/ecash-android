@@ -21,11 +21,13 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
 import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
+import vn.ecpay.ewallet.model.forgotPassword.changePass.request.ChangePassRequest;
 
 public class ChangePassActivity extends ECashBaseActivity {
     @BindView(R.id.edt_old_pass)
@@ -133,23 +135,24 @@ public class ChangePassActivity extends ECashBaseActivity {
             @Override
             public void onResponse(Call<ResponseChangePassword> call, Response<ResponseChangePassword> response) {
                 dismissLoading();
+
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            ECashApplication.get(ChangePassActivity.this).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
-                        } else if (response.body().getResponseCode().equals("3019")) {
-                            showDialogError(getString(R.string.err_old_pass_invalid));
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                            if (null != response.body().getResponseData()) {
+                                ECashApplication.get(ChangePassActivity.this).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
+                            } else {
+                                showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
-                            showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(getApplicationContext(), response.body().getResponseCode());
                         }
                     } else {
-                        showDialogError(getString(R.string.err_upload));
+                        showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
-                    showDialogError(getString(R.string.err_upload));
+                    showDialogError(application.getString(R.string.err_upload));
                 }
             }
 

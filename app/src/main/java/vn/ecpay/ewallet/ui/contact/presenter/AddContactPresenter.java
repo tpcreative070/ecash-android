@@ -8,7 +8,7 @@ import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.contact.view.AddContactView;
 
 public interface AddContactPresenter extends Presenter<AddContactView> {
-    void requestSearchByPhone(String edtTextSearch, AccountInfo accountInfo);
+    void requestSearchByPhone(String phoneNumber, AccountInfo accountInfo, Context context);
 
-    void requestSearchWalletID(String walletId, AccountInfo accountInfo);
+    void requestSearchWalletID(String walletId, AccountInfo accountInfo, Context context);
 }

@@ -15,13 +15,6 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.ui.account.fragment.FragmentLogin;
 
 public class AccountActivity extends ECashBaseActivity {
-
-    @BindView(R.id.iv_back)
-    ImageView ivBack;
-    @BindView(R.id.toolbar_center_text)
-    TextView toolbarCenterText;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     private boolean isTimeOut;
 
     @Override
@@ -37,13 +30,6 @@ public class AccountActivity extends ECashBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setSupportActionBar(toolbar);
-        if (toolbar != null) {
-            toolbar.getMenu().clear();
-            toolbarCenterText.setText(getString(R.string.txt_sign_in));
-            ivBack.setOnClickListener(v -> onBackPressed());
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
         Intent intent = getIntent();
         Bundle content = intent.getExtras();
         if (null != content) {
@@ -56,9 +42,5 @@ public class AccountActivity extends ECashBaseActivity {
 
     public void addFragment(Fragment pFragment, boolean isAnimation) {
         addFragment(pFragment, isAnimation, R.id.fragment_layout_login);
-    }
-
-    public void updateTitle(String title) {
-        toolbarCenterText.setText(title);
     }
 }

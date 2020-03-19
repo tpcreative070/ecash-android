@@ -23,6 +23,7 @@ import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
@@ -164,7 +165,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             for (int i = 1; i < separated.length - 1; i++) {
                 if (i == 1) {
                     middleName.append(separated[i]);
-                }else {
+                } else {
                     middleName.append(" ").append(separated[i]);
                 }
             }
@@ -185,10 +186,10 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             public void onResponse(Call<ResponseUpdateAccountInfo> call, Response<ResponseUpdateAccountInfo> response) {
                 dismissLoading();
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        if (response.body().getResponseCode() != null) {
-                            String code = response.body().getResponseCode();
-                            if (code.equals(Constant.CODE_SUCCESS)) {
+                    assert response.body() != null;
+                    if (null != response.body().getResponseCode()) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            if (null != response.body().getResponseData()) {
                                 WalletDatabase.getINSTANCE(EditAccountInfoActivity.this, ECashApplication.masterKey);
                                 WalletDatabase.updateAccountInfo(requestUpdateAccountInfo.getPersonFirstName(),
                                         requestUpdateAccountInfo.getPersonLastName(),
@@ -209,15 +210,17 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
 
                                     }
                                 });
-                            } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                                ECashApplication.getInstance().checkSessionByErrorCode(response.body().getResponseCode());
                             } else {
-                                showDialogError(response.body().getResponseMessage());
+                                showDialogError(getString(R.string.err_upload));
                             }
+                        } else {
+                            CheckErrCodeUtil.errorMessage(getApplicationContext(), response.body().getResponseCode());
                         }
                     } else {
-                        showDialogError(getResources().getString(R.string.err_upload));
+                        showDialogError(getString(R.string.err_upload));
                     }
+                } else {
+                    showDialogError(getString(R.string.err_upload));
                 }
             }
 

@@ -25,6 +25,7 @@ import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.language.SharedPrefs;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -125,17 +126,21 @@ public class HomePresenterImpl implements HomePresenter {
                 homeView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            homeView.onGetOTPActiveAccountSuccess(response.body().getResponseData(), publicKeyBase64);
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                            if (null != response.body().getResponseData()) {
+                                homeView.onGetOTPActiveAccountSuccess(response.body().getResponseData(), publicKeyBase64);
+                            } else {
+                                homeView.showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
-                            homeView.showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        homeView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
-                    homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                    homeView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
@@ -225,41 +230,40 @@ public class HomePresenterImpl implements HomePresenter {
             public void onResponse(Call<ResponseGetAccountWalletInfo> call, Response<ResponseGetAccountWalletInfo> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            AccountInfo mAccountInfo = response.body().getResponseData();
-                            mAccountInfo.setTerminalId(CommonUtils.getIMEI(context));
-                            mAccountInfo.setTerminalInfo(CommonUtils.getModelName());
-                            mAccountInfo.setEcKeyPublicValue(accountInfo.getEcKeyPublicValue());
-                            mAccountInfo.setMasterKey(responseData.getMasterKey());
-                            mAccountInfo.setWalletId(responseData.getWalletId());
-                            mAccountInfo.setLastAccessTime(responseData.getLastAccessTime());
-                            ECashApplication.privateKey = privateKeyBase64;
-                            ECashApplication.masterKey = mAccountInfo.getMasterKey();
+                            if (null != response.body().getResponseData()) {
+                                AccountInfo mAccountInfo = response.body().getResponseData();
+                                mAccountInfo.setTerminalId(CommonUtils.getIMEI(context));
+                                mAccountInfo.setTerminalInfo(CommonUtils.getModelName());
+                                mAccountInfo.setEcKeyPublicValue(accountInfo.getEcKeyPublicValue());
+                                mAccountInfo.setMasterKey(responseData.getMasterKey());
+                                mAccountInfo.setWalletId(responseData.getWalletId());
+                                mAccountInfo.setLastAccessTime(responseData.getLastAccessTime());
+                                mAccountInfo.setUserId(accountInfo.getUserId());
+                                ECashApplication.privateKey = privateKeyBase64;
+                                ECashApplication.masterKey = mAccountInfo.getMasterKey();
 
-                            //update key
-                            DatabaseUtil.changeMasterKeyDatabase(context, mAccountInfo.getMasterKey());
-                            KeyStoreUtils.saveKeyPrivateWallet(privateKeyBase64, context);
-                            KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), context);
-                            homeView.onActiveAccountSuccess(mAccountInfo);
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            homeView.dismissLoading();
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
-                        } else if (response.body().getResponseCode().equals("3014") ||
-                                response.body().getResponseCode().equals("0998")) {
-                            homeView.dismissLoading();
-                            homeView.requestOTPFail(context.getResources().getString(R.string.err_otp_fail), responseData);
+                                //update key
+                                DatabaseUtil.changeMasterKeyDatabase(context, mAccountInfo.getMasterKey());
+                                KeyStoreUtils.saveKeyPrivateWallet(privateKeyBase64, context);
+                                KeyStoreUtils.saveMasterKey(mAccountInfo.getMasterKey(), context);
+                                homeView.onActiveAccountSuccess(mAccountInfo);
+                            } else {
+                                homeView.dismissLoading();
+                                homeView.showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
                             homeView.dismissLoading();
-                            homeView.showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         homeView.dismissLoading();
-                        homeView.showDialogError(context.getString(R.string.err_upload));
+                        homeView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
                     homeView.dismissLoading();
-                    homeView.showDialogError(context.getString(R.string.err_upload));
+                    homeView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
@@ -297,18 +301,21 @@ public class HomePresenterImpl implements HomePresenter {
                 homeView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             SharedPrefs.getInstance().put(SharedPrefs.contactMaxDate, ECashApplication.lastTimeAddContact);
                             homeView.onSyncContactSuccess();
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            homeView.showDialogError(response.body().getResponseMessage());
+                            homeView.dismissLoading();
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        homeView.dismissLoading();
+                        homeView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
-                    homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                    homeView.dismissLoading();
+                    homeView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 

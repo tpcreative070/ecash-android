@@ -19,7 +19,7 @@ import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -98,24 +98,23 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             @Override
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (null != response.body().getResponseData()) {
                                 CashInResponse responseData = response.body().getResponseData();
                                 cashChangeView.changeCashSuccess(responseData);
-                            } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                                cashChangeView.dismissLoading();
-                                application.checkSessionByErrorCode(response.body().getResponseCode());
                             } else {
                                 cashChangeView.dismissLoading();
-                               // cashChangeView.showDialogError(response.body().getResponseMessage());
-                                cashChangeView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                                cashChangeView.showDialogError(application.getString(R.string.err_upload));
                             }
                         } else {
                             cashChangeView.dismissLoading();
-                           // cashChangeView.showDialogError(response.body().getResponseMessage());
-                            cashChangeView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        cashChangeView.dismissLoading();
+                        cashChangeView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
                     cashChangeView.dismissLoading();
@@ -157,17 +156,24 @@ public class CashChangePresenterImpl implements CashChangePresenter {
                 cashChangeView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            cashChangeView.loadPublicKeyOrganizeSuccess(response.body().getResponseData().getIssuerKpValue());
-                        }else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                            if (null != response.body().getResponseData()) {
+                                cashChangeView.loadPublicKeyOrganizeSuccess(response.body().getResponseData().getIssuerKpValue());
+                            } else {
+                                cashChangeView.dismissLoading();
+                                cashChangeView.showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
-                          //  cashChangeView.showDialogError(response.body().getResponseMessage());
-                            cashChangeView.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            cashChangeView.dismissLoading();
+                            CheckErrCodeUtil.errorMessage(activity, response.body().getResponseCode());
                         }
+                    } else {
+                        cashChangeView.dismissLoading();
+                        cashChangeView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
+                    cashChangeView.dismissLoading();
                     cashChangeView.showDialogError(application.getString(R.string.err_upload));
                 }
             }

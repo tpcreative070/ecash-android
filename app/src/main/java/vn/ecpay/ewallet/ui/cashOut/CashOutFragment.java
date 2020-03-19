@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,22 +36,25 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
+import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
 import vn.ecpay.ewallet.ui.cashOut.view.CashOutView;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
 import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
-import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.common.utils.Constant.EVENT_CASH_OUT_MONEY;
@@ -120,7 +124,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     }
 
     private void setData() {
-        setAdapter();
+        updateMoneyCancelAccount();
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -133,10 +137,23 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             tvEdong.setText(listEDongInfo.get(0).getAccountIdt());
         }
+        Utils.disableButtonConfirm(getActivity(), btnConfirm, true);
+    }
+
+    private void updateMoneyCancelAccount() {
+        valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
+        Collections.reverse(valuesListAdapter);
+        if (ECashApplication.isCancelAccount) {
+            for (int i = 0; i < valuesListAdapter.size(); i++) {
+                valuesListAdapter.get(i).setTotal(valuesListAdapter.get(i).getTotalDatabase());
+                valuesListAdapter.get(i).setTotalDatabase(0);
+            }
+        }
+        setAdapter();
+        updateTotalMoney();
     }
 
     private void setAdapter() {
-        valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvCashValues.setLayoutManager(mLayoutManager);
         cashOutAdapter = new CashOutAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
@@ -149,6 +166,11 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
         }
         tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
+        if (totalMoney > 0) {
+            Utils.disableButtonConfirm(getActivity(), btnConfirm, false);
+        } else {
+            Utils.disableButtonConfirm(getActivity(), btnConfirm, true);
+        }
     }
 
     private void showDialogEDong() {
@@ -169,7 +191,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
     private void showDialogCashOutOk() {
         DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getString(R.string.str_transaction_success),
-                getResources().getString(R.string.str_dialog_cash_out_success, CommonUtils.formatPriceVND(totalMoney)),getResources().getColor(R.color.green), new DialogUtil.OnConfirm() {
+                getResources().getString(R.string.str_dialog_cash_out_success, CommonUtils.formatPriceVND(totalMoney)), getResources().getColor(R.color.green), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();
@@ -202,10 +224,14 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 }
                 break;
             case R.id.btn_confirm:
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
+                if (!CheckNetworkUtil.isConnected(getActivity())) {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
+                    return;
+                }
                 validateData();
                 break;
         }
@@ -244,9 +270,9 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             }
 
             @Override
-            public void onUpdateMasterFail() {
+            public void onUpdateMasterFail(String code) {
                 dismissLoading();
-                showDialogError(getResources().getString(R.string.err_change_database));
+                CheckErrCodeUtil.errorMessage(getActivity(), code);
             }
 
             @Override
@@ -294,7 +320,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_upload));
                 return;
             }
-            cashOutPresenter.sendECashToEDong(getActivity(),encData, refId, totalMoney, edongInfo, accountInfo);
+            cashOutPresenter.sendECashToEDong(getActivity(), encData, refId, totalMoney, edongInfo, accountInfo);
         }
     }
 
@@ -367,7 +393,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
     private void reloadData() {
         if (WalletDatabase.numberRequest == 0) {
-            cashOutPresenter.getEDongInfo(accountInfo);
+            cashOutPresenter.getEDongInfo(accountInfo, getActivity());
         } else {
             new Timer().schedule(new TimerTask() {
                 @Override
