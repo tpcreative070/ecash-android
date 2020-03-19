@@ -213,6 +213,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         List<Contact> listContact = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
                         for (int i = 0; i < listContact.size(); i++) {
                             if (listContact.get(i).getWalletId().equals(contact.getWalletId())) {
+                                dismissLoading();
                                 ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_add_contact_duplicate));
                                 return;
                             }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +39,7 @@ import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -123,7 +125,7 @@ public class FragmentContact extends ECashBaseFragment {
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ContactAdapter(mSectionList, getActivity(), pos -> {
             showProgress();
-            deleteContact(mSectionList.get(pos));
+            deleteContact(mSectionList.get(pos), getActivity());
         }, this::checkListContactTransfer);
         recyclerView.setAdapter(mAdapter);
     }
@@ -165,7 +167,7 @@ public class FragmentContact extends ECashBaseFragment {
         super.onResume();
     }
 
-    @OnClick({R.id.iv_add_contact, R.id.iv_clear, R.id.tv_done})
+    @OnClick({R.id.iv_add_contact, R.id.iv_clear, R.id.tv_done, R.id.iv_back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_add_contact:
@@ -175,6 +177,9 @@ public class FragmentContact extends ECashBaseFragment {
                 break;
             case R.id.iv_clear:
                 edtSearch.setText(Constant.STR_EMPTY);
+                break;
+            case R.id.iv_back:
+                ((MainActivity) getActivity()).onBackPressed();
                 break;
             case R.id.tv_done:
                 if (CommonUtils.getListTransfer(mSectionList).size() > 0) {
@@ -220,7 +225,7 @@ public class FragmentContact extends ECashBaseFragment {
         EventBus.getDefault().removeStickyEvent(event);
     }
 
-    private void deleteContact(Contact contact) {
+    private void deleteContact(Contact contact, Context context) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -243,22 +248,22 @@ public class FragmentContact extends ECashBaseFragment {
                 dismissProgress();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             DatabaseUtil.deleteContact(getActivity(), contact.getWalletId());
                             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
                             List<Contact> listContactAfterDelete = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
                             setAdapter(listContactAfterDelete);
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            ECashApplication.getInstance().checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            if (getActivity() != null)
-                                ((MainActivity) getActivity()).showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        if (getActivity() != null)
+                            ((MainActivity) getActivity()).showDialogError(context.getResources().getString(R.string.err_upload));
                     }
                 } else {
                     if (getActivity() != null)
-                        ((MainActivity) getActivity()).showDialogError(getResources().getString(R.string.err_upload));
+                        ((MainActivity) getActivity()).showDialogError(context.getResources().getString(R.string.err_upload));
                 }
             }
 

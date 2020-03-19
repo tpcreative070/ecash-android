@@ -92,6 +92,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new TransactionHistoryAdapter(mSectionList, getActivity(), transactionsHistoryModel -> {
+            showProgress();
             Intent intent = new Intent(getActivity(), TransactionsHistoryDetailActivity.class);
             intent.putExtra(Constant.TRANSACTIONS_HISTORY_MODEL, transactionsHistoryModel);
             getActivity().startActivity(intent);
@@ -130,6 +131,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        dismissProgress();
     }
 
     @Override
@@ -181,6 +183,4 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
             cashChange.show(getChildFragmentManager(), "historyFilter");
         }
     }
-
-
 }

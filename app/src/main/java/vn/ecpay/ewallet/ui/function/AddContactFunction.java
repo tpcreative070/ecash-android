@@ -14,6 +14,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -56,14 +57,14 @@ public class AddContactFunction {
             public void onResponse(Call<ResponseAddContact> call, Response<ResponseAddContact> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             addContactListener.addContactSuccess();
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            ECashApplication.getInstance().checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                            addContactListener.addContactFail();
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
+                    } else {
+                        addContactListener.addContactFail();
                     }
                 } else {
                     addContactListener.addContactFail();

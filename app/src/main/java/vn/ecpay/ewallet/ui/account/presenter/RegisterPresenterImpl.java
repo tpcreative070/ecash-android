@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.account.presenter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
@@ -22,10 +21,9 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
-import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.GetStringErrorCode;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.model.OTP.RequestGetOTP;
 import vn.ecpay.ewallet.model.OTP.response.ResponseGetOTP;
 import vn.ecpay.ewallet.model.account.register.RequestRegister;
@@ -207,30 +205,35 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onResponse(Call<ResponseRegister> call, Response<ResponseRegister> response) {
                 registerView.dismissLoading();
-                String code = response.body().getResponseCode();
                 if (response.isSuccessful()) {
-                    if (code.equals(Constant.CODE_SUCCESS)) {
-                        AccountInfo accountInfo = response.body().getResponseData();
-                        accountInfo.setTerminalId(CommonUtils.getIMEI(context));
-                        accountInfo.setTerminalInfo(CommonUtils.getModelName());
-                        accountInfo.setPassword(CommonUtils.encryptPassword(pass));
-                        accountInfo.setUsername(userName);
-                        accountInfo.setIdNumber(CMND);
-                        accountInfo.setPersonMobilePhone(phone);
-                        accountInfo.setPersonFirstName(requestRegister.getPersonFirstName());
-                        accountInfo.setPersonMiddleName(requestRegister.getPersonMiddleName());
-                        accountInfo.setPersonLastName(requestRegister.getPersonLastName());
-                        accountInfo.setEcKeyPublicValue(requestRegister.getEcKeyPublicValue());
-                        accountInfo.setLastAccessTime(accountInfo.getLastAccessTime());
-                        registerView.registerSuccess(accountInfo, privateKeyBase64, publicKeyBase64);
-                    } else {
-                        if(response.body().getResponseCode()!=null){
-                            registerView.registerFail(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                    assert response.body() != null;
+                    if (null != response.body().getResponseCode()) {
+                        if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
+                            if (null != response.body().getResponseData()) {
+                                AccountInfo accountInfo = response.body().getResponseData();
+                                accountInfo.setTerminalId(CommonUtils.getIMEI(context));
+                                accountInfo.setTerminalInfo(CommonUtils.getModelName());
+                                accountInfo.setPassword(CommonUtils.encryptPassword(pass));
+                                accountInfo.setUsername(userName);
+                                accountInfo.setIdNumber(CMND);
+                                accountInfo.setPersonMobilePhone(phone);
+                                accountInfo.setPersonFirstName(requestRegister.getPersonFirstName());
+                                accountInfo.setPersonMiddleName(requestRegister.getPersonMiddleName());
+                                accountInfo.setPersonLastName(requestRegister.getPersonLastName());
+                                accountInfo.setEcKeyPublicValue(requestRegister.getEcKeyPublicValue());
+                                accountInfo.setLastAccessTime(accountInfo.getLastAccessTime());
+                                registerView.registerSuccess(accountInfo, privateKeyBase64, publicKeyBase64);
+                            } else {
+                                registerView.showDialogError(application.getString(R.string.err_upload));
+                            }
+                        } else {
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
-
+                    } else {
+                        registerView.showDialogError(application.getString(R.string.err_upload));
                     }
                 } else {
-                    registerView.registerFail(application.getString(R.string.err_upload));
+                    registerView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
@@ -243,7 +246,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void retryOTP(Context context,AccountInfo accountInfo) {
+    public void retryOTP(Context context, AccountInfo accountInfo) {
         registerView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -273,8 +276,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         } else if (response.body().getResponseCode().equals("3015")) {
                             registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
                         } else {
-                          //  registerView.showDialogError(response.body().getResponseMessage());
-                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         registerView.showDialogError(application.getString(R.string.err_upload));
@@ -293,7 +295,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void activeAccount(Context context,AccountInfo accountInfo, String otp) {
+    public void activeAccount(Context context, AccountInfo accountInfo, String otp) {
         registerView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -331,8 +333,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             registerView.requestOtpErr(accountInfo, application.getString(R.string.err_otp_fail));
                         } else {
                             registerView.dismissLoading();
-                           // registerView.showDialogError(response.body().getResponseMessage());
-                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         registerView.dismissLoading();
@@ -353,7 +354,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void loginAccount(Context context,AccountInfo accountInfo) {
+    public void loginAccount(Context context, AccountInfo accountInfo) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -378,7 +379,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             registerView.loginSuccess(accountInfo);
                         } else {
                             registerView.dismissLoading();
-                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         registerView.dismissLoading();
@@ -399,7 +400,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
     @Override
-    public void getEDongInfo(Context context,AccountInfo accountInfo) {
+    public void getEDongInfo(Context context, AccountInfo accountInfo) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -426,9 +427,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             registerView.getEDongInfoSuccess(accountInfo, response.body().getResponseData());
                         } else {
-                           // registerView.showDialogError(response.body().getResponseMessage());
-                            registerView.showDialogError(new GetStringErrorCode().errorMessage(context,response.body().getResponseCode(),response.body().getResponseMessage()));
-
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         registerView.showDialogError(application.getString(R.string.err_upload));

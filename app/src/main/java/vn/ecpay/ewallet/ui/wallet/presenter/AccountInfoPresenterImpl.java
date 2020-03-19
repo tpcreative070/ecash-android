@@ -33,6 +33,7 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.FileUtils;
@@ -49,7 +50,7 @@ import static vn.ecpay.ewallet.common.utils.Constant.REQUEST_IMAGE_CAPTURE;
 import static vn.ecpay.ewallet.common.utils.Constant.REQUEST_TAKE_PHOTO;
 
 public class AccountInfoPresenterImpl implements AccountInfoPresenter {
-    private AccountInfoView accountInfoPresenter;
+    private AccountInfoView accountInfoView;
     private Uri imageUri;
     @Inject
     ECashApplication application;
@@ -60,7 +61,7 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
 
     @Override
     public void setView(AccountInfoView view) {
-        this.accountInfoPresenter = view;
+        this.accountInfoView = view;
     }
 
     @Override
@@ -114,7 +115,7 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
                 ((MainActivity) activity).startActivityForResult(takePictureIntent, requestCode);
             }
         } catch (UnsupportedOperationException e) {
-            accountInfoPresenter.showDialogError(activity.getResources().getString(R.string.err_device_un_support));
+            accountInfoView.showDialogError(activity.getResources().getString(R.string.err_device_un_support));
         }
     }
 
@@ -130,7 +131,7 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
         } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK && data != null) {
             mFileImage = FileUtils.resolveImage(activity, data.getData());
             if (!CommonUtils.validateLeghtFileImage(mFileImage).equals("")) {
-                accountInfoPresenter.onUpdateFail(CommonUtils.validateLeghtFileImage(mFileImage));
+                accountInfoView.onUpdateFail(CommonUtils.validateLeghtFileImage(mFileImage));
                 return;
             }
             startCropActivity(data.getData(), activity, accountInfo);
@@ -157,7 +158,7 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
     }
 
     private void handleCropResult(@NonNull Bitmap result, Context context, AccountInfo accountInfo) {
-        accountInfoPresenter.showLoading();
+        accountInfoView.showLoading();
         try {
             try {
                 final String encodedImage = ImageBase64.encodeTobase64(result).replace("\n", "");
@@ -165,12 +166,12 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
                     Handler handler = new Handler();
                     handler.postDelayed(() -> changeAvatar(encodedImage, context, accountInfo), 1000);
                 } else {
-                    accountInfoPresenter.showDialogError(application.getResources().getString(R.string.err_upload));
+                    accountInfoView.showDialogError(application.getResources().getString(R.string.err_upload));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                accountInfoPresenter.showDialogError(application.getResources().getString(R.string.err_update_avatar_fails));
-                accountInfoPresenter.dismissLoading();
+                accountInfoView.showDialogError(application.getResources().getString(R.string.err_update_avatar_fails));
+                accountInfoView.dismissLoading();
                 try {
                     throw new IOException();
                 } catch (IOException e1) {
@@ -201,31 +202,35 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
         call.enqueue(new Callback<ResponseUpdateAvartar>() {
             @Override
             public void onResponse(Call<ResponseUpdateAvartar> call, Response<ResponseUpdateAvartar> response) {
-                accountInfoPresenter.dismissLoading();
+                accountInfoView.dismissLoading();
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    if (response.body().getResponseCode() != null) {
+                    if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            ECashApplication.getAccountInfo().setLarge(encodedImage);
-                            WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-                            WalletDatabase.updateAccountAvatar(encodedImage, accountInfo.getUsername());
-                            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_AVARTAR));
-                            Toast.makeText(context, context.getResources().getString(R.string.str_update_avatar_success), Toast.LENGTH_LONG).show();
-                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
-                            application.checkSessionByErrorCode(response.body().getResponseCode());
+                            if (null != response.body().getResponseData()) {
+                                ECashApplication.getAccountInfo().setLarge(encodedImage);
+                                WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+                                WalletDatabase.updateAccountAvatar(encodedImage, accountInfo.getUsername());
+                                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_AVARTAR));
+                                Toast.makeText(context, context.getResources().getString(R.string.str_update_avatar_success), Toast.LENGTH_LONG).show();
+                            } else {
+                                accountInfoView.showDialogError(application.getString(R.string.err_upload));
+                            }
                         } else {
-                            accountInfoPresenter.showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
-                        accountInfoPresenter.showDialogError(application.getString(R.string.err_upload));
+                        accountInfoView.showDialogError(application.getString(R.string.err_upload));
                     }
+                } else {
+                    accountInfoView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseUpdateAvartar> call, Throwable t) {
-                accountInfoPresenter.dismissLoading();
-                accountInfoPresenter.showDialogError(application.getString(R.string.err_upload));
+                accountInfoView.dismissLoading();
+                accountInfoView.showDialogError(application.getString(R.string.err_upload));
             }
         });
     }

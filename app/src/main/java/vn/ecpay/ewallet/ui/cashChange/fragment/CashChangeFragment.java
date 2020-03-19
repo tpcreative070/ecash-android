@@ -36,6 +36,8 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -186,6 +188,10 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 cashTake.show(getChildFragmentManager(), "cashTake");
                 break;
             case R.id.btn_confirm:
+                if (!CheckNetworkUtil.isConnected(getActivity())) {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
+                    return;
+                }
                 validateData();
                 break;
         }
@@ -316,9 +322,9 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             }
 
             @Override
-            public void onUpdateMasterFail() {
+            public void onUpdateMasterFail(String code) {
                 dismissLoading();
-                showDialogError(getResources().getString(R.string.err_change_database));
+                CheckErrCodeUtil.errorMessage(getActivity(), code);
             }
 
             @Override

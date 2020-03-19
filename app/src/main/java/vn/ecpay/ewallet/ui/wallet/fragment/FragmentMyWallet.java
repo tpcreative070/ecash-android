@@ -115,7 +115,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
                         getString(R.string.err_confirm_cancel_account), new DialogUtil.OnConfirm() {
                             @Override
                             public void OnListenerOk() {
-                                myWalletPresenter.validateCancelAccount(balance, accountInfo);
+                                myWalletPresenter.validateCancelAccount(balance, accountInfo, getActivity());
                             }
 
                             @Override
@@ -175,7 +175,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     private void handleCancelAccount() {
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         if (balance == 0) {
-            myWalletPresenter.validateCancelAccount(balance, accountInfo);
+            myWalletPresenter.validateCancelAccount(balance, accountInfo, getActivity());
         } else {
             ECashApplication.isCancelAccount = false;
         }

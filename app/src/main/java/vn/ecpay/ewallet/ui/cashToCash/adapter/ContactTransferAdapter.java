@@ -19,6 +19,8 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.ui.callbackListener.AddContactListener;
+import vn.ecpay.ewallet.ui.callbackListener.ContactTransferListener;
 
 import static vn.ecpay.ewallet.ECashApplication.getActivity;
 
@@ -32,14 +34,13 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     WeakReference<Context> mContextWeakReference;
     ArrayList<Contact> multiTransferList;
     private boolean limitChoice;
-    private Context context;
+    private ContactTransferListener addContactListener;
 
-    public ContactTransferAdapter(List<Contact> mContactList, Context context, boolean limitChoice)
-        {
+    public ContactTransferAdapter(List<Contact> mContactList, Context context, boolean limitChoice, ContactTransferListener addContactListener) {
         this.contactList = mContactList;
         this.mContextWeakReference = new WeakReference<>(context);
         this.limitChoice = limitChoice;
-        this.context = context;
+        this.addContactListener = addContactListener;
     }
 
     @Override
@@ -93,13 +94,13 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 contactList.get(position).setAddTransfer(false);
                 itemViewHolder.iv_multi_chose.setVisibility(View.GONE);
             } else {
-                if(limitChoice){
-                    if(contactList!=null){
-                        if(CommonUtils.getCountTransfer(contactList)==10){
-                            if(getActivity()!=null){
-                                if(getActivity() instanceof ECashBaseActivity){
+                if (limitChoice) {
+                    if (contactList != null) {
+                        if (CommonUtils.getCountTransfer(contactList) == 10) {
+                            if (getActivity() != null) {
+                                if (getActivity() instanceof ECashBaseActivity) {
                                     ((ECashBaseActivity) getActivity()).showDialogError(getActivity().getString(R.string.str_error_limited_select_contact));
-                                }else{
+                                } else {
                                     Log.e("getActivity ", getActivity().getLocalClassName());
                                 }
                             }
@@ -110,6 +111,7 @@ public class ContactTransferAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     }
                 }
                 contactList.get(position).setAddTransfer(true);
+                addContactListener.addContactChange();
                 itemViewHolder.iv_multi_chose.setVisibility(View.VISIBLE);
             }
         });

@@ -131,17 +131,6 @@ public class ECashApplication extends Application {
         return (ECashApplication) context.getApplicationContext();
     }
 
-    public void checkSessionByErrorCode(String error_code) {
-        switch (error_code) {
-            case Constant.sesion_expid:
-                showDialogSwitchLogin(getString(R.string.err_end_of_the_session));
-                break;
-            default:
-                showDialogError(getString(R.string.err_upload));
-                break;
-        }
-    }
-
     private void InitTokenFCMDB() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
@@ -215,10 +204,11 @@ public class ECashApplication extends Application {
                     }
                 });
     }
-    private void showDialogError(final String messenger){
-        if(getActivity()!=null){
-            if(getActivity() instanceof ECashBaseActivity){
-                ((ECashBaseActivity)getActivity()).showDialogError(messenger);
+
+    private void showDialogError(final String messenger) {
+        if (getActivity() != null) {
+            if (getActivity() instanceof ECashBaseActivity) {
+                ((ECashBaseActivity) getActivity()).showDialogError(messenger);
             }
         }
 

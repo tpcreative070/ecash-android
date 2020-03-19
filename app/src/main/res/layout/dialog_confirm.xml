@@ -54,7 +54,7 @@
             style="@style/btn_cancel"
             android:layout_marginStart="10dp"
             android:textSize="@dimen/text_large"
-            android:text="@string/str_Ignore" />
+            android:text="@string/str_cancel" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -3,10 +3,7 @@ package vn.ecpay.ewallet.ui.cashToCash.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -21,8 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -31,7 +26,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,26 +35,25 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
-import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.ui.callbackListener.CashOutListener;
+import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashSuccessWithQRCodeActivity;
 import vn.ecpay.ewallet.ui.function.CashOutFunction;
 import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
-import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
-import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
-import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CashToCashFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.tv_account_name)
@@ -140,6 +133,13 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     private void setAdapter() {
         totalMoney=0;
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
+        if (ECashApplication.isCancelAccount) {
+            for (int i = 0; i < valuesListAdapter.size(); i++) {
+                valuesListAdapter.get(i).setTotal(valuesListAdapter.get(i).getTotalDatabase());
+                valuesListAdapter.get(i).setTotalDatabase(0);
+            }
+            updateTotalMoneyCancelAccount();
+        }
         Collections.reverse(valuesListAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvCashValues.setLayoutManager(mLayoutManager);
@@ -147,6 +147,14 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         rvCashValues.setAdapter(cashValueAdapter);
         if (null != multiTransferList)
             cashValueAdapter.setNumberTransfer(multiTransferList.size());
+    }
+
+    private void updateTotalMoneyCancelAccount() {
+        totalMoney = 0;
+        for (int i = 0; i < valuesListAdapter.size(); i++) {
+            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
+        }
+        tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
     }
 
     protected void updateTotalMoney() {
@@ -174,6 +182,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
+                if (!CheckNetworkUtil.isConnected(getActivity())) {
+                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
+                    return;
+                }
                 validateData();
                 break;
             case R.id.iv_back:
@@ -266,9 +278,9 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 }
 
                 @Override
-                public void onUpdateMasterFail() {
+                public void onUpdateMasterFail(String code) {
                     dismissProgress();
-                    showDialogError(getResources().getString(R.string.err_change_database));
+                    CheckErrCodeUtil.errorMessage(getActivity(), code);
                 }
 
                 @Override

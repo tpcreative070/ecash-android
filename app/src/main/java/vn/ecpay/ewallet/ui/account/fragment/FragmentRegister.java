@@ -12,11 +12,11 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -63,6 +63,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     EditText edtPhone;
     @Inject
     RegisterPresenter registerPresenter;
+    @BindView(R.id.toolbar_center_text)
+    TextView toolbarCenterText;
 
     private String userName, name, cmnd, phone, pass, rePass;
 
@@ -77,6 +79,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new RegisterModule(this)).inject(this);
         registerPresenter.setView(this);
         registerPresenter.onViewCreate();
+
+        toolbarCenterText.setText(getResources().getString(R.string.str_register_account));
         edtUserName.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (!edtUserName.getText().toString().isEmpty()) {
@@ -141,20 +145,6 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @OnClick(R.id.btn_confirm)
-    public void onViewClicked() {
-        if (KeyStoreUtils.getMasterKey(getActivity()) != null) {
-            List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
-            if (listAccount != null) {
-                if (listAccount.size() > 0) {
-                    DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
-                    return;
-                }
-            }
-        }
-        validateData();
-    }
 
     @SuppressLint("MissingPermission")
     private void startRegisterPassword() {
@@ -298,12 +288,12 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
-                registerPresenter.activeAccount(getActivity(),accountInfo, otp);
+                registerPresenter.activeAccount(getActivity(), accountInfo, otp);
             }
 
             @Override
             public void onRetryOTP() {
-                registerPresenter.retryOTP(getActivity(),accountInfo);
+                registerPresenter.retryOTP(getActivity(), accountInfo);
             }
 
             @Override
@@ -317,12 +307,12 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", err, "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
-                registerPresenter.activeAccount(getActivity(),accountInfo, otp);
+                registerPresenter.activeAccount(getActivity(), accountInfo, otp);
             }
 
             @Override
             public void onRetryOTP() {
-                registerPresenter.retryOTP(getActivity(),accountInfo);
+                registerPresenter.retryOTP(getActivity(), accountInfo);
             }
 
             @Override
@@ -330,11 +320,6 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                 ((AccountActivity) getActivity()).onBackPressed();
             }
         });
-    }
-
-    public void onResume() {
-        super.onResume();
-        ((AccountActivity) getActivity()).updateTitle("Đăng ký tài khoản");
     }
 
     @Override
@@ -392,7 +377,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     public void activeAccountSuccess(AccountInfo accountInfo) {
         accountInfo.setUsername(userName);
         accountInfo.setPassword(CommonUtils.encryptPassword(pass));
-        registerPresenter.loginAccount(getActivity(),accountInfo);
+        registerPresenter.loginAccount(getActivity(), accountInfo);
     }
 
     @Override
@@ -403,7 +388,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                 registerPresenter.syncContact(getActivity(), accountInfo);
             }
         }
-        registerPresenter.getEDongInfo(getActivity(),accountInfo);
+        registerPresenter.getEDongInfo(getActivity(), accountInfo);
 //        getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
     }
 
@@ -440,5 +425,27 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     @Override
     public void dismissLoading() {
         dismissProgress();
+    }
+
+    @OnClick({R.id.iv_back, R.id.btn_confirm})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_back:
+                if (getActivity() != null)
+                    ((AccountActivity) getActivity()).onBackPressed();
+                break;
+            case R.id.btn_confirm:
+                if (KeyStoreUtils.getMasterKey(getActivity()) != null) {
+                    List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
+                    if (listAccount != null) {
+                        if (listAccount.size() > 0) {
+                            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
+                            return;
+                        }
+                    }
+                }
+                validateData();
+                break;
+        }
     }
 }
