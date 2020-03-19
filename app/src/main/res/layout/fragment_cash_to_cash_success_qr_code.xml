@@ -23,14 +23,15 @@
           android:gravity="center"
           />
        <RelativeLayout
+           android:id="@+id/view_qr_code"
            android:layout_width="match_parent"
            android:layout_marginTop="30dp"
            android:layout_height="230dp">
            <ImageView
                android:id="@+id/iv_left"
-               android:layout_width="30dp"
-               android:layout_height="40dp"
-               android:src="@drawable/ic_back"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:src="@drawable/ic_icon_back"
                android:layout_centerVertical="true"
                android:layout_marginStart="10dp"
                android:contentDescription="@string/string_todo"
@@ -42,17 +43,17 @@
                android:layout_height="230dp"/>
            <ImageView
                android:id="@+id/iv_right"
-               android:layout_width="30dp"
-               android:layout_height="40dp"
-               android:src="@drawable/ic_back"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:src="@drawable/ic_icon_next"
                android:layout_alignParentEnd="true"
                android:layout_centerVertical="true"
                android:layout_marginEnd="10dp"
-               android:rotation="180"
                android:contentDescription="@string/string_todo" />
        </RelativeLayout>
 
       <TextView
+          android:id="@+id/tv_scan_receive"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textSize="@dimen/text_xlarge"

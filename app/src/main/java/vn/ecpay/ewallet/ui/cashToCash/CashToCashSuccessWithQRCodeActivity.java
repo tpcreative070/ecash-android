@@ -1,6 +1,8 @@
 package vn.ecpay.ewallet.ui.cashToCash;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,6 +35,7 @@ public class CashToCashSuccessWithQRCodeActivity extends ECashBaseActivity {
     FrameLayout fragmentLayout;
     private List<CashTotal> valuesListAdapter;
     private List<Contact> multiTransferList;
+    private ArrayList<Bitmap> listBitmap;
     private String content;
     private String type;
     @Override
@@ -71,6 +75,7 @@ public class CashToCashSuccessWithQRCodeActivity extends ECashBaseActivity {
             multiTransferList = (List<Contact>) intent.getSerializableExtra(Constant.CONTACT_MULTI_TRANSFER);
             content = intent.getStringExtra(Constant.CONTENT_TRANSFER);
             type = intent.getStringExtra(Constant.TYPE_TRANSFER);
+          // listBitmap = (ArrayList<Bitmap>) intent.getSerializableExtra(Constant.URI_TRANSFER);
             if(valuesListAdapter!=null&&multiTransferList!=null){
                 addFragment(CashToCashSuccessWithQRCodeFragment.newInstance(valuesListAdapter,multiTransferList,content,type), false);
             }

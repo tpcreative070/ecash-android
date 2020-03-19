@@ -55,7 +55,7 @@ public class QRCodeUtil {
     return bitmap;
   }
   @SuppressLint("StaticFieldLeak")
-  public static  void saveImageQRCode(ECashBaseFragment fragment, Bitmap bitmap, String name, String directory){
+  public static  void saveImageQRCode(ECashBaseFragment fragment, Bitmap bitmap, String name, String directory,boolean showToast){
     if (PermissionUtils.checkPermissionWriteStore(fragment, null)) {
       fragment.showProgress();
       new AsyncTask<Void, Void, Void>() {
@@ -80,15 +80,23 @@ public class QRCodeUtil {
             out.flush();
             out.close();
           } catch (Exception e) {
-            Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
+            if(fragment!=null){
+              if(showToast)
+              Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
+            }
             e.printStackTrace();
           }
           return null;
         }
         @Override
         protected void onPostExecute(Void aVoid) {
-          fragment.dismissProgress();
-          Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+          if(fragment!=null){
+            fragment.dismissProgress();
+            if(showToast){
+              Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+            }
+          }
+
         }
       }.execute();
     }

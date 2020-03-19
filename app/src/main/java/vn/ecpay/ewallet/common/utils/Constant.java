@@ -63,6 +63,7 @@ public class Constant {
     public static final String CASH_TOTAL_TRANSFER = "CASH_TOTAL_TRANSFER";
     public static final String CONTENT_TRANSFER = "CONTENT_TRANSFER";
     public static final String TYPE_TRANSFER = "TYPE_TRANSFER";
+    public static final String URI_TRANSFER ="URI_TRANSFER";
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
