@@ -332,6 +332,7 @@
     <string name="error_message_code_0998">user name is at least 3 characters</string>
     <string name="error_message_code_3024">Phone number already exists</string>
     <string name="error_message_code_3019">Password is changed. Please log in again</string>
+    <string name="error_message_code_login_3019">The password you entered is incorrect</string>
     <string name="error_message_code_3014">Incorrect authentication code</string>
     <string name="error_message_code_3016">Validation timeout </string>
     <string name="error_message_code_3104">Exceeding the number of allowed attempts to enter the verification code</string>
@@ -361,8 +362,4 @@
     <string name="str_scan_qr_to_receive_money">Scan the code to receive money</string>
     <string name="str_wallet_receive">Wallet receive:</string>
     <string name="str_saved">Saved</string>
-    <string name="str_error_connection">Connection errors</string>
-    <string name="str_error_connection_internet">Please check your network connection or try again in a few minutes.</string>
-    <string name="str_error_connection_request_timeout">Request Timeout</string>
-    <string name="str_error_connection_internal_server">Internal Server Error</string>
 </resources>

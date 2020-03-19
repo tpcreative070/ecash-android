@@ -327,6 +327,7 @@
     <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
     <string name="error_message_code_3024">Số điện thoại đã tồn tại</string>
     <string name="error_message_code_3019">Mật khẩu đã được thay đổi. Bạn vui lòng đăng nhập lại</string>
+    <string name="error_message_code_login_3019">Mật khẩu bạn nhập không đúng</string>
     <string name="error_message_code_3014">Mã xác thực không đúng</string>
     <string name="error_message_code_3016">Hết thời gian xác thực </string>
     <string name="error_message_code_3104">Quá số lần nhập mã xác thực cho phép</string>

@@ -31,6 +31,10 @@ import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.ResponseL
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
 
+import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3019;
+import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3035;
+import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3077;
+
 public class LoginPresenterImpl implements LoginPresenter {
 
     private LoginView loginView;
@@ -77,7 +81,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void requestLogin(Context context,AccountInfo accountInfo, String userName, String pass) {
+    public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -94,21 +98,21 @@ public class LoginPresenterImpl implements LoginPresenter {
 
         String alphabe = CommonUtils.getStringAlphabe(requestLogin);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogin));
-        String channelSignature="";
-        try{
-             channelSignature =CommonUtils.generateSignature(dataSign);
-            if(channelSignature.isEmpty()){
+        String channelSignature = "";
+        try {
+            channelSignature = CommonUtils.generateSignature(dataSign);
+            if (channelSignature.isEmpty()) {
                 loginView.showDialogError(application.getString(R.string.err_upload));
                 loginView.dismissLoading();
                 return;
             }
-        }catch (Exception e){
-           Log.e("generateSignature ",e.getMessage());
+        } catch (Exception e) {
+            Log.e("generateSignature ", e.getMessage());
             loginView.showDialogError(application.getString(R.string.err_upload));
             loginView.dismissLoading();
             return;
         }
-       // requestLogin.setChannelSignature(CommonUtils.generateSignature(dataSign));
+        // requestLogin.setChannelSignature(CommonUtils.generateSignature(dataSign));
         requestLogin.setChannelSignature(channelSignature);
         CommonUtils.logJson(requestLogin);
         Call<ResponseLoginAfterRegister> call = apiService.login(requestLogin);
@@ -120,7 +124,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             loginView.requestLoginSuccess(response.body().getAccountInfo());
-                        } else if (response.body().getResponseCode().equals("3077")) {
+                        } else if (response.body().getResponseCode().equals(ERROR_CODE_3077)) {
                             //must save account to active account
                             if (accountInfo != null) {
                                 loginView.requestActiveAccount();
@@ -128,9 +132,12 @@ public class LoginPresenterImpl implements LoginPresenter {
                                 loginView.dismissLoading();
                                 loginView.showDialogError(response.body().getResponseMessage());
                             }
-                        } else if (response.body().getResponseCode().equals("3035")) {
+                        } else if (response.body().getResponseCode().equals(ERROR_CODE_3035)) {
                             loginView.dismissLoading();
                             loginView.showDialogError(application.getString(R.string.err_user_not_exit));
+                        } else if (response.body().getResponseCode().equals(ERROR_CODE_3019)) {
+                            loginView.dismissLoading();
+                            loginView.showDialogError(context.getResources().getString(R.string.error_message_code_login_3019));
                         } else {
                             loginView.dismissLoading();
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
@@ -145,14 +152,14 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 loginView.dismissLoading();
-              //  loginView.showDialogError(application.getString(R.string.err_upload));
+                //  loginView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
 
     @Override
-    public void getEDongInfo(Context context,AccountInfo accountInfo) {
+    public void getEDongInfo(Context context, AccountInfo accountInfo) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -202,7 +209,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void requestOTPActiveAccount(Context context,AccountInfo accountInfo, String pass) {
+    public void requestOTPActiveAccount(Context context, AccountInfo accountInfo, String pass) {
         loginView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -246,13 +253,14 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
                 loginView.dismissLoading();
-               // loginView.showDialogError(application.getString(R.string.err_upload));
+                // loginView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
+
     @Override
-    public void activeAccount(Context context,AccountInfo accountInfo, String otp) {
+    public void activeAccount(Context context, AccountInfo accountInfo, String otp) {
         loginView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -303,7 +311,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseActiveAccount> call, Throwable t) {
                 loginView.dismissLoading();
-              //  loginView.showDialogError(application.getString(R.string.err_upload));
+                //  loginView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
