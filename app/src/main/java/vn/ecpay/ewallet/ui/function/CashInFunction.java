@@ -271,6 +271,7 @@ public class CashInFunction {
 
             @Override
             public void onFailure(Call<ResponseGetPublicKeyCash> call, Throwable t) {
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }

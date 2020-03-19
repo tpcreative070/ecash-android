@@ -2,6 +2,8 @@ package vn.ecpay.ewallet.ui.function;
 
 import android.content.Context;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -12,6 +14,8 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
@@ -26,22 +30,22 @@ import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseUpdate
 import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 
 public class UpdateMasterKeyFunction {
-    private Context context;
+    private AppCompatActivity activity;
     @Inject
     ECashApplication application;
 
-    public UpdateMasterKeyFunction(Context context) {
-        this.context = context;
+    public UpdateMasterKeyFunction(AppCompatActivity activity) {
+        this.activity = activity;
     }
 
     public void updateLastTimeAndMasterKey(UpdateMasterKeyListener updateMasterKeyListener) {
-        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), context);
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), activity);
         if (null == accountInfo) {
             updateMasterKeyListener.onUpdateMasterFail("xxx");
         }
-        String masterKey = KeyStoreUtils.getMasterKey(context);
+        String masterKey = KeyStoreUtils.getMasterKey(activity);
 
-        Retrofit retrofit = RetroClientApi.getRetrofitClient(context.getString(R.string.api_base_url));
+        Retrofit retrofit = RetroClientApi.getRetrofitClient(activity.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
         RequestUpdateMasterKey requestUpdateMasterKey = new RequestUpdateMasterKey();
@@ -53,7 +57,7 @@ public class UpdateMasterKeyFunction {
         requestUpdateMasterKey.setAuditNumber(CommonUtils.getAuditNumber());
         requestUpdateMasterKey.setLastAccessTime(accountInfo.getLastAccessTime());
         requestUpdateMasterKey.setMasterKey(masterKey);
-        requestUpdateMasterKey.setTerminalId(CommonUtils.getIMEI(context));
+        requestUpdateMasterKey.setTerminalId(CommonUtils.getIMEI(activity));
         requestUpdateMasterKey.setWalletId(String.valueOf(accountInfo.getWalletId()));
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestUpdateMasterKey));
@@ -70,8 +74,8 @@ public class UpdateMasterKeyFunction {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             WalletDatabase.updateAccountLastAccessTime(responseData.getLastAccessTime(), accountInfo.getUsername());
                             ECashApplication.masterKey = responseData.getMasterKey();
-                            DatabaseUtil.changeMasterKeyDatabase(context, responseData.getMasterKey());
-                            KeyStoreUtils.saveMasterKey(responseData.getMasterKey(), context);
+                            DatabaseUtil.changeMasterKeyDatabase(activity, responseData.getMasterKey());
+                            KeyStoreUtils.saveMasterKey(responseData.getMasterKey(), activity);
                             updateMasterKeyListener.onUpdateMasterSuccess();
                         } else {
                             updateMasterKeyListener.onUpdateMasterFail(response.body().getResponseCode());
@@ -86,7 +90,11 @@ public class UpdateMasterKeyFunction {
 
             @Override
             public void onFailure(Call<ResponseUpdateMasterKey> call, Throwable t) {
-                updateMasterKeyListener.onRequestTimeout();
+                //updateMasterKeyListener.onRequestTimeout();
+                if(activity instanceof ECashBaseActivity){
+                    ((ECashBaseActivity) activity).dismissLoading();
+                }
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }

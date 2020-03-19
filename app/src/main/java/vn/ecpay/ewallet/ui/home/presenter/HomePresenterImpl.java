@@ -147,7 +147,8 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseOTPActiveAccount> call, Throwable t) {
                 homeView.dismissLoading();
-                homeView.onSyncContactFail(application.getString(R.string.err_upload));
+             //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
@@ -191,7 +192,8 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseGetMoneyValue> call, Throwable t) {
                 homeView.dismissLoading();
-                homeView.onSyncContactFail(application.getString(R.string.err_upload));
+             //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
@@ -270,7 +272,8 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseGetAccountWalletInfo> call, Throwable t) {
                 homeView.dismissLoading();
-                homeView.showDialogError(context.getString(R.string.err_upload));
+               // homeView.showDialogError(context.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
@@ -322,7 +325,8 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
                 homeView.dismissLoading();
-                homeView.onSyncContactFail(application.getString(R.string.err_upload));
+               // homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }

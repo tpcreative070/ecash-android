@@ -233,10 +233,15 @@ public class PaymentCashChangeHandler {
     }
 
     public void showDialogConfirmPayment(List<CashTotal> valueListCash) {
-        DialogUtil.getInstance().showDialogConfirmPayment(activity, valueListCash, payment, new DialogUtil.OnResult() {
+        DialogUtil.getInstance().showDialogConfirmPayment(activity, valueListCash, payment, new DialogUtil.OnConfirm() {
             @Override
             public void OnListenerOk() {
                 handleToPay(valueListCash, payment);
+            }
+
+            @Override
+            public void OnListenerCancel() {
+                activity.dismissLoading();
             }
         });
     }
@@ -253,7 +258,18 @@ public class PaymentCashChangeHandler {
                 public void getFullName(String fullname) {
                     payment.setFullName(fullname);
                     if (toPay) {
-                        DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, () -> validatePayment());
+                        DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, new DialogUtil.OnConfirm() {
+                            @Override
+                            public void OnListenerOk() {
+                                validatePayment();
+                            }
+
+                            @Override
+                            public void OnListenerCancel() {
+                                activity.dismissLoading();
+                                activity.getPaymentDataBase();
+                            }
+                        });
 
                     } else {
                         validatePayment();
@@ -262,7 +278,18 @@ public class PaymentCashChangeHandler {
             });
         } else {
             if (toPay) {
-                DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, () -> validatePayment());
+                DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, new DialogUtil.OnConfirm() {
+                    @Override
+                    public void OnListenerOk() {
+                        validatePayment();
+                    }
+
+                    @Override
+                    public void OnListenerCancel() {
+                        activity.dismissLoading();
+                        activity.getPaymentDataBase();
+                    }
+                });
 
             } else {
                 validatePayment();

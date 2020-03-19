@@ -99,7 +99,8 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
             @Override
             public void onFailure(Call<ResponseLogOut> call, Throwable t) {
                 myWalletView.dismissLoading();
-                myWalletView.showDialogError(application.getString(R.string.err_upload));
+              //  myWalletView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }
@@ -164,7 +165,8 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
             public void onFailure(Call<ResponseCancelAccount> call, Throwable t) {
                 ECashApplication.isCancelAccount = false;
                 myWalletView.dismissLoading();
-                myWalletView.showDialogError(application.getString(R.string.err_upload));
+                //myWalletView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }

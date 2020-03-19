@@ -296,19 +296,13 @@ public class WebSocketsService extends Service {
         payment_dataBase.setToPay(true);
 
         DatabaseUtil.insertPayment(getActivity(), payment_dataBase);
-        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_NEW_PAYMENT));
-//        if (ECashApplication.getActivity() != null) {
-//            if (ECashApplication.getActivity() instanceof ECashBaseActivity) {
-//                ECashBaseActivity activity = (ECashBaseActivity) ECashApplication.getActivity();
-//                activity.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        activity.showDialogNewPaymentRequest(payToRequest,true);
-//                    }
-//                });
-//
-//            }
-//        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_NEW_PAYMENT));
+            }
+        },500);
+
     }
 
     @Override

@@ -133,7 +133,8 @@ public class CashInPresenterImpl implements CashInPresenter {
             @Override
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashInView.dismissLoading();
-                cashInView.showDialogError(application.getString(R.string.err_upload));
+               // cashInView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
     }

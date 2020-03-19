@@ -292,7 +292,7 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     protected abstract void setupActivityComponent();
 
 
-    protected Fragment getCurrentFragment() {
+    public Fragment getCurrentFragment() {
         try {
             return fragmentStack.lastElement();
         } catch (NoSuchElementException e) {
@@ -416,17 +416,21 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
         DatabaseUtil.insertPayment(getActivity(), payment_dataBase);
 
         getPaymentDataBase();
+
     }
 
     public void getPaymentDataBase(){
-        Payment_DataBase payment_dataBase = DatabaseUtil.getPayment(getActivity());
-        if(payment_dataBase!=null){
-            if(cashChangeHandler!=null){
-                if(cashChangeHandler.isHandle())
-                    return;
+        new Handler().postDelayed(() -> {
+            Payment_DataBase payment_dataBase = DatabaseUtil.getPayment(getActivity());
+            if(payment_dataBase!=null){
+                if(cashChangeHandler!=null){
+                    if(cashChangeHandler.isHandle())
+                        return;
+                }
+                cashChangeHandler = new PaymentCashChangeHandler(ECashApplication.getInstance(), this,payment_dataBase);
+                cashChangeHandler.showDialogNewPaymentRequest(payment_dataBase.isToPay());
             }
-            cashChangeHandler = new PaymentCashChangeHandler(ECashApplication.getInstance(), this,payment_dataBase);
-            cashChangeHandler.showDialogNewPaymentRequest(payment_dataBase.isToPay());
-        }
+        },1300);
+
     }
 }

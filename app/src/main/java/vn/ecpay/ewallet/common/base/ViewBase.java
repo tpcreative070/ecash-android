@@ -4,4 +4,5 @@ public interface ViewBase {
     void showLoading();
 
     void dismissLoading();
+
 }
