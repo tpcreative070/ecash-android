@@ -55,9 +55,9 @@ import static vn.ecpay.ewallet.common.utils.Constant.TYPE_CASH_EXCHANGE;
 
 public class PaymentCashChangeHandler {
     private Payment_DataBase payment;
-  private ECashBaseActivity activity;
+    private ECashBaseActivity activity;
     private ECashApplication application;
-    private  String publicKeyOrganization ="";
+    private String publicKeyOrganization = "";
     private boolean isHandle;
     private List<Integer> listQualitySend = new ArrayList<>();
     private List<Integer> listValueSend = new ArrayList<>();
@@ -69,13 +69,15 @@ public class PaymentCashChangeHandler {
     private List<CashTotal> valueListCashTake = new ArrayList<>();
 
     private List<CashTotal> listTransfer = new ArrayList<>();
-    public PaymentCashChangeHandler(ECashApplication application, ECashBaseActivity activity, Payment_DataBase payment){
-        this.application =application;
-        this.activity =activity;
-        this.payment =payment;
+
+    public PaymentCashChangeHandler(ECashApplication application, ECashBaseActivity activity, Payment_DataBase payment) {
+        this.application = application;
+        this.activity = activity;
+        this.payment = payment;
     }
-    public String getPublicKeyOrganization(AccountInfo accountInfo, PublicKeyOrganization publicKey){
-        publicKeyOrganization ="";
+
+    public String getPublicKeyOrganization(AccountInfo accountInfo, PublicKeyOrganization publicKey) {
+        publicKeyOrganization = "";
         Retrofit retrofit = RetroClientApi.getRetrofitClient(activity.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
         RequestGetPublicKeyOrganizetion requestGetPublicKeyOrganizetion = new RequestGetPublicKeyOrganizetion();
@@ -100,13 +102,13 @@ public class PaymentCashChangeHandler {
                     assert response.body() != null;
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            publicKeyOrganization= response.body().getResponseData().getIssuerKpValue();
+                            publicKeyOrganization = response.body().getResponseData().getIssuerKpValue();
                             publicKey.getPublicKeyOrganization(publicKeyOrganization);
-                        }else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
+                        } else if (response.body().getResponseCode().equals(Constant.sesion_expid)) {
                             application.checkSessionByErrorCode(response.body().getResponseCode());
                         } else {
-                           // activity.showDialogError(response.body().getResponseMessage());
-                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            // activity.showDialogError(response.body().getResponseMessage());
+                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity, response.body().getResponseCode(), response.body().getResponseMessage()));
 
                         }
                     }
@@ -124,7 +126,8 @@ public class PaymentCashChangeHandler {
         });
         return publicKeyOrganization;
     }
-    public void requestChangeCash(String cashEnc, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue, CashChangeSuccess cashChangeSuccess){
+
+    public void requestChangeCash(String cashEnc, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue, CashChangeSuccess cashChangeSuccess) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -160,15 +163,15 @@ public class PaymentCashChangeHandler {
                             } else {
                                 activity.dismissLoading();
                                 //activity.showDialogError(response.body().getResponseMessage());
-                                activity.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
+                                activity.showDialogError(new GetStringErrorCode().errorMessage(activity, response.body().getResponseCode(), response.body().getResponseMessage()));
                             }
                         } else {
                             activity.dismissLoading();
-                           // activity.showDialogError(response.body().getResponseMessage());
-                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity,response.body().getResponseCode(),response.body().getResponseMessage()));
+                            // activity.showDialogError(response.body().getResponseMessage());
+                            activity.showDialogError(new GetStringErrorCode().errorMessage(activity, response.body().getResponseCode(), response.body().getResponseMessage()));
 
                         }
-                    }else {
+                    } else {
                         activity.showDialogError(response.body().getResponseMessage());
                     }
                 } else {
@@ -185,7 +188,7 @@ public class PaymentCashChangeHandler {
         });
     }
 
-    public void getWalletAccountInfo(AccountInfo accountInfo, long walletID, GetFullNameAccountRequest listener){
+    public void getWalletAccountInfo(AccountInfo accountInfo, long walletID, GetFullNameAccountRequest listener) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -214,17 +217,16 @@ public class PaymentCashChangeHandler {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             AccountInfo mAccountInfo = response.body().getResponseData();
-                            if(mAccountInfo!=null){
+                            if (mAccountInfo != null) {
                                 listener.getFullName(mAccountInfo.getPersonFirstName() + " " + mAccountInfo.getPersonMiddleName() + " " + mAccountInfo.getPersonLastName());
-                            }else{
+                            } else {
                                 listener.getFullName("");
                             }
-                        }else{
+                        } else {
                             listener.getFullName("");
                         }
                     }
-                }
-                else{
+                } else {
                     listener.getFullName("");
                 }
 
@@ -240,18 +242,24 @@ public class PaymentCashChangeHandler {
     }
 
     public void showDialogConfirmPayment(List<CashTotal> valueListCash) {
-        DialogUtil.getInstance().showDialogConfirmPayment(activity, valueListCash, payment, new DialogUtil.OnResult() {
+        DialogUtil.getInstance().showDialogConfirmPayment(activity, valueListCash, payment, new DialogUtil.OnConfirm() {
             @Override
             public void OnListenerOk() {
                 handleToPay(valueListCash, payment);
             }
+
+            @Override
+            public void OnListenerCancel() {
+                activity.dismissLoading();
+            }
         });
     }
+
     public void showDialogNewPaymentRequest(boolean toPay) {
-        isHandle =true;
+        isHandle = true;
         activity.showLoading();
         payment.setFullName("");
-        DatabaseUtil.deletePayment(activity,payment.getId());
+        DatabaseUtil.deletePayment(activity, payment.getId());
         AccountInfo accountInfo = ECashApplication.getAccountInfo();
         if (accountInfo != null) {
             getWalletAccountInfo(accountInfo, Long.parseLong(payment.getSender()), new GetFullNameAccountRequest() {
@@ -259,7 +267,18 @@ public class PaymentCashChangeHandler {
                 public void getFullName(String fullname) {
                     payment.setFullName(fullname);
                     if (toPay) {
-                        DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, () -> validatePayment());
+                        DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, new DialogUtil.OnConfirm() {
+                            @Override
+                            public void OnListenerOk() {
+                                validatePayment();
+                            }
+
+                            @Override
+                            public void OnListenerCancel() {
+                                activity.dismissLoading();
+                                activity.getPaymentDataBase();
+                            }
+                        });
 
                     } else {
                         validatePayment();
@@ -268,7 +287,18 @@ public class PaymentCashChangeHandler {
             });
         } else {
             if (toPay) {
-                DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, () -> validatePayment());
+                DialogUtil.getInstance().showDialogPaymentRequest(activity, payment, new DialogUtil.OnConfirm() {
+                    @Override
+                    public void OnListenerOk() {
+                        validatePayment();
+                    }
+
+                    @Override
+                    public void OnListenerCancel() {
+                        activity.dismissLoading();
+                        activity.getPaymentDataBase();
+                    }
+                });
 
             } else {
                 validatePayment();
@@ -276,9 +306,10 @@ public class PaymentCashChangeHandler {
         }
 
     }
+
     public void validatePayment() {
-       // this.payment = payment;
-        if(payment==null)
+        // this.payment = payment;
+        if (payment == null)
             return;
         activity.showLoading();
         long balanceEcash = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
@@ -304,12 +335,11 @@ public class PaymentCashChangeHandler {
             ResultOptimal resultOptimal = util.recursiveFindeCashs(walletList, partialList, totalAmount);
             if (resultOptimal.remain == 0) {
                 //List<CashTotal> list = resultOptimal.listPartial;
-              //  handlePaymentWithCashValid(list);
-                listTransfer=resultOptimal.listPartial;
+                //  handlePaymentWithCashValid(list);
+                listTransfer = resultOptimal.listPartial;
                 handlePaymentWithCashValid();
 
-            }
-            else {
+            } else {
                 /** Lay ra nhung to tien can doi **/
                 int amountCompare = 0;
                 ArrayList<CashTotal> arrayUseForExchange = new ArrayList<CashTotal>();
@@ -380,15 +410,16 @@ public class PaymentCashChangeHandler {
         } else {//balanceEcash<totalAmount
             activity.dismissLoading();
             showDialogCannotPayment();
-            isHandle =false;
+            isHandle = false;
         }
 
         //
     }
+
     private void getPublicKeyOrganization() {
         String userName = ECashApplication.getAccountInfo().getUsername();
         AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, activity);
-       getPublicKeyOrganization(accountInfo, new PublicKeyOrganization() {
+        getPublicKeyOrganization(accountInfo, new PublicKeyOrganization() {
             @Override
             public void getPublicKeyOrganization(String publicKey) {
                 //   Log.e("publicKey ",publicKey);
@@ -401,6 +432,7 @@ public class PaymentCashChangeHandler {
             }
         });
     }
+
     private void getListCashSend() {
         listQualitySend = new ArrayList<>();
         listValueSend = new ArrayList<>();
@@ -428,7 +460,7 @@ public class PaymentCashChangeHandler {
     }
 
 
-    private void convertCash( String keyPublicReceiver, AccountInfo accountInfo) {
+    private void convertCash(String keyPublicReceiver, AccountInfo accountInfo) {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
 
@@ -455,7 +487,7 @@ public class PaymentCashChangeHandler {
             activity.dismissLoading();
             if (activity != null)
                 activity.showDialogError("không lấy được endCrypt data và ID");
-            isHandle=false;
+            isHandle = false;
             return;
         }
 
@@ -474,7 +506,7 @@ public class PaymentCashChangeHandler {
                 cacheData_database.setType(TYPE_CASH_EXCHANGE);
                 DatabaseUtil.saveCacheData(cacheData_database, activity);
                 // Log.e("A","A");
-               // EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
+                // EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_CHANGE));
                 activity.setEvenBus(Constant.EVENT_CASH_IN_CHANGE);
                 //validatePayment(payments);
                 // dismissLoading();
@@ -482,12 +514,13 @@ public class PaymentCashChangeHandler {
         });
         //  dismissLoading();
     }
+
     public void handlePaymentWithCashValid() {
-        if(listTransfer==null||listTransfer.size()==0){
-           // activity.showDialogError("có lỗi xẩy ra!!!");
-            Log.e("Error listTransfer","handlePaymentWithCashValid");
+        if (listTransfer == null || listTransfer.size() == 0) {
+            // activity.showDialogError("có lỗi xẩy ra!!!");
+            Log.e("Error listTransfer", "handlePaymentWithCashValid");
             activity.dismissLoading();
-            isHandle=false;
+            isHandle = false;
             return;
         }
         valueListCashChange = new ArrayList<>();
@@ -519,9 +552,11 @@ public class PaymentCashChangeHandler {
 //                }
         showDialogConfirmPayment(valueListCashChange);
     }
+
     private void showDialogCannotPayment() {
         DialogUtil.getInstance().showDialogCannotPayment(activity);
     }
+
     private void handleToPay(List<CashTotal> listCash, Payment_DataBase payToRequest) {
         activity.showLoading();
         ArrayList<Contact> listContact = new ArrayList<>();
@@ -538,6 +573,7 @@ public class PaymentCashChangeHandler {
                     showDialogPaymentSuccess(payToRequest);
                 });
             }
+
             @Override
             public void onUpdateMasterFail() {
                 activity.dismissLoading();
@@ -551,10 +587,11 @@ public class PaymentCashChangeHandler {
             }
         });
     }
+
     public void showDialogPaymentSuccess(Payment_DataBase payment_dataBase) {
-       // DatabaseUtil.deletePayment(activity,payment_dataBase.getId());
+        // DatabaseUtil.deletePayment(activity,payment_dataBase.getId());
         this.payment = null;
-        isHandle =false;
+        isHandle = false;
 
         activity.restartSocket();
 
@@ -563,7 +600,7 @@ public class PaymentCashChangeHandler {
             public void run() {
                 if (activity == null) return;
                 activity.setEvenBus(Constant.EVENT_PAYMENT_SUCCESS);
-               // EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMENT_SUCCESS));
+                // EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_PAYMENT_SUCCESS));
             }
         }, 500);
 

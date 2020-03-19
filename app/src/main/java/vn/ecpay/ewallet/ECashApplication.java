@@ -5,6 +5,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,12 +15,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import retrofit2.HttpException;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationModule;
@@ -26,6 +36,8 @@ import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.GetStatusErrorConnection;
+import vn.ecpay.ewallet.model.ErrorStatusConnectionModel;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.notification.TokenFCMObj;
@@ -97,7 +109,7 @@ public class ECashApplication extends Application {
 
     static AppCompatActivity activity;
 
-    public static Activity getActivity() {
+    public static AppCompatActivity getActivity() {
         return activity;
     }
 
@@ -210,5 +222,15 @@ public class ECashApplication extends Application {
             }
         }
 
+    }
+    public  boolean isConnected() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) ECashApplication.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    public void showStatusErrorConnection(Throwable t){
+        ErrorStatusConnectionModel errorConnect =new GetStatusErrorConnection().error(getActivity(),t);
+        DialogUtil.getInstance().showDialogError(getActivity(), errorConnect.getTitle(),errorConnect.getMessage());
     }
 }

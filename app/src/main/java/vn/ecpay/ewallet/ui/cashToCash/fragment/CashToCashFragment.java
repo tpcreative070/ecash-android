@@ -255,7 +255,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 //                }
 //            });
         } else {
-            UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
+            UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
             showProgress();
             updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
                 @Override

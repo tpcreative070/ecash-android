@@ -146,7 +146,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                             }
                             break;
                         case QR_TO_PAY:
-                            //Log.e("request ","5");
+                            Log.e("request ","5");
                             if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
                                 if (getActivity() != null)
                                     ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
@@ -247,7 +247,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     private void handleCash(String result) {
       //      Log.e("result 1",result);
         Gson gson = new Gson();
-      //  try {
+        try {
            //  QRCodeSender qrCodeSender = new QRCodeSender();
            // QRScanBase qrScanBase = gson.fromJson(result, QRScanBase.class);
             QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
@@ -304,13 +304,13 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                 if (null != getActivity())
                     ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ.");
             }
-       // }
-//        catch (JsonSyntaxException e) {
-//            dismissProgress();
-//            Log.e("JsonSyntaxException 1",e.getMessage());
-//            if (null != getActivity())
-//                ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ!");
-//        }
+        }
+        catch (JsonSyntaxException e) {
+            dismissProgress();
+            Log.e("JsonSyntaxException 1",e.getMessage());
+            if (null != getActivity())
+                ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ!");
+        }
     }
 
     private void handleQRCodeToPay(String result) {

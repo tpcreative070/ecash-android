@@ -2,7 +2,10 @@
     android:id="@+id/layout_send_500"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="5dp"
+    >
 
     <TextView
         android:id="@+id/tv_value"
@@ -11,7 +14,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_normal" />
+        android:textSize="@dimen/text_xlarge" />
 
     <TextView
         android:id="@+id/tv_total"
@@ -20,11 +23,10 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:paddingLeft="15dp"
-        android:paddingTop="10dp"
+        android:paddingTop="2dp"
         android:paddingRight="15dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="2dp"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_xlarge" />
-<!--    android:background="@drawable/bg_radius_grey"-->
         android:textSize="@dimen/text_xxlarge" />
+
 </RelativeLayout>

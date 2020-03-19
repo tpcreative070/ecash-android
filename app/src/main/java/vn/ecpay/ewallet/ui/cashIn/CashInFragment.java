@@ -194,7 +194,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                 listValue.add(valuesListAdapter.get(i).getParValue());
             }
         }
-        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
         showLoading();
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override

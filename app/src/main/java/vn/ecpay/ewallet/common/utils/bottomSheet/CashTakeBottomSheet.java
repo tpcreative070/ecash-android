@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -60,6 +61,9 @@ public class CashTakeBottomSheet extends BaseBottomSheetDialogFragment {
         super.initView();
         tvTitle.setText(getString(R.string.str_select_the_face_value_you_want_to_receive));
         valuesList = DatabaseUtil.getAllCashValues(getActivity());
+        if(valuesList!=null&&valuesList.size()>0){
+            Collections.reverse(valuesList);
+        }
         tvChangeNorm.setText(CommonUtils.formatPriceVND(totalChange));
         Utils.disableButtonConfirm(getActivity(),btnOk,true);
 

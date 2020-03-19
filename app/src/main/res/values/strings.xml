@@ -358,4 +358,8 @@
     <string name="str_scan_qr_to_receive_money">Scan the code to receive money</string>
     <string name="str_wallet_receive">Wallet receive:</string>
     <string name="str_saved">Saved</string>
+    <string name="str_error_connection">Connection errors</string>
+    <string name="str_error_connection_internet">Please check your network connection or try again in a few minutes.</string>
+    <string name="str_error_connection_request_timeout">Request Timeout</string>
+    <string name="str_error_connection_internal_server">Internal Server Error</string>
 </resources>
