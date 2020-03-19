@@ -20,6 +20,7 @@
             android:background="@drawable/edt_boder_gray"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="10dp"
+            android:imeActionLabel="@string/str_done"
             android:hint="@string/str_input_add_contact"
             android:imeOptions="actionDone"
             android:inputType="number"

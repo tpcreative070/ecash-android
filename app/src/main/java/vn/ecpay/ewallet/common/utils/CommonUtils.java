@@ -364,6 +364,14 @@ public class CommonUtils {
         return name.matches(regex);
     }
 
+    public static boolean isValidateNameContact(String name) {
+        name = name.trim();
+        if (name.isEmpty())
+            return false;
+        String regex = "[A-Za-z0-9aáàạảâẫấầậẩăằắặẳôốồộổỗơớờởợưứữừựửđóòỏọuúùụủeééẹẻêễễếềệểuúũùụủíìịĩỉýỳỵỹỷAÁÀẠÃẢÂẤẦẬẨĂẰẮẶẲÔỐỒỖỘỔƠỚỜỠỞỢƯỨIỪỰỬĐÓÒỎỌUÚÙỤỦEÉÉẸẺÊẾỀỆỂUÚÙỤỦÍÌỊỈÝỲỴỶ!@#$%^&*?<>~\\s]{2,64}";
+        return name.matches(regex);
+    }
+
     public static String getAppenItemCash(CashLogs_Database cash) {
         return (cash.getCountryCode() + ";" + cash.getIssuerCode() + ";" + cash.getDecisionNo() + ";"
                 + cash.getSerialNo() + ";" + cash.getParValue() + ";" + cash.getActiveDate() + ";"

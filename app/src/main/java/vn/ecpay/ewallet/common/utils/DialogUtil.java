@@ -460,9 +460,13 @@ public class DialogUtil {
             btnUpdate.setOnClickListener(v -> {
                 String name = edtName.getText().toString();
                 if (!name.isEmpty()) {
-                    dismissDialog();
-                    if (onContactUpdate != null) {
-                        onContactUpdate.OnListenerOk(name);
+                    if(CommonUtils.isValidateNameContact(name)){
+                        dismissDialog();
+                        if (onContactUpdate != null) {
+                            onContactUpdate.OnListenerOk(name);
+                        }
+                    }else {
+                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_validate_name_contact), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(pContext, pContext.getResources().getString(R.string.err_contact_empty), Toast.LENGTH_SHORT).show();

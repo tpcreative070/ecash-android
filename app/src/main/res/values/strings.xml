@@ -25,7 +25,7 @@
     <string name="str_cancel">Abort</string>
     <string name="str_close">Closed</string>
     <string name="str_skip">Skip</string>
-    <string name="str_done">Accomplished</string>
+    <string name="str_done">Done</string>
     <string name="str_exit">Exit</string>
     <string name="str_continute">Continue</string>
     <string name="str_clear_filter">Clear search</string>
@@ -197,11 +197,12 @@
     <string name="err_device_acc_exit">Your device has been registered with another account!</string>
     <string name="err_otp_input_fail">The OTP you entered is incorrect</string>
     <string name="err_out_of_money_change">End of face value to change</string>
-    <string name="err_end_of_the_session">Your opium has expired. Please log in again</string>
+    <string name="err_end_of_the_session">Your session has been expired. Please log in again</string>
     <string name="err_chose_money">You have not selected the amount you wish to transfer</string>
     <string name="err_get_public_key_organize">Failed to obtain the issuer\'s publickey</string>
     <string name="err_duplicate_wallet_id">The transfer wallet number must be different from your wallet number!</string>
     <string name="err_dit_not_content">You did not enter content</string>
+    <string name="err_validate_name_contact">Full name must be 2 to 64 characters</string>
     <string name="err_dit_not_money_transfer">You have not selected the amount you wish to transfer</string>
     <string name="err_dit_not_get_key_transfer">Failed to get recipient\'s key</string>
     <string name="err_connect_socket_fail">Socket connection failed. Please check the connection!</string>

@@ -68,7 +68,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:imeOptions="actionDone"
             android:background="@drawable/edt_boder_gray"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="10dp"

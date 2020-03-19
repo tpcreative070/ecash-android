@@ -189,7 +189,7 @@
     <string name="err_device_acc_exit">Thiết bị của bạn đã được đăng ký 1 tài khoản khác!</string>
     <string name="err_otp_input_fail">OTP bạn nhập không đúng</string>
     <string name="err_out_of_money_change">Hết mệnh giá cần đổi</string>
-    <string name="err_end_of_the_session">Phiên làm việc của Bạn đã hết hạn. Bạn vui lòng đăng nhập lại</string>
+    <string name="err_end_of_the_session">Phiên làm việc đã hết hiệu lực. Vui lòng đăng nhập lại để thực hiện giao dịch</string>
     <string name="err_chose_money">Bạn chưa chọn số tiền muốn chuyển</string>
     <string name="err_get_public_key_organize">không lấy được publickey của tổ chức phát hành</string>
     <string name="err_duplicate_wallet_id">Số ví chuyển phải khác số ví của Bạn!</string>
@@ -200,6 +200,7 @@
     <string name="err_validate_user_name_fail">Tên đăng nhập không chưa ký tự đặc biệt hoặc khoảng trắng</string>
     <string name="err_validate_name_fail">Họ và tên không chứa số và ký tự đặc biệt!</string>
     <string name="err_validate_cmnd_fail">Số chứng minh là số = 9 hoặc 12 số!</string>
+    <string name="err_validate_name_contact">Họ và tên phải từ 2 đến 64 ký tự</string>
     <string name="err_validate_phone_fail">Số điện thoại Bạn vừa nhập không hợp lệ vui lòng nhập lại</string>
     <string name="err_pass_duplicate_fail">2 mật khẩu phải giống nhau</string>
     <string name="err_new_pass_must_other_old_pass">Mật khẩu mới phải khác mật khẩu cũ</string>
