@@ -126,7 +126,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashChangeView.dismissLoading();
            //     cashChangeView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -183,7 +183,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             public void onFailure(Call<ResponseGetPublickeyOrganization> call, Throwable t) {
                 cashChangeView.dismissLoading();
                // cashChangeView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

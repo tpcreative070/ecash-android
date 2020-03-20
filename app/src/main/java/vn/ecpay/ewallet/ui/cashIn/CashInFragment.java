@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,6 +42,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
@@ -75,6 +78,11 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     RecyclerView rvCashValues;
     @BindView(R.id.tv_total_cash_in)
     TextView tvTotalCashIn;
+    @BindView(R.id.tv_error)
+    TextView tvError;
+
+    @BindView(R.id.btn_confirm)
+    Button btnConfirm;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     private long balance;
@@ -111,6 +119,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     private void setAdapter() {
         valuesListAdapter = DatabaseUtil.getAllCashValues(getActivity());
+        Collections.reverse(valuesListAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvCashValues.setLayoutManager(mLayoutManager);
         cashValueAdapter = new CashValueAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
@@ -123,9 +132,15 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
         }
         tvTotalCashIn.setText(CommonUtils.formatPriceVND(totalMoney));
+        if(totalMoney>0){
+            Utils.disableButtonConfirm(getActivity(),btnConfirm,false);
+        }else{
+            Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
+        }
     }
 
     private void setData() {
+        Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
         setAdapter();
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -179,7 +194,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 if (!CheckNetworkUtil.isConnected(getActivity())) {
-                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
+                    DialogUtil.getInstance().showDialogErrorTitleMessage(getActivity(),getResources().getString(R.string.str_error_connection), getResources().getString(R.string.network_err));
                     return;
                 }
                 validateData();
@@ -188,9 +203,16 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     }
 
     private void validateData() {
+        tvError.setVisibility(View.GONE);
         if (totalMoney == 0) {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_not_select_amount));
             return;
+        }
+        if(listEDongInfo!=null&&listEDongInfo.size()>0){
+            if(totalMoney>CommonUtils.getMoneyEDong(listEDongInfo.get(0))){
+                tvError.setVisibility(View.VISIBLE);
+                return;
+            }
         }
         listQuality = new ArrayList<>();
         listValue = new ArrayList<>();
@@ -254,6 +276,22 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     @Override
     public void showDialogError(String err) {
         DialogUtil.getInstance().showDialogWarning(getActivity(), err);
+    }
+
+    @Override
+    public void showDialogErrorWithCloseAndContinue(String title, String message) {
+        DialogUtil.getInstance().showDialogErrorWithCloseContinue(getActivity(), title, message, new DialogUtil.OnConfirm() {
+            @Override
+            public void OnListenerOk() {
+            }
+
+            @Override
+            public void OnListenerCancel() {
+                if(getActivity()!=null){
+                    getActivity().finish();
+                }
+            }
+        });
     }
 
     public void showDialogError(int err) {

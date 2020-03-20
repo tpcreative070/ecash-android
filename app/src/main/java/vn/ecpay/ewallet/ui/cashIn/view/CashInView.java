@@ -5,6 +5,7 @@ import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 
 public interface CashInView extends BaseView {
     void showDialogError(String err);
+    void showDialogErrorWithCloseAndContinue(String title,String message);
 
     void transferMoneySuccess(CashInResponse eDongToECash);
 
