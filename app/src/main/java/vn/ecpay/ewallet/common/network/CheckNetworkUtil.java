@@ -2,6 +2,9 @@ package vn.ecpay.ewallet.common.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import vn.ecpay.ewallet.ECashApplication;
 
 public class CheckNetworkUtil {
     public static boolean isConnected(Context context) {
@@ -15,5 +18,11 @@ public class CheckNetworkUtil {
                 .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
         return wifi.isConnected() || mobile.isConnected();
+    }
+    public  boolean isConnected() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) ECashApplication.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

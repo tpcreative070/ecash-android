@@ -114,7 +114,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
             public void onFailure(Call<ResponseGetPublicKeyByPhone> call, Throwable t) {
                 addContactView.dismissLoading();
                // addContactView.getWalletFail(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -166,7 +166,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
             public void onFailure(Call<ResponseGetPublicKeyWallet> call, Throwable t) {
                 addContactView.dismissLoading();
                // addContactView.getWalletFail(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

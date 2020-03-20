@@ -15,7 +15,7 @@ import retrofit2.HttpException;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.model.ErrorStatusConnectionModel;
 
-public class GetStatusErrorConnection {
+public class CheckErrorConnectionUtils {
     public ErrorStatusConnectionModel error(Context context,Throwable t){
         ErrorStatusConnectionModel error = new ErrorStatusConnectionModel();
         error.setTitle(context.getString(R.string.str_error_connection));

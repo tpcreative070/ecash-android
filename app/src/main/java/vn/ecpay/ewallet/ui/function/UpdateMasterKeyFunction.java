@@ -1,7 +1,5 @@
 package vn.ecpay.ewallet.ui.function;
 
-import android.content.Context;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import javax.inject.Inject;
@@ -15,10 +13,8 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
-import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
-import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -94,7 +90,7 @@ public class UpdateMasterKeyFunction {
                 if(activity instanceof ECashBaseActivity){
                     ((ECashBaseActivity) activity).dismissLoading();
                 }
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
