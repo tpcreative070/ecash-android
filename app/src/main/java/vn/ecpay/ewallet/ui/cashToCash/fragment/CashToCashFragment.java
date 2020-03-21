@@ -122,6 +122,13 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     protected void setData() {
+        totalMoney=0;
+        edtContent.setText("");
+        tvNumberWallet.setText(getString(R.string.str_chose_wallet_transfer));
+        if(multiTransferList!=null&&multiTransferList.size()>0){
+            multiTransferList.clear();
+        }
+        tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
         setAdapter();
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
@@ -131,7 +138,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void setAdapter() {
-        totalMoney=0;
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
         if (ECashApplication.isCancelAccount) {
             for (int i = 0; i < valuesListAdapter.size(); i++) {
@@ -182,10 +188,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                if (!CheckNetworkUtil.isConnected(getActivity())) {
-                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
-                    return;
-                }
+
                 validateData();
                 break;
             case R.id.iv_back:
@@ -267,6 +270,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 //                }
 //            });
         } else {
+            if (!CheckNetworkUtil.isConnected(getActivity())) {
+                DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
+                return;
+            }
             UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
             showProgress();
             updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
@@ -301,7 +308,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void cashOutSuccess() {
-        tvNumberWallet.setText(getString(R.string.str_chose_wallet_transfer));
         if (WalletDatabase.numberRequest == 0) {
             if (ECashApplication.isCancelAccount) {
                 handleCancelAccount();
@@ -396,7 +402,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                         return;
                     }
                 }
-            }, 4000);
+            }, 3000);
         }
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
