@@ -14,6 +14,7 @@ import java.util.List;
 
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.ui.callbackListener.UpDownMoneyListener;
 
@@ -80,10 +81,11 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         upDownMoneyListener.onUpDownMoneyListener();
                     }
                 } else {
-                    Toast.makeText(context, context.getResources().getString(R.string.err_amount_not_enough_to_transfer), Toast.LENGTH_LONG).show();
+                    DialogUtil.getInstance().showDialogErrorTitleMessage(context,context.getString(R.string.str_dialog_notification_title),context.getString(R.string.str_error_not_enough_balance_please_try_again));
                 }
             } else {
-                Toast.makeText(context, context.getResources().getString(R.string.err_amount_not_enough_to_transfer), Toast.LENGTH_LONG).show();
+                DialogUtil.getInstance().showDialogErrorTitleMessage(context,context.getString(R.string.str_dialog_notification_title),context.getString(R.string.str_error_not_enough_balance_please_try_again));
+
             }
         });
     }

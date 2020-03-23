@@ -115,7 +115,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
     }
-
     protected void updateType() {
         toolbarCenterText.setText(getResources().getString(R.string.str_transfer));
         typeSend = Constant.TYPE_ECASH_TO_ECASH;

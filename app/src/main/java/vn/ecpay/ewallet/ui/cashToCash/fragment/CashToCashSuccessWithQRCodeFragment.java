@@ -72,6 +72,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     private List<CashTotal> valuesListAdapter;
     private List<Contact> multiTransferList;
     private List<ContactTransfer> contactsList;
+    //private List<ContactTransfer> contactsList;
     private ArrayList<Bitmap> listBitmap;
     private ArrayList<Uri> listUri;
     private String content;
@@ -147,17 +148,18 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 
         if (valuesListAdapter != null && multiTransferList != null) {
             boolean checked=false;
-            for (int i=0;i< multiTransferList.size();i++) {
-                contactsList.add(new ContactTransfer(multiTransferList.get(i)));
-                if(i== multiTransferList.size()-1){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            createBitmap();
-                        }
-                    },3000);
-                }
-            }
+            createBitmap();
+//            for (int i=0;i< multiTransferList.size();i++) {
+//                contactsList.add(new ContactTransfer(multiTransferList.get(i)));
+//                if(i== multiTransferList.size()-1){
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            createBitmap();
+//                        }
+//                    },3000);
+//                }
+//            }
 
         }else{
             dismissProgress();
@@ -172,7 +174,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 
             view_pager.setAdapter(adapter);
             dismissProgress();
-            if(multiTransferList.size()<=1){
+            if(contactsList.size()<=1){
                 iv_left.setVisibility(View.GONE);
                 iv_right.setVisibility(View.GONE);
             }else{
@@ -188,13 +190,13 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                 @Override
                 public void onPageSelected(int position) {
                     pagePosition=position;
-                    if(multiTransferList.size()<=1){
+                    if(contactsList.size()<=1){
                         return;
                     }else{
                         if(position==0){
                             iv_left.setVisibility(View.GONE);
                             iv_right.setVisibility(View.VISIBLE);
-                        }else if(position==multiTransferList.size()-1){
+                        }else if(position==contactsList.size()-1){
                             iv_left.setVisibility(View.VISIBLE);
                             iv_right.setVisibility(View.GONE);
                         }else{
@@ -218,13 +220,13 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
         switch (view.getId()) {
             case R.id.iv_left:
                 pagePosition-=1;
-                if(pagePosition>=0&&pagePosition<multiTransferList.size()){
+                if(pagePosition>=0&&pagePosition<contactsList.size()){
                     view_pager.setCurrentItem(pagePosition);
                 }
                 break;
             case R.id.iv_right:
                 pagePosition+=1;
-                if(pagePosition>=0&&pagePosition<multiTransferList.size()){
+                if(pagePosition>=0&&pagePosition<contactsList.size()){
                     view_pager.setCurrentItem(pagePosition);
                 }
                 break;
@@ -292,8 +294,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                for (int i = 0; i < contactsList.size(); i++) {
-                    ContactTransfer contact = contactsList.get(i);
+                for (int i = 0; i < multiTransferList.size(); i++) {
+                    Contact contact = multiTransferList.get(i);
                     Gson gson = new Gson();
                     ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(getActivity(), valuesListAdapter,
                             contact, content, i, type, accountInfo);
@@ -315,13 +317,13 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                             for (int j = 0; j < codeSenderArrayList.size(); j++) {
                                // Log.e("codeSenderArrayList",gson.toJson(codeSenderArrayList.get(j)));
                                 Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
-                                contact.setBitmap(bitmap);
+                                ContactTransfer contactTransfer = new ContactTransfer(contact);
+                                contactTransfer.setBitmap(bitmap);
+                                contactsList.add(contactTransfer);
+                               // contact.setBitmap(bitmap);
                                 listUri.add(CommonUtils.getBitmapUri(getActivity(),bitmap));
                                 listBitmap.add(bitmap);
                                 DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, getActivity());
-//                                if(j==codeSenderArrayList.size()-1){
-//                                    setData();
-//                                }
                             }
                         }
                     }
@@ -344,7 +346,17 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
         }.execute();
     }
     private void handleShareList(){
+//        if(contactsList.size()>0){
+//            for(int i=0;i<contactsList.size();i++){
+//                String currentTime = CommonUtils.getCurrentTime();
+//                String imageName = contactsList.get(i).getWalletId() + "_" + currentTime + "_" + i;
+//                if(contactsList.get(i).getBitmap()!=null){
+//                    listUri.add(CommonUtils.getBitmapUri(getActivity(),contactsList.get(i).getBitmap()));
+//                }
+//            }
+//        }
         if(listUri.size()>0){
+            Log.e("listUri.size() ",listUri.size()+"");
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
             shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, listUri);
