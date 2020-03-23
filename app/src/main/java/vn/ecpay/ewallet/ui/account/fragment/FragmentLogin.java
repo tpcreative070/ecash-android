@@ -210,7 +210,11 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
         if (requestCode == PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getIMEI();
+            } else {
+                dismissProgress();
             }
+        } else {
+            dismissProgress();
         }
     }
 
@@ -338,12 +342,8 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void requestLoginSuccess(AccountInfo mAccountInfo) {
-//        if (getActivity() != null) {
-//            getActivity().startService(new Intent(getActivity(), WebSocketsService.class));
-//        }
         restartSocket();
         mAccountInfo.setUsername(userName);
-        mAccountInfo.setToken(mAccountInfo.getToken());
         loginPresenter.getEDongInfo(getActivity(), mAccountInfo);
         if (KeyStoreUtils.getMasterKey(getActivity()) != null &&
                 KeyStoreUtils.getPrivateKey(getActivity()) != null) {

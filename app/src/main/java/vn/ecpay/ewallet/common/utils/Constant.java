@@ -15,22 +15,23 @@ public class Constant {
     public static final String ERROR_CODE_3034 = "3034";
     public static final String ERROR_CODE_3024 = "3024";
     public static final String ERROR_CODE_3019 = "3019";
-   // public static final String ERROR_CODE_0998 = "0998";
+    // public static final String ERROR_CODE_0998 = "0998";
     public static final String ERROR_CODE_3014 = "3014";
+    public static final String ERROR_CODE_3015 = "3015";
     public static final String ERROR_CODE_3016 = "3016";
     public static final String ERROR_CODE_3104 = "3104";
     public static final String ERROR_CODE_0001 = "0001";
     public static final String ERROR_CODE_0997 = "0997";
     public static final String ERROR_CODE_3035 = "3035";
-   // public static final String ERROR_CODE_3019 = "3019";
-   // public static final String ERROR_CODE_0998 = "0998";
+    // public static final String ERROR_CODE_3019 = "3019";
+    // public static final String ERROR_CODE_0998 = "0998";
     public static final String ERROR_CODE_3029 = "3029";
-  //  public static final String ERROR_CODE_3035 = "3035";
+    //  public static final String ERROR_CODE_3035 = "3035";
     public static final String ERROR_CODE_0000 = "0000";
     public static final String ERROR_CODE_4009 = "4009";
     public static final String ERROR_CODE_4010 = "4010";
     public static final String ERROR_CODE_4008 = "4008";
-   // public static final String ERROR_CODE_4010 = "4010";
+    // public static final String ERROR_CODE_4010 = "4010";
     public static final String ERROR_CODE_4012 = "4012";
     public static final String ERROR_CODE_4011 = "4011";
 
@@ -40,9 +41,9 @@ public class Constant {
     public static final int DATABASE_VERSION = 1;
     public static final byte ELEMENT_SPLIT = '$';
 
-    public static final String DIRECTORY_QR_MY_CONTACT= "/qr_my_account";
-    public static final String DIRECTORY_QR_MY_PAYMENT= "/qr_my_payment";
-    public static final String DIRECTORY_QR_IMAGE= "/qr_image";
+    public static final String DIRECTORY_QR_MY_CONTACT = "/qr_my_account";
+    public static final String DIRECTORY_QR_MY_PAYMENT = "/qr_my_payment";
+    public static final String DIRECTORY_QR_IMAGE = "/qr_image";
 
 
     //type notification
@@ -64,7 +65,7 @@ public class Constant {
     public static final String CASH_TOTAL_TRANSFER = "CASH_TOTAL_TRANSFER";
     public static final String CONTENT_TRANSFER = "CONTENT_TRANSFER";
     public static final String TYPE_TRANSFER = "TYPE_TRANSFER";
-    public static final String URI_TRANSFER ="URI_TRANSFER";
+    public static final String URI_TRANSFER = "URI_TRANSFER";
     //date
     public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";

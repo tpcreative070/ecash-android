@@ -180,6 +180,27 @@ public class DialogUtil {
         }
     }
 
+    public void showDialogFogotPassSuccess(Context pContext, String title, String message, final OnResult pOnConfirm) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_cancel_account_success);
+            Button btnOk;
+            btnOk = mDialog.findViewById(R.id.btn_go_home);
+            TextView textView = mDialog.findViewById(R.id.tv_content);
+            textView.setText(message);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerOk();
+                }
+
+            });
+        }
+    }
+
     public void showDialogCancelAccount(Context pContext, long balance, final OnCancelAccount onCancelAccount) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
@@ -571,12 +592,13 @@ public class DialogUtil {
             btnClose.setOnClickListener(v -> dismissDialog());
         }
     }
-    public void showDialogError(Context pContext,String title, String mess) {
+
+    public void showDialogError(Context pContext, String title, String mess) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_warning);
             Button btnClose;
-            TextView tv_title,tv_mess;
+            TextView tv_title, tv_mess;
             btnClose = mDialog.findViewById(R.id.btn_close);
             tv_title = mDialog.findViewById(R.id.tv_title);
             tv_mess = mDialog.findViewById(R.id.tv_mess);

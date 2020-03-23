@@ -418,6 +418,13 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     }
 
     @Override
+    public void onOTPexpried() {
+        Toast.makeText(getActivity(), getResources().getString(R.string.error_message_code_3016), Toast.LENGTH_SHORT).show();
+        if (null != getActivity())
+            ((AccountActivity) getActivity()).onBackPressed();
+    }
+
+    @Override
     public void showLoading() {
         showProgress();
     }

@@ -36,7 +36,6 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -124,7 +123,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     }
 
     private void setData() {
-        updateMoneyCancelAccount();
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -138,6 +136,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             tvEdong.setText(listEDongInfo.get(0).getAccountIdt());
         }
         Utils.disableButtonConfirm(getActivity(), btnConfirm, true);
+        updateMoneyCancelAccount();
     }
 
     private void updateMoneyCancelAccount() {
@@ -148,6 +147,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                 valuesListAdapter.get(i).setTotal(valuesListAdapter.get(i).getTotalDatabase());
                 valuesListAdapter.get(i).setTotalDatabase(0);
             }
+            Utils.disableButtonConfirm(getActivity(), btnConfirm, false);
         }
         setAdapter();
         updateTotalMoney();
@@ -228,10 +228,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                if (!CheckNetworkUtil.isConnected(getActivity())) {
-                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
-                    return;
-                }
                 validateData();
                 break;
         }

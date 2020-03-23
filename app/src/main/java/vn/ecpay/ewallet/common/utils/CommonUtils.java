@@ -318,7 +318,7 @@ public class CommonUtils {
 
     //validate data input
     public static boolean isValidateUserName(String code) {
-        String regex = "[A-Za-z0-9]{0,100}";
+        String regex = "[A-Za-z0-9]{3,100}";
         return code.matches(regex);
     }
 
@@ -363,7 +363,7 @@ public class CommonUtils {
         name = name.trim();
         if (name.isEmpty())
             return false;
-        String regex = "[A-Za-z0-9aáàạảâẫấầậẩăằắặẳôốồộổỗơớờởợưứữừựửđóòỏọuúùụủeééẹẻêễễếềệểuúũùụủíìịĩỉýỳỵỹỷAÁÀẠÃẢÂẤẦẬẨĂẰẮẶẲÔỐỒỖỘỔƠỚỜỠỞỢƯỨIỪỰỬĐÓÒỎỌUÚÙỤỦEÉÉẸẺÊẾỀỆỂUÚÙỤỦÍÌỊỈÝỲỴỶ\\s]{0,100}";
+        String regex = "[A-Za-z0-9aáàạảâẫấầậẩăằắặẳôốồộổỗơớờởợưứữừựửđóòỏọuúùụủeééẹẻêễễếềệểuúũùụủíìịĩỉýỳỵỹỷAÁÀẠÃẢÂẤẦẬẨĂẰẮẶẲÔỐỒỖỘỔƠỚỜỠỞỢƯỨIỪỰỬĐÓÒỎỌUÚÙỤỦEÉÉẸẺÊẾỀỆỂUÚÙỤỦÍÌỊỈÝỲỴỶ\\s]{2,100}";
         return name.matches(regex);
     }
 

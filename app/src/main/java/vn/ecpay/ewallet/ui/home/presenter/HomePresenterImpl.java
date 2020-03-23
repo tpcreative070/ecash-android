@@ -113,7 +113,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestOTPActiveAccount.setTerminalId(CommonUtils.getIMEI(context));
         requestOTPActiveAccount.setTerminalInfo(CommonUtils.getModelName());
         requestOTPActiveAccount.setUsername(accountInfo.getUsername());
-        requestOTPActiveAccount.setToken(CommonUtils.getToken(accountInfo));
+        requestOTPActiveAccount.setToken(CommonUtils.getToken());
         requestOTPActiveAccount.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestOTPActiveAccount));
@@ -147,7 +147,7 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseOTPActiveAccount> call, Throwable t) {
                 homeView.dismissLoading();
-             //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
@@ -165,7 +165,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestGetMoneyValue.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetMoneyValue.setIssuerCodes(Collections.singletonList(Constant.ISSUER_CODE));
         requestGetMoneyValue.setUsername(accountInfo.getUsername());
-        requestGetMoneyValue.setToken(CommonUtils.getToken(accountInfo));
+        requestGetMoneyValue.setToken(CommonUtils.getToken());
         requestGetMoneyValue.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetMoneyValue));
@@ -181,6 +181,9 @@ public class HomePresenterImpl implements HomePresenter {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             DatabaseUtil.deleteAllCashValue(context);
                             homeView.getCashValuesSuccess(response.body().getResponseData().getListDenomination());
+                        } else {
+                            homeView.dismissLoading();
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     }
                 } else {
@@ -192,7 +195,7 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseGetMoneyValue> call, Throwable t) {
                 homeView.dismissLoading();
-             //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
@@ -272,7 +275,7 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseGetAccountWalletInfo> call, Throwable t) {
                 homeView.dismissLoading();
-               // homeView.showDialogError(context.getString(R.string.err_upload));
+                // homeView.showDialogError(context.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
@@ -291,7 +294,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
         requestSyncContact.setUsername(accountInfo.getUsername());
         requestSyncContact.setWalletId(accountInfo.getWalletId());
-        requestSyncContact.setToken(CommonUtils.getToken(accountInfo));
+        requestSyncContact.setToken(CommonUtils.getToken());
         requestSyncContact.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));
@@ -325,7 +328,7 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
                 homeView.dismissLoading();
-               // homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                // homeView.onSyncContactFail(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });

@@ -213,14 +213,16 @@ public class ECashApplication extends Application {
         }
 
     }
-    public  boolean isConnected() {
+
+    public boolean isConnected() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) ECashApplication.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    public void showStatusErrorConnection(Throwable t){
-        ErrorStatusConnectionModel errorConnect =new GetStatusErrorConnection().error(getActivity(),t);
-        DialogUtil.getInstance().showDialogError(getActivity(), errorConnect.getTitle(),errorConnect.getMessage());
+
+    public void showStatusErrorConnection(Throwable t) {
+        ErrorStatusConnectionModel errorConnect = new GetStatusErrorConnection().error(getActivity(), t);
+        DialogUtil.getInstance().showDialogError(getActivity(), errorConnect.getTitle(), errorConnect.getMessage());
     }
 }

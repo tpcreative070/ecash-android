@@ -33,10 +33,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -188,10 +186,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
                 cashTake.show(getChildFragmentManager(), "cashTake");
                 break;
             case R.id.btn_confirm:
-                if (!CheckNetworkUtil.isConnected(getActivity())) {
-                    DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
-                    return;
-                }
                 validateData();
                 break;
         }

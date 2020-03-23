@@ -130,7 +130,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                                 loginView.requestActiveAccount();
                             } else {
                                 loginView.dismissLoading();
-                                loginView.showDialogError(response.body().getResponseMessage());
+                                CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                             }
                         } else if (response.body().getResponseCode().equals(ERROR_CODE_3035)) {
                             loginView.dismissLoading();
@@ -152,7 +152,6 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 loginView.dismissLoading();
-                //  loginView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
@@ -202,7 +201,6 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
                 loginView.dismissLoading();
-                //loginView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
@@ -253,7 +251,6 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
                 loginView.dismissLoading();
-                // loginView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });
@@ -311,7 +308,6 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseActiveAccount> call, Throwable t) {
                 loginView.dismissLoading();
-                //  loginView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showStatusErrorConnection(t);
             }
         });

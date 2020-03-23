@@ -101,6 +101,7 @@
     <string name="str_forgot_password">Forgot password</string>
     <string name="str_input_user_name">Enter an account name</string>
     <string name="str_restore_pass">Password recovery</string>
+    <string name="str_restore_pass_success">Password recovery success</string>
     <string name="str_send_again_code">Resend code</string>
     <string name="str_input_otp">Enter the OTP code</string>
     <string name="str_change_avatar">Change avatar</string>
@@ -213,7 +214,7 @@
     <string name="err_validate_phone_fail">The phone number you have entered is invalid, please enter it again</string>
     <string name="err_pass_duplicate_fail">2 passwords must be the same</string>
     <string name="err_new_pass_must_other_old_pass">The new password is different from the old password</string>
-    <string name="err_pass_bigger_six_char">The password you entered is not valid</string>
+    <string name="err_pass_bigger_six_char">Password requires 6 to 20 characters</string>
     <string name="err_user_name_null">You did not enter an account name</string>
     <string name="err_user_name_lenght">Length of account name must be greater than 3 characters</string>
     <string name="err_name_lenght">Length of name must be greater than 2 characters</string>
@@ -334,10 +335,12 @@
     <string name="error_message_code_3019">Password is changed. Please log in again</string>
     <string name="error_message_code_login_3019">The password you entered is incorrect</string>
     <string name="error_message_code_3014">Incorrect authentication code</string>
+    <string name="error_message_code_3015">Chưa đến thời gian gửi lại OTP. Vui lòng chờ trong giây lát.</string>
     <string name="error_message_code_3016">Validation timeout </string>
     <string name="error_message_code_3104">Exceeding the number of allowed attempts to enter the verification code</string>
     <string name="error_message_code_3035">Account does not exist</string>
     <string name="error_message_code_3029">Signature is not valid</string>
+    <string name="error_message_code_3077">User not active!</string>
 
     <string name="str_denominations_available">the denominations available</string>
     <string name="str_ecash_wants_to_change">eCash wants to change:</string>
@@ -362,4 +365,8 @@
     <string name="str_scan_qr_to_receive_money">Scan the code to receive money</string>
     <string name="str_wallet_receive">Wallet receive:</string>
     <string name="str_saved">Saved</string>
+    <string name="str_error_connection">Connection errors</string>
+    <string name="str_error_connection_internet">Please check your network connection or try again in a few minutes.</string>
+    <string name="str_error_connection_request_timeout">Request Timeout</string>
+    <string name="str_error_connection_internal_server">Internal Server Error</string>
 </resources>

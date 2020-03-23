@@ -235,7 +235,7 @@ public class FragmentContact extends ECashBaseFragment {
         requestDeleteContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestDeleteContact.setUsername(accountInfo.getUsername());
         requestDeleteContact.setWalletId(String.valueOf(contact.getWalletId()));
-        requestDeleteContact.setToken(CommonUtils.getToken(accountInfo));
+        requestDeleteContact.setToken(CommonUtils.getToken());
         requestDeleteContact.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestDeleteContact));

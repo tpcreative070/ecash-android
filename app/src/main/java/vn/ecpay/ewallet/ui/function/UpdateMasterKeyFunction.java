@@ -53,7 +53,7 @@ public class UpdateMasterKeyFunction {
         requestUpdateMasterKey.setFunctionCode(Constant.FUNCTION_UPDATE_MASTER_KEY);
         requestUpdateMasterKey.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestUpdateMasterKey.setUsername(ECashApplication.getAccountInfo().getUsername());
-        requestUpdateMasterKey.setToken(CommonUtils.getToken(ECashApplication.getAccountInfo()));
+        requestUpdateMasterKey.setToken(CommonUtils.getToken());
         requestUpdateMasterKey.setAuditNumber(CommonUtils.getAuditNumber());
         requestUpdateMasterKey.setLastAccessTime(accountInfo.getLastAccessTime());
         requestUpdateMasterKey.setMasterKey(masterKey);

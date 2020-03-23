@@ -22,6 +22,7 @@ import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -124,7 +125,7 @@ public class ForgotPasswordOTPFragment extends ECashBaseFragment {
                             ForgotPassResponseData forgotPassOTPResponse = response.body().getResponseData();
                             getOTPSuccess(forgotPassOTPResponse);
                         } else {
-                            showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(getActivity(), response.body().getResponseCode());
                         }
                     } else {
                         showDialogError(getResources().getString(R.string.err_upload));

@@ -5,7 +5,7 @@
     <string name="avatar">Hình đại diện</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">Thông báo</string>
     <string name="str_menu_wallet">Ví của tôi</string>
     <string name="msg_generic_error_message">Vui lòng thử lại sau giây lát.</string>
     <string name="hint_user_name">Tài khoản</string>
@@ -92,8 +92,9 @@
     <string name="str_save_to_device_success">QR code đã được lưu về thiết bị này</string>
     <string name="str_chose_wallet_transfer">Chọn sô ví muốn chuyển</string>
     <string name="str_forgot_password">Quên mật khẩu</string>
-    <string name="str_input_user_name">Nhập tên tài khoản</string>
+    <string name="str_input_user_name">Nhập tài khoản</string>
     <string name="str_restore_pass">Khôi phục mật khẩu</string>
+    <string name="str_restore_pass_success">Khôi phục mật khẩu thành công</string>
     <string name="str_send_again_code">Gửi lại mã</string>
     <string name="str_input_otp">Nhập mã OTP</string>
     <string name="str_change_avatar">Đổi ảnh đại diện</string>
@@ -180,7 +181,7 @@
     <string name="err_socket_timeout" translatable="false">Kết nối thất bại. Xin vui lòng thử lại sau</string>
     <string name="err_upload" translatable="false">Đã có lỗi xảy ra.Xin vui lòng thử lại</string>
     <string name="str_send_otp_success">Gửi mã OTP thành công vui lòng chờ SMS để lấy OTP</string>
-    <string name="err_send_otp_active_account">Bạn vui lòng nhập mã OTP để kích hoạt tài khoản</string>
+    <string name="err_send_otp_active_account">Tài khoản chưa được kích hoạt. Bạn vui lòng nhập mã OTP để kích hoạt tài khoản</string>
     <string name="err_not_received">Bạn không nhận được?</string>
     <string name="err_doing">Chức năng đang được phát triển?</string>
     <string name="err_user_not_exit">Tài khoản không tồn tại</string>
@@ -198,17 +199,17 @@
     <string name="err_dit_not_money_transfer">Bạn chưa chọn số tiền muốn chuyển</string>
     <string name="err_dit_not_get_key_transfer">Không lấy được key của người nhận</string>
     <string name="err_connect_socket_fail">Kết nối socket không thành công. Bạn vui lòng kiểm tra kết nối!</string>
-    <string name="err_validate_user_name_fail">Tên đăng nhập không chưa ký tự đặc biệt hoặc khoảng trắng</string>
-    <string name="err_validate_name_fail">Họ và tên không chứa số và ký tự đặc biệt!</string>
+    <string name="err_validate_user_name_fail">Tên tài khoản chỉ cho phép nhập chữ và số, tối thiểu 3 ký tự</string>
+    <string name="err_validate_name_fail">Họ và tên không chứa số và ký tự đặc biệt, tối thiểu 2 ký tự</string>
     <string name="err_validate_cmnd_fail">Số chứng minh là số = 9 hoặc 12 số!</string>
     <string name="err_validate_name_contact">Họ và tên phải từ 2 đến 64 ký tự</string>
-    <string name="err_validate_phone_fail">Số điện thoại Bạn vừa nhập không hợp lệ vui lòng nhập lại</string>
-    <string name="err_pass_duplicate_fail">2 mật khẩu phải giống nhau</string>
+    <string name="err_validate_phone_fail">Số điện thoại sai định dạng</string>
+    <string name="err_pass_duplicate_fail">Mật khẩu không trùng khớp</string>
     <string name="err_new_pass_must_other_old_pass">Mật khẩu mới phải khác mật khẩu cũ</string>
-    <string name="err_pass_bigger_six_char">Mật khẩu Bạn nhập không hợp lệ</string>
+    <string name="err_pass_bigger_six_char">Mật khẩu tối thiểu 6 ký tự</string>
     <string name="err_user_name_null">Bạn chưa nhập tên tài khoản</string>
-    <string name="err_user_name_lenght">Độ dài tên tài khoản phải lớn hơn 3 ký tự</string>
-    <string name="err_name_lenght">Độ dài tên phải lớn hơn 2 ký tự</string>
+    <string name="err_user_name_lenght">Tài khoản tối thiểu 3 ký tự</string>
+    <string name="err_name_lenght">Họ và tên tối thiểu 2 ký tự</string>
     <string name="err_name_null">Bạn chưa nhập họ tên</string>
     <string name="err_cmnd_null">Bạn chưa nhập chứng minh nhân dân</string>
     <string name="err_phone_null">Bạn chưa nhập số điện thoại</string>
@@ -217,8 +218,8 @@
     <string name="err_renew_pass_null">Bạn chưa nhập lại mật khẩu mới</string>
     <string name="err_pass_null">Bạn chưa nhập mật khẩu</string>
     <string name="err_repass_null">Bạn chưa nhập lại mật khẩu</string>
-    <string name="err_nmnd_is_exit">số CMND hoặc sdt đã tồn tại trên hệ thống</string>
-    <string name="err_user_is_exit">tên đăng nhập đã tồn tại trên hệ thống</string>
+    <string name="err_nmnd_is_exit">Số CMND hoặc số điện thoại đã tồn tại</string>
+    <string name="err_user_is_exit">User name đã tồn tại</string>
     <string name="err_otp_fail">OTP Bạn nhập không đúng</string>
     <string name="err_wallet_is_exit">Thiết bị của Bạn đã được đăng ký ví!</string>
     <string name="err_store_image">Bộ nhớ không đủ để lưu ảnh</string>
@@ -329,10 +330,12 @@
     <string name="error_message_code_3019">Mật khẩu đã được thay đổi. Bạn vui lòng đăng nhập lại</string>
     <string name="error_message_code_login_3019">Mật khẩu bạn nhập không đúng</string>
     <string name="error_message_code_3014">Mã xác thực không đúng</string>
+    <string name="error_message_code_3015">Chưa đến thời gian gửi lại OTP. Vui lòng chờ trong giây lát.</string>
     <string name="error_message_code_3016">Hết thời gian xác thực </string>
     <string name="error_message_code_3104">Quá số lần nhập mã xác thực cho phép</string>
     <string name="error_message_code_3035">Tài khoản không tồn tại</string>
     <string name="error_message_code_3029">Chữ ký không hợp lệ</string>
+    <string name="error_message_code_3077">Tài khoản chưa được kích hoạt!</string>
 
     <string name="str_denominations_available">Các mệnh giá đang có</string>
     <string name="str_ecash_wants_to_change">eCash muốn đổi:</string>

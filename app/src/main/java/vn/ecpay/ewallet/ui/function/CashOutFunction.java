@@ -58,7 +58,7 @@ public class CashOutFunction {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void handleCashOutQRCode(CashOutListener mCashOutListener) {
+    public void CashOutFunction(CashOutListener mCashOutListener) {
         this.cashOutListener = mCashOutListener;
         new AsyncTask<Void, Void, Void>() {
             @Override

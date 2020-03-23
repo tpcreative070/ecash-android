@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.account.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.forgotPassword.getOTP.response.ForgotPassResponseData;
+import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.ForgotPassModule;
 import vn.ecpay.ewallet.ui.account.presenter.ForgotPassPresenter;
@@ -59,7 +61,7 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
             this.forgotPassResponseData = (ForgotPassResponseData) bundle.getSerializable(Constant.FORGOT_PASS_TRANSFER_MODEL);
             this.userName = bundle.getString(Constant.USER_NAME);
         } else {
-            if(getActivity()!=null)
+            if (getActivity() != null)
                 getActivity().onBackPressed();
         }
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new ForgotPassModule(this)).inject(this);
@@ -77,7 +79,7 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_send_again_code:
-                forgotPassPresenter.getOTPForgotPassword(userName);
+                forgotPassPresenter.getOTPForgotPassword(userName, getActivity());
                 break;
             case R.id.btn_confirm:
                 validateData();
@@ -123,7 +125,7 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
         if (null == forgotPassResponseData) {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_upload));
         }
-        forgotPassPresenter.requestChangePass(forgotPassResponseData, otp, newPass);
+        forgotPassPresenter.requestChangePass(forgotPassResponseData, otp, newPass, getActivity());
     }
 
     @Override
@@ -133,8 +135,15 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
 
     @Override
     public void changePassSuccess() {
-        if (getActivity() != null)
-            ECashApplication.get(getActivity()).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
+        DialogUtil.getInstance().showDialogFogotPassSuccess(getActivity(), "", getResources().getString(R.string.str_restore_pass_success), new DialogUtil.OnResult() {
+            @Override
+            public void OnListenerOk() {
+                Intent intent = new Intent(getActivity(), AccountActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
     }
 
     @Override
