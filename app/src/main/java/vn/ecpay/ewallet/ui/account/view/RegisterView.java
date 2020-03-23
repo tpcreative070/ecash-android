@@ -30,4 +30,6 @@ public interface RegisterView extends ViewBase {
     void onSyncContactSuccess();
 
     void onSyncContactFail(String err);
+
+    void onOTPexpried();
 }

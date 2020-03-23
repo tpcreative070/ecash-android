@@ -33,8 +33,20 @@ public class CheckErrCodeUtil {
                 message = context.getString(R.string.error_message_code_3014);
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
+            case Constant.ERROR_CODE_3015:
+                message = context.getString(R.string.error_message_code_3015);
+                DialogUtil.getInstance().showDialogWarning(context, message);
+                break;
             case Constant.ERROR_CODE_3016:
                 message = context.getString(R.string.error_message_code_3016);
+                DialogUtil.getInstance().showDialogWarning(context, message);
+                break;
+            case Constant.ERROR_CODE_3035:
+                message = context.getString(R.string.error_message_code_3035);
+                DialogUtil.getInstance().showDialogWarning(context, message);
+                break;
+            case Constant.ERROR_CODE_3077:
+                message = context.getString(R.string.error_message_code_3077);
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
             case Constant.ERROR_CODE_3104:

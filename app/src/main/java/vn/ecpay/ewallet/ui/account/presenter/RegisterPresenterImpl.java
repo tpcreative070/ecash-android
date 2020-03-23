@@ -21,12 +21,11 @@ import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.model.OTP.RequestGetOTP;
 import vn.ecpay.ewallet.model.OTP.response.ResponseGetOTP;
-import vn.ecpay.ewallet.model.account.register.RequestRegister;
 import vn.ecpay.ewallet.model.account.active.RequestActiveAccount;
 import vn.ecpay.ewallet.model.account.active.ResponseActiveAccount;
 import vn.ecpay.ewallet.model.account.checkIDNumberAccount.RequestCheckIDNumberAccount;
@@ -37,11 +36,14 @@ import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.RequestLogin;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.ResponseLoginAfterRegister;
+import vn.ecpay.ewallet.model.account.register.RequestRegister;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.ResponseRegister;
 import vn.ecpay.ewallet.model.contact.RequestSyncContact;
 import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
 import vn.ecpay.ewallet.ui.account.view.RegisterView;
+
+import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3016;
 
 public class RegisterPresenterImpl implements RegisterPresenter {
 
@@ -226,6 +228,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             } else {
                                 registerView.showDialogError(application.getString(R.string.err_upload));
                             }
+                        } else if (response.body().getResponseCode().equals(ERROR_CODE_3016)) {
+                            registerView.onOTPexpried();
                         } else {
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
@@ -240,7 +244,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseRegister> call, Throwable t) {
                 registerView.dismissLoading();
-                registerView.registerFail(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -254,7 +258,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         RequestGetOTP requestGetOTP = new RequestGetOTP();
         requestGetOTP.setChannelCode(Constant.CHANNEL_CODE);
         requestGetOTP.setFunctionCode(Constant.FUNCTION_GET_OTP);
-        requestGetOTP.setToken(CommonUtils.getToken());
+        requestGetOTP.setToken(CommonUtils.getToken(accountInfo));
         requestGetOTP.setUsername(accountInfo.getUsername());
         requestGetOTP.setWalletId(String.valueOf(accountInfo.getWalletId()));
         requestGetOTP.setAuditNumber(CommonUtils.getAuditNumber());
@@ -289,7 +293,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
                 registerView.dismissLoading();
-                registerView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -348,7 +352,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseActiveAccount> call, Throwable t) {
                 registerView.dismissLoading();
-                registerView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -394,7 +398,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 registerView.dismissLoading();
-                registerView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -409,7 +413,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         requestEdongInfo.setChannelCode(Constant.CHANNEL_CODE);
         requestEdongInfo.setFunctionCode(Constant.FUNCTION_GET_EDONG_INFO);
         requestEdongInfo.setSessionId(accountInfo.getSessionId());
-        requestEdongInfo.setToken(CommonUtils.getToken());
+        requestEdongInfo.setToken(CommonUtils.getToken(accountInfo));
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
         String alphabe = CommonUtils.getStringAlphabe(requestEdongInfo);
@@ -440,7 +444,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
                 registerView.dismissLoading();
-                registerView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -485,7 +489,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
-                registerView.onSyncContactFail(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

@@ -1,5 +1,7 @@
 package vn.ecpay.ewallet.ui.account.presenter;
 
+import android.content.Context;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -11,6 +13,7 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.model.forgotPassword.changePass.request.ChangePassRequest;
@@ -66,7 +69,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
     }
 
     @Override
-    public void getOTPForgotPassword(String userName) {
+    public void getOTPForgotPassword(String userName, Context context) {
         forgotPassView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(eCashApplication.getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -92,7 +95,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
                             ForgotPassResponseData forgotPassOTPResponse = response.body().getResponseData();
                             forgotPassView.getOTPSuccess(forgotPassOTPResponse);
                         } else {
-                            forgotPassView.showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         forgotPassView.showDialogError(eCashApplication.getResources().getString(R.string.err_upload));
@@ -105,13 +108,13 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
             @Override
             public void onFailure(Call<ForgotPassOTPResponse> call, Throwable t) {
                 forgotPassView.dismissLoading();
-                forgotPassView.showDialogError(eCashApplication.getResources().getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
 
     @Override
-    public void requestChangePass(ForgotPassResponseData forgotPassResponseData, String otp, String newPass) {
+    public void requestChangePass(ForgotPassResponseData forgotPassResponseData, String otp, String newPass, Context context) {
         forgotPassView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(eCashApplication.getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -138,11 +141,8 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             forgotPassView.changePassSuccess();
-                        } else if (response.body().getResponseCode().equals("3014") ||
-                                response.body().getResponseCode().equals("0998")) {
-                            forgotPassView.showDialogError(eCashApplication.getResources().getString(R.string.err_otp_fail));
                         } else {
-                            forgotPassView.showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {
                         forgotPassView.showDialogError(eCashApplication.getResources().getString(R.string.err_upload));
@@ -155,7 +155,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
             @Override
             public void onFailure(Call<ChangePassResponse> call, Throwable t) {
                 forgotPassView.dismissLoading();
-                forgotPassView.showDialogError(eCashApplication.getResources().getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

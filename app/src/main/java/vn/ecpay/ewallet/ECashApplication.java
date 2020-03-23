@@ -200,11 +200,10 @@ public class ECashApplication extends Application {
                 ((ECashBaseActivity) getActivity()).showDialogError(messenger);
             }
         }
-
     }
 
-    public void showErrorConnection(Throwable t){
-        ErrorStatusConnectionModel errorConnect =new CheckErrorConnectionUtils().error(getActivity(),t);
-        DialogUtil.getInstance().showDialogErrorTitleMessage(getActivity(), errorConnect.getTitle(),errorConnect.getMessage());
+    public void showErrorConnection(Throwable t) {
+        ErrorStatusConnectionModel errorConnect = new CheckErrorConnectionUtils().error(getActivity(), t);
+        DialogUtil.getInstance().showDialogErrorTitleMessage(getActivity(), errorConnect.getTitle(), errorConnect.getMessage());
     }
 }

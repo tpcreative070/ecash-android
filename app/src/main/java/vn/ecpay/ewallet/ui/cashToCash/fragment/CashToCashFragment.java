@@ -35,7 +35,6 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -115,6 +114,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
     }
+
     protected void updateType() {
         toolbarCenterText.setText(getResources().getString(R.string.str_transfer));
         typeSend = Constant.TYPE_ECASH_TO_ECASH;
@@ -134,6 +134,9 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverECash.setText(CommonUtils.formatPriceVND(balance));
+        if (ECashApplication.isCancelAccount) {
+            layoutQrCode.setVisibility(View.GONE);
+        }
     }
 
     private void setAdapter() {
@@ -187,7 +190,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-
                 validateData();
                 break;
             case R.id.iv_back:
@@ -269,10 +271,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 //                }
 //            });
         } else {
-            if (!CheckNetworkUtil.isConnected(getActivity())) {
-                DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.network_err));
-                return;
-            }
             UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
             showProgress();
             updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
