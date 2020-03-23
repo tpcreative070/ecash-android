@@ -108,7 +108,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
             @Override
             public void onFailure(Call<ForgotPassOTPResponse> call, Throwable t) {
                 forgotPassView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -155,7 +155,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
             @Override
             public void onFailure(Call<ChangePassResponse> call, Throwable t) {
                 forgotPassView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

@@ -592,13 +592,12 @@ public class DialogUtil {
             btnClose.setOnClickListener(v -> dismissDialog());
         }
     }
-
-    public void showDialogError(Context pContext, String title, String mess) {
+    public void showDialogErrorTitleMessage(Context pContext, String title, String mess) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_warning);
             Button btnClose;
-            TextView tv_title, tv_mess;
+            TextView tv_title,tv_mess;
             btnClose = mDialog.findViewById(R.id.btn_close);
             tv_title = mDialog.findViewById(R.id.tv_title);
             tv_mess = mDialog.findViewById(R.id.tv_mess);
@@ -608,6 +607,36 @@ public class DialogUtil {
             mDialog.setCancelable(true);
             mDialog.show();
             btnClose.setOnClickListener(v -> dismissDialog());
+        }
+    }
+    public void showDialogErrorWithCloseContinue(Context pContext, String title, String mess,final OnConfirm pOnConfirm) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_continue_exit);
+            ImageView icon=mDialog.findViewById(R.id.icon);
+            TextView tvTitle, tvMessage,tvExit,tvContinue;
+            tvTitle = mDialog.findViewById(R.id.tv_title);
+            tvMessage = mDialog.findViewById(R.id.tv_message);
+            tvExit = mDialog.findViewById(R.id.tv_exit);
+            tvContinue = mDialog.findViewById(R.id.tv_continue);
+            icon.setImageDrawable(pContext.getDrawable(R.drawable.ic_icon_waring));
+            tvTitle.setText(title);
+            tvMessage.setText(mess);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            tvContinue.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerOk();
+                }
+            });
+            tvExit.setOnClickListener(v -> {
+                dismissDialog();
+                if (pOnConfirm != null) {
+                    pOnConfirm.OnListenerCancel();
+                }
+            });
         }
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +37,7 @@ import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.payTo.PayToActivity;
 
-public class FragmentContactTransferCash extends ECashBaseFragment {
+public class FragmentContactTransferCash extends ECashBaseFragment{
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
@@ -68,10 +70,15 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
         super.onViewCreated(view, savedInstanceState);
         toolbarCenterText.setText(getResources().getString(R.string.str_account_receive));
         Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            this.multiTransferListener = (MultiTransferListener) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
-            this.limitChoice = bundle.getBoolean(Constant.CONTACT_MULTIPLE_CHOICE);
+        try {
+            if (bundle != null) {
+                this.multiTransferListener = (MultiTransferListener) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
+                this.limitChoice = bundle.getBoolean(Constant.CONTACT_MULTIPLE_CHOICE);
+            }
+        }catch (Exception e){
+            Log.e("e",e.getMessage());
         }
+
 
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         String userName = ECashApplication.getAccountInfo().getUsername();
@@ -100,7 +107,17 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
             }
         });
     }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e("onStop","onStop");
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e("onPause","onPause");
+    }
     private void setAdapterTextChange(String filter) {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         List<Contact> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter), accountInfo.getWalletId());

@@ -118,7 +118,12 @@ public class CashInPresenterImpl implements CashInPresenter {
                             }
                         } else {
                             cashInView.dismissLoading();
-                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
+                            if(response.body().getResponseCode().equals(Constant.ERROR_CODE_4011)){
+                                cashInView.showDialogErrorWithCloseAndContinue(context.getString(R.string.str_have_warning),context.getString(R.string.error_message_code_4011));
+                            }else{
+                                CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
+                            }
+
                         }
                     } else {
                         cashInView.dismissLoading();
@@ -134,7 +139,7 @@ public class CashInPresenterImpl implements CashInPresenter {
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashInView.dismissLoading();
                // cashInView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

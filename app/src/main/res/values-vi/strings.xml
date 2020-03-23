@@ -322,7 +322,7 @@
     <string name="error_message_code_4010">eCash không hợp lệ</string>
     <string name="error_message_code_4008">Hệ thống không giả mã được giao dịch</string>
     <string name="error_message_code_4012">Tổng mệnh giá nhận lớn hơn tổng mệnh giá đổi</string>
-    <string name="error_message_code_4011">Hết mệnh giá cần đổi</string>
+    <string name="error_message_code_4011">Hết mệnh giá, Vui lòng thử lại</string>
     <string name="error_message_code_1003">Số giấy tờ tùy thân đã tồn tại</string>
     <string name="error_message_code_3034">username đã tồn tại</string>
     <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
@@ -363,7 +363,8 @@
     <string name="str_error_connection_internet">Bạn vui lòng kiểm tra kết nối mạng hoặc thử lại sau ít phút.</string>
     <string name="str_error_connection_request_timeout">Hết thời gian yêu cầu.</string>
     <string name="str_error_connection_internal_server">Lỗi hệ thống</string>
-
+    <string name="str_error_not_enough_balance_edong">Không đủ số dư eDong</string>
+    <string name="str_error_not_enough_balance_please_try_again">Số dư ví không đủ, vui lòng chọn lại</string>
 </resources>
 
 

@@ -4,11 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import javax.inject.Inject;
-import javax.net.ssl.HttpsURLConnection;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.HttpException;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import vn.ecpay.ewallet.ECashApplication;
@@ -152,7 +150,8 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 loginView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+              //  loginView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -201,7 +200,8 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
                 loginView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                //loginView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -251,7 +251,8 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
                 loginView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+               // loginView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -308,7 +309,8 @@ public class LoginPresenterImpl implements LoginPresenter {
             @Override
             public void onFailure(Call<ResponseActiveAccount> call, Throwable t) {
                 loginView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+              //  loginView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

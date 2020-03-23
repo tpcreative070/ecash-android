@@ -244,7 +244,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseRegister> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -293,7 +293,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -352,7 +352,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseActiveAccount> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -398,7 +398,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -444,7 +444,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }
@@ -489,7 +489,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

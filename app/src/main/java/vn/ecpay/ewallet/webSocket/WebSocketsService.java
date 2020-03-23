@@ -195,8 +195,9 @@ public class WebSocketsService extends Service {
                     case Constant.TYPE_TOPAY:
                         Payments topayResponse = new Gson().fromJson(data, Payments.class);
                         handlePaymentRequest(topayResponse);
-                        webSocket.send(getJsonSend(responseMess));
                         confirmMess(responseMess);
+//
+                        //webSocket.send(getJsonSend(responseMess));
                         break;
                 }
             }
@@ -295,13 +296,8 @@ public class WebSocketsService extends Service {
         payment_dataBase.setFullName(payToRequest.getFullName());
         payment_dataBase.setToPay(true);
 
-        DatabaseUtil.insertPayment(getActivity(), payment_dataBase);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_NEW_PAYMENT));
-            }
-        },500);
+        DatabaseUtil.insertPayment(getApplicationContext(), payment_dataBase);
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_NEW_PAYMENT));
 
     }
 

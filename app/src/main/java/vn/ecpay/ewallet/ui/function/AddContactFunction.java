@@ -74,7 +74,7 @@ public class AddContactFunction {
             @Override
             public void onFailure(Call<ResponseAddContact> call, Throwable t) {
             //    addContactListener.addContactFail();
-                ECashApplication.getInstance().showStatusErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

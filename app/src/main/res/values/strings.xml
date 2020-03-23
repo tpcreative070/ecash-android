@@ -327,7 +327,7 @@
     <string name="error_message_code_4010">eCash is not valid</string>
     <string name="error_message_code_4008">The system does not fake the transaction code</string>
     <string name="error_message_code_4012">The total face value received is greater than the total face value</string>
-    <string name="error_message_code_4011">End of face value to change</string>
+    <string name="error_message_code_4011">Out of face value, Please try again</string>
     <string name="error_message_code_1003">Identification number already exists</string>
     <string name="error_message_code_3034">The username already exists</string>
     <string name="error_message_code_0998">user name is at least 3 characters</string>
@@ -369,4 +369,6 @@
     <string name="str_error_connection_internet">Please check your network connection or try again in a few minutes.</string>
     <string name="str_error_connection_request_timeout">Request Timeout</string>
     <string name="str_error_connection_internal_server">Internal Server Error</string>
+    <string name="str_error_not_enough_balance_edong">Not enough balance eDong</string>
+    <string name="str_error_not_enough_balance_please_try_again">Wallet balance is not sufficient, please select again</string>
 </resources>

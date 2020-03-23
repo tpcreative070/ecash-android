@@ -15,25 +15,26 @@ import retrofit2.HttpException;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.model.ErrorStatusConnectionModel;
 
-public class GetStatusErrorConnection {
-    public ErrorStatusConnectionModel error(Context context, Throwable t) {
+public class CheckErrorConnectionUtils {
+    public ErrorStatusConnectionModel error(Context context,Throwable t){
         ErrorStatusConnectionModel error = new ErrorStatusConnectionModel();
         error.setTitle(context.getString(R.string.str_error_connection));
-        if (t instanceof SocketTimeoutException) {
-            // error.setMessage(context.getString(R.string.str_error_connection_request_timeout));
+        if(t instanceof SocketTimeoutException){
+           // error.setMessage(context.getString(R.string.str_error_connection_request_timeout));
             error.setMessage(context.getString(R.string.str_error_connection_internet));
-        } else if (t instanceof ConnectException || t instanceof UnknownHostException) {
+        }
+        else if(t instanceof ConnectException || t instanceof UnknownHostException){
             error.setMessage(context.getString(R.string.str_error_connection_internet));
-        } else if (t instanceof HttpException) {
-            switch (((HttpException) t).code()) {
+        }else if(t instanceof HttpException){
+            switch (((HttpException) t).code()){
                 case HttpsURLConnection.HTTP_INTERNAL_ERROR:
-                    // Log.e("Error  ","Internal Server Error");
+                   // Log.e("Error  ","Internal Server Error");
                     error.setMessage(context.getString(R.string.str_error_connection_internal_server));
                     break;
-                // ToDo
-                //  case HttpsURLConnection.HTTP_BAD_REQUEST:
-                // Log.e("Error  ","Bad Request");
-                //   break;
+                    // ToDo
+                  //  case HttpsURLConnection.HTTP_BAD_REQUEST:
+                   // Log.e("Error  ","Bad Request");
+                 //   break;
 //                case HttpsURLConnection.HTTP_UNAUTHORIZED:
 //                    Log.e("Error  ","Unauthorised User");
 //                    break;
@@ -41,17 +42,18 @@ public class GetStatusErrorConnection {
 //                    Log.e("Error  ","Forbidden");
 //                    break;
                 default:
-                    // error.setMessage(context.getString(R.string.str_error_connection_internet));
+                   // error.setMessage(context.getString(R.string.str_error_connection_internet));
                     error.setMessage(context.getString(R.string.err_upload));
                     break;
             }
-        } else if (t instanceof JsonSyntaxException) {
+        }
+        else if(t instanceof JsonSyntaxException){
             //Log.e("Error  ","the API not response");
             error.setMessage(context.getString(R.string.err_upload));
-        } else {
+        }else {
             error.setMessage(context.getString(R.string.err_upload));
         }
-        return error;
+     return  error;
 
     }
 }
