@@ -366,4 +366,5 @@
     <string name="str_error_connection_request_timeout">Request Timeout</string>
     <string name="str_error_connection_internal_server">Internal Server Error</string>
     <string name="str_error_not_enough_balance_edong">Not enough balance eDong</string>
+    <string name="str_error_not_enough_balance_please_try_again">Wallet balance is not sufficient, please select again</string>
 </resources>

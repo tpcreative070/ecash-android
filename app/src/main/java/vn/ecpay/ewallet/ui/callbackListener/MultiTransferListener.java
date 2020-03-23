@@ -1,5 +1,7 @@
 package vn.ecpay.ewallet.ui.callbackListener;
 
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 

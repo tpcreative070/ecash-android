@@ -208,6 +208,7 @@
                     android:background="@drawable/edt_bottom_line"
                     android:hint="@string/str_input_content"
                     android:inputType="text"
+                    android:maxLength="256"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:textSize="@dimen/text_normal" />
