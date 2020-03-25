@@ -140,9 +140,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         homePresenter.onViewCreate();
         updateAccountInfo();
         checkPayment();
-//        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
-//            homePresenter.getCashValues(accountInfo, getActivity());
-//        }
+        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
+            homePresenter.getCashValues(accountInfo, getActivity());
+        }
     }
 
     private void updateAccountInfo() {
