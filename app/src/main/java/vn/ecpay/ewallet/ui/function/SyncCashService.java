@@ -113,7 +113,7 @@ public class SyncCashService extends Service {
                     CashInFunction cashInFunction = new CashInFunction(responseMess, accountInfo, getApplicationContext());
                     cashInFunction.handleCash(new CashInSuccessListener() {
                         @Override
-                        public void onCashInSuccess() {
+                        public void onCashInSuccess(Long TotalMoney) {
                             DatabaseUtil.deleteCacheData(responseMess.getId(), getApplicationContext());
                             listResponseMessSockets.remove(0);
                             handleListResponse();

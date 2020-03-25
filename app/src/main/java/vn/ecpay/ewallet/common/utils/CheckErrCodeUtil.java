@@ -21,6 +21,10 @@ public class CheckErrCodeUtil {
                 message = context.getString(R.string.error_message_code_1003);
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
+            case Constant.ERROR_CODE_1006:
+                message = context.getString(R.string.error_message_code_1006);
+                DialogUtil.getInstance().showDialogWarning(context, message);
+                break;
             case Constant.ERROR_CODE_3034:
                 message = context.getString(R.string.error_message_code_3034);
                 DialogUtil.getInstance().showDialogWarning(context, message);

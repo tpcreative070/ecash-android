@@ -1,14 +1,19 @@
 package vn.ecpay.ewallet.webSocket;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 
@@ -26,7 +31,9 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.table.Payment_DataBase;
@@ -243,7 +250,8 @@ public class WebSocketsService extends Service {
                     CashInFunction cashInFunction = new CashInFunction(accountInfo, getApplicationContext(), listResponseMessSockets.get(0));
                     cashInFunction.handleCashIn(new CashInSuccessListener() {
                         @Override
-                        public void onCashInSuccess() {
+                        public void onCashInSuccess(Long totalMoney) {
+                            putNotificationMoneyChange(listResponseMessSockets.get(0), totalMoney);
                             confirmMess(listResponseMessSockets.get(0));
                             listResponseMessSockets.remove(0);
                             handleListResponse();
@@ -267,6 +275,38 @@ public class WebSocketsService extends Service {
         } else {
             EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
             isRunning = false;
+        }
+    }
+
+    private void putNotificationMoneyChange(ResponseMessSocket responseMess, Long totalMoney) {
+        String message = "Quý khách đã nhận được số tiền " + CommonUtils.formatPriceVND(totalMoney) + " từ số ví: " + responseMess.getSender();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String id = "_channel_01";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel mChannel = new NotificationChannel(id, "notification", importance);
+            mChannel.enableLights(true);
+
+            Notification notification = new Notification.Builder(getApplicationContext(), id)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Nhận tiền thành công")
+                    .setContentText("Quý khách đã nhận được số tiền " + CommonUtils.formatPriceVND(totalMoney) + " từ số ví: " + responseMess.getSender())
+                    .setStyle(new Notification.BigTextStyle().bigText(message))
+                    .setAutoCancel(true)
+                    .build();
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (mNotificationManager != null) {
+                mNotificationManager.createNotificationChannel(mChannel);
+                mNotificationManager.notify(1, notification);
+            }
+        } else {
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
+            notification.setSmallIcon(R.mipmap.ic_launcher);
+            notification.setContentTitle("Nhận tiền thành công");
+            notification.setContentText(message);
+            notification.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            nm.notify(1, notification.build());
         }
     }
 

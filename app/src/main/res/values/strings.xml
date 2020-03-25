@@ -116,6 +116,7 @@
     <string name="str_total_lixi">Total lixi</string>
     <string name="str_wishes">Wishes</string>
     <string name="str_take_lixi_success">you receive a pack of Poker, please open the Packet Pack</string>
+    <string name="str_update_acount_info_success">Update account info success</string>
 
     //chuyển khoản
     <string name="str_lixi_sender">Lixi is sent from: %s</string>
@@ -329,6 +330,7 @@
     <string name="error_message_code_4012">The total face value received is greater than the total face value</string>
     <string name="error_message_code_4011">Out of face value, Please try again</string>
     <string name="error_message_code_1003">Identification number already exists</string>
+    <string name="error_message_code_1006">The identity card number already exists in the system</string>
     <string name="error_message_code_3034">The username already exists</string>
     <string name="error_message_code_0998">user name is at least 3 characters</string>
     <string name="error_message_code_3024">Phone number already exists</string>

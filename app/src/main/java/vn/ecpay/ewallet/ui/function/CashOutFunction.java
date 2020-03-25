@@ -98,7 +98,7 @@ public class CashOutFunction {
                                    //listUri.add(bitmap);
                                 }
                                 //save log
-                                DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, context.getActivity());
+//                                DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, context.getActivity());
                             }
                         }
                     }

@@ -55,16 +55,14 @@ public class DatabaseUtil {
         return WalletDatabase.getAllProfile();
     }
 
-    public static void saveTransactionLogQR(ArrayList<QRCodeSender> codeSenderArrayList, ResponseMessSocket responseMess, Context activity) {
+    public static void saveTransactionLogQR(QRCodeSender qrCodeSender, ResponseMessSocket responseMess, Context activity) {
         WalletDatabase.getINSTANCE(activity, ECashApplication.masterKey);
-        for (int i = 0; i < codeSenderArrayList.size(); i++) {
-            TransactionLogQR_Database transactionLog = new TransactionLogQR_Database();
-            transactionLog.setTransactionSignature(responseMess.getId());
-            transactionLog.setTotal(codeSenderArrayList.get(i).getTotal());
-            transactionLog.setValue(codeSenderArrayList.get(i).getContent());
-            transactionLog.setSequence(codeSenderArrayList.get(i).getCycle());
-            WalletDatabase.insertTransactionLogQRTask(transactionLog, Constant.STR_EMPTY);
-        }
+        TransactionLogQR_Database transactionLog = new TransactionLogQR_Database();
+        transactionLog.setTransactionSignature(responseMess.getId());
+        transactionLog.setTotal(qrCodeSender.getTotal());
+        transactionLog.setValue(qrCodeSender.getContent());
+        transactionLog.setSequence(qrCodeSender.getCycle());
+        WalletDatabase.insertTransactionLogQRTask(transactionLog, Constant.STR_EMPTY);
     }
 
     public static void saveTransactionLog(ResponseMessSocket responseMess, Context context) {

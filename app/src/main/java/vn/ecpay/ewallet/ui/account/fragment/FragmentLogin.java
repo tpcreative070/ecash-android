@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 

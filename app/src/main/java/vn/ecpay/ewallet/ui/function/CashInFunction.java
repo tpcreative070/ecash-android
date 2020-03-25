@@ -196,10 +196,11 @@ public class CashInFunction {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class AsyncTaskCash extends AsyncTask<String[][], Void, Void> {
+    private class AsyncTaskCash extends AsyncTask<String[][], Void, Long> {
         @Override
-        protected Void doInBackground(String[][]... params) {
+        protected Long doInBackground(String[][]... params) {
             String[][] deCryptArray = params[0];
+            Long totalMoney = 0L;
             for (String[] object : deCryptArray) {
                 CashLogs_Database cash = new CashLogs_Database();
                 cash.setAccSign(object[1].replaceAll("\n", ""));
@@ -223,14 +224,15 @@ public class CashInFunction {
                 } else {
                     getPublicKeyCashToCheck(cash, item[2]);
                 }
+                totalMoney = totalMoney + Integer.valueOf(item[4]);
             }
-            return null;
+            return totalMoney;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Long totalMoney) {
             if (null != cashInSuccessListener) {
-                cashInSuccessListener.onCashInSuccess();
+                cashInSuccessListener.onCashInSuccess(totalMoney);
             }
         }
     }
@@ -289,7 +291,7 @@ public class CashInFunction {
         if (CommonUtils.verifyCash(cash, decisionTrekp, decisionAcckp)) {
             //xác thực đồng ecash ok => save cash
 
-            if(accountInfo==null){
+            if (accountInfo == null) {
                 accountInfo = CommonUtils.getAccountByUserName(context);
             }
             DatabaseUtil.saveCashToDB(cash, context, accountInfo.getUsername());

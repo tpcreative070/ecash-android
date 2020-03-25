@@ -46,6 +46,6 @@
         style="@style/btn_cancel"
         android:textAllCaps="true"
         android:textSize="@dimen/text_large"
-        android:text="@string/str_cancel" />
+        android:text="@string/str_exit" />
 
 </LinearLayout>

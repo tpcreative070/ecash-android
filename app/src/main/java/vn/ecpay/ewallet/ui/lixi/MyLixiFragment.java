@@ -79,7 +79,7 @@ public class MyLixiFragment extends ECashBaseFragment {
                         CashInFunction cashInFunction = new CashInFunction(accountInfo, getActivity(), responseMess);
                         cashInFunction.handleCashIn(new CashInSuccessListener() {
                             @Override
-                            public void onCashInSuccess() {
+                            public void onCashInSuccess(Long totalMoney) {
                                 new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {

@@ -112,7 +112,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         updateType();
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        setData();
+        setAdapter();
     }
 
     protected void updateType() {
@@ -121,14 +121,19 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     protected void setData() {
-        totalMoney=0;
+        totalMoney = 0;
         edtContent.setText("");
         tvNumberWallet.setText(getString(R.string.str_chose_wallet_transfer));
-        if(multiTransferList!=null&&multiTransferList.size()>0){
+        if (multiTransferList != null && multiTransferList.size() > 0) {
             multiTransferList.clear();
         }
         tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
+        tvId.setText(String.valueOf(accountInfo.getWalletId()));
+        tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         setAdapter();
+    }
+
+    private void setAdapter() {
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
@@ -137,9 +142,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         if (ECashApplication.isCancelAccount) {
             layoutQrCode.setVisibility(View.GONE);
         }
-    }
 
-    private void setAdapter() {
         valuesListAdapter = DatabaseUtil.getAllCashTotal(getActivity());
         if (ECashApplication.isCancelAccount) {
             for (int i = 0; i < valuesListAdapter.size(); i++) {
@@ -239,7 +242,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 intent.putExtra(Constant.CONTACT_MULTI_TRANSFER, (Serializable) multiTransferList);
                 intent.putExtra(Constant.CONTENT_TRANSFER, edtContent.getText().toString());
                 intent.putExtra(Constant.TYPE_TRANSFER, typeSend);
-               startActivity(intent);
+                startActivity(intent);
                 dismissProgress();
             } else {
                 dismissProgress();
@@ -361,6 +364,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         this.multiTransferList = contactList;
         setAdapter();
         updateWalletSend();
+        updateTotalMoney();
     }
 
     private void updateWalletSend() {

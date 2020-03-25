@@ -149,11 +149,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
                 });
                 break;
             case R.id.layout_image_account:
-                if (PermissionUtils.checkPermissionWriteStore(this, null)) {
-                    if (PermissionUtils.checkPermissionCamera(this, null)) {
-                        showDialogChangeAvatar();
-                    }
-                }
+                showDialogChangeAvatar(FragmentAccountInfo.this);
                 break;
             case R.id.layout_name:
             case R.id.layout_email:
@@ -196,16 +192,21 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         }
     }
 
-    private void showDialogChangeAvatar() {
+    private void showDialogChangeAvatar(FragmentAccountInfo fragmentAccountInfo) {
         DialogUtil.getInstance().showDialogChangeAvatar(getActivity(), new DialogUtil.OnChangeAvatar() {
             @Override
             public void OnListenerFromStore() {
-                accountInfoPresenter.onChooseImage(getActivity(), REQUEST_TAKE_PHOTO);
+                if (PermissionUtils.checkPermissionWriteStore(fragmentAccountInfo, null)) {
+                    accountInfoPresenter.onChooseImage(getActivity(), REQUEST_TAKE_PHOTO);
+                }
+
             }
 
             @Override
             public void OnListenerTakePhoto() {
-                accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
+                if (PermissionUtils.checkPermissionCamera(fragmentAccountInfo, null)) {
+                    accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
     }
@@ -215,15 +216,11 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionUtils.REQUEST_WRITE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (PermissionUtils.checkPermissionCamera(this, null)) {
-                    showDialogChangeAvatar();
-                }
+                accountInfoPresenter.onChooseImage(getActivity(), REQUEST_TAKE_PHOTO);
             }
         } else if (requestCode == PermissionUtils.MY_CAMERA_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (PermissionUtils.checkPermissionWriteStore(this, null)) {
-                    showDialogChangeAvatar();
-                }
+                accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
             }
         }
     }
