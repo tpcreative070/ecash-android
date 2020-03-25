@@ -109,6 +109,7 @@
     <string name="str_total_lixi">Tổng lì xì</string>
     <string name="str_wishes">Lời chúc</string>
     <string name="str_take_lixi_success">Bạn nhận được một gói Lì Xi bạn vui lòng mở gói Lì Xì</string>
+    <string name="str_update_acount_info_success">Cập nhật thông tin tài khoản thành công</string>
 
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>
@@ -201,21 +202,21 @@
     <string name="err_connect_socket_fail">Kết nối socket không thành công. Bạn vui lòng kiểm tra kết nối!</string>
     <string name="err_validate_user_name_fail">Tên tài khoản chỉ cho phép nhập chữ và số, tối thiểu 3 ký tự</string>
     <string name="err_validate_name_fail">Họ và tên không chứa số và ký tự đặc biệt, tối thiểu 2 ký tự</string>
-    <string name="err_validate_cmnd_fail">Số chứng minh là số = 9 hoặc 12 số!</string>
+    <string name="err_validate_cmnd_fail">Chứng minh nhân dân chỉ được nhập 9 hoặc 12 ký tự số</string>
     <string name="err_validate_name_contact">Họ và tên phải từ 2 đến 64 ký tự</string>
     <string name="err_validate_phone_fail">Số điện thoại sai định dạng</string>
     <string name="err_pass_duplicate_fail">Mật khẩu không trùng khớp</string>
-    <string name="err_new_pass_must_other_old_pass">Mật khẩu mới phải khác mật khẩu cũ</string>
-    <string name="err_pass_bigger_six_char">Mật khẩu tối thiểu 6 ký tự</string>
+    <string name="err_new_pass_must_other_old_pass">Mật khẩu mới không được trùng với mật khẩu cũ</string>
+    <string name="err_pass_bigger_six_char">Mật khẩu mới phải từ 6 đến 20 ký tự</string>
     <string name="err_user_name_null">Bạn chưa nhập tên tài khoản</string>
     <string name="err_user_name_lenght">Tài khoản tối thiểu 3 ký tự</string>
     <string name="err_name_lenght">Họ và tên tối thiểu 2 ký tự</string>
-    <string name="err_name_null">Bạn chưa nhập họ tên</string>
+    <string name="err_name_null">Vui lòng nhập Họ và tên</string>
     <string name="err_cmnd_null">Bạn chưa nhập chứng minh nhân dân</string>
     <string name="err_phone_null">Bạn chưa nhập số điện thoại</string>
     <string name="err_old_pass_null">Bạn chưa nhập mật khẩu cũ</string>
     <string name="err_new_pass_null">Bạn chưa nhập mật khẩu mới</string>
-    <string name="err_renew_pass_null">Bạn chưa nhập lại mật khẩu mới</string>
+    <string name="err_renew_pass_null">Nhập lại mật khẩu mới không khớp</string>
     <string name="err_pass_null">Bạn chưa nhập mật khẩu</string>
     <string name="err_repass_null">Bạn chưa nhập lại mật khẩu</string>
     <string name="err_nmnd_is_exit">Số CMND hoặc số điện thoại đã tồn tại</string>
@@ -324,6 +325,7 @@
     <string name="error_message_code_4012">Tổng mệnh giá nhận lớn hơn tổng mệnh giá đổi</string>
     <string name="error_message_code_4011">Hết mệnh giá, Vui lòng thử lại</string>
     <string name="error_message_code_1003">Số giấy tờ tùy thân đã tồn tại</string>
+    <string name="error_message_code_1006">Số chứng minh nhân dân đã tồn tại trong hệ thống</string>
     <string name="error_message_code_3034">username đã tồn tại</string>
     <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
     <string name="error_message_code_3024">Số điện thoại đã tồn tại</string>

@@ -32,7 +32,7 @@ android {
         dev {
             dimension dimensDefault
             applicationIdSuffix ""
-            resValue("string", "app_name", "ECash Dev")
+            resValue("string", "app_name", "eCash")
             buildConfigField("boolean", "ENABLE_LOG", "true")
             buildConfigField "String", "SERVER", '"http://10.1.1.105"'
             buildConfigField "boolean", "LOG", "true"
@@ -40,7 +40,7 @@ android {
 
         prod {
             dimension dimensDefault
-            resValue("string", "app_name", "VECash PRo")
+            resValue("string", "app_name", "eCash")
             buildConfigField "String", "SERVER", '"http://10.1.1.105"'
             buildConfigField "boolean", "LOG", "false"
             buildConfigField("boolean", "ENABLE_LOG", "false")

@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.wallet.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,10 +25,12 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
 import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
 import vn.ecpay.ewallet.model.forgotPassword.changePass.request.ChangePassRequest;
+import vn.ecpay.ewallet.ui.account.AccountActivity;
 
 public class ChangePassActivity extends ECashBaseActivity {
     @BindView(R.id.edt_old_pass)
@@ -42,10 +45,9 @@ public class ChangePassActivity extends ECashBaseActivity {
     TextView toolbarCenterText;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    private String newPass, oldPass, reNewPass;
+    private String newPass;
+    private String oldPass;
     private AccountInfo accountInfo;
-    @Inject
-    ECashApplication application;
 
     @Override
     protected int getLayoutResId() {
@@ -72,40 +74,43 @@ public class ChangePassActivity extends ECashBaseActivity {
 
     @OnClick(R.id.btn_confirm)
     public void onViewClicked() {
-        validateData();
-    }
-
-    private void validateData() {
+        showLoading();
         oldPass = edtOldPass.getText().toString();
         newPass = edtNewPass.getText().toString();
-        reNewPass = edtReNewPass.getText().toString();
+        String reNewPass = edtReNewPass.getText().toString();
 
         if (oldPass.isEmpty()) {
+            dismissLoading();
             showDialogError(getString(R.string.err_old_pass_null));
             return;
         }
 
         if (newPass.isEmpty()) {
+            dismissLoading();
             showDialogError(getString(R.string.err_new_pass_null));
             return;
         }
 
         if (reNewPass.isEmpty()) {
+            dismissLoading();
             showDialogError(getString(R.string.err_renew_pass_null));
             return;
         }
 
         if (!CommonUtils.isValidatePass(newPass)) {
+            dismissLoading();
             showDialogError(getString(R.string.err_pass_bigger_six_char));
             return;
         }
 
         if (!newPass.equals(reNewPass)) {
+            dismissLoading();
             showDialogError(getString(R.string.err_pass_duplicate_fail));
             return;
         }
 
         if (oldPass.equals(newPass)) {
+            dismissLoading();
             showDialogError(getString(R.string.err_new_pass_must_other_old_pass));
             return;
         }
@@ -113,7 +118,6 @@ public class ChangePassActivity extends ECashBaseActivity {
     }
 
     private void requestChangePass() {
-        showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -135,32 +139,43 @@ public class ChangePassActivity extends ECashBaseActivity {
             @Override
             public void onResponse(Call<ResponseChangePassword> call, Response<ResponseChangePassword> response) {
                 dismissLoading();
-
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (null != response.body().getResponseData()) {
-                                ECashApplication.get(ChangePassActivity.this).showDialogChangePassSuccess(getString(R.string.str_change_pass_success));
+                                onChangePassSuccess();
                             } else {
-                                showDialogError(application.getString(R.string.err_upload));
+                                showDialogError(getResources().getString(R.string.err_upload));
                             }
+                        } else if (response.body().getResponseCode().equals(Constant.ERROR_CODE_3019)) {
+                            showDialogError(getString(R.string.err_old_pass_invalid));
                         } else {
                             CheckErrCodeUtil.errorMessage(getApplicationContext(), response.body().getResponseCode());
                         }
                     } else {
-                        showDialogError(application.getString(R.string.err_upload));
+                        showDialogError(getResources().getString(R.string.err_upload));
                     }
                 } else {
-                    showDialogError(application.getString(R.string.err_upload));
+                    showDialogError(getResources().getString(R.string.err_upload));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseChangePassword> call, Throwable t) {
                 dismissLoading();
-                showDialogError(getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
+    }
+
+    private void onChangePassSuccess() {
+        DialogUtil.getInstance().showDialogChangePassSuccess(ChangePassActivity.this,
+                getString(R.string.str_change_pass_success), () -> {
+                    Intent intent = new Intent(this, AccountActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                });
     }
 }

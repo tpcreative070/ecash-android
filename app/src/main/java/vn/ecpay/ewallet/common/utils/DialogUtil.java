@@ -137,7 +137,7 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogChangePassSuccess(Context pContext, String title, String message, final OnResult pOnConfirm) {
+    public void showDialogChangePassSuccess(Context pContext, String message, final OnResult pOnConfirm) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_confirm_change_pass_success);
@@ -146,8 +146,8 @@ public class DialogUtil {
             btnOk = mDialog.findViewById(R.id.btnOk);
             tvTitle = mDialog.findViewById(R.id.tvTitle);
             tvMessage = mDialog.findViewById(R.id.tvContent);
-            tvTitle.setText(title);
             tvMessage.setText(message);
+            tvTitle.setVisibility(View.GONE);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();
@@ -156,7 +156,6 @@ public class DialogUtil {
                 if (pOnConfirm != null) {
                     pOnConfirm.OnListenerOk();
                 }
-
             });
         }
     }
@@ -481,12 +480,12 @@ public class DialogUtil {
             btnUpdate.setOnClickListener(v -> {
                 String name = edtName.getText().toString();
                 if (!name.isEmpty()) {
-                    if(CommonUtils.isValidateNameContact(name)){
+                    if (CommonUtils.isValidateNameContact(name)) {
                         dismissDialog();
                         if (onContactUpdate != null) {
                             onContactUpdate.OnListenerOk(name);
                         }
-                    }else {
+                    } else {
                         Toast.makeText(pContext, pContext.getResources().getString(R.string.err_validate_name_contact), Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -592,12 +591,13 @@ public class DialogUtil {
             btnClose.setOnClickListener(v -> dismissDialog());
         }
     }
+
     public void showDialogErrorTitleMessage(Context pContext, String title, String mess) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_warning);
             Button btnClose;
-            TextView tv_title,tv_mess;
+            TextView tv_title, tv_mess;
             btnClose = mDialog.findViewById(R.id.btn_close);
             tv_title = mDialog.findViewById(R.id.tv_title);
             tv_mess = mDialog.findViewById(R.id.tv_mess);
@@ -609,12 +609,13 @@ public class DialogUtil {
             btnClose.setOnClickListener(v -> dismissDialog());
         }
     }
-    public void showDialogErrorWithCloseContinue(Context pContext, String title, String mess,final OnConfirm pOnConfirm) {
+
+    public void showDialogErrorWithCloseContinue(Context pContext, String title, String mess, final OnConfirm pOnConfirm) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_continue_exit);
-            ImageView icon=mDialog.findViewById(R.id.icon);
-            TextView tvTitle, tvMessage,tvExit,tvContinue;
+            ImageView icon = mDialog.findViewById(R.id.icon);
+            TextView tvTitle, tvMessage, tvExit, tvContinue;
             tvTitle = mDialog.findViewById(R.id.tv_title);
             tvMessage = mDialog.findViewById(R.id.tv_message);
             tvExit = mDialog.findViewById(R.id.tv_exit);
@@ -670,33 +671,24 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogUpdateAccountInfo(Context pContext, String title, String message, final OnConfirm pOnConfirm) {
+    public void showDialogUpdateAccountInfo(Context pContext, String message, final OnResult onResult) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_update_account_info);
-            Button btnOk, btnCancel;
-            TextView tvTitle, tvMessage;
-            btnOk = mDialog.findViewById(R.id.btnOk);
-            btnCancel = mDialog.findViewById(R.id.btnCancel);
-            tvTitle = mDialog.findViewById(R.id.tvTitle);
+            Button btnOk;
+            TextView tvMessage;
+            btnOk = mDialog.findViewById(R.id.btnClose);
             tvMessage = mDialog.findViewById(R.id.tvContent);
-            tvTitle.setText(title);
             tvMessage.setText(message);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();
             btnOk.setOnClickListener(v -> {
                 dismissDialog();
-                if (pOnConfirm != null) {
-                    pOnConfirm.OnListenerOk();
+                if (onResult != null) {
+                    onResult.OnListenerOk();
                 }
 
-            });
-            btnCancel.setOnClickListener(v -> {
-                dismissDialog();
-                if (pOnConfirm != null) {
-                    pOnConfirm.OnListenerCancel();
-                }
             });
         }
     }
@@ -728,7 +720,7 @@ public class DialogUtil {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_payment_request);
-            Button btnOk,btClose;
+            Button btnOk, btClose;
             TextView tvTitle = mDialog.findViewById(R.id.tvTitle);
             tvTitle.setText(String.format(context.getString(R.string.str_payment_request), " "));
             TextView tvContent = mDialog.findViewById(R.id.tv_content);
@@ -759,14 +751,14 @@ public class DialogUtil {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_confirm_payment);
-            Button btnOk,btClose;
+            Button btnOk, btClose;
 
             TextView tv_info = mDialog.findViewById(R.id.tv_info);
             tv_info.setText(context.getString(R.string.str_payment_info));
             TextView tv_title = mDialog.findViewById(R.id.tv_title);
             RecyclerView rvCashValues = mDialog.findViewById(R.id.rv_cash_values);
 
-            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash,false, context);
+            CashTotalChangeAdapter cashValueAdapter = new CashTotalChangeAdapter(valueListCash, false, context);
             //rvCashValues.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
             rvCashValues.setAdapter(cashValueAdapter);
             TextView tvTotalAmount = mDialog.findViewById(R.id.tv_total_payment);
@@ -813,11 +805,11 @@ public class DialogUtil {
         }
     }
 
-    public void showDialogContinueAndExit(Context context, String title, String message,int color, final OnConfirm listener) {
+    public void showDialogContinueAndExit(Context context, String title, String message, int color, final OnConfirm listener) {
         if (!isShowing() && context != null) {
             initDialog(context);
             mDialog.setContentView(R.layout.dialog_continue_exit);
-            TextView tvTitle, tvMessage,tvExit,tvContinue;
+            TextView tvTitle, tvMessage, tvExit, tvContinue;
             tvTitle = mDialog.findViewById(R.id.tv_title);
             tvMessage = mDialog.findViewById(R.id.tv_message);
             tvExit = mDialog.findViewById(R.id.tv_exit);
@@ -842,6 +834,7 @@ public class DialogUtil {
             });
         }
     }
+
     public void dismissDialog() {
         if (mDialog != null) {
             mDialog.dismiss();

@@ -274,6 +274,7 @@ public class CommonUtils {
         fmt.setDecimalFormatSymbols(fmts);
         return fmt.format(money) + " VNĐ";
     }
+
     public static String formatPrice(long money) {
         DecimalFormat fmt = new DecimalFormat();
         DecimalFormatSymbols fmts = new DecimalFormatSymbols();
@@ -323,7 +324,7 @@ public class CommonUtils {
     }
 
     public static boolean isValidateEmail(String email) {
-        String regex = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        String regex = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,64})$";
         return email.matches(regex);
     }
 
@@ -636,7 +637,7 @@ public class CommonUtils {
     }
 
     public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
-                                                                  Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
+                                                                 Contact contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
 
@@ -678,12 +679,13 @@ public class CommonUtils {
         }
         return null;
     }
+
     public static ResponseMessSocket getObjectJsonSendCashToCash(Context context, List<CashTotal> valuesListAdapter,
                                                                  ContactTransfer contact, String contentSendMoney, int index, String typeSend, AccountInfo accountInfo) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         ArrayList<CashLogs_Database> listCashSend = new ArrayList<>();
 
-        try{
+        try {
             for (int i = 0; i < valuesListAdapter.size(); i++) {
                 if (valuesListAdapter.get(i).getTotal() > 0) {
                     List<CashLogs_Database> cashList = DatabaseUtil.getListCashForMoney(context, String.valueOf(valuesListAdapter.get(i).getParValue()));
@@ -720,8 +722,8 @@ public class CommonUtils {
                 DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());
                 return responseMess;
             }
-        }catch (Exception e){
-            Log.e("Exception ",e.getMessage());
+        } catch (Exception e) {
+            Log.e("Exception ", e.getMessage());
         }
 
         return null;
@@ -772,14 +774,15 @@ public class CommonUtils {
         }
         return false;
     }
-    public static ArrayList<Uri> genericListUri(Context context, List<Contact> multiTransferList, List<CashTotal> valuesListAdapter, String content, String type){
+
+    public static ArrayList<Uri> genericListUri(Context context, List<Contact> multiTransferList, List<CashTotal> valuesListAdapter, String content, String type) {
         ArrayList<Uri> listUri = new ArrayList<>();
         try {
             String userName = ECashApplication.getAccountInfo().getUsername();
             AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, context);
             for (int i = 0; i < multiTransferList.size(); i++) {
                 Gson gson = new Gson();
-                ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash( context, valuesListAdapter,
+                ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(context, valuesListAdapter,
                         multiTransferList.get(i), content, i, type, accountInfo);
                 String jsonCash = gson.toJson(responseMessSocket);
                 List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
@@ -802,8 +805,8 @@ public class CommonUtils {
                 }
             }
         } catch (Exception e) {
-           /// showDialogErr(R.string.err_upload);
-            Log.e("Error genericListUri ",e.getMessage());
+            /// showDialogErr(R.string.err_upload);
+            Log.e("Error genericListUri ", e.getMessage());
         }
 
         return listUri;

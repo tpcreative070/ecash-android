@@ -88,10 +88,6 @@ public class LoginPresenterImpl implements LoginPresenter {
         requestLogin.setFunctionCode(Constant.FUNCTION_LOGIN);
         requestLogin.setUsername(userName);
         requestLogin.setToken(CommonUtils.encryptPassword(pass));
-        requestLogin.setUuid(Constant.STR_EMPTY);
-        requestLogin.setChannelSignature(Constant.STR_EMPTY);
-        requestLogin.setTerminalId(Constant.STR_EMPTY);
-        requestLogin.setTransactionId(Constant.STR_EMPTY);
         requestLogin.setAuditNumber(CommonUtils.getAuditNumber());
 
         String alphabe = CommonUtils.getStringAlphabe(requestLogin);

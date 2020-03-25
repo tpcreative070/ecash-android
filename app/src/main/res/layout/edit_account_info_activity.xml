@@ -29,6 +29,7 @@
             android:id="@+id/edt_name"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:maxLength="64"
             android:background="@drawable/bg_edit_text"
             android:inputType="text"
             android:textSize="@dimen/text_normal" />
@@ -44,6 +45,7 @@
             android:id="@+id/edt_address"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:maxLength="128"
             android:background="@drawable/bg_edit_text"
             android:inputType="text"
             android:textSize="@dimen/text_normal" />
@@ -77,6 +79,7 @@
             android:id="@+id/edt_email"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:maxLength="64"
             android:background="@drawable/bg_edit_text"
             android:inputType="textWebEmailAddress"
             android:textSize="@dimen/text_normal" />

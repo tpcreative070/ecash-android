@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -146,7 +147,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     private void updateAccountInfo() {
         tvPaymentRequest.setText(String.format(getString(R.string.str_payment_request), "\n"));
-        accountInfo = ECashApplication.getAccountInfo();
         listEDongInfo = ECashApplication.getListEDongInfo();
         if (null != listEDongInfo) {
             if (listEDongInfo.size() > 0) {
@@ -155,13 +155,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
         }
-        if (accountInfo == null) {
+        try {
             accountInfo = ECashApplication.getAccountInfo();
+            dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
+        } catch (NullPointerException e) {
+            restartApp();
         }
-        if (accountInfo.getUsername() == null) {
-            accountInfo = CommonUtils.getAccountByUserName(getContext());
-        }
-        dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
             updateNotification();
             updateNumberLixi();
@@ -172,7 +171,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             layoutFullInfo.setVisibility(View.VISIBLE);
             //request permission contact
             PermissionUtils.checkPermissionReadContact(this, null);
-            WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
             if (WalletDatabase.getAllCash() != null) {
                 if (WalletDatabase.getAllCash().size() > 0) {
                     balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
@@ -187,6 +185,13 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             layoutActiveAccount.setVisibility(View.VISIBLE);
             layoutFullInfo.setVisibility(View.GONE);
         }
+    }
+
+    private void restartApp() {
+        Intent intent = new Intent(getActivity(), AccountActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        getActivity().startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void updateNotification() {

@@ -1,23 +1,16 @@
 package vn.ecpay.ewallet.ui.wallet.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -80,31 +73,35 @@ public class FragmentMyQRCode extends ECashBaseFragment {
 
             bitmap = CommonUtils.generateQRCode(gson.toJson(qrScanBase));
             ivQrCode.setImageBitmap(bitmap);
+            updateAvatar();
+        }
+    }
+
+    private void updateAvatar() {
+        if (ECashApplication.getAccountInfo().getLarge() == null) {
+            if (getActivity() != null)
+                ivAvatar.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_avatar));
+        } else {
+            CommonUtils.loadAvatar(getActivity(), ivAvatar, ECashApplication.getAccountInfo().getLarge());
         }
     }
 
     @OnClick(R.id.tv_download)
     public void onViewClicked() {
-        if(bitmap!=null){
-            QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT,true);
-
+        if (bitmap != null) {
+            QRCodeUtil.saveImageQRCode(this, bitmap, String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT, true);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PermissionUtils.REQUEST_WRITE_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(bitmap!=null){
-                        QRCodeUtil.saveImageQRCode(this,bitmap,String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT,true);
-                    }
-
+        if (requestCode == PermissionUtils.REQUEST_WRITE_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (bitmap != null) {
+                    QRCodeUtil.saveImageQRCode(this, bitmap, String.valueOf(accountInfo.getWalletId()), Constant.DIRECTORY_QR_MY_CONTACT, true);
                 }
             }
-            default:
-                break;
         }
     }
 

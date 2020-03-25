@@ -79,7 +79,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     private String type;
     private SlideQRCodeAdapter adapter;
     private Bitmap bitmap;
-    private int pagePosition=0;
+    private int pagePosition = 0;
 
     public static CashToCashSuccessWithQRCodeFragment newInstance(List<CashTotal> valuesListAdapter, List<Contact> multiTransferList, String content, String type) {
         Bundle args = new Bundle();
@@ -101,14 +101,14 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-      //  Log.e("onViewCreated","onViewCreated");
+        //  Log.e("onViewCreated","onViewCreated");
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             valuesListAdapter = (List<CashTotal>) bundle.getSerializable(Constant.CASH_TOTAL_TRANSFER);
             multiTransferList = (List<Contact>) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
             content = bundle.getString(Constant.CONTENT_TRANSFER);
             type = bundle.getString(Constant.TYPE_TRANSFER);
-           // listUri = (ArrayList<Bitmap>) bundle.getSerializable(Constant.URI_TRANSFER);
+            // listUri = (ArrayList<Bitmap>) bundle.getSerializable(Constant.URI_TRANSFER);
 
             initUI();
         }
@@ -119,7 +119,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
         super.onStart();
 
     }
-    private void initUI(){
+
+    private void initUI() {
         tv_title.setText("");
         view_qr_code.setVisibility(View.GONE);
         tv_scan_receive.setVisibility(View.GONE);
@@ -131,23 +132,23 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                 mappingContact();
                 //setData();
             }
-        },2000);
+        }, 2000);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-      //  Log.e("onResume","onResume");
+        //  Log.e("onResume","onResume");
         ((CashToCashSuccessWithQRCodeActivity) getActivity()).updateTitle(getString(R.string.str_transfer));
     }
 
-    private void mappingContact(){
+    private void mappingContact() {
         listBitmap = new ArrayList<>();
         listUri = new ArrayList<>();
-        contactsList= new ArrayList<>();
+        contactsList = new ArrayList<>();
 
         if (valuesListAdapter != null && multiTransferList != null) {
-            boolean checked=false;
+            boolean checked = false;
             createBitmap();
 //            for (int i=0;i< multiTransferList.size();i++) {
 //                contactsList.add(new ContactTransfer(multiTransferList.get(i)));
@@ -161,10 +162,11 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 //                }
 //            }
 
-        }else{
+        } else {
             dismissProgress();
         }
     }
+
     private void setData() {
         if (valuesListAdapter != null && contactsList != null) {
             view_qr_code.setVisibility(View.VISIBLE);
@@ -174,10 +176,10 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 
             view_pager.setAdapter(adapter);
             dismissProgress();
-            if(contactsList.size()<=1){
+            if (contactsList.size() <= 1) {
                 iv_left.setVisibility(View.GONE);
                 iv_right.setVisibility(View.GONE);
-            }else{
+            } else {
                 iv_left.setVisibility(View.GONE);
                 iv_right.setVisibility(View.VISIBLE);
             }
@@ -187,19 +189,20 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
                 }
+
                 @Override
                 public void onPageSelected(int position) {
-                    pagePosition=position;
-                    if(contactsList.size()<=1){
+                    pagePosition = position;
+                    if (contactsList.size() <= 1) {
                         return;
-                    }else{
-                        if(position==0){
+                    } else {
+                        if (position == 0) {
                             iv_left.setVisibility(View.GONE);
                             iv_right.setVisibility(View.VISIBLE);
-                        }else if(position==contactsList.size()-1){
+                        } else if (position == contactsList.size() - 1) {
                             iv_left.setVisibility(View.VISIBLE);
                             iv_right.setVisibility(View.GONE);
-                        }else{
+                        } else {
                             iv_left.setVisibility(View.VISIBLE);
                             iv_right.setVisibility(View.VISIBLE);
                         }
@@ -211,32 +214,33 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 
                 }
             });
-        }else{
+        } else {
             dismissProgress();
         }
     }
-    @OnClick({R.id.iv_left, R.id.iv_right, R.id.view_download,R.id.view_share})
+
+    @OnClick({R.id.iv_left, R.id.iv_right, R.id.view_download, R.id.view_share})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_left:
-                pagePosition-=1;
-                if(pagePosition>=0&&pagePosition<contactsList.size()){
+                pagePosition -= 1;
+                if (pagePosition >= 0 && pagePosition < contactsList.size()) {
                     view_pager.setCurrentItem(pagePosition);
                 }
                 break;
             case R.id.iv_right:
-                pagePosition+=1;
-                if(pagePosition>=0&&pagePosition<contactsList.size()){
+                pagePosition += 1;
+                if (pagePosition >= 0 && pagePosition < contactsList.size()) {
                     view_pager.setCurrentItem(pagePosition);
                 }
                 break;
             case R.id.view_share:
-                if(valuesListAdapter == null && contactsList == null)
+                if (valuesListAdapter == null && contactsList == null)
                     return;
                 handleShareSave(true);
                 break;
             case R.id.view_download:
-                if(valuesListAdapter == null && contactsList == null)
+                if (valuesListAdapter == null && contactsList == null)
                     return;
                 handleShareSave(false);
                 break;
@@ -244,13 +248,13 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
     }
 
 
-    private void handleShareSave(boolean share){
-       // bitmap = adapter.getBitmap();
-        if(share){
+    private void handleShareSave(boolean share) {
+        // bitmap = adapter.getBitmap();
+        if (share) {
             if (PermissionUtils.checkPermissionWriteStore(this, null)) {
                 handleShareList();
             }
-        }else{
+        } else {
             if (PermissionUtils.checkPermissionWriteStore(this, null)) {
                 if (!CommonUtils.isExternalStorageWritable()) {
                     dismissProgress();
@@ -258,39 +262,43 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                         showDialogErr(R.string.err_store_image);
                     return;
                 }
-                if(contactsList.size()==0){
+                if (contactsList.size() == 0) {
                     showDialogErr(R.string.err_upload);
                     return;
                 }
-                boolean showToast=false;
-                for(int i=0;i<contactsList.size();i++){
+                boolean showToast = false;
+                for (int i = 0; i < contactsList.size(); i++) {
                     String currentTime = CommonUtils.getCurrentTime();
                     String imageName = contactsList.get(i).getWalletId() + "_" + currentTime + "_" + i;
-                    if(i== listBitmap.size()-1){
-                        showToast=true;
+                    if (i == listBitmap.size() - 1) {
+                        showToast = true;
                     }
-                    if(contactsList.get(i).getBitmap()!=null){
-                        QRCodeUtil.saveImageQRCode(this,contactsList.get(i).getBitmap(),imageName, Constant.DIRECTORY_QR_IMAGE,showToast);
+                    if (contactsList.get(i).getBitmap() != null) {
+                        QRCodeUtil.saveImageQRCode(this, contactsList.get(i).getBitmap(), imageName, Constant.DIRECTORY_QR_IMAGE, showToast);
                     }
                 }
             }
         }
     }
+
     private void showDialogErr(int err) {
         ((CashToCashSuccessWithQRCodeActivity) getActivity()).showDialogError(getString(err));
     }
+
     private void cashOutSuccess() {
         dismissProgress();
-        Toast.makeText(getActivity(),getString(R.string.str_saved),Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), getString(R.string.str_saved), Toast.LENGTH_SHORT).show();
     }
-    private ArrayList<Uri> genericListUri(){
-        return CommonUtils.genericListUri(getActivity(),multiTransferList,valuesListAdapter,content,type);
+
+    private ArrayList<Uri> genericListUri() {
+        return CommonUtils.genericListUri(getActivity(), multiTransferList, valuesListAdapter, content, type);
 
     }
+
     @SuppressLint("StaticFieldLeak")
-    private void createBitmap(){
+    private void createBitmap() {
         String userName = ECashApplication.getAccountInfo().getUsername();
-       AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -300,10 +308,10 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                     ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(getActivity(), valuesListAdapter,
                             contact, content, i, type, accountInfo);
                     String jsonCash = gson.toJson(responseMessSocket);
-                  //  Log.e("jsonCash",jsonCash);
+                    //  Log.e("jsonCash",jsonCash);
                     List<String> stringList = CommonUtils.getSplittedString(jsonCash, 1000);
                     ArrayList<QRCodeSender> codeSenderArrayList = new ArrayList<>();
-                   // ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
+                    // ArrayList<QRScanBase> codeSenderArrayList = new ArrayList<>();
                     if (stringList.size() > 0) {
                         for (int j = 0; j < stringList.size(); j++) {
                             QRCodeSender qrCodeSender = new QRCodeSender();
@@ -315,15 +323,15 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                         }
                         if (codeSenderArrayList.size() > 0) {
                             for (int j = 0; j < codeSenderArrayList.size(); j++) {
-                               // Log.e("codeSenderArrayList",gson.toJson(codeSenderArrayList.get(j)));
+                                // Log.e("codeSenderArrayList",gson.toJson(codeSenderArrayList.get(j)));
                                 Bitmap bitmap = CommonUtils.generateQRCode(gson.toJson(codeSenderArrayList.get(j)));
                                 ContactTransfer contactTransfer = new ContactTransfer(contact);
                                 contactTransfer.setBitmap(bitmap);
                                 contactsList.add(contactTransfer);
-                               // contact.setBitmap(bitmap);
-                                listUri.add(CommonUtils.getBitmapUri(getActivity(),bitmap));
+                                // contact.setBitmap(bitmap);
+                                listUri.add(CommonUtils.getBitmapUri(getActivity(), bitmap));
                                 listBitmap.add(bitmap);
-                                DatabaseUtil.saveTransactionLogQR(codeSenderArrayList, responseMessSocket, getActivity());
+                                DatabaseUtil.saveTransactionLogQR(codeSenderArrayList.get(j), responseMessSocket, getActivity());
                             }
                         }
                     }
@@ -340,12 +348,13 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
                     public void run() {
                         EventBus.getDefault().postSticky(new EventDataChange(Constant.CASH_OUT_MONEY_SUCCESS));
                     }
-                },1000);
+                }, 1000);
 
             }
         }.execute();
     }
-    private void handleShareList(){
+
+    private void handleShareList() {
 //        if(contactsList.size()>0){
 //            for(int i=0;i<contactsList.size();i++){
 //                String currentTime = CommonUtils.getCurrentTime();
@@ -355,8 +364,8 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 //                }
 //            }
 //        }
-        if(listUri.size()>0){
-            Log.e("listUri.size() ",listUri.size()+"");
+        if (listUri.size() > 0) {
+            Log.e("listUri.size() ", listUri.size() + "");
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
             shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, listUri);

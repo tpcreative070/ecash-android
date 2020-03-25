@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -127,6 +128,7 @@ public class ECashApplication extends Application {
                         return;
                     }
                     FBToken = Objects.requireNonNull(task.getResult()).getToken();
+                    Log.e("FBToken",FBToken);
                     if (FBToken.isEmpty()) return;
                     if (!SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class).isEmpty() &&
                             !SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class).isEmpty() &&
@@ -176,22 +178,6 @@ public class ECashApplication extends Application {
                 getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
-    }
-
-    public void showDialogChangePassSuccess(final String messenger) {
-        if (DialogUtil.getInstance().isShowing()) {
-            DialogUtil.getInstance().dismissDialog();
-        }
-        DialogUtil.getInstance().showDialogChangePassSuccess(getActivity(),
-                getResources().getString(R.string.str_dialog_notification_title), messenger, new DialogUtil.OnResult() {
-                    @Override
-                    public void OnListenerOk() {
-                        Intent intent = new Intent(getActivity(), AccountActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        getActivity().startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                    }
-                });
     }
 
     private void showDialogError(final String messenger) {

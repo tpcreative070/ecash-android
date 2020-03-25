@@ -86,7 +86,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
         cmnd = edtCmnd.getText().toString();
         email = edtEmail.getText().toString();
         if (name.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(this, getString(R.string.err_user_name_null));
+            DialogUtil.getInstance().showDialogWarning(this, getString(R.string.err_name_null));
             return;
         }
 
@@ -197,24 +197,12 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
                                         requestUpdateAccountInfo.getIdNumber(),
                                         requestUpdateAccountInfo.getPersonCurrentAddress(),
                                         requestUpdateAccountInfo.getPersonEmail(), accountInfo.getUsername());
-                                DialogUtil.getInstance().showDialogUpdateAccountInfo(EditAccountInfoActivity.this, Constant.STR_EMPTY, "Cập nhập thông tin tài khoản thành công", new DialogUtil.OnConfirm() {
-                                    @Override
-                                    public void OnListenerOk() {
-                                        finish();
-                                        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_ACCOUNT_INFO));
-                                    }
-
-                                    @Override
-                                    public void OnListenerCancel() {
-                                        EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_ACCOUNT_INFO));
-
-                                    }
-                                });
+                                updateAccountSuccess();
                             } else {
                                 showDialogError(getString(R.string.err_upload));
                             }
                         } else {
-                            CheckErrCodeUtil.errorMessage(getApplicationContext(), response.body().getResponseCode());
+                            CheckErrCodeUtil.errorMessage(EditAccountInfoActivity.this, response.body().getResponseCode());
                         }
                     } else {
                         showDialogError(getString(R.string.err_upload));
@@ -227,8 +215,16 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             @Override
             public void onFailure(Call<ResponseUpdateAccountInfo> call, Throwable t) {
                 dismissLoading();
-                showDialogError(getResources().getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
+    }
+
+    private void updateAccountSuccess() {
+        DialogUtil.getInstance().showDialogUpdateAccountInfo(EditAccountInfoActivity.this,
+                getResources().getString(R.string.str_update_acount_info_success), () -> {
+                    finish();
+                    EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_ACCOUNT_INFO));
+                });
     }
 }

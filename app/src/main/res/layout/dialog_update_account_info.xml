@@ -3,30 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_border_gray"
+    android:padding="10dp"
     android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/tvTitle"
+    <ImageView
+        android:id="@+id/iv_success"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:text="@string/str_dialog_notification_title"
-        android:textColor="@color/blue"
-        android:textSize="@dimen/text_header" />
+        android:src="@drawable/ic_success_green"
+        android:contentDescription="@string/string_todo" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_below="@id/tvTitle"
-        android:background="@color/gray_light" />
 
     <TextView
         android:id="@+id/tvContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTitle"
+        android:layout_below="@+id/iv_success"
         android:layout_centerInParent="true"
         android:layout_margin="10dp"
         android:gravity="center"
@@ -36,25 +30,13 @@
         android:textSize="@dimen/text_large" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/btnClose"
+        style="@style/btn_submit"
         android:layout_below="@+id/tvContent"
-        android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:padding="10dp">
-        <Button
-            android:id="@+id/btnOk"
-            style="@style/btn_submit"
-            android:layout_marginEnd="10dp"
-            android:textSize="@dimen/text_large"
-            android:text="@string/back" />
-        <Button
-            android:id="@+id/btnCancel"
-            style="@style/btn_cancel"
-            android:layout_marginStart="10dp"
-            android:textSize="@dimen/text_large"
-            android:text="@string/str_Ignore" />
-    </LinearLayout>
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/text_large"
+        android:text="@string/yes" />
 
 </RelativeLayout>

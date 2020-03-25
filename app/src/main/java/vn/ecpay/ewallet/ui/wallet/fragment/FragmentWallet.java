@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.wallet.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +14,8 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.base.PagerSlidingTabStrip;
+import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
+import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.wallet.adapter.WalletPagerAdapter;
 
 public class FragmentWallet extends ECashBaseFragment {
@@ -40,5 +43,10 @@ public class FragmentWallet extends ECashBaseFragment {
 
     @OnClick(R.id.iv_qr_code)
     public void onViewClicked() {
+        if (null != getActivity()) {
+            Intent intent = new Intent(getActivity(), QRCodeActivity.class);
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
     }
 }
