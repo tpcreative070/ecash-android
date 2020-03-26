@@ -303,6 +303,9 @@ public abstract class ECashBaseActivity extends AppCompatActivity implements Bas
     protected String getCurrentActivity() {
         return this.getClass().getName();
     }
+    protected AppCompatActivity getBaseActivity(){
+        return this;
+    }
 
     public void showDialogError(String messenger) {
         DialogUtil.getInstance().showDialogWarning(this, messenger);
