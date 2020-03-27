@@ -2,6 +2,7 @@ package vn.ecpay.ewallet.common.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -51,6 +52,7 @@ import java.util.TreeMap;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.CircleImageView;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.ECElGamal;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
@@ -73,6 +75,7 @@ import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.Res
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
+import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class CommonUtils {
@@ -105,7 +108,7 @@ public class CommonUtils {
         StringBuilder allItem = new StringBuilder();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
-            allItem.append(String.valueOf(entry.getValue()));
+            allItem.append(entry.getValue());
         }
         return allItem.toString().replaceAll("null", "");
     }
@@ -354,10 +357,7 @@ public class CommonUtils {
         if (idNumber.isEmpty()) {
             return false;
         }
-        if (lenght == 12 || lenght == 9) {
-            return true;
-        }
-        return false;
+        return lenght == 12 || lenght == 9;
     }
 
     public static boolean isValidateName(String name) {
@@ -451,7 +451,8 @@ public class CommonUtils {
             String strYear = date.substring(0, 4);
             String strMonth = date.substring(4, 6);
             String strDay = date.substring(6, 8);
-            return context.getString(R.string.str_date, strDay, strMonth, strYear);
+            String time = date.substring(9);
+            return context.getString(R.string.str_date, strDay, strMonth, strYear, time);
         } else {
             return Constant.STR_EMPTY;
         }
@@ -529,10 +530,7 @@ public class CommonUtils {
 
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     private static String getPublicServerKey() {
@@ -768,9 +766,7 @@ public class CommonUtils {
         String userName = ECashApplication.getAccountInfo().getUsername();
         AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, context);
         if (accountInfo != null && walletID != null) {
-            if (walletID.equals(String.valueOf(accountInfo.getWalletId()))) {
-                return true;
-            }
+            return walletID.equals(String.valueOf(accountInfo.getWalletId()));
         }
         return false;
     }
@@ -810,5 +806,12 @@ public class CommonUtils {
         }
 
         return listUri;
+    }
+
+    public static void restartApp(ECashBaseActivity activity) {
+        Intent intent = new Intent(activity, AccountActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

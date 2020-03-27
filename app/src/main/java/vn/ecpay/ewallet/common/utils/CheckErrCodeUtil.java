@@ -91,7 +91,7 @@ public class CheckErrCodeUtil {
                 break;
             case Constant.ERROR_CODE_0998:
             default:
-                message = context.getString(R.string.err_upload);
+                message = context.getString(R.string.err_upload) + " => mã lỗi: " + error_code;
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
         }

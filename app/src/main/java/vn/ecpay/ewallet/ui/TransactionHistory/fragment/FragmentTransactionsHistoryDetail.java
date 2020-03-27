@@ -105,6 +105,8 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     ImageView btBack;
     @BindView(R.id.bt_next)
     ImageView btNext;
+    @BindView(R.id.toolbar_center_text)
+    TextView toolbarCenterText;
     private TransactionsHistoryModel transactionsHistoryModel;
     private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistoryIn;
     private AdapterCashLogTransactionsHistory adapterCashLogTransactionsHistoryOut;
@@ -147,6 +149,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
 
         switch (transactionsHistoryModel.getTransactionType()) {
             case TYPE_SEND_ECASH_TO_EDONG:
+                toolbarCenterText.setText(getResources().getString(R.string.str_cash_out));
                 tvType.setText(getResources().getString(R.string.str_cash_out));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_out));
                 tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
@@ -158,6 +161,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 break;
             case TYPE_SEND_EDONG_TO_ECASH:
                 tvType.setText(getResources().getString(R.string.str_cash_in));
+                toolbarCenterText.setText(getResources().getString(R.string.str_cash_in));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_in));
                 tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_in,
                         CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
@@ -173,6 +177,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                     tvSenderReceiver.setText(getResources().getString(R.string.sender));
                     tvHumanCode.setText(transactionsHistoryModel.getSenderAccountId());
                     tvHistoryName.setText(transactionsHistoryModel.getSenderName());
+                    tvHistoryPhone.setText(transactionsHistoryModel.getSenderPhone());
                 } else {
                     tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
@@ -181,6 +186,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                     tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
                 }
                 tvType.setText(getResources().getString(R.string.str_transfer));
+                toolbarCenterText.setText(getResources().getString(R.string.str_transfer));
                 tvHistoryType.setText(getResources().getString(R.string.str_transfer));
                 break;
             case TYPE_LIXI:
@@ -198,6 +204,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 break;
             case TYPE_CASH_EXCHANGE:
                 tvType.setText(getResources().getString(R.string.str_cash_change));
+                toolbarCenterText.setText(getResources().getString(R.string.str_cash_change));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_change));
                 tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
                 tvTotalMoneyTransfer.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
@@ -225,6 +232,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                     tvHistoryName.setText(transactionsHistoryModel.getReceiverName());
                 }
                 tvType.setText(getResources().getString(R.string.str_payment));
+                toolbarCenterText.setText(getResources().getString(R.string.str_payment));
                 tvHistoryType.setText(getResources().getString(R.string.str_payment));
 
                 break;

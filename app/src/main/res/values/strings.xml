@@ -256,7 +256,7 @@
     <string name="str_number_scan_qr_code">You have successfully scanned %s  QR code</string>
     <string name="str_total_money_transfer">  %S</string>
     <string name="str_history_date_header">Month %s  / %s </string>
-    <string name="str_date"> %s  / %s  / %s </string>
+    <string name="str_date">%s/%s/%s   %s</string>
     <string name="str_total_money"> %s  VND</string>
     <string name="str_dialog_cash_in_success"><![CDATA[You have successfully deposited the amount<b> %s</b>. Do you want to continue making other transactions?]]></string>
     <string name="str_dialog_cash_out_success"><![CDATA[You have successfully withdrawn amount<b> %s</b>. Do you want to continue making other transactions?]]></string>
@@ -343,6 +343,7 @@
     <string name="error_message_code_3035">Account does not exist</string>
     <string name="error_message_code_3029">Signature is not valid</string>
     <string name="error_message_code_3077">User not active!</string>
+    <string name="err_no_result">No results were found</string>
 
     <string name="str_denominations_available">the denominations available</string>
     <string name="str_ecash_wants_to_change">eCash wants to change:</string>

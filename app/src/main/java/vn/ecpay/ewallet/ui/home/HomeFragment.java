@@ -140,9 +140,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         homePresenter.onViewCreate();
         updateAccountInfo();
         checkPayment();
-        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
-            homePresenter.getCashValues(accountInfo, getActivity());
-        }
+//        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
+//            homePresenter.getCashValues(accountInfo, getActivity());
+//        }
     }
 
     private void updateAccountInfo() {
@@ -159,7 +159,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             accountInfo = ECashApplication.getAccountInfo();
             dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
         } catch (NullPointerException e) {
-            restartApp();
+            CommonUtils.restartApp((MainActivity)getActivity());
         }
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
             updateNotification();
@@ -185,13 +185,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             layoutActiveAccount.setVisibility(View.VISIBLE);
             layoutFullInfo.setVisibility(View.GONE);
         }
-    }
-
-    private void restartApp() {
-        Intent intent = new Intent(getActivity(), AccountActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        getActivity().startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void updateNotification() {

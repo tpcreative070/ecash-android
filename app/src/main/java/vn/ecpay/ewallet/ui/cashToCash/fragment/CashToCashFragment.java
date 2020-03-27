@@ -245,32 +245,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             } else {
                 dismissProgress();
             }
-
-//            UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getActivity());
-//            showProgress();
-//            updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
-//                @Override
-//                public void onUpdateMasterSuccess() {
-//                    CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
-//                            multiTransferList, edtContent.getText().toString(), typeSend, listUri);
-//                    cashOutSocketFunction.handleCashOutQRCode(() -> {
-//                        cashOutSuccess();
-//
-//                    });
-//                }
-//
-//                @Override
-//                public void onUpdateMasterFail() {
-//                    dismissProgress();
-//                    showDialogError(getResources().getString(R.string.err_change_database));
-//                }
-//
-//                @Override
-//                public void onRequestTimeout() {
-//                    dismissProgress();
-//                    showDialogError(getResources().getString(R.string.err_upload));
-//                }
-//            });
         } else {
             UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
             showProgress();
@@ -348,9 +322,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         switch (requestCode) {
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
-//                            multiTransferList, edtContent.getText().toString(), typeSend);
-//                    cashOutSocketFunction.handleCashOutQRCode(this::cashOutSuccess);
                     validateData();
                 }
             }
@@ -427,18 +398,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                         getActivity().finish();
                     }
                 });
-    }
-
-    private void gotoQRCode() {
-        Intent intent = new Intent(getActivity(), CashToCashSuccessWithQRCodeActivity.class);
-        intent.putExtra(Constant.CASH_TOTAL_TRANSFER, (Serializable) valuesListAdapter);
-        intent.putExtra(Constant.CONTACT_MULTI_TRANSFER, (Serializable) multiTransferList);
-        intent.putExtra(Constant.CONTENT_TRANSFER, edtContent.getText().toString());
-        intent.putExtra(Constant.TYPE_TRANSFER, typeSend);
-        getActivity().startActivity(intent);
-        setData();
-        updateTotalMoney();
-
     }
 
     @Override

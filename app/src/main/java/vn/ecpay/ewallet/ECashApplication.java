@@ -180,14 +180,6 @@ public class ECashApplication extends Application {
         });
     }
 
-    private void showDialogError(final String messenger) {
-        if (getActivity() != null) {
-            if (getActivity() instanceof ECashBaseActivity) {
-                ((ECashBaseActivity) getActivity()).showDialogError(messenger);
-            }
-        }
-    }
-
     public void showErrorConnection(Throwable t) {
         ErrorStatusConnectionModel errorConnect = new CheckErrorConnectionUtils().error(getActivity(), t);
         DialogUtil.getInstance().showDialogErrorTitleMessage(getActivity(), errorConnect.getTitle(), errorConnect.getMessage());

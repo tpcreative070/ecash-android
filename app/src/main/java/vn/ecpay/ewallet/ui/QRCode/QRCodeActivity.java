@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,22 +41,19 @@ public class QRCodeActivity extends ECashBaseActivity {
         if (PermissionUtils.checkPermissionCamera(null, this)) {
             addFragment(new ScannerQRCodeFragment(), false);
             intentData();
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PermissionUtils.MY_CAMERA_REQUEST_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    addFragment(new ScannerQRCodeFragment(), true, R.id.containerQRCode);
-                } else {
-                    finish();
-                }
+        if (requestCode == PermissionUtils.MY_CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                addFragment(new ScannerQRCodeFragment(), true, R.id.containerQRCode);
+            } else {
+                finish();
             }
-            default:
-                break;
         }
     }
 
