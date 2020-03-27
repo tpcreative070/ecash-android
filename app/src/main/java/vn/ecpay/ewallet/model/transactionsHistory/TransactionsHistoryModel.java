@@ -15,10 +15,11 @@ public class TransactionsHistoryModel implements Serializable {
     private String transactionDate;
     private String cashLogType;
     private String receiverPhone;
+    private String senderPhone;
     private String transactionSignature;
     private String cashEnc;
 
-    public TransactionsHistoryModel(String senderName, String senderAccountId, String receiverName, String receiverAccountId, String transactionType, String transactionContent, String transactionStatus, String transactionAmount, String transactionDate, String cashLogType, String receiverPhone, String transactionSignature, String cashEnc) {
+    public TransactionsHistoryModel(String senderName, String senderAccountId, String receiverName, String receiverAccountId, String transactionType, String transactionContent, String transactionStatus, String transactionAmount, String transactionDate, String cashLogType, String receiverPhone, String senderPhone, String transactionSignature, String cashEnc) {
         this.senderName = senderName;
         this.senderAccountId = senderAccountId;
         this.receiverName = receiverName;
@@ -30,6 +31,7 @@ public class TransactionsHistoryModel implements Serializable {
         this.transactionDate = transactionDate;
         this.cashLogType = cashLogType;
         this.receiverPhone = receiverPhone;
+        this.senderPhone = senderPhone;
         this.transactionSignature = transactionSignature;
         this.cashEnc = cashEnc;
     }
@@ -151,5 +153,13 @@ public class TransactionsHistoryModel implements Serializable {
 
     public void setCashEnc(String cashEnc) {
         this.cashEnc = cashEnc;
+    }
+
+    public String getSenderPhone() {
+        return senderPhone;
+    }
+
+    public void setSenderPhone(String senderPhone) {
+        this.senderPhone = senderPhone;
     }
 }

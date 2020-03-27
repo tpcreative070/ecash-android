@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -26,6 +25,7 @@ import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 
 
 public class SyncCashService extends Service {
@@ -51,7 +51,7 @@ public class SyncCashService extends Service {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
-   //     Log.e("B ", event.getData());
+        //     Log.e("B ", event.getData());
         if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
             if (!isRunning) {
                 isRunning = true;
@@ -99,10 +99,32 @@ public class SyncCashService extends Service {
     private void syncData() {
         listResponseMessSockets = DatabaseUtil.getAllCacheData(getApplicationContext());
         if (listResponseMessSockets.size() > 0) {
-            handleListResponse();
+            updateMasterKey();
         } else {
             syncData();
         }
+    }
+
+    private void updateMasterKey() {
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+            @Override
+            public void onUpdateMasterSuccess() {
+                handleListResponse();
+            }
+
+            @Override
+            public void onUpdateMasterFail(String code) {
+                isRunning = false;
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_MASTER_KEY_ERR));
+            }
+
+            @Override
+            public void onRequestTimeout() {
+                isRunning = false;
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_MASTER_KEY_ERR));
+            }
+        });
     }
 
     private void handleListResponse() {
@@ -138,11 +160,9 @@ public class SyncCashService extends Service {
         } else {
             isRunning = false;
             if (!changeCashPayment) {
-   //             Log.e("C1 ", "C1");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
             } else {
                 changeCashPayment = false;
-                Log.e("C ", "C");
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
             }
         }

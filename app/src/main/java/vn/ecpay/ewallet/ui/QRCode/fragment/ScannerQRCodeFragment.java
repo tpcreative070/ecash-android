@@ -2,8 +2,10 @@ package vn.ecpay.ewallet.ui.QRCode.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -40,6 +42,7 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
@@ -57,9 +60,9 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.QRCode.module.QRCodeModule;
 import vn.ecpay.ewallet.ui.QRCode.presenter.QRCodePresenter;
 import vn.ecpay.ewallet.ui.QRCode.view.QRCodeView;
+import vn.ecpay.ewallet.ui.callbackListener.AddContactListener;
 import vn.ecpay.ewallet.ui.function.AddContactFunction;
 import vn.ecpay.ewallet.ui.function.SyncCashService;
-import vn.ecpay.ewallet.ui.callbackListener.AddContactListener;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 import static vn.ecpay.ewallet.common.utils.Constant.QR_CONTACT;
@@ -77,6 +80,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     LinearLayout layoutImage;
     @BindView(R.id.tv_number_scan)
     TextView tvNumberScan;
+    @BindView(R.id.tv_flash)
+    TextView tvFlash;
     private ZXingScannerView mScannerView;
     @BindView(R.id.containerScanner)
     FrameLayout containerScanner;
@@ -87,6 +92,9 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     @Inject
     QRCodePresenter qrCodePresenter;
     private AccountInfo accountInfo;
+
+    private boolean isFlashOn;
+    private boolean hasFlash;
 
     @Override
     protected int getLayoutResId() {
@@ -106,19 +114,24 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         eCashSplit = new StringBuffer();
         mScannerView = new ZXingScannerView(getActivity());
         containerScanner.addView(mScannerView);
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        try {
+            String userName = ECashApplication.getAccountInfo().getUsername();
+            accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        } catch (NullPointerException e) {
+            CommonUtils.restartApp((QRCodeActivity) getActivity());
+        }
         cashMap = new HashMap<>();
+        hasFlash = getActivity().getApplicationContext().getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mScannerView.startCamera();
+        restartScan();
         Handler handler = new Handler();
         handler.postDelayed(() -> progress.setVisibility(View.GONE), 1000);
         mScannerView.setResultHandler(this);
-        restartScan();
     }
 
     @Override
@@ -129,9 +142,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
 
     @Override
     public void handleResult(Result result) {
-        //  Log.e("result ", result.toString());
         Gson gson = new Gson();
-        //Log.e("gson ", gson.toJson(result));
         try {
             QRScanBase qrScanBase = gson.fromJson(result.getText(), QRScanBase.class);
             Log.e("qrScanBase ", gson.toJson(qrScanBase));
@@ -146,44 +157,40 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                             }
                             break;
                         case QR_TO_PAY:
-                            Log.e("request ", "5");
                             if (((QRCodeActivity) Objects.requireNonNull(getActivity())).isScanQRCodePayTo()) {
                                 if (getActivity() != null)
-                                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                                    restartScan();
+                                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
                             } else {
                                 handleQRCodeToPay(result.getText());
                             }
 
                             break;
                         default:
-                            Log.e("Eee 0", "Eee 0");
-                            dismissProgress();
                             if (getActivity() != null)
-                                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                                restartScan();
+                            ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
                             break;
                     }
                 } else {
                     if (null != qrScanBase.getContent()) {
                         handleCash(result.getText());
                     } else {
-                        Log.e("Eee ", "Eee ");
-                        dismissProgress();
                         if (getActivity() != null)
-                            ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                            restartScan();
+                        ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
                     }
                 }
             } else {
-                dismissProgress();
-                Log.e("Eee1 ", "Eee1 ");
                 if (getActivity() != null)
-                    ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                    restartScan();
+                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
             }
 
         } catch (JsonSyntaxException e) {
-            dismissProgress();
-            Log.e("JsonSyntaxException ", e.getMessage());
             if (getActivity() != null)
-                ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
+                restartScan();
+            ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_code_fail));
         }
         Handler handler = new Handler();
         handler.postDelayed(() -> mScannerView.resumeCameraPreview(ScannerQRCodeFragment.this), 2000);
@@ -246,11 +253,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     }
 
     private void handleCash(String result) {
-        //      Log.e("result 1",result);
         Gson gson = new Gson();
         try {
-            //  QRCodeSender qrCodeSender = new QRCodeSender();
-            // QRScanBase qrScanBase = gson.fromJson(result, QRScanBase.class);
             QRCodeSender qrCodeSender = gson.fromJson(result, QRCodeSender.class);
             if (qrCodeSender != null) {
                 Log.e("scan_qr_code", qrCodeSender.toString());
@@ -264,9 +268,9 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     }
                     ResponseMessSocket responseMess = gson.fromJson(eCashSplit.toString(), ResponseMessSocket.class);
                     if (!responseMess.getReceiver().equals(String.valueOf(accountInfo.getWalletId()))) {
-                        restartScan();
                         if (getActivity() != null)
-                            ((QRCodeActivity) getActivity()).showDialogError("Giao dịch được gửi cho tài khoản khác");
+                            restartScan();
+                        ((QRCodeActivity) getActivity()).showDialogError("Giao dịch được gửi cho tài khoản khác");
                         return;
                     }
                     if (responseMess.getType().equals(Constant.TYPE_LIXI)) {
@@ -281,9 +285,10 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_LIXI));
                                 restartScan();
                                 Toast.makeText(getActivity(), getResources().getString(R.string.str_take_lixi_success), Toast.LENGTH_LONG).show();
+                            } else {
+                                restartScan();
                             }
                         } else {
-                            dismissProgress();
                             restartScan();
                             if (getActivity() != null)
                                 ((QRCodeActivity) getActivity()).showDialogError("QR Code đã được nhận");
@@ -292,8 +297,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         if (!DatabaseUtil.isTransactionLogExit(responseMess, getActivity())) {
                             handleCashIn(responseMess);
                         } else {
-                            restartScan();
                             if (getActivity() != null) {
+                                restartScan();
                                 ((QRCodeActivity) getActivity()).showDialogError("QR Code đã được nhận");
                             }
 
@@ -301,13 +306,12 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     }
                 }
             } else {
-                dismissProgress();
+                restartScan();
                 if (null != getActivity())
                     ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ.");
             }
         } catch (JsonSyntaxException e) {
-            dismissProgress();
-            Log.e("JsonSyntaxException 1", e.getMessage());
+            restartScan();
             if (null != getActivity())
                 ((QRCodeActivity) getActivity()).showDialogError("QR Code không hợp lệ!");
         }
@@ -390,7 +394,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     private String transactionSignatureCashInQR;
 
     private void handleCashIn(ResponseMessSocket responseMess) {
-        Log.e("handleCashIn", "handleCashIn");
+        Log.e("handleCashIn", "ahihi");
         mScannerView.stopCamera();
         transactionSignatureCashInQR = responseMess.getId();
         Gson gson = new Gson();
@@ -407,6 +411,8 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         cashMap.clear();
         eCashSplit.delete(0, eCashSplit.length());
         tvNumberScan.setText(Constant.STR_EMPTY);
+        mScannerView.startCamera();
+        mScannerView.setAutoFocus(true);
         dismissProgress();
     }
 
@@ -418,9 +424,36 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             case R.id.layout_qr_code:
                 break;
             case R.id.layout_flash:
+                if (!hasFlash) {
+                    AlertDialog alert = new AlertDialog.Builder(getActivity())
+                            .create();
+                    alert.setTitle("Error");
+                    alert.setMessage("Sorry, your device doesn't support flash light!");
+                    alert.setButton("OK", (dialog, which) -> alert.dismiss());
+                    alert.show();
+                    return;
+                }
+                if (isFlashOn) {
+                    mScannerView.setFlash(false);
+                    isFlashOn = false;
+                    toggleButtonImage();
+                } else {
+                    mScannerView.setFlash(true);
+                    isFlashOn = true;
+                    toggleButtonImage();
+                }
+
                 break;
             case R.id.layout_image:
                 break;
+        }
+    }
+
+    private void toggleButtonImage() {
+        if (isFlashOn) {
+            tvFlash.setTextColor(getResources().getColor(R.color.blue));
+        } else {
+            tvFlash.setTextColor(getResources().getColor(R.color.white));
         }
     }
 
@@ -440,21 +473,17 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         if (event.getData().equals(Constant.EVENT_VERIFY_CASH_FAIL)) {
-            cashMap.clear();
-            eCashSplit.delete(0, eCashSplit.length());
-            tvNumberScan.setText(Constant.STR_EMPTY);
-            dismissProgress();
+            restartScan();
             ((QRCodeActivity) getActivity()).showDialogError("Giao dịch được gửi cho tài khoản khác");
         }
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> onCashInSuccessListener());
-                }
-            }, 500);
+            getActivity().runOnUiThread(() -> onCashInSuccessListener());
         }
+
+        if (event.getData().equals(Constant.EVENT_UPDATE_MASTER_KEY_ERR)) {
+            restartScan();
+        }
+
         EventBus.getDefault().removeStickyEvent(event);
     }
 

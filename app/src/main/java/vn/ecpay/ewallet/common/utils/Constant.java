@@ -68,7 +68,7 @@ public class Constant {
     public static final String TYPE_TRANSFER = "TYPE_TRANSFER";
     public static final String URI_TRANSFER = "URI_TRANSFER";
     //date
-    public static String FORMAT_DATE_SEND_CASH = "yyyyMMddHHmmss";
+    public static String FORMAT_DATE_SEND_CASH = "yyyyMMdd HH:mm:ss";
     public static String FORMAT_DATE_NOTIFICATION = "HH:mm:ss dd-MM-yyyy";
     public static String FORMAT_DATE_TOPAY = "yyyyMMdd HH:mm:ss";
     //type and key
@@ -117,6 +117,7 @@ public class Constant {
     public static final String EVENT_UPDATE_BALANCE = "EVENT_UPDATE_BALANCE";
     public static final String EVENT_CLOSE_SOCKET = "EVENT_CLOSE_SOCKET";
     public static final String EVENT_NEW_PAYMENT = "EVENT_NEW_PAYMENT";
+    public static final String EVENT_UPDATE_MASTER_KEY_ERR = "EVENT_UPDATE_MASTER_KEY_ERR";
     //function
     public static final String FUNCTION_GET_WALLET_INFO = "GWEC0030";
     public static final String FUNCTION_LOGIN = "FU00004";

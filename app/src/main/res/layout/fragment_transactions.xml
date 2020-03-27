@@ -98,4 +98,16 @@
         android:layout_marginTop="1dp"
         android:clipToPadding="false" />
 
+    <TextView
+        android:id="@+id/tv_no_result"
+        android:visibility="gone"
+        android:layout_below="@+id/view_search"
+        android:text="@string/err_no_result"
+        android:textSize="@dimen/text_large"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>
