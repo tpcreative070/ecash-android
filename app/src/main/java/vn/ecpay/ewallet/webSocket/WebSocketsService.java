@@ -33,6 +33,7 @@ import okhttp3.WebSocketListener;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -41,7 +42,9 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
+import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
+import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
@@ -168,7 +171,7 @@ public class WebSocketsService extends Service {
                             new Timer().schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    handleListResponse();
+                                    updateMasterKey();
                                 }
                             }, 3000);
                         }
@@ -241,6 +244,24 @@ public class WebSocketsService extends Service {
 
         Gson gson = new Gson();
         return gson.toJson(requestReceived);
+    }
+
+    private void updateMasterKey(){
+        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+            @Override
+            public void onUpdateMasterSuccess() {
+                handleListResponse();
+            }
+
+            @Override
+            public void onUpdateMasterFail(String code) {
+            }
+
+            @Override
+            public void onRequestTimeout() {
+            }
+        });
     }
 
     private void handleListResponse() {
@@ -338,7 +359,6 @@ public class WebSocketsService extends Service {
 
         DatabaseUtil.insertPayment(getApplicationContext(), payment_dataBase);
         EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_NEW_PAYMENT));
-
     }
 
     @Override

@@ -34,6 +34,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="3dp"
                 android:text="chuyển khoản"
+                android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_large"
                 android:textStyle="bold" />
@@ -61,7 +62,7 @@
                 android:id="@+id/tv_transactionAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20.000 vnđ"
+                android:layout_gravity="right"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_large" />
 
@@ -70,7 +71,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="3/4/2019"
                 android:textColor="@color/grey_light"
                 android:textSize="@dimen/text_small" />
         </LinearLayout>

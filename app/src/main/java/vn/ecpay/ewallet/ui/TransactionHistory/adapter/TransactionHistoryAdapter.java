@@ -86,9 +86,6 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
 
         TransactionHistoryAdapter.ItemViewHolder itemViewHolder = (TransactionHistoryAdapter.ItemViewHolder) holder;
         TransactionsHistoryModel transactionsHistoryModel = mTransactionHistory.get(position);
-        itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
-                transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
-
         if (Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_SUCCESS) {
             itemViewHolder.tvTransactionStatus.setText(context.getString(R.string.str_cash_take_success));
         } else if (Integer.parseInt(transactionsHistoryModel.getTransactionStatus()) == TRANSACTION_FAIL) {
@@ -102,6 +99,7 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_cash_out_gray);
                 itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
                         CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                itemViewHolder.tvFullName.setText(String.valueOf(transactionsHistoryModel.getReceiverAccountId()));
                 break;
             case TYPE_ECASH_TO_ECASH:
                 if (transactionsHistoryModel.getCashLogType().equals(Constant.STR_CASH_IN)) {
@@ -109,11 +107,15 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                     itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+                            transactionsHistoryModel.getSenderName(), String.valueOf(transactionsHistoryModel.getSenderAccountId())));
                 } else {
                     itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_transfer));
                     itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                    itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+                            transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
                 }
                 break;
             case TYPE_LIXI:
@@ -128,17 +130,21 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 }
+                itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+                        transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
                 break;
             case TYPE_SEND_EDONG_TO_ECASH:
                 itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_cash_in));
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_cash_in_gray);
                 itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_in,
                         CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                itemViewHolder.tvFullName.setText(String.valueOf(transactionsHistoryModel.getReceiverAccountId()));
                 break;
             case TYPE_CASH_EXCHANGE:
                 itemViewHolder.tvTransactionType.setText(context.getString(R.string.str_cash_change));
                 itemViewHolder.ivTransactionIcon.setImageResource(R.drawable.ic_transfer_gray);
                 itemViewHolder.tvTransactionAmount.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()) / 2));
+                itemViewHolder.tvFullName.setText(String.valueOf(transactionsHistoryModel.getReceiverAccountId()));
                 break;
             case TYPE_PAYTO:
                 //Log.e("payto ",new Gson().toJson(transactionsHistoryModel));
@@ -157,6 +163,8 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                     itemViewHolder.tvTransactionAmount.setText(context.getString(R.string.str_type_cash_out,
                             CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
                 }
+                itemViewHolder.tvFullName.setText(context.getString(R.string.str_item_transfer_cash,
+                        transactionsHistoryModel.getReceiverName(), String.valueOf(transactionsHistoryModel.getReceiverAccountId())));
                 break;
 
         }

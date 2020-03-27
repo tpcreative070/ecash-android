@@ -86,7 +86,7 @@ public class UpdateMasterKeyFunction {
 
             @Override
             public void onFailure(Call<ResponseUpdateMasterKey> call, Throwable t) {
-                //updateMasterKeyListener.onRequestTimeout();
+                updateMasterKeyListener.onRequestTimeout();
                 if(activity instanceof ECashBaseActivity){
                     ((ECashBaseActivity) activity).dismissLoading();
                 }

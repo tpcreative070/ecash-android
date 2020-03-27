@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +44,8 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
     EditText edtSearch;
+    @BindView(R.id.tv_no_result)
+    TextView tvNoResult;
     private TransactionHistoryAdapter mAdapter;
     private List<TransactionsHistoryModel> mSectionList;
 
@@ -82,6 +85,13 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
 
     private void setAdapterTextChange(String filter) {
         List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistoryFilter(CommonUtils.getParamFilter(filter));
+        if (transactionsHistoryModelList.size() > 0) {
+            tvNoResult.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            tvNoResult.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
         setAdapter(transactionsHistoryModelList);
     }
 
