@@ -255,3 +255,4 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
         });
     }
 }
+

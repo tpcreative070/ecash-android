@@ -227,12 +227,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         long numberCash = WalletDatabase.getAllCash().size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             if (getActivity() != null)
-                getActivity().runOnUiThread(() -> {
+                    getActivity().runOnUiThread(() -> {
                     WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
                     String a = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_IN));
                     String b = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_OUT));
                     balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-                    tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
+                    tvHomeAccountBalance .setText(CommonUtils.formatPriceVND(balance));
 
                     listEDongInfo = ECashApplication.getListEDongInfo();
                     if (listEDongInfo.size() > 0) {

@@ -115,7 +115,24 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
     }
-
+    private void updateBalance(){
+        long numberCash = WalletDatabase.getAllCash().size();
+        if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
+            if (getActivity() != null)
+                getActivity().runOnUiThread(() -> {
+                    WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+                    balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+                    tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
+                });
+        }else{
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    updateBalance();
+                }
+            }, 1000);
+        }
+    }
     @Override
     public void onResume() {
         toolbarCenterText.setText(String.format(getString(R.string.str_payment_request)," "));
@@ -248,18 +265,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             showDialogError(getString(R.string.err_connect_socket_fail));
         }
         if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
-
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> setData());
-                    } catch (NullPointerException e) {
-                        return;
-                    }
-                }
-            }, 5000);
+            updateBalance();
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

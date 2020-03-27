@@ -180,11 +180,11 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_chose_wallet:
-                if (getActivity() != null) {
-                    try {
-                        ((CashToCashActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this, true), true);
-                    } catch (ClassCastException e) {
-                        ((MyLixiActivity) getActivity()).addFragment(FragmentContactTransferCash.newInstance(this, false), true);
+                if(getBaseActivity()!=null){
+                    if(getBaseActivity() instanceof CashToCashActivity){
+                        ((CashToCashActivity) getBaseActivity()).addFragment(FragmentContactTransferCash.newInstance(this, true), true);
+                    }else if(getBaseActivity() instanceof MyLixiActivity){
+                        ((MyLixiActivity) getBaseActivity()).addFragment(FragmentContactTransferCash.newInstance(this, false), true);
                     }
                 }
                 break;
@@ -196,12 +196,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 validateData();
                 break;
             case R.id.iv_back:
-                if (getActivity() != null)
-                    try {
-                        ((CashToCashActivity) getActivity()).onBackPressed();
-                    } catch (ClassCastException e) {
-                        ((MyLixiActivity) getActivity()).onBackPressed();
-                    }
+                if(getBaseActivity()!=null){
+                   // Log.e("getBaseActivity() back",getBaseActivity().getLocalClassName());
+                    getBaseActivity().onBackPressed();
+                }
                 break;
         }
     }
@@ -274,10 +272,12 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void showDialogErr(int err) {
-        try {
-            ((CashToCashActivity) getActivity()).showDialogError(getString(err));
-        } catch (ClassCastException e) {
-            ((MyLixiActivity) getActivity()).showDialogError(getString(err));
+        if(getBaseActivity()!=null){
+            if(getBaseActivity() instanceof  CashToCashActivity){
+                ((CashToCashActivity) getBaseActivity()).showDialogError(getString(err));
+            }else if(getBaseActivity() instanceof  MyLixiActivity){
+                ((MyLixiActivity) getBaseActivity()).showDialogError(getString(err));
+            }
         }
     }
 
@@ -332,10 +332,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     @Override
     public void onMultiTransfer(ArrayList<Contact> contactList) {
-        this.multiTransferList = contactList;
-        setAdapter();
-        updateWalletSend();
-        updateTotalMoney();
+            this.multiTransferList = contactList;
+            setAdapter();
+            updateWalletSend();
+            updateTotalMoney();
     }
 
     private void updateWalletSend() {
