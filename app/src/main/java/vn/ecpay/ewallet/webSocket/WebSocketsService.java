@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -365,7 +364,7 @@ public class WebSocketsService extends Service {
     public void onDestroy() {
         super.onDestroy();
         isRunning = false;
-        Toast.makeText(getApplicationContext(), "Socket server tèo rồi T_T", Toast.LENGTH_LONG).show();
+        Log.e("Soccket","Socket server tèo rồi T_T");
         EventBus.getDefault().unregister(this);
     }
 }

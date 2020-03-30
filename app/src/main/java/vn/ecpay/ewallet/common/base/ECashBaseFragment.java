@@ -75,6 +75,12 @@ public abstract class ECashBaseFragment extends Fragment {
             DialogUtil.getInstance().showDialogWarning(getActivity(), msg);
         }
     }
+    protected void showDialogSuccess(String msg){
+        if (getActivity() instanceof ECashBaseActivity) {
+            DialogUtil.getInstance().showDialogSuccess(getActivity(), msg);
+        }
+
+    }
     protected Fragment getCurrentFragment() {
         try {
             return ((ECashBaseActivity)getActivity()).getCurrentFragment();

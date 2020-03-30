@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -333,7 +332,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
             protected void onPostExecute(Void aVoid) {
                 dismissProgress();
                 if (isSaveQR) {
-                    Toast.makeText(getActivity(), getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+                    showDialogSuccess(getResources().getString(R.string.str_save_to_device_success));
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_SEND_MULTIPLE);

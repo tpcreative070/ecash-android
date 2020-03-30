@@ -5,7 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.widget.Toast;
+import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
@@ -80,10 +80,8 @@ public class QRCodeUtil {
             out.flush();
             out.close();
           } catch (Exception e) {
-            if(fragment!=null){
-              if(showToast)
-              Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
-            }
+            Log.e("Error","Error Save QR Code");
+
             e.printStackTrace();
           }
           return null;
@@ -93,7 +91,7 @@ public class QRCodeUtil {
           if(fragment!=null){
             fragment.dismissProgress();
             if(showToast){
-              Toast.makeText(fragment.getActivity(), fragment.getResources().getString(R.string.str_save_to_device_success), Toast.LENGTH_LONG).show();
+              DialogUtil.getInstance().showDialogSuccess(fragment.getActivity(), fragment.getResources().getString(R.string.str_save_to_device_success));
             }
           }
 

@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +44,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -58,10 +60,19 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     Button btnLogin;
     @BindView(R.id.ed_user_name)
     EditText edUserName;
+    @BindView(R.id.tv_error_user_name)
+    TextView tvErrorUserName;
+
     @BindView(R.id.ed_password)
     EditText edPassword;
+    @BindView(R.id.tv_error_password)
+    TextView tvErrorPassword;
+
     @BindView(R.id.layout_register)
     LinearLayout layoutRegister;
+    @BindView(R.id.tv_error_register)
+    TextView tvErrorRegister;
+
     @BindView(R.id.layout_content)
     LinearLayout layoutContent;
     @BindView(R.id.tv_not_login)
@@ -94,11 +105,13 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 validateData();
                 break;
             case R.id.layout_register:
+                tvErrorRegister.setText("");
                 if (KeyStoreUtils.getMasterKey(getActivity()) != null) {
                     List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
                     if (null != listAccount) {
                         if (listAccount.size() > 0) {
-                            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_wallet_is_exit));
+                            tvErrorRegister.setText(getString(R.string.err_device_acc_exit));
+                            // DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_wallet_is_exit));
                         } else {
                             ((AccountActivity) getActivity()).addFragment(new FragmentRegister(), true);
                         }
@@ -143,7 +156,58 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             }
             return false;
         });
-        edPassword.setText("123456");
+        //edPassword.setText("123456");
+        Utils.disableButtonConfirm(getBaseActivity(), btnLogin, true);
+        addTextChange();
+    }
+
+    private void addTextChange() {
+        edUserName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    if(edPassword.getText().length()>0){
+                        Utils.disableButtonConfirm(getBaseActivity(), btnLogin, false);
+                    }else{
+                        Utils.disableButtonConfirm(getBaseActivity(), btnLogin, true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(), btnLogin, true);
+                }
+            }
+        });
+        edPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() >= 6) {
+                    Utils.disableButtonConfirm(getBaseActivity(), btnLogin, false);
+                } else {
+                    Utils.disableButtonConfirm(getBaseActivity(), btnLogin, true);
+                }
+
+            }
+        });
+
     }
 
     private void checkAccountExit() {
@@ -179,24 +243,27 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     private void validateData() {
         showLoading();
+        tvErrorUserName.setText("");
+        tvErrorPassword.setText("");
+        tvErrorRegister.setText("");
         userName = edUserName.getText().toString();
         pass = edPassword.getText().toString();
         if (userName.isEmpty()) {
             dismissLoading();
-            showDialogError(getString(R.string.err_not_input_username));
+            tvErrorUserName.setText(getString(R.string.err_not_input_username));
             return;
         }
 
         if (pass.isEmpty()) {
             dismissLoading();
-            showDialogError(getString(R.string.err_not_input_pass));
+            tvErrorPassword.setText(getString(R.string.err_not_input_pass));
             return;
         }
 
         if (accountInfo != null) {
             if (!userName.equals(accountInfo.getUsername())) {
                 dismissLoading();
-                showDialogError(getString(R.string.err_device_acc_exit));
+                tvErrorRegister.setText(getString(R.string.err_device_acc_exit));
                 return;
             }
         }
@@ -236,11 +303,10 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             editor.putString(Constant.DEVICE_IMEI, IMEI);
             editor.apply();
         }
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass,tvErrorUserName);
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
-        Toast.makeText(getActivity(), R.string.err_send_otp_active_account, Toast.LENGTH_LONG).show();
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
@@ -299,7 +365,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void activeAccountSuccess() {
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass,tvErrorUserName);
     }
 
     @Override

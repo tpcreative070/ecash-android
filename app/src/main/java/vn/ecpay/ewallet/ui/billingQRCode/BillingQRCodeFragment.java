@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -93,7 +92,7 @@ public class BillingQRCodeFragment extends ECashBaseFragment {
                     shareIntent.setType("image/jpeg");
                     getContext().startActivity(Intent.createChooser(shareIntent, getString(R.string.str_share)));
                 }else{
-                    Toast.makeText(getActivity(),getString(R.string.str_have_warning),Toast.LENGTH_SHORT).show();
+                    showDialogError(getString(R.string.str_have_warning));
                 }
             }
         }

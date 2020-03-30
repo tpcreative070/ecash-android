@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -186,7 +185,6 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
                     String text = tvMasterKey.getText().toString();
                     ClipData myClip = ClipData.newPlainText("text", text);
                     clipboard.setPrimaryClip(myClip);
-                    Toast.makeText(getActivity(), "copy master key thành công", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -270,10 +268,10 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             exportFile(context.getDatabasePath(Constant.DATABASE_NAME + "-wal").getAbsolutePath(), Constant.DATABASE_NAME + "-wal");
         } catch (Exception e) {
             dismissProgress();
-            Toast.makeText(getActivity(), getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
+            showDialogError( getResources().getString(R.string.err_upload));
         }
         dismissProgress();
-        Toast.makeText(getActivity(), "Export file DB thành công", Toast.LENGTH_LONG).show();
+        showDialogError(  "Export file DB thành công");
     }
 
     private File exportFile(String input, String dst) throws IOException {
@@ -290,7 +288,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             outChannel = outputStream.getChannel();
         } catch (FileNotFoundException e) {
             dismissProgress();
-            Toast.makeText(getActivity(), getResources().getString(R.string.err_upload), Toast.LENGTH_LONG).show();
+            showDialogError(getResources().getString(R.string.err_upload));
         }
 
         try {
