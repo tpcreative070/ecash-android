@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.wallet.activity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,6 +50,14 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
     EditText edtCmnd;
     @BindView(R.id.edt_email)
     EditText edtEmail;
+    @BindView(R.id.tv_name_err)
+    TextView tvNameErr;
+    @BindView(R.id.tv_address_err)
+    TextView tvAddressErr;
+    @BindView(R.id.tv_cmnd_err)
+    TextView tvCmndErr;
+    @BindView(R.id.tv_email_err)
+    TextView tvEmailErr;
     private AccountInfo accountInfo;
     private String name, address, cmnd, email;
 
@@ -86,29 +95,45 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
         cmnd = edtCmnd.getText().toString();
         email = edtEmail.getText().toString();
         if (name.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(this, getString(R.string.err_name_null));
+            tvNameErr.setVisibility(View.VISIBLE);
+            tvNameErr.setText(getString(R.string.err_name_null));
             return;
+        } else {
+            tvNameErr.setVisibility(View.GONE);
         }
 
         if (cmnd.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(this, getString(R.string.err_cmnd_null));
+            tvCmndErr.setVisibility(View.VISIBLE);
+            tvCmndErr.setText(getString(R.string.err_cmnd_null));
             return;
+        } else {
+            tvCmndErr.setVisibility(View.GONE);
         }
+
+        if (!CommonUtils.validatePassPort(cmnd)) {
+            tvCmndErr.setVisibility(View.VISIBLE);
+            tvCmndErr.setText(getString(R.string.err_validate_cmnd_fail));
+            return;
+        }else {
+            tvCmndErr.setVisibility(View.GONE);
+        }
+
         if (!email.isEmpty()) {
             if (!CommonUtils.isValidateEmail(email)) {
-                DialogUtil.getInstance().showDialogWarning(this, getString(R.string.err_email_validate_fail));
+                tvEmailErr.setVisibility(View.VISIBLE);
+                tvEmailErr.setText(getString(R.string.err_email_validate_fail));
                 return;
+            } else {
+                tvEmailErr.setVisibility(View.GONE);
             }
         }
 
         if (!CommonUtils.isValidateName(name)) {
-            DialogUtil.getInstance().showDialogWarning(this, getString(R.string.err_validate_name_fail));
+            tvNameErr.setVisibility(View.VISIBLE);
+            tvNameErr.setText(getString(R.string.err_validate_name_fail));
             return;
-        }
-
-        if (!CommonUtils.validatePassPort(cmnd)) {
-            DialogUtil.getInstance().showDialogWarning(this, getString(R.string.err_validate_cmnd_fail));
-            return;
+        } else {
+            tvNameErr.setVisibility(View.GONE);
         }
 
         updateAccountInfo();

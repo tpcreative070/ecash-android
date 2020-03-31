@@ -119,7 +119,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         String userName = ECashApplication.getAccountInfo().getUsername();
         accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
         setData();
-        cashOutPresenter.getPublicKeyOrganization(getActivity(), accountInfo);
+        cashOutPresenter.getPublicKeyOrganization(getActivity(), accountInfo, false);
     }
 
     private void setData() {
@@ -203,8 +203,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
                         if (getActivity() != null)
                             getActivity().finish();
                     }
-
-
                 });
     }
 
@@ -240,10 +238,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             return;
         }
         if (null == publicKeyOrganization) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_get_public_key_organize));
-            if (getActivity() != null)
-                getActivity().onBackPressed();
-            return;
+            cashOutPresenter.getPublicKeyOrganization(getActivity(), accountInfo, true);
         }
 
         showLoading();
@@ -336,6 +331,12 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     }
 
     @Override
+    public void loadPublicKeyOrganizeSuccessForValidate(String issuerKpValue) {
+        this.publicKeyOrganization = publicKeyOrganization;
+        validateData();
+    }
+
+    @Override
     public void showDialogError(String err) {
         DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
@@ -399,7 +400,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             }, 1000);
         }
     }
-
 
     @Override
     public void onDetach() {

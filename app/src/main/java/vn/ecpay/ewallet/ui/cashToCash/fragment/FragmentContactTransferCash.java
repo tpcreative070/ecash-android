@@ -37,7 +37,7 @@ import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.payTo.PayToActivity;
 
-public class FragmentContactTransferCash extends ECashBaseFragment{
+public class FragmentContactTransferCash extends ECashBaseFragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.edt_search)
@@ -58,7 +58,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment{
 
     public static FragmentContactTransferCash newInstance(MultiTransferListener multiTransferListener, boolean limitChoice) {
         Bundle args = new Bundle();
-        args.putSerializable(Constant.CONTACT_MULTI_TRANSFER, multiTransferListener);
+        args.putParcelable(Constant.CONTACT_MULTI_TRANSFER, multiTransferListener);
         args.putBoolean(Constant.CONTACT_MULTIPLE_CHOICE, limitChoice);
         FragmentContactTransferCash fragment = new FragmentContactTransferCash();
         fragment.setArguments(args);
@@ -72,11 +72,11 @@ public class FragmentContactTransferCash extends ECashBaseFragment{
         Bundle bundle = this.getArguments();
         try {
             if (bundle != null) {
-                this.multiTransferListener = (MultiTransferListener) bundle.getSerializable(Constant.CONTACT_MULTI_TRANSFER);
+                this.multiTransferListener = (MultiTransferListener) bundle.getParcelable(Constant.CONTACT_MULTI_TRANSFER);
                 this.limitChoice = bundle.getBoolean(Constant.CONTACT_MULTIPLE_CHOICE);
             }
-        }catch (Exception e){
-            Log.e("e",e.getMessage());
+        } catch (Exception e) {
+            Log.e("e", e.getMessage());
         }
 
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -467,4 +468,13 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         super.onDetach();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
 }

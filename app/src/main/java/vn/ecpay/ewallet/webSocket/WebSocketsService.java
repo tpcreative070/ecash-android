@@ -205,7 +205,6 @@ public class WebSocketsService extends Service {
                         Payments topayResponse = new Gson().fromJson(data, Payments.class);
                         handlePaymentRequest(topayResponse);
                         confirmMess(responseMess);
-//
                         //webSocket.send(getJsonSend(responseMess));
                         break;
                 }
