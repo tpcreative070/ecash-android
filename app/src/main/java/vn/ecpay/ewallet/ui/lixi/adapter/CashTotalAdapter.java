@@ -69,7 +69,7 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         itemViewHolder.iv_up.setOnClickListener(v -> {
             if (numberTransfer == 0) {
-                Toast.makeText(context, context.getResources().getString(R.string.err_not_input_number_username), Toast.LENGTH_LONG).show();
+                DialogUtil.getInstance().showDialogWarning(context,context.getResources().getString(R.string.err_not_input_number_username));
                 return;
             }
             if (cashTotal.getTotalDatabase() > 0) {

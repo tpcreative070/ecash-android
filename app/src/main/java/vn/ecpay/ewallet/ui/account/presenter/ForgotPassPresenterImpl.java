@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.account.presenter;
 
 import android.content.Context;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -114,7 +115,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
     }
 
     @Override
-    public void requestChangePass(ForgotPassResponseData forgotPassResponseData, String otp, String newPass, Context context) {
+    public void requestChangePass(ForgotPassResponseData forgotPassResponseData, String otp, String newPass, Context context, TextView tvErrorOTP) {
         forgotPassView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(eCashApplication.getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -141,7 +142,16 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             forgotPassView.changePassSuccess();
-                        } else {
+                        }else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_3014)){
+                            tvErrorOTP.setText(context.getString(R.string.error_message_code_3014));
+                        }
+                        else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_3016)){
+                            tvErrorOTP.setText(context.getString(R.string.error_message_code_3016));
+                        }
+                        else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_3104)){
+                            tvErrorOTP.setText(context.getString(R.string.error_message_code_3104));
+                        }
+                        else {
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {

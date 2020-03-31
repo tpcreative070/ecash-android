@@ -2,13 +2,14 @@ package vn.ecpay.ewallet.ui.wallet.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -26,25 +27,37 @@ import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.changePass.RequestChangePassword;
 import vn.ecpay.ewallet.model.changePass.response.ResponseChangePassword;
-import vn.ecpay.ewallet.model.forgotPassword.changePass.request.ChangePassRequest;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 
-public class ChangePassActivity extends ECashBaseActivity {
+public class  ChangePassActivity extends ECashBaseActivity {
     @BindView(R.id.edt_old_pass)
     EditText edtOldPass;
+    @BindView(R.id.tv_error_old_pass)
+    TextView tvErrorOldPass;
+
     @BindView(R.id.edt_new_pass)
     EditText edtNewPass;
+    @BindView(R.id.tv_error_new_pass)
+    TextView tvErrorNewPass;
+
     @BindView(R.id.edt_re_new_pass)
     EditText edtReNewPass;
+    @BindView(R.id.tv_error_re_new_pass)
+    TextView tvErrorReNewPass;
+
     @BindView(R.id.iv_back)
     ImageView ivBack;
     @BindView(R.id.toolbar_center_text)
     TextView toolbarCenterText;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.btn_confirm)
+    Button btConfirm;
+
     private String newPass;
     private String oldPass;
     private AccountInfo accountInfo;
@@ -70,51 +83,129 @@ public class ChangePassActivity extends ECashBaseActivity {
             ivBack.setOnClickListener(v -> onBackPressed());
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+        addTextChange();
     }
 
     @OnClick(R.id.btn_confirm)
     public void onViewClicked() {
-        showLoading();
+        tvErrorOldPass.setText("");
+        tvErrorNewPass.setText("");
+        tvErrorReNewPass.setText("");
         oldPass = edtOldPass.getText().toString();
         newPass = edtNewPass.getText().toString();
         String reNewPass = edtReNewPass.getText().toString();
 
         if (oldPass.isEmpty()) {
-            dismissLoading();
-            showDialogError(getString(R.string.err_old_pass_null));
+            tvErrorOldPass.setText(getString(R.string.err_old_pass_null));
             return;
         }
 
         if (newPass.isEmpty()) {
-            dismissLoading();
-            showDialogError(getString(R.string.err_new_pass_null));
+            tvErrorNewPass.setText(getString(R.string.err_new_pass_null));
             return;
         }
 
         if (reNewPass.isEmpty()) {
-            dismissLoading();
-            showDialogError(getString(R.string.err_renew_pass_null));
+            tvErrorReNewPass.setText(getString(R.string.err_renew_pass_null));
             return;
         }
 
         if (!CommonUtils.isValidatePass(newPass)) {
-            dismissLoading();
-            showDialogError(getString(R.string.err_pass_bigger_six_char));
+            tvErrorNewPass.setText(getString(R.string.err_pass_bigger_six_char));
             return;
         }
 
         if (!newPass.equals(reNewPass)) {
-            dismissLoading();
-            showDialogError(getString(R.string.err_pass_duplicate_fail));
+            tvErrorNewPass.setText(getString(R.string.err_pass_duplicate_fail));
+            tvErrorReNewPass.setText(getString(R.string.err_pass_duplicate_fail));
             return;
         }
 
         if (oldPass.equals(newPass)) {
-            dismissLoading();
-            showDialogError(getString(R.string.err_new_pass_must_other_old_pass));
+            tvErrorOldPass.setText(getString(R.string.err_new_pass_must_other_old_pass));
             return;
         }
+        showLoading();
         requestChangePass();
+    }
+
+    private void addTextChange(){
+        edtOldPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length()>0){
+                    if(edtNewPass.getText().length()>0&&edtNewPass.getText().length()>0){
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,false);
+                    }else{
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                }
+
+            }
+        });
+        edtNewPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length()>0){
+                    if(edtOldPass.getText().length()>0&&edtReNewPass.getText().length()>0){
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,false);
+                    }else{
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                }
+            }
+        });
+        edtReNewPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length()>0){
+                    if(edtOldPass.getText().length()>0&&edtNewPass.getText().length()>0){
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,false);
+                    }else{
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                }
+            }
+        });
+
+
     }
 
     private void requestChangePass() {

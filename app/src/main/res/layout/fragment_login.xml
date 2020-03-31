@@ -48,6 +48,12 @@
                 android:hint="@string/password"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword" />
+            <TextView
+                android:id="@+id/tv_error_password"
+                style="@style/TextViewErrorInput"
+                android:layout_below="@+id/ed_password"
+                android:text=""
+                />
 
             <LinearLayout
                 android:id="@+id/layout_register"
@@ -76,6 +82,14 @@
                     android:textSize="@dimen/text_xxlarge"
                     android:textStyle="bold" />
             </LinearLayout>
+            <TextView
+                android:id="@+id/tv_error_register"
+                style="@style/TextViewErrorInput"
+                android:gravity="center"
+                android:layout_below="@+id/layout_register"
+                android:text=""
+                />
+
 
             <RelativeLayout
                 android:id="@+id/layout_user_name"
@@ -94,7 +108,13 @@
                     android:ems="10"
                     android:hint="@string/hint_user_name"
                     android:imeOptions="actionNext"
-                    android:inputType="textPersonName" />
+                    android:inputType="number" />
+                <TextView
+                    android:id="@+id/tv_error_user_name"
+                    style="@style/TextViewErrorInput"
+                    android:layout_below="@+id/ed_user_name"
+                    android:text=""
+                    />
 
                 <LinearLayout
                     android:id="@+id/layout_is_exit"

@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -230,7 +229,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @SuppressLint("StaticFieldLeak")
     private void showDialogConfirm() {
         if (valueListCashChange == null || valueListCashChange.size() == 0 || valueListCashTake == null || valueListCashTake.size() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.err_upload), Toast.LENGTH_SHORT).show();
             return;
         }
         ConfirmChangeCashBottomSheet confirm = new ConfirmChangeCashBottomSheet(valueListCashChange, valueListCashTake, new ConfirmChangeCashListener() {

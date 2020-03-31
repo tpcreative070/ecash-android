@@ -86,7 +86,8 @@
                         android:ellipsize="end"
                         android:layout_toStartOf="@+id/iv_contact"
                         android:layout_centerVertical="true"
-                        android:text="@string/str_chose_wallet_transfer"
+                        android:hint="@string/str_chose_wallet_transfer"
+                        android:textColorHint="@color/grey_light"
                         android:textColor="@color/grey_light" />
 
                     <ImageView
@@ -107,6 +108,11 @@
                         android:layout_marginEnd="10dp"
                         android:layout_height="1px"/>
                 </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_error_wallet"
+                    style="@style/TextViewErrorInput"
+                    android:text=""
+                    />
 
                 <RelativeLayout
                     android:id="@+id/layout_qr_code"
@@ -199,6 +205,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="1px"
                     android:background="@color/gray_light" />
+                <TextView
+                    android:id="@+id/tv_error_amount"
+                    style="@style/TextViewErrorInput"
+                    android:text=""
+                    />
 
                 <EditText
                     android:id="@+id/edt_content"
@@ -212,6 +223,11 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:textSize="@dimen/text_normal" />
+                <TextView
+                    android:id="@+id/tv_error_content"
+                    style="@style/TextViewErrorInput"
+                    android:text=""
+                    />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

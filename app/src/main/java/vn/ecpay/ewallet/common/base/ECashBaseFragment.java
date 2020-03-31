@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import java.util.NoSuchElementException;
@@ -74,6 +75,12 @@ public abstract class ECashBaseFragment extends Fragment {
             DialogUtil.getInstance().showDialogWarning(getActivity(), msg);
         }
     }
+    protected void showDialogSuccess(String msg){
+        if (getActivity() instanceof ECashBaseActivity) {
+            DialogUtil.getInstance().showDialogSuccess(getActivity(), msg);
+        }
+
+    }
     protected Fragment getCurrentFragment() {
         try {
             return ((ECashBaseActivity)getActivity()).getCurrentFragment();
@@ -84,6 +91,9 @@ public abstract class ECashBaseFragment extends Fragment {
 
     protected String getCurrentActivity() {
         return ((ECashBaseActivity)getActivity()).getCurrentActivity();
+    }
+    protected AppCompatActivity getBaseActivity() {
+        return ((ECashBaseActivity)getActivity()).getBaseActivity();
     }
 
     /**

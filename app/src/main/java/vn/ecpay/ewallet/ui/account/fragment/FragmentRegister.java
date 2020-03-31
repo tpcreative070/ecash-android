@@ -8,12 +8,13 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +40,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
@@ -49,18 +51,37 @@ import vn.ecpay.ewallet.ui.account.view.RegisterView;
 public class FragmentRegister extends ECashBaseFragment implements RegisterView {
     @BindView(R.id.edt_user_name)
     EditText edtUserName;
+    @BindView(R.id.tv_error_user_name)
+    TextView tvErrorUsername;
+
     @BindView(R.id.edt_name)
     EditText edtName;
+    @BindView(R.id.tv_error_name)
+    TextView tvErrorName;
+
     @BindView(R.id.edt_cmnd)
     EditText edtCmnd;
+    @BindView(R.id.tv_error_cmnd)
+    TextView tvErrorCMNN;
+
     @BindView(R.id.edt_pass)
     EditText edtPass;
+    @BindView(R.id.tv_error_pass)
+    TextView tvErrorPass;
+
     @BindView(R.id.edt_re_pass)
     EditText edtRePass;
-    @BindView(R.id.btn_confirm)
-    Button edtConfirm;
+    @BindView(R.id.tv_error_re_pass)
+    TextView tvErrorRePass;
+
     @BindView(R.id.edt_phone)
     EditText edtPhone;
+    @BindView(R.id.tv_error_phone)
+    TextView tvErrorPhone;
+
+    @BindView(R.id.btn_confirm)
+    Button edtConfirm;
+
     @Inject
     RegisterPresenter registerPresenter;
     @BindView(R.id.toolbar_center_text)
@@ -81,12 +102,14 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         registerPresenter.onViewCreate();
 
         toolbarCenterText.setText(getResources().getString(R.string.str_register_account));
+        Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
         edtUserName.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (!edtUserName.getText().toString().isEmpty()) {
+                    tvErrorUsername.setText("");
                     String userName = edtUserName.getText().toString();
                     if (!CommonUtils.isValidateUserName(userName)) {
-                        DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_validate_user_name_fail));
+                        tvErrorUsername.setText( getString(R.string.err_validate_user_name_fail));
                     } else {
                         registerPresenter.checkUSerNameAccount(userName);
                     }
@@ -98,8 +121,9 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             if (!hasFocus) {
                 if (!edtName.getText().toString().isEmpty()) {
                     String name = edtName.getText().toString();
+                    tvErrorName.setText("");
                     if (!CommonUtils.isValidateName(name))
-                        DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_validate_name_fail));
+                        tvErrorName.setText(getString(R.string.err_validate_name_fail));
                 }
             }
         });
@@ -107,8 +131,9 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         edtCmnd.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (!edtCmnd.getText().toString().isEmpty()) {
+                    tvErrorCMNN.setText("");
                     if (!CommonUtils.validatePassPort(edtCmnd.getText().toString())) {
-                        DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_validate_cmnd_fail));
+                        tvErrorCMNN.setText(getString(R.string.err_validate_cmnd_fail));
                         return;
                     }
                 }
@@ -123,8 +148,9 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         edtPhone.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (!edtPhone.getText().toString().isEmpty()) {
+                    tvErrorPhone.setText("");
                     if (!CommonUtils.isValidatePhoneNumber(edtPhone.getText().toString())) {
-                        DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_validate_phone_fail));
+                        tvErrorPhone.setText(getResources().getString(R.string.err_validate_phone_fail));
                         return;
                     }
                 }
@@ -143,6 +169,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             }
             return false;
         });
+        addTextChange();
     }
 
 
@@ -182,6 +209,12 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     }
 
     private void validateData() {
+        tvErrorUsername.setText("");
+        tvErrorName.setText("");
+        tvErrorPass.setText("");
+        tvErrorRePass.setText("");
+        tvErrorCMNN.setText("");
+        tvErrorPhone.setText("");
         userName = edtUserName.getText().toString();
         name = edtName.getText().toString();
         cmnd = edtCmnd.getText().toString();
@@ -190,84 +223,85 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         rePass = edtRePass.getText().toString();
         showProgress();
         if (userName.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_user_name_null));
+            tvErrorUsername.setText(getString(R.string.err_user_name_null));
             dismissProgress();
             return;
         }
 
         if (userName.length() <= 3) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_user_name_lenght));
+            tvErrorUsername.setText(getString(R.string.err_user_name_lenght));
             dismissProgress();
             return;
         }
 
         if (name.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_name_null));
+            tvErrorName.setText(getString(R.string.err_name_null));
             dismissProgress();
             return;
         }
 
         if (name.length() <= 2) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_name_lenght));
+            tvErrorName.setText(getString(R.string.err_name_lenght));
             dismissProgress();
             return;
         }
 
         if (cmnd.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_cmnd_null));
+            tvErrorCMNN.setText(getString(R.string.err_cmnd_null));
             dismissProgress();
             return;
         }
 
         if (phone.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_phone_null));
+            tvErrorPhone.setText(getString(R.string.err_phone_null));
             dismissProgress();
             return;
         }
 
         if (pass.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_pass_null));
+            tvErrorPass.setText(getString(R.string.err_pass_null));
             dismissProgress();
             return;
         }
 
         if (rePass.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_repass_null));
+            tvErrorRePass.setText(getString(R.string.err_repass_null));
             dismissProgress();
             return;
         }
 
         if (!CommonUtils.isValidatePass(pass)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_pass_bigger_six_char));
+            tvErrorPass.setText(getString(R.string.err_pass_bigger_six_char));
             dismissProgress();
             return;
         }
 
         if (!pass.equals(rePass)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_pass_duplicate_fail));
+            tvErrorPass.setText(getString(R.string.err_pass_duplicate_fail));
+            tvErrorRePass.setText(getString(R.string.err_pass_duplicate_fail));
             dismissProgress();
             return;
         }
 
         if (!CommonUtils.isValidateUserName(userName)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_validate_user_name_fail));
+            tvErrorUsername.setText(getString(R.string.err_validate_user_name_fail));
             dismissProgress();
             return;
         }
 
         if (!CommonUtils.isValidateName(name)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_validate_name_fail));
+            tvErrorName.setText(getString(R.string.err_validate_name_fail));
             return;
         }
 
         if (!CommonUtils.validatePassPort(cmnd)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_validate_cmnd_fail));
+            tvErrorCMNN.setText(getString(R.string.err_validate_cmnd_fail));
             dismissProgress();
             return;
         }
 
         if (!CommonUtils.isValidatePhoneNumber(phone)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_validate_phone_fail));
+            tvErrorPhone.setText(getString(R.string.err_validate_phone_fail));
             dismissProgress();
             return;
         }
@@ -283,8 +317,158 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         }
     }
 
+    private void addTextChange() {
+        edtUserName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(getText()){
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                }
+            }
+        });
+        edtName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(getText()){
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                }
+            }
+        });
+        edtPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(getText()){
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                }
+            }
+        });
+        edtRePass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(getText()){
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                }
+            }
+        });
+        edtPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(getText()){
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                }
+            }
+        });
+        edtCmnd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(getText()){
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                }
+            }
+        });
+    }
+    private boolean getText(){
+        userName = edtUserName.getText().toString();
+        name = edtName.getText().toString();
+        cmnd = edtCmnd.getText().toString();
+        phone = edtPhone.getText().toString();
+        pass = edtPass.getText().toString();
+        rePass = edtRePass.getText().toString();
+        boolean check =true;
+        if(userName.length()==0){
+           check =false;
+        }
+        if(name.length()==0){
+            check =false;
+        }
+        if(cmnd.length()==0){
+            check =false;
+        }
+        if(phone.length()==0){
+            check =false;
+        }
+        if(pass.length()==0){
+            check =false;
+        }
+        if(rePass.length()==0){
+            check =false;
+        }
+        return check;
+    }
+
     public void requestOTPSuccess(AccountInfo accountInfo) {
-        Toast.makeText(getActivity(), R.string.str_send_otp_success, Toast.LENGTH_LONG).show();
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {
@@ -409,7 +593,6 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void onSyncContactSuccess() {
-        Toast.makeText(getActivity(), getResources().getString(R.string.str_sync_contact_success), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -419,7 +602,6 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void onOTPexpried() {
-        Toast.makeText(getActivity(), getResources().getString(R.string.error_message_code_3016), Toast.LENGTH_SHORT).show();
         if (null != getActivity())
             ((AccountActivity) getActivity()).onBackPressed();
     }

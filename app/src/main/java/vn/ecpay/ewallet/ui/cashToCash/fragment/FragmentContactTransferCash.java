@@ -107,19 +107,6 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
             }
         });
     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.e("onStop", "onStop");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.e("onPause", "onPause");
-    }
-
     private void setAdapterTextChange(String filter) {
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
         List<Contact> transferModelArrayList = WalletDatabase.getListContactFilter(CommonUtils.getParamFilter(filter), accountInfo.getWalletId());
@@ -169,17 +156,10 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                if (getActivity() != null && getCurrentActivity() != null) {
-                    //Toast.makeText(getActivity(),getCurrentActivity(),Toast.LENGTH_LONG).show();
-                    if (getCurrentActivity().equals((CashToCashActivity.class.getName()))) {
-                        (getActivity()).onBackPressed();
-                    } else if (getCurrentActivity().equals((PayToActivity.class.getName()))) {
-                        getActivity().onBackPressed();
-                    } else if (getCurrentActivity().equals((MyLixiActivity.class.getName()))) {
-                        (getActivity()).onBackPressed();
-                    }
+                if(getBaseActivity()!=null){
+                    Log.e("getBaseActivity() ",getBaseActivity().getLocalClassName());
+                    getBaseActivity().onBackPressed();
                 }
-
                 break;
             case R.id.tv_done:
                 if (CommonUtils.getListTransfer(mSectionList).size() > 0) {

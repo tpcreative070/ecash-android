@@ -110,6 +110,24 @@ public class ToPayFragment extends ECashBaseFragment {
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
     }
+    private void updateBalance(){
+        long numberCash = WalletDatabase.getAllCash().size();
+        if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
+            if (getActivity() != null)
+                getActivity().runOnUiThread(() -> {
+                    WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+                    balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+                    tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
+                });
+        }else{
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    updateBalance();
+                }
+            }, 1000);
+        }
+    }
     @OnClick({R.id.iv_back,R.id.btn_confirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -194,18 +212,7 @@ public class ToPayFragment extends ECashBaseFragment {
     public void updateData(EventDataChange event) {
         //Log.e("event topay ",event.getData());
         if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
-
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        if (getActivity() == null) return;
-                        getActivity().runOnUiThread(() -> setData());
-                    } catch (NullPointerException e) {
-                        return;
-                    }
-                }
-            }, 5000);
+            updateBalance();
         }
         EventBus.getDefault().removeStickyEvent(event);
     }

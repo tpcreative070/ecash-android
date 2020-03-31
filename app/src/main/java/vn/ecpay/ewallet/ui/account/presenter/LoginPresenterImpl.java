@@ -2,6 +2,7 @@ package vn.ecpay.ewallet.ui.account.presenter;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -79,7 +80,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass) {
+    public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass, TextView tvError) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -128,7 +129,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                             }
                         } else if (response.body().getResponseCode().equals(ERROR_CODE_3035)) {
                             loginView.dismissLoading();
-                            loginView.showDialogError(application.getString(R.string.err_user_not_exit));
+                            tvError.setText(context.getString(R.string.err_user_not_exit));
                         } else if (response.body().getResponseCode().equals(ERROR_CODE_3019)) {
                             loginView.dismissLoading();
                             loginView.showDialogError(context.getResources().getString(R.string.error_message_code_login_3019));

@@ -111,6 +111,7 @@ public class PaymentCashChangeHandler {
                 } else {
                     activity.dismissLoading();
                     activity.showDialogError(application.getString(R.string.err_upload));
+                    activity.restartSocket();
                 }
             }
 
@@ -160,14 +161,17 @@ public class PaymentCashChangeHandler {
                         } else {
                             activity.dismissLoading();
                             CheckErrCodeUtil.errorMessage(activity, response.body().getResponseCode());
+                            activity.restartSocket();
                         }
                     } else {
                         activity.dismissLoading();
                         activity.showDialogError(response.body().getResponseMessage());
+                        activity.restartSocket();
                     }
                 } else {
                     activity.dismissLoading();
                     activity.showDialogError(application.getString(R.string.err_upload));
+                    activity.restartSocket();
                 }
             }
 
@@ -175,6 +179,7 @@ public class PaymentCashChangeHandler {
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 activity.dismissLoading();
                 activity.showDialogError(application.getString(R.string.err_upload));
+                activity.restartSocket();
             }
         });
     }
@@ -227,6 +232,7 @@ public class PaymentCashChangeHandler {
             public void onFailure(Call<ResponseGetAccountWalletInfo> call, Throwable t) {
                 listener.getFullName("");
                 activity.dismissLoading();
+                activity.restartSocket();
             }
         });
 
@@ -242,6 +248,7 @@ public class PaymentCashChangeHandler {
             @Override
             public void OnListenerCancel() {
                 activity.dismissLoading();
+                activity.restartSocket();
             }
         });
     }
@@ -546,6 +553,7 @@ public class PaymentCashChangeHandler {
 
     private void showDialogCannotPayment() {
         DialogUtil.getInstance().showDialogCannotPayment(activity);
+        activity.restartSocket();
     }
 
     private void handleToPay(List<CashTotal> listCash, Payment_DataBase payToRequest) {
@@ -569,12 +577,14 @@ public class PaymentCashChangeHandler {
             public void onUpdateMasterFail(String code) {
                 activity.dismissLoading();
                 CheckErrCodeUtil.errorMessage(getActivity(), code);
+                activity.restartSocket();
             }
 
             @Override
             public void onRequestTimeout() {
                 activity.dismissLoading();
                 activity.showDialogError(activity.getResources().getString(R.string.err_upload));
+                activity.restartSocket();
             }
         });
     }
