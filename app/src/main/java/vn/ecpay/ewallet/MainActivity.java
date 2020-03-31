@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -73,7 +72,7 @@ public class MainActivity extends ECashBaseActivity {
                 return;
             }
             if (CommonUtils.isAccountExit(this)) {
-                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+                showDialogError(getString(R.string.str_dialog_active_acc));
             } else {
                 tabHost.setCurrentTab(1);
             }
@@ -86,7 +85,7 @@ public class MainActivity extends ECashBaseActivity {
                 return;
             }
             if (CommonUtils.isAccountExit(this)) {
-                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+                showDialogError(getString(R.string.str_dialog_active_acc));
             } else {
                 tabHost.setCurrentTab(3);
             }
@@ -99,7 +98,7 @@ public class MainActivity extends ECashBaseActivity {
                 return;
             }
             if (CommonUtils.isAccountExit(this)) {
-                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+                showDialogError(getString(R.string.str_dialog_active_acc));
             } else {
                 tabHost.setCurrentTab(4);
             }
@@ -111,7 +110,7 @@ public class MainActivity extends ECashBaseActivity {
                 return;
             }
             if (CommonUtils.isAccountExit(this)) {
-                Toast.makeText(this, getString(R.string.str_dialog_active_acc), Toast.LENGTH_LONG).show();
+                showDialogError(getString(R.string.str_dialog_active_acc));
                 return;
             }
             Intent intentCashIn = new Intent(this, QRCodeActivity.class);

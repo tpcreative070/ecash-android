@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -605,7 +604,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         updateActiveAccount();
         homePresenter.getCashValues(accountInfo, getActivity());
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_ACCOUNT_LOGIN));
-        Toast.makeText(getActivity(), getString(R.string.str_active_account_success), Toast.LENGTH_LONG).show();
     }
 
     private void addMyContact(AccountInfo mAccountInfo) {
@@ -625,7 +623,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void onSyncContactSuccess() {
-        Toast.makeText(getActivity(), getString(R.string.str_sync_contact_success), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -636,7 +633,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     public void onGetOTPActiveAccountSuccess(ResponseData responseData, String publicKeyBase64) {
         accountInfo.setEcKeyPublicValue(publicKeyBase64);
-        Toast.makeText(getActivity(), getResources().getString(R.string.str_send_otp_success), Toast.LENGTH_LONG).show();
         DialogUtil.getInstance().showDialogInputOTP(getActivity(), "", "", "", new DialogUtil.OnConfirmOTP() {
             @Override
             public void onSuccess(String otp) {

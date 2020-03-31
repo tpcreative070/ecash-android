@@ -2,9 +2,12 @@ package vn.ecpay.ewallet.ui.account.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -20,6 +23,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
+import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.model.forgotPassword.getOTP.response.ForgotPassResponseData;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
@@ -30,10 +34,24 @@ import vn.ecpay.ewallet.ui.account.view.ForgotPassView;
 public class ForgotChangePassFragment extends ECashBaseFragment implements ForgotPassView {
     @BindView(R.id.edt_otp)
     EditText edtOtp;
+    @BindView(R.id.tv_error_otp)
+    TextView tvErrorOTP;
+
+
     @BindView(R.id.edt_new_pass)
     EditText edtNewPass;
+    @BindView(R.id.tv_error_new_pass)
+    TextView tvErrorNewPass;
+
     @BindView(R.id.edt_re_new_pass)
     EditText edtReNewPass;
+    @BindView(R.id.tv_error_re_new_pass)
+    TextView tvErrorReNewPass;
+
+    @BindView(R.id.btn_confirm)
+    Button btConfirm;
+
+
     private ForgotPassResponseData forgotPassResponseData;
     private String userName, otp, newPass, reNewPass;
     @Inject
@@ -67,6 +85,8 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
         ECashApplication.get(getActivity()).getApplicationComponent().plus(new ForgotPassModule(this)).inject(this);
         forgotPassPresenter.setView(this);
         forgotPassPresenter.onViewCreate();
+        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+        addTextChange();
     }
 
     @Override
@@ -79,6 +99,7 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_send_again_code:
+                tvErrorOTP.setText("");
                 forgotPassPresenter.getOTPForgotPassword(userName, getActivity());
                 break;
             case R.id.btn_confirm:
@@ -88,6 +109,9 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
     }
 
     private void validateData() {
+        tvErrorOTP.setText("");
+        tvErrorNewPass.setText("");
+        tvErrorReNewPass.setText("");
         otp = edtOtp.getText().toString();
         newPass = edtNewPass.getText().toString();
         reNewPass = edtReNewPass.getText().toString();
@@ -96,25 +120,27 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
             return;
         }
         if (otp.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_input_otp_null));
-            return;
+            tvErrorOTP.setText(getResources().getString(R.string.err_input_otp_null));
+        return;
         }
         if (newPass.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_pass_null));
+            tvErrorNewPass.setText(getResources().getString(R.string.err_pass_null));
             return;
         }
         if (reNewPass.isEmpty()) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_repass_null));
+            tvErrorReNewPass.setText(getResources().getString(R.string.err_repass_null));
             return;
         }
 
         if (!CommonUtils.isValidatePass(newPass)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_pass_bigger_six_char));
+            tvErrorNewPass.setText(getResources().getString(R.string.err_pass_bigger_six_char));
+            tvErrorReNewPass.setText(getResources().getString(R.string.err_pass_bigger_six_char));
             return;
         }
 
         if (!newPass.equals(reNewPass)) {
-            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_pass_duplicate_fail));
+            tvErrorNewPass.setText(getResources().getString(R.string.err_pass_duplicate_fail));
+            tvErrorReNewPass.setText(getResources().getString(R.string.err_pass_duplicate_fail));
             return;
         }
 
@@ -125,7 +151,7 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
         if (null == forgotPassResponseData) {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_upload));
         }
-        forgotPassPresenter.requestChangePass(forgotPassResponseData, otp, newPass, getActivity());
+        forgotPassPresenter.requestChangePass(forgotPassResponseData, otp, newPass, getActivity(),tvErrorOTP);
     }
 
     @Override
@@ -148,7 +174,6 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
 
     @Override
     public void getOTPSuccess(ForgotPassResponseData forgotPassOTPResponse) {
-        Toast.makeText(getActivity(), getResources().getString(R.string.str_send_otp_success), Toast.LENGTH_LONG).show();
         this.forgotPassResponseData = forgotPassOTPResponse;
     }
 
@@ -160,5 +185,82 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
     @Override
     public void dismissLoading() {
         dismissProgress();
+    }
+    private void addTextChange(){
+        edtOtp.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length()>0){
+                    if(edtNewPass.getText().length()>0&&edtReNewPass.getText().length()>0){
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,false);
+                    }else{
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                }
+
+            }
+        });
+        edtNewPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length()>0){
+                    if(edtOtp.getText().length()>0&&edtReNewPass.getText().length()>0){
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,false);
+                    }else{
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                }
+
+            }
+        });
+        edtReNewPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length()>0){
+                    if(edtOtp.getText().length()>0&&edtNewPass.getText().length()>0){
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,false);
+                    }else{
+                        Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                    }
+                }else{
+                    Utils.disableButtonConfirm(getBaseActivity(),btConfirm,true);
+                }
+            }
+        });
+
     }
 }

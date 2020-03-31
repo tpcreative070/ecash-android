@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -212,7 +211,6 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
                                 WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
                                 WalletDatabase.updateAccountAvatar(encodedImage, accountInfo.getUsername());
                                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_AVARTAR));
-                                Toast.makeText(context, context.getResources().getString(R.string.str_update_avatar_success), Toast.LENGTH_LONG).show();
                             } else {
                                 accountInfoView.showDialogError(application.getString(R.string.err_upload));
                             }

@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -159,6 +158,26 @@ public class DialogUtil {
             });
         }
     }
+    public void showDialogSuccess(Context pContext, String message) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_confirm_change_pass_success);
+            Button btnOk;
+            TextView tvTitle, tvMessage;
+            btnOk = mDialog.findViewById(R.id.btnOk);
+            tvTitle = mDialog.findViewById(R.id.tvTitle);
+            tvMessage = mDialog.findViewById(R.id.tvContent);
+            tvMessage.setText(message);
+            btnOk.setText("OK");
+            tvTitle.setVisibility(View.GONE);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+            });
+        }
+    }
 
     public void showDialogCancelAccountSuccess(Context pContext, String title, String message, final OnResult pOnConfirm) {
         if (!isShowing() && pContext != null) {
@@ -185,7 +204,7 @@ public class DialogUtil {
             mDialog.setContentView(R.layout.dialog_cancel_account_success);
             Button btnOk;
             btnOk = mDialog.findViewById(R.id.btn_go_home);
-            TextView textView = mDialog.findViewById(R.id.tv_content);
+            TextView textView = mDialog.findViewById(R.id.tvContent);
             textView.setText(message);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
@@ -375,7 +394,7 @@ public class DialogUtil {
                         dismissDialog();
                         onResultChoseCash.OnListenerOk(valuesList);
                     } else {
-                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_chose_money_transfer), Toast.LENGTH_LONG).show();
+                        showDialogWarning(pContext,pContext.getResources().getString(R.string.err_chose_money_transfer));
                     }
                 }
             });
@@ -416,7 +435,7 @@ public class DialogUtil {
                         dismissDialog();
                         onResultChoseCash.OnListenerOk(valuesList);
                     } else {
-                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_chose_money_transfer), Toast.LENGTH_LONG).show();
+                        showDialogWarning(pContext,pContext.getResources().getString(R.string.err_chose_money_transfer));
                     }
                 }
             });
@@ -486,10 +505,10 @@ public class DialogUtil {
                             onContactUpdate.OnListenerOk(name);
                         }
                     } else {
-                        Toast.makeText(pContext, pContext.getResources().getString(R.string.err_validate_name_contact), Toast.LENGTH_SHORT).show();
+                        showDialogWarning(pContext,pContext.getResources().getString(R.string.err_validate_name_contact));
                     }
                 } else {
-                    Toast.makeText(pContext, pContext.getResources().getString(R.string.err_contact_empty), Toast.LENGTH_SHORT).show();
+                    showDialogWarning(pContext,pContext.getResources().getString(R.string.err_contact_empty));
                 }
             });
             mDialog.show();
@@ -546,7 +565,7 @@ public class DialogUtil {
 
             btnVn.setOnClickListener(v -> {
                 if (LanguageUtils.getCurrentLanguage().getCode().equals(pContext.getResources().getString(R.string.language_vietnamese_code))) {
-                    Toast.makeText(pContext, pContext.getResources().getString(R.string.err_current_language_conflict), Toast.LENGTH_LONG).show();
+                    showDialogSuccess(pContext,pContext.getResources().getString(R.string.err_current_language_conflict));
                     return;
                 }
 
@@ -561,7 +580,6 @@ public class DialogUtil {
             });
             btnEn.setOnClickListener(v -> {
                 if (LanguageUtils.getCurrentLanguage().getCode().equals(pContext.getResources().getString(R.string.language_english_code))) {
-                    Toast.makeText(pContext, pContext.getResources().getString(R.string.err_current_language_conflict), Toast.LENGTH_LONG).show();
                     return;
                 }
                 dismissDialog();

@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -287,7 +286,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 
     private void cashOutSuccess() {
         dismissProgress();
-        Toast.makeText(getActivity(), getString(R.string.str_saved), Toast.LENGTH_SHORT).show();
+
     }
 
     private ArrayList<Uri> genericListUri() {
