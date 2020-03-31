@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.List;
 
 import vn.ecpay.ewallet.R;
@@ -18,7 +19,7 @@ import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.ui.callbackListener.UpDownMoneyListener;
 
-public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private Context context;
     private List<CashTotal> listCashValue;
     private UpDownMoneyListener upDownMoneyListener;

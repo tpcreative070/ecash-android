@@ -10,4 +10,6 @@ public interface CashOutView extends BaseView {
     void sendECashToEDongSuccess();
 
     void getEDongInfoSuccess();
+
+    void loadPublicKeyOrganizeSuccessForValidate(String issuerKpValue);
 }
