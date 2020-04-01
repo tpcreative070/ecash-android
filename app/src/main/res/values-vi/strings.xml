@@ -363,11 +363,12 @@
     <string name="str_wallet_receive">Ví nhận:</string>
     <string name="str_saved">Đã lưu</string>
     <string name="str_error_connection">Lỗi kết nối</string>
-    <string name="str_error_connection_internet">Bạn vui lòng kiểm tra kết nối mạng hoặc thử lại sau ít phút.</string>
+    <string name="str_error_connection_internet">Bạn vui lòng kiểm tra kết nối mạng \nhoặc thử lại sau ít phút.</string>
     <string name="str_error_connection_request_timeout">Hết thời gian yêu cầu.</string>
     <string name="str_error_connection_internal_server">Lỗi hệ thống</string>
     <string name="str_error_not_enough_balance_edong">Không đủ số dư eDong</string>
     <string name="str_error_not_enough_balance_please_try_again">Số dư ví không đủ, vui lòng chọn lại</string>
+    <string name="str_try_again">Thử lại</string>
 </resources>
 
 

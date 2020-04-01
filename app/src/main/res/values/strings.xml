@@ -6,6 +6,7 @@
     <string name="language_vietnamese_code" translatable="false">vi</string>
     <string name="string_zero" translatable="false">0</string>
     <string name="string_todo" translatable="false">TODO</string>
+    <string name="string_ok" translatable="false">OK</string>
 
     <string name="receiver">Receiver: </string>
     <string name="sender">Sender: </string>
@@ -369,9 +370,10 @@
     <string name="str_wallet_receive">Wallet receive:</string>
     <string name="str_saved">Saved</string>
     <string name="str_error_connection">Connection errors</string>
-    <string name="str_error_connection_internet">Please check your network connection or try again in a few minutes.</string>
+    <string name="str_error_connection_internet">Please check your network connection \nor try again in a few minutes.</string>
     <string name="str_error_connection_request_timeout">Request Timeout</string>
     <string name="str_error_connection_internal_server">Internal Server Error</string>
     <string name="str_error_not_enough_balance_edong">Not enough balance eDong</string>
     <string name="str_error_not_enough_balance_please_try_again">Wallet balance is not sufficient, please select again</string>
+    <string name="str_try_again">Try again</string>
 </resources>
