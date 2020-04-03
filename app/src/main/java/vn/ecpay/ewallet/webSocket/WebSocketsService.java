@@ -244,7 +244,7 @@ public class WebSocketsService extends Service {
         return gson.toJson(requestReceived);
     }
 
-    private void updateMasterKey(){
+    private void updateMasterKey() {
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
@@ -254,10 +254,12 @@ public class WebSocketsService extends Service {
 
             @Override
             public void onUpdateMasterFail(String code) {
+                isRunning = false;
             }
 
             @Override
             public void onRequestTimeout() {
+                isRunning = false;
             }
         });
     }
@@ -299,6 +301,8 @@ public class WebSocketsService extends Service {
 
     private void putNotificationMoneyChange(ResponseMessSocket responseMess, Long totalMoney) {
         String message = "Quý khách đã nhận được số tiền " + CommonUtils.formatPriceVND(totalMoney) + " từ số ví: " + responseMess.getSender();
+        DatabaseUtil.saveNotification(getApplicationContext(), "Thông báo biến động số dư", message);
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_NOTIFICATION));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String id = "_channel_01";
             int importance = NotificationManager.IMPORTANCE_LOW;
@@ -363,7 +367,7 @@ public class WebSocketsService extends Service {
     public void onDestroy() {
         super.onDestroy();
         isRunning = false;
-        Log.e("Soccket","Socket server tèo rồi T_T");
+        Log.e("Soccket", "Socket server tèo rồi T_T");
         EventBus.getDefault().unregister(this);
     }
 }

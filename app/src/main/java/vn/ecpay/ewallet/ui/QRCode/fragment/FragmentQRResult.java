@@ -15,8 +15,6 @@ import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.TransactionHistory.fragment.FragmentTransactionsHistoryDetail;
 
 public class FragmentQRResult extends FragmentTransactionsHistoryDetail {
-//    @BindView(R.id.toolbar_center_text)
-//    TextView toolbar_center_text;
 
     public static FragmentQRResult newInstance(TransactionsHistoryModel transactionsHistoryModel) {
         Bundle args = new Bundle();
@@ -24,18 +22,6 @@ public class FragmentQRResult extends FragmentTransactionsHistoryDetail {
         FragmentQRResult fragment = new FragmentQRResult();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    protected int getLayoutResId() {
-      //  return R.layout.fragment_scan_qr_result;
-        return R.layout.transactions_history_fragment;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-       // toolbar_center_text.setText(getResources().getString(R.string.str_transactions_history_detail));
     }
 
     @OnClick(R.id.iv_back)

@@ -29,7 +29,7 @@
     <string name="str_done">Done</string>
     <string name="str_exit">Exit</string>
     <string name="str_continute">Continue</string>
-    <string name="str_clear_filter">Clear search</string>
+    <string name="str_clear_filter">Refresh</string>
     <string name="str_delete_all_notification">You have deleted all notifications</string>
     <string name="str_confirm_delete_notification">Are you sure you want to delete all notifications</string>
 
@@ -226,6 +226,9 @@
     <string name="err_old_pass_null">You have not entered the old password</string>
     <string name="err_new_pass_null">You have not entered a new password</string>
     <string name="err_renew_pass_null">You have not entered a new password</string>
+    <string name="err_name_fist">Họ không quá 32 ký </string>
+    <string name="err_name_middle">Tên đệm không quá 32 ký </string>
+    <string name="err_name_last">Tên không quá 32 ký tự</string>
     <string name="err_pass_null">You have not entered the password</string>
     <string name="err_repass_null">You have not entered your password</string>
     <string name="err_nmnd_is_exit">ID or SDT number already exists on the system</string>
@@ -334,7 +337,7 @@
     <string name="error_message_code_1006">The identity card number already exists in the system</string>
     <string name="error_message_code_3034">The username already exists</string>
     <string name="error_message_code_0998">user name is at least 3 characters</string>
-    <string name="error_message_code_3024">Phone number already exists</string>
+    <string name="error_message_code_1094">Phone number already exists</string>
     <string name="error_message_code_3019">Password is changed. Please log in again</string>
     <string name="error_message_code_login_3019">The password you entered is incorrect</string>
     <string name="error_message_code_3014">Incorrect authentication code</string>

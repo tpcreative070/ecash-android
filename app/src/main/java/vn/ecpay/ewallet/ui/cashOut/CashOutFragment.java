@@ -268,9 +268,9 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
             @Override
             public void onRequestTimeout() {
-                dismissLoading();
-                showDialogError(getResources().getString(R.string.err_upload));
+
             }
+
         });
     }
 

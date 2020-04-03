@@ -161,21 +161,13 @@ public class ECashApplication extends Application {
         if (DialogUtil.getInstance().isShowing()) {
             DialogUtil.getInstance().dismissDialog();
         }
-        DialogUtil.getInstance().showDialogConfirm(getActivity(), messenger, new DialogUtil.OnConfirm() {
+        DialogUtil.getInstance().showDialogSessionTimeO(getActivity(), messenger, new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
                 Intent intent = new Intent(getActivity(), AccountActivity.class);
                 intent.putExtra(Constant.IS_SESSION_TIMEOUT, true);
                 getActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
-
-            @Override
-            public void OnListenerCancel() {
-                Intent intent = new Intent(getActivity(), AccountActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                getActivity().startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
     }

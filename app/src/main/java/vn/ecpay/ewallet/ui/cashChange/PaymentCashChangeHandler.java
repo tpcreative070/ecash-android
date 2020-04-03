@@ -582,9 +582,7 @@ public class PaymentCashChangeHandler {
 
             @Override
             public void onRequestTimeout() {
-                activity.dismissLoading();
-                activity.showDialogError(activity.getResources().getString(R.string.err_upload));
-                activity.restartSocket();
+
             }
         });
     }

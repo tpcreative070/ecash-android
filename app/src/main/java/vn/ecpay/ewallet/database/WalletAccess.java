@@ -101,7 +101,7 @@ public interface WalletAccess {
     @Query("DELETE From CONTACTS WHERE walletId = :strWalletId")
     void deleteContact(Long strWalletId);
 
-    @Query("SELECT publicKeyValue, phone, walletId, fullName, status, 0 as isSection , 0 as isAddTransfer FROM CONTACTS Where (phone LIKE :name OR fullName like :name) AND walletId <>:myWalletId AND status = '1'")
+    @Query("SELECT publicKeyValue, phone, walletId, fullName, status, 0 as isSection , 0 as isAddTransfer FROM CONTACTS Where (phone LIKE :name OR fullName like :name OR walletId like :name) AND walletId <>:myWalletId AND status = '1'")
     List<Contact> getAllContactFilter(String name, Long myWalletId);
 
     @Query("UPDATE CONTACTS SET fullName=:name WHERE walletId = :walletId")
@@ -254,6 +254,7 @@ public interface WalletAccess {
             "IFNULL((SELECT SUM(CASH_LOGS.parValue) FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature), 0) AS transactionAmount, " +
             "IFNULL((SELECT DISTINCT CASH_LOGS.type FROM CASH_LOGS WHERE CASH_LOGS.transactionSignature = TRAN.transactionSignature),'') AS cashLogType, " +
             "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
+            "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.senderAccountId), '') AS senderPhone, " +
             "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT AS TIMEOUT " +
             "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) AS transactionStatus FROM TRANSACTIONS_LOGS AS TRAN WHERE TRAN.transactionSignature =:transactionSignature")
     TransactionsHistoryModel getCurrentTransactionsHistory(String transactionSignature);

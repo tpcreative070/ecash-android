@@ -240,7 +240,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             return;
         }
 
-        if (name.length() <= 2) {
+        if (name.length() < 2) {
             tvErrorName.setText(getString(R.string.err_name_lenght));
             dismissProgress();
             return;
@@ -277,7 +277,6 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         }
 
         if (!pass.equals(rePass)) {
-            tvErrorPass.setText(getString(R.string.err_pass_duplicate_fail));
             tvErrorRePass.setText(getString(R.string.err_pass_duplicate_fail));
             dismissProgress();
             return;

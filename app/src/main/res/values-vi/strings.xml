@@ -21,7 +21,7 @@
     <string name="str_done">Xong</string>
     <string name="str_exit">Thoát</string>
     <string name="str_continute">Tiếp tục</string>
-    <string name="str_clear_filter">Xoá tìm kiếm</string>
+    <string name="str_clear_filter">Làm mới</string>
     <string name="str_delete_all_notification">Bạn đã xoá hết thông báo</string>
     <string name="str_confirm_delete_notification">Bạn có chắc muốn xoá tất cả thông báo</string>
 
@@ -212,6 +212,9 @@
     <string name="err_user_name_lenght">Tài khoản tối thiểu 3 ký tự</string>
     <string name="err_name_lenght">Họ và tên tối thiểu 2 ký tự</string>
     <string name="err_name_null">Vui lòng nhập Họ và tên</string>
+    <string name="err_name_fist">Họ không quá 32 ký </string>
+    <string name="err_name_middle">Tên đệm không quá 32 ký </string>
+    <string name="err_name_last">Tên không quá 32 ký tự</string>
     <string name="err_cmnd_null">Bạn chưa nhập chứng minh nhân dân</string>
     <string name="err_phone_null">Bạn chưa nhập số điện thoại</string>
     <string name="err_old_pass_null">Bạn chưa nhập mật khẩu cũ</string>
@@ -329,7 +332,7 @@
     <string name="error_message_code_1006">Số chứng minh nhân dân đã tồn tại trong hệ thống</string>
     <string name="error_message_code_3034">username đã tồn tại</string>
     <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
-    <string name="error_message_code_3024">Số điện thoại đã tồn tại</string>
+    <string name="error_message_code_1094">Số điện thoại đã tồn tại</string>
     <string name="error_message_code_3019">Mật khẩu đã được thay đổi. Bạn vui lòng đăng nhập lại</string>
     <string name="error_message_code_login_3019">Mật khẩu bạn nhập không đúng</string>
     <string name="error_message_code_3014">Mã xác thực không đúng</string>

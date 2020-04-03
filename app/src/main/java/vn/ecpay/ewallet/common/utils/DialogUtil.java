@@ -136,6 +136,31 @@ public class DialogUtil {
         }
     }
 
+    public void showDialogSessionTimeO(Context pContext, String message, final OnResult onResult) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_session_timeout);
+            Button btnOk;
+            TextView tvTitle, tvMessage;
+            btnOk = mDialog.findViewById(R.id.btnOk);
+            tvTitle = mDialog.findViewById(R.id.tvTitle);
+            tvMessage = mDialog.findViewById(R.id.tvContent);
+            tvMessage.setText(message);
+
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
+
+            btnOk.setOnClickListener(v -> {
+                dismissDialog();
+                if (onResult != null) {
+                    onResult.OnListenerOk();
+                }
+            });
+            ((ECashBaseActivity) pContext).dismissLoading();
+        }
+    }
+
     public void showDialogChangePassSuccess(Context pContext, String message, final OnResult pOnConfirm) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
@@ -502,15 +527,46 @@ public class DialogUtil {
             mDialog.setContentView(R.layout.dialog_edit_contact);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
+
             Button btnUpdate = mDialog.findViewById(R.id.btn_update);
             TextView walletId = mDialog.findViewById(R.id.tv_wallet_id);
             EditText edtName = mDialog.findViewById(R.id.edt_name);
             TextView tvPhone = mDialog.findViewById(R.id.tv_phone);
-            TextView tvMobileInfo = mDialog.findViewById(R.id.tv_mobile_info);
+            TextView tv_name_err = mDialog.findViewById(R.id.tv_name_err);
 
             walletId.setText(String.valueOf(contactTransferModel.getWalletId()));
             edtName.setText(contactTransferModel.getFullName());
             tvPhone.setText(contactTransferModel.getPhone());
+
+            edtName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.toString().isEmpty()) {
+                        tv_name_err.setVisibility(View.VISIBLE);
+                        tv_name_err.setText(pContext.getResources().getString(R.string.err_contact_empty));
+                        return;
+                    } else {
+                        tv_name_err.setVisibility(View.GONE);
+                    }
+
+                    if (!CommonUtils.isValidateNameContact(s.toString())) {
+                        tv_name_err.setVisibility(View.VISIBLE);
+                        tv_name_err.setText(pContext.getResources().getString(R.string.err_validate_name_contact));
+                    }else {
+                        tv_name_err.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
 
             btnUpdate.setOnClickListener(v -> {
                 String name = edtName.getText().toString();
@@ -521,12 +577,16 @@ public class DialogUtil {
                             onContactUpdate.OnListenerOk(name);
                         }
                     } else {
-                        showDialogWarning(pContext,pContext.getResources().getString(R.string.err_validate_name_contact));
+                        tv_name_err.setVisibility(View.VISIBLE);
+                        tv_name_err.setText(pContext.getResources().getString(R.string.err_validate_name_contact));
                     }
                 } else {
-                    showDialogWarning(pContext,pContext.getResources().getString(R.string.err_contact_empty));
+                    tv_name_err.setVisibility(View.VISIBLE);
+                    tv_name_err.setText(pContext.getResources().getString(R.string.err_contact_empty));
                 }
             });
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
             mDialog.show();
         } else {
             dismissDialog();

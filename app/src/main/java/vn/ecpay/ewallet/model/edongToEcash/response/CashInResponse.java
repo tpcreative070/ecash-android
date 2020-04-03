@@ -62,6 +62,16 @@ public class CashInResponse implements Serializable {
     private String mUsername;
     @SerializedName("values")
     private List<Long> mValues;
+    @SerializedName("content")
+    private String mContent;
+
+    public String getContent() {
+        return mContent;
+    }
+
+    public void setContent(String mContent) {
+        this.mContent = mContent;
+    }
 
     public Long getAmount() {
         return mAmount;

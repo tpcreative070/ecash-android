@@ -116,7 +116,6 @@ public class SyncCashService extends Service {
             @Override
             public void onUpdateMasterFail(String code) {
                 isRunning = false;
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_MASTER_KEY_ERR));
             }
 
             @Override

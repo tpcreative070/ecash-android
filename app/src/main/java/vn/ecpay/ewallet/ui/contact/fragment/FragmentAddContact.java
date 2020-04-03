@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -155,6 +156,7 @@ public class FragmentAddContact extends ECashBaseFragment implements AddContactV
                 public void addContactSuccess() {
                     dismissLoading();
                     DatabaseUtil.saveOnlySingleContact(getActivity(), contact);
+                    Toast.makeText(getActivity(), getResources().getString(R.string.str_add_contact_success), Toast.LENGTH_LONG).show();
                 }
 
                 @Override
