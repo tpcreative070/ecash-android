@@ -49,4 +49,5 @@
     <color name="bg_transfer_blue">#F6FCFC</color>
     <color name="bg_number_money">#E9F8FF</color>
     <color name="bg_total">#EFF9FD</color>
+    <color name="red_warning">#FF4856</color>
 </resources>
