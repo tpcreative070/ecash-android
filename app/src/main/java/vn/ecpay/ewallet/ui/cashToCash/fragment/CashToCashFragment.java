@@ -1,11 +1,14 @@
 package vn.ecpay.ewallet.ui.cashToCash.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,10 +37,13 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import vn.ecpay.ewallet.BuildConfig;
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -49,7 +55,6 @@ import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
 import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
@@ -59,6 +64,7 @@ import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.lixi.adapter.CashTotalAdapter;
 
+@SuppressLint("ParcelCreator")
 public class CashToCashFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.tv_account_name)
     TextView tvAccountName;
@@ -91,6 +97,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     Button btConfirm;
 
     protected AccountInfo accountInfo;
+    private AccountInfo dbAccountInfo;
     protected int balance;
     @BindView(R.id.toolbar_center_text)
     protected TextView toolbarCenterText;
@@ -126,9 +133,21 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 }
             }
         }
+
         updateType();
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+
+        try {
+            accountInfo = ECashApplication.getAccountInfo();
+            dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
+        } catch (NullPointerException e) {
+            CommonUtils.restartApp((CashToCashActivity)getActivity());
+        }
+        if(KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null){
+            accountInfo = dbAccountInfo;
+            updateContent();
+            setAdapter();
+        }
+
         Utils.disableButtonConfirm(getActivity(),btConfirm,true);
         edtContent.addTextChangedListener(new TextWatcher() {
             @Override
@@ -155,7 +174,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 }
             }
         });
-        setAdapter();
+
     }
 
     protected void updateType() {
@@ -164,9 +183,9 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     protected void setData() {
-        Utils.disableButtonConfirm(getActivity(),btConfirm,true);
+        updateContent();
         totalMoney = 0;
-        edtContent.setText("");
+       // edtContent.setText("");
         tvNumberWallet.setText(getString(R.string.str_chose_wallet_transfer));
         if (multiTransferList != null && multiTransferList.size() > 0) {
             multiTransferList.clear();
@@ -174,6 +193,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
+        Utils.disableButtonConfirm(getActivity(),btConfirm,true);
         setAdapter();
     }
 
@@ -376,6 +396,9 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     validateData();
+                }else{
+                    dismissProgress();
+                    showDialogSettingStore();
                 }
             }
             default:
@@ -425,6 +448,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                         if (getActivity() == null) return;
                         getActivity().runOnUiThread(() -> {
                             setData();
+                            updateTotalMoney();
                         });
                     } catch (NullPointerException e) {
                         return;
@@ -455,6 +479,18 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     }
                 });
     }
+    private void showDialogSettingStore(){
+        DialogUtil.getInstance().showDialogSettingPermissionStore(getActivity(), new DialogUtil.OnResult() {
+            @Override
+            public void OnListenerOk() {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", getBaseActivity().getPackageName(), null));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -476,5 +512,8 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
+    }
+    private void updateContent(){
+        edtContent.setText(String.format("%s + %s", CommonUtils.getFullName(accountInfo), getString(R.string.str_transfer)));
     }
 }

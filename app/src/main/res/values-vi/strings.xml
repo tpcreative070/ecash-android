@@ -90,7 +90,7 @@
     <string name="str_scan_qr_code_to_add_wallet">Quét mã QR code để thêm eWallet</string>
     <string name="str_save_to_device">Lưu về máy</string>
     <string name="str_save_to_device_success">QR code đã được lưu về thiết bị này</string>
-    <string name="str_chose_wallet_transfer">Chọn sô ví muốn chuyển</string>
+    <string name="str_chose_wallet_transfer">Chọn số ví muốn chuyển</string>
     <string name="str_forgot_password">Quên mật khẩu</string>
     <string name="str_input_user_name">Nhập tài khoản</string>
     <string name="str_restore_pass">Khôi phục mật khẩu</string>
@@ -369,6 +369,9 @@
     <string name="str_error_not_enough_balance_edong">Không đủ số dư eDong</string>
     <string name="str_error_not_enough_balance_please_try_again">Số dư ví không đủ, vui lòng chọn lại</string>
     <string name="str_try_again">Thử lại</string>
+    <string name="str_permission_store_setting">Bạn đã chọn không cho phép truy cập ảnh, bộ nhớ. Nếu muốn truy cập danh bạ trở lại vui lòng bật quyền truy cập bắng cách vào mục Cài đặt</string>
+    <string name="str_setting">Cài đặt</string>
+
 </resources>
 
 
