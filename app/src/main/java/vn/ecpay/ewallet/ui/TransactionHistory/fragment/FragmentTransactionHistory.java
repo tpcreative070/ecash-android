@@ -77,6 +77,8 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                 if (!s.toString().isEmpty()) {
                     setAdapterTextChange(s.toString());
                 } else {
+                    tvNoResult.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
                     setAdapter(transactionsHistoryModelList);
                 }
             }
@@ -84,15 +86,15 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     }
 
     private void setAdapterTextChange(String filter) {
-        List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistoryFilter(CommonUtils.getParamFilter(filter));
-        if (transactionsHistoryModelList.size() > 0) {
+        List<TransactionsHistoryModel> transactionsHistoryModelListFilter = WalletDatabase.getListTransactionHistoryFilter(CommonUtils.getParamFilter(filter));
+        if (transactionsHistoryModelListFilter.size() > 0) {
             tvNoResult.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         } else {
             tvNoResult.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
-        setAdapter(transactionsHistoryModelList);
+        setAdapter(transactionsHistoryModelListFilter);
     }
 
     private void setAdapter(List<TransactionsHistoryModel> transactionsHistoryModelList) {

@@ -117,7 +117,6 @@ public class  ChangePassActivity extends ECashBaseActivity {
         }
 
         if (!newPass.equals(reNewPass)) {
-            tvErrorNewPass.setText(getString(R.string.err_pass_duplicate_fail));
             tvErrorReNewPass.setText(getString(R.string.err_pass_duplicate_fail));
             return;
         }

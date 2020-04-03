@@ -77,10 +77,10 @@ public class UpdateMasterKeyFunction {
                             updateMasterKeyListener.onUpdateMasterFail(response.body().getResponseCode());
                         }
                     } else {
-                        updateMasterKeyListener.onRequestTimeout();
+                        updateMasterKeyListener.onUpdateMasterFail("error");
                     }
                 } else {
-                    updateMasterKeyListener.onRequestTimeout();
+                    updateMasterKeyListener.onUpdateMasterFail("error");
                 }
             }
 

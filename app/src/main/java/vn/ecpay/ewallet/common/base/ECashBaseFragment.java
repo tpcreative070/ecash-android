@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -94,6 +95,12 @@ public abstract class ECashBaseFragment extends Fragment {
     }
     protected AppCompatActivity getBaseActivity() {
         return ((ECashBaseActivity)getActivity()).getBaseActivity();
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        return super.onGetLayoutInflater(savedInstanceState);
     }
 
     /**

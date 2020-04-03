@@ -156,7 +156,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             }
             return false;
         });
-        //edPassword.setText("123456");
+        edPassword.setText("123456");
         Utils.disableButtonConfirm(getBaseActivity(), btnLogin, true);
         addTextChange();
     }

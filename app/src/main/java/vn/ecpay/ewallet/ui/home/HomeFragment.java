@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -129,6 +130,12 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     @Override
     protected int getLayoutResId() {
         return R.layout.home_fragment;
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        return super.onGetLayoutInflater(savedInstanceState);
     }
 
     @Override

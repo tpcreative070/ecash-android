@@ -550,6 +550,7 @@ public class CommonUtils {
     public static String getIMEI(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         return prefs.getString(Constant.DEVICE_IMEI, null);
+//        return "287496598275927459872";
     }
 
     public static String validateLeghtFileImage(File file) {

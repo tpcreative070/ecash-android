@@ -27,6 +27,7 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.Notification_Database;
 
@@ -37,7 +38,7 @@ public class ECashFireBaseService extends FirebaseMessagingService {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
             String title = notification.getTitle();
             String body = notification.getBody();
-            saveNotification(title, body);
+            DatabaseUtil.saveNotification(getApplicationContext(), title, body);
             sendNotification(title, body);
             EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_NOTIFICATION));
         } else {
@@ -60,16 +61,6 @@ public class ECashFireBaseService extends FirebaseMessagingService {
             SharedPrefs.getInstance().put(SharedPrefs.clientKp, clientKp);
             SharedPrefs.getInstance().put(SharedPrefs.clientKs, clientKs);
         }
-    }
-
-    private void saveNotification(String title, String body) {
-        WalletDatabase.getINSTANCE(getApplicationContext(), KeyStoreUtils.getMasterKey(getApplicationContext()));
-        Notification_Database notification = new Notification_Database();
-        notification.setTitle(title);
-        notification.setBody(body);
-        notification.setDate(CommonUtils.getCurrentTimeNotification());
-        notification.setRead(Constant.ON);
-        WalletDatabase.insertNotificationTask(notification, Constant.STR_EMPTY);
     }
 
     private void sendNotification(String title, String body) {

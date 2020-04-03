@@ -4,7 +4,6 @@ import android.content.Context;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
-import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 
 public class CheckErrCodeUtil {
     public static void errorMessage(Context context, String error_code) {
@@ -29,8 +28,8 @@ public class CheckErrCodeUtil {
                 message = context.getString(R.string.error_message_code_3034);
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
-            case Constant.ERROR_CODE_3024:
-                message = context.getString(R.string.error_message_code_3024);
+            case Constant.ERROR_CODE_1094:
+                message = context.getString(R.string.error_message_code_1094);
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
             case Constant.ERROR_CODE_3014:

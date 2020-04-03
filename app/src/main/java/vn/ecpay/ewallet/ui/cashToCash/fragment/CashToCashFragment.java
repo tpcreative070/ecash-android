@@ -317,8 +317,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
                 @Override
                 public void onRequestTimeout() {
-                    dismissProgress();
-                    showDialogError(getResources().getString(R.string.err_upload));
+
                 }
             });
         }

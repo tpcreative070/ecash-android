@@ -18,6 +18,7 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
+import vn.ecpay.ewallet.database.table.Notification_Database;
 import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
@@ -85,6 +86,7 @@ public class DatabaseUtil {
         transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
         transactionLog.setType(cashInResponse.getType());
         transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
+        transactionLog.setContent(cashInResponse.getContent());
         transactionLog.setCashEnc(cashInResponse.getCashEnc());
         transactionLog.setTransactionSignature(cashInResponse.getId());
         transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
@@ -418,6 +420,15 @@ public class DatabaseUtil {
     public static void deletePayment(Context context, int id) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         WalletDatabase.deletePayment(id);
+    }
 
+    public static void saveNotification(Context context, String title, String body){
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        Notification_Database notification = new Notification_Database();
+        notification.setTitle(title);
+        notification.setBody(body);
+        notification.setDate(CommonUtils.getCurrentTimeNotification());
+        notification.setRead(Constant.ON);
+        WalletDatabase.insertNotificationTask(notification, Constant.STR_EMPTY);
     }
 }

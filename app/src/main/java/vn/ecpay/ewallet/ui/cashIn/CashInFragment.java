@@ -233,8 +233,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
             @Override
             public void onRequestTimeout() {
-                dismissLoading();
-                showDialogError(getResources().getString(R.string.err_upload));
+
             }
         });
     }

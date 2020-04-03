@@ -82,6 +82,88 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         setData();
+
+        edtName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                if (edtName.getText().toString().isEmpty()) {
+                    tvNameErr.setVisibility(View.VISIBLE);
+                    tvNameErr.setText(getString(R.string.err_name_null));
+                    return;
+                }else {
+                    tvNameErr.setVisibility(View.GONE);
+                }
+
+                checkFullName(edtName.getText().toString());
+            }
+        });
+
+        edtCmnd.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                if (edtCmnd.getText().toString().isEmpty()) {
+                    tvCmndErr.setVisibility(View.VISIBLE);
+                    tvCmndErr.setText(getString(R.string.err_cmnd_null));
+                    return;
+                } else {
+                    tvCmndErr.setVisibility(View.GONE);
+                }
+
+                if (!CommonUtils.validatePassPort(edtCmnd.getText().toString())) {
+                    tvCmndErr.setVisibility(View.VISIBLE);
+                    tvCmndErr.setText(getString(R.string.err_validate_cmnd_fail));
+                }else {
+                    tvCmndErr.setVisibility(View.GONE);
+                }
+
+            }
+        });
+    }
+
+    private void checkFullName(String name){
+        String[] separated = name.split(" ");
+        String fist, last, middle;
+        if (separated.length == 1) {
+            fist = name;
+            last = "";
+            middle = "";
+        } else if (separated.length == 2) {
+            fist = separated[0];
+            last = separated[1];
+            middle = "";
+        } else if (separated.length == 3) {
+            fist = separated[0];
+            last = separated[2];
+            middle = separated[1];
+        } else {
+            fist = separated[0];
+            StringBuilder middleName = new StringBuilder();
+            for (int i = 1; i < separated.length - 1; i++) {
+                if (i == 1) {
+                    middleName.append(separated[i]);
+                } else {
+                    middleName.append(" ").append(separated[i]);
+                }
+            }
+            last = separated[separated.length - 1];
+            middle = middleName.toString();
+        }
+
+        if(fist.length()>32){
+            tvNameErr.setVisibility(View.VISIBLE);
+            tvNameErr.setText(getString(R.string.err_name_fist));
+            return;
+        }
+        else if(middle.length()>32){
+            tvNameErr.setVisibility(View.VISIBLE);
+            tvNameErr.setText(getString(R.string.err_name_middle));
+            return;
+        }
+        else if(last.length()>32){
+            tvNameErr.setVisibility(View.VISIBLE);
+            tvNameErr.setText(getString(R.string.err_name_last));
+            return;
+        }else {
+            tvNameErr.setVisibility(View.GONE);
+        }
     }
 
     @OnClick(R.id.btn_confirm)
@@ -101,6 +183,8 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
         } else {
             tvNameErr.setVisibility(View.GONE);
         }
+
+        checkFullName(name);
 
         if (cmnd.isEmpty()) {
             tvCmndErr.setVisibility(View.VISIBLE);
