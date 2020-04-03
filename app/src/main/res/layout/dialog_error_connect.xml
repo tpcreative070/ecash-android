@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:contentDescription="@string/string_todo"
-            android:src="@drawable/ic_success_green" />
+            android:src="@drawable/ic_icon_error" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -28,7 +28,9 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="@string/str_error_connection"
+            android:textColor="@color/red_warning"
             android:textSize="@dimen/text_header" />
 
         <TextView
@@ -40,9 +42,9 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="20dp"
             android:gravity="center"
-            android:text=""
+            android:text="@string/str_error_connection_internet"
             android:textColor="@color/black_two"
-            android:textSize="@dimen/text_xlarge" />
+            android:textSize="@dimen/text_xxlarge" />
 
         <include layout="@layout/view_line_05" />
 
@@ -67,12 +69,12 @@
                 android:background="@color/gray" />
 
             <TextView
-                android:id="@+id/tv_continue"
+                android:id="@+id/tv_try_again"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/str_continute"
+                android:text="@string/str_try_again"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/text_header" />
         </LinearLayout>

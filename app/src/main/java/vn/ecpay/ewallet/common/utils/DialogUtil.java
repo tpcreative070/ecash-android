@@ -161,19 +161,35 @@ public class DialogUtil {
     public void showDialogSuccess(Context pContext, String message) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
-            mDialog.setContentView(R.layout.dialog_confirm_change_pass_success);
-            Button btnOk;
-            TextView tvTitle, tvMessage;
-            btnOk = mDialog.findViewById(R.id.btnOk);
-            tvTitle = mDialog.findViewById(R.id.tvTitle);
+            mDialog.setContentView(R.layout.dialog_base_success);
+            TextView tvOk, tvMessage;
+            tvOk = mDialog.findViewById(R.id.tvOk);
             tvMessage = mDialog.findViewById(R.id.tvContent);
             tvMessage.setText(message);
-            btnOk.setText("OK");
-            tvTitle.setVisibility(View.GONE);
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.setCancelable(false);
+            //mDialog.setCanceledOnTouchOutside(false);
+        //    mDialog.setCancelable(false);
             mDialog.show();
-            btnOk.setOnClickListener(v -> {
+            tvOk.setOnClickListener(v -> {
+                dismissDialog();
+            });
+        }
+    }
+    public void showDialogErrorConnectInternet(Context pContext,String message) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_error_connect);
+            TextView tvMessage,tvExit, tvTryAgain;
+            tvMessage = mDialog.findViewById(R.id.tv_message);
+            tvMessage.setText(message);
+            tvExit = mDialog.findViewById(R.id.tv_exit);
+            tvTryAgain = mDialog.findViewById(R.id.tv_try_again);
+           // mDialog.setCanceledOnTouchOutside(false);
+            //    mDialog.setCancelable(false);
+            mDialog.show();
+            tvExit.setOnClickListener(v -> {
+                dismissDialog();
+            });
+            tvTryAgain.setOnClickListener(v -> {
                 dismissDialog();
             });
         }
@@ -852,7 +868,27 @@ public class DialogUtil {
             });
         }
     }
-
+    public void showDialogSettingPermissionStore(Context context, final OnResult listener) {
+        if (!isShowing() && context != null) {
+            initDialog(context);
+            mDialog.setContentView(R.layout.dialog_setting_permission_store);
+            TextView tvClose, tvSetting;
+            tvClose = mDialog.findViewById(R.id.tv_close);
+            tvSetting = mDialog.findViewById(R.id.tv_setting);
+//            mDialog.setCanceledOnTouchOutside(false);
+//            mDialog.setCancelable(false);
+            mDialog.show();
+            tvSetting.setOnClickListener(v -> {
+                dismissDialog();
+                if (listener != null) {
+                    listener.OnListenerOk();
+                }
+            });
+            tvClose.setOnClickListener(v -> {
+                dismissDialog();
+            });
+        }
+    }
     public void dismissDialog() {
         if (mDialog != null) {
             mDialog.dismiss();

@@ -182,6 +182,6 @@ public class ECashApplication extends Application {
 
     public void showErrorConnection(Throwable t) {
         ErrorStatusConnectionModel errorConnect = new CheckErrorConnectionUtils().error(getActivity(), t);
-        DialogUtil.getInstance().showDialogErrorTitleMessage(getActivity(), errorConnect.getTitle(), errorConnect.getMessage());
+        DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), errorConnect.getMessage());
     }
 }
