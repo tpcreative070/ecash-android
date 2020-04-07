@@ -139,7 +139,7 @@ public class ForgotChangePassFragment extends ECashBaseFragment implements Forgo
         }
 
         if (!newPass.equals(reNewPass)) {
-            tvErrorNewPass.setText(getResources().getString(R.string.err_pass_duplicate_fail));
+           // tvErrorNewPass.setText(getResources().getString(R.string.err_pass_duplicate_fail));
             tvErrorReNewPass.setText(getResources().getString(R.string.err_pass_duplicate_fail));
             return;
         }

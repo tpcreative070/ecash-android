@@ -314,8 +314,9 @@
     <string name="str_share">Chia sẻ</string>
     <string name="err_anount_null">Bạn chưa nhập số tiền</string>
     <string name="err_amount_validate">Số tiền không hợp lệ</string>
+    <string name="err_amount_input_validate">Nhập tổng tiền tương ứng với các mệnh giá có trong kho</string>
     <string name="err_amount_does_not_exceed_twenty_million">Số tiền không vượt quá 20 triệu</string>
-    <string name="str_send_request_success">Gửi yêu cầu thành công</string>
+    <string name="str_send_request_success">Gửi yêu cầu thanh toán thành công. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
     <string name="str_transfer_money_success">chuyển tiền thành công</string>
     <string name="str_error_you_cannot_pay_for_your_self">Bạn không thể thanh toán cho chính mình!</string>
     <string name="str_error_limited_select_contact">Bạn được chọn tối đa 10 người cho mỗi lần yêu cầu </string>
@@ -374,6 +375,7 @@
     <string name="str_try_again">Thử lại</string>
     <string name="str_permission_store_setting">Bạn đã chọn không cho phép truy cập ảnh, bộ nhớ. Nếu muốn truy cập danh bạ trở lại vui lòng bật quyền truy cập bắng cách vào mục Cài đặt</string>
     <string name="str_setting">Cài đặt</string>
+    <string name="str_err_otp_incorrect">Mã xác thực không đúng</string>
 
 </resources>
 
