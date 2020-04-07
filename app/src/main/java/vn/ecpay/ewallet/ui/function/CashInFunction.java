@@ -192,6 +192,8 @@ public class CashInFunction {
                 AsyncTaskCash asynctaskCash = new AsyncTaskCash();
                 asynctaskCash.execute(deCryptECash);
             }
+        } else {
+            EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_VERIFY_CASH_FAIL));
         }
     }
 

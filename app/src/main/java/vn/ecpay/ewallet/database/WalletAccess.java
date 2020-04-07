@@ -267,7 +267,9 @@ public interface WalletAccess {
             "IFNULL((SELECT CONTACTS.phone FROM CONTACTS WHERE CONTACTS.walletId = TRAN.receiverAccountId), '') AS receiverPhone, " +
             "IFNULL((SELECT COUNT(TIMEOUT.transactionSignature) FROM TRANSACTIONS_TIMEOUT AS TIMEOUT " +
             "WHERE TIMEOUT.transactionSignature=TRAN.transactionSignature AND TIMEOUT.status=1), 0) AS transactionStatus FROM TRANSACTIONS_LOGS AS TRAN " +
-            "WHERE (senderName like :key AND (transactionType='CT' OR transactionType='TT')) OR (receiverName like :key AND cashLogType='out' AND (transactionType='CT' OR transactionType='TT')) OR TRAN.receiverAccountId like :key OR TRAN.receiverAccountId like :key OR TRAN.content like :key ORDER BY TRAN.id DESC")
+            "WHERE (senderName like :key AND cashLogType='in' AND (transactionType='CT' OR transactionType='TT')) " +
+            "OR (receiverName like :key AND cashLogType='out' AND (transactionType='CT' OR transactionType='TT')) " +
+            "OR TRAN.receiverAccountId like :key OR TRAN.receiverAccountId like :key OR TRAN.content like :key ORDER BY TRAN.id DESC")
     List<TransactionsHistoryModel> getAllTransactionsHistoryOnlyFilter(String key);
 
     @Query("select parValue, count(parValue) as validCount, 1 as status from CASH_LOGS where transactionSignature = :transactionSignatureLog group by parValue union " +
@@ -276,7 +278,7 @@ public interface WalletAccess {
     List<CashLogTransaction> getAllCashByTransactionLog(String transactionSignatureLog);
 
     @Query("select parValue, count(parValue) as validCount, 1 as status from CASH_LOGS where type = :typeMoney AND transactionSignature = :transactionSignatureLog group by parValue union " +
-            "select parValue,count(parValue) as validCount , 0 as status from CASH_INVALID where transactionSignature = :transactionSignatureLog " +
+            "select parValue,count(parValue) as validCount , 0 as status from CASH_INVALID where type = :typeMoney AND transactionSignature = :transactionSignatureLog " +
             "group by parValue")
     List<CashLogTransaction> getAllCashByTransactionLogByType(String transactionSignatureLog, String typeMoney);
 

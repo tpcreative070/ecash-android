@@ -21,105 +21,110 @@
         <LinearLayout
             android:id="@+id/layout_scan_qr"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="10dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            android:padding="10dp">
+
             <ImageView
                 android:layout_width="wrap_content"
-                android:src="@drawable/ic_scan"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_scan" />
+
             <TextView
                 android:layout_width="wrap_content"
-                android:text="@string/str_scan_qr_code"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textSize="@dimen/text_normal"
+                android:text="@string/str_scan_qr_code"
                 android:textColor="@color/blue"
-                android:layout_height="wrap_content"/>
+                android:textSize="@dimen/text_normal" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_qr_code"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="10dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            android:padding="10dp">
+
             <ImageView
                 android:layout_width="wrap_content"
-                android:src="@drawable/ic_qrcode_white"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_qrcode_white" />
+
             <TextView
                 android:layout_width="wrap_content"
-                android:text="@string/str_qr_code"
-                android:textSize="@dimen/text_normal"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:text="@string/str_qr_code"
                 android:textColor="@color/white"
-                android:layout_height="wrap_content"/>
+                android:textSize="@dimen/text_normal" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/containerTop"
         android:layout_width="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:background="@color/transparent_white"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/layout_flash"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="10dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            android:padding="10dp">
+
             <ImageView
                 android:layout_width="wrap_content"
-                android:src="@drawable/ic_flash"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_flash" />
+
             <TextView
                 android:id="@+id/tv_flash"
                 android:layout_width="wrap_content"
-                android:text="@string/str_flash_on"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textSize="@dimen/text_normal"
+                android:text="@string/str_flash_on"
                 android:textColor="@color/white"
-                android:layout_height="wrap_content"/>
+                android:textSize="@dimen/text_normal" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_image"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="10dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            android:padding="10dp">
+
             <ImageView
                 android:layout_width="wrap_content"
-                android:src="@drawable/ic_picture"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_picture" />
+
             <TextView
                 android:layout_width="wrap_content"
-                android:text="@string/str_image"
-                android:textSize="@dimen/text_normal"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:text="@string/str_image"
                 android:textColor="@color/white"
-                android:layout_height="wrap_content"/>
+                android:textSize="@dimen/text_normal" />
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:layout_below="@+id/containerTop"
+    <ProgressBar
+        android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/str_scan_qr_note"
-        android:layout_marginTop="30dp"
-        android:textColor="@color/white" />
+        android:layout_centerInParent="true" />
 
     <TextView
         android:id="@+id/tv_number_scan"
@@ -130,9 +135,12 @@
         android:layout_marginBottom="30dp"
         android:textColor="@color/white" />
 
-    <ProgressBar
-        android:id="@+id/progress"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_below="@+id/containerTop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/str_scan_qr_note"
+        android:textColor="@color/white" />
 </RelativeLayout>

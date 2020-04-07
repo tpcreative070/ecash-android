@@ -38,6 +38,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.table.Payment_DataBase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
@@ -300,7 +301,15 @@ public class WebSocketsService extends Service {
     }
 
     private void putNotificationMoneyChange(ResponseMessSocket responseMess, Long totalMoney) {
-        String message = "Quý khách đã nhận được số tiền " + CommonUtils.formatPriceVND(totalMoney) + " từ số ví: " + responseMess.getSender();
+        Contact contact = DatabaseUtil.getCurrentContact(getApplicationContext(), responseMess.getSender());
+        String message = "";
+        if (null != contact) {
+            message = "Quý khách đã nhận được số tiền " + CommonUtils.formatPriceVND(totalMoney)
+                    + " từ số ví: " + responseMess.getSender() + " (" + contact.getFullName() + ")";
+        } else {
+            message = "Quý khách đã nhận được số tiền " + CommonUtils.formatPriceVND(totalMoney)
+                    + " từ số ví: " + responseMess.getSender();
+        }
         DatabaseUtil.saveNotification(getApplicationContext(), "Thông báo biến động số dư", message);
         EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_NOTIFICATION));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

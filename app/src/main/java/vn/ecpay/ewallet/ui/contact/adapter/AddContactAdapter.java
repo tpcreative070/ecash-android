@@ -25,12 +25,12 @@ import vn.ecpay.ewallet.ui.callbackListener.OnItemContactClickListener;
 
 public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final AccountInfo accountInfo;
-    List<Contact> mCountriesModelList;
+    List<Contact> contactList;
     WeakReference<Context> mContextWeakReference;
     private OnItemContactClickListener onItemContactClickListener;
 
     public AddContactAdapter(List<Contact> mCountriesModelList, Context context, OnItemContactClickListener mOnItemContactClickListener) {
-        this.mCountriesModelList = mCountriesModelList;
+        this.contactList = mCountriesModelList;
         this.mContextWeakReference = new WeakReference<>(context);
         this.onItemContactClickListener = mOnItemContactClickListener;
         String userName = ECashApplication.getAccountInfo().getUsername();
@@ -55,7 +55,7 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             return;
         }
         AddContactAdapter.ItemContactContentHolder itemViewHolder = (AddContactAdapter.ItemContactContentHolder) holder;
-        Contact contact = mCountriesModelList.get(position);
+        Contact contact = contactList.get(position);
         itemViewHolder.tvName.setText(context.getString(R.string.str_item_transfer_cash,
                 contact.getFullName(), String.valueOf(contact.getWalletId())));
         itemViewHolder.tvPhone.setText(contact.getPhone());
@@ -73,6 +73,8 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
                 if (onItemContactClickListener != null) {
                     onItemContactClickListener.OnclickListener(contact);
+                    contactList.remove(position);
+                    notifyDataSetChanged();
                 }
             }
         });
@@ -81,7 +83,7 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return mCountriesModelList.size();
+        return contactList.size();
     }
 
     public static class ItemContactContentHolder extends RecyclerView.ViewHolder {

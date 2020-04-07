@@ -79,6 +79,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                 } else {
                     tvNoResult.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
+                    List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
                     setAdapter(transactionsHistoryModelList);
                 }
             }

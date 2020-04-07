@@ -88,7 +88,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 notificationObjList.get(position).setIsCheck(0);
             }
         });
-
     }
 
 

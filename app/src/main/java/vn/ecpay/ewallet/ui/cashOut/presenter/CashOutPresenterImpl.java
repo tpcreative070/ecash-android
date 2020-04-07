@@ -98,9 +98,9 @@ public class CashOutPresenterImpl implements CashOutPresenter {
                     if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (null != response.body().getResponseData()) {
-                                if(isValidate){
+                                if (isValidate) {
                                     cashOutView.loadPublicKeyOrganizeSuccessForValidate(response.body().getResponseData().getIssuerKpValue());
-                                }else {
+                                } else {
                                     cashOutView.loadPublicKeyOrganizeSuccess(response.body().getResponseData().getIssuerKpValue());
                                 }
                             } else {
@@ -130,7 +130,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
     }
 
     @Override
-    public void sendECashToEDong(Context context,String encData, String idSender, long totalMoney, EdongInfo edongInfo, AccountInfo accountInfo) {
+    public void sendECashToEDong(Context context, String encData, String idSender, long totalMoney, EdongInfo edongInfo, AccountInfo accountInfo) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -187,7 +187,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
             @Override
             public void onFailure(Call<ResponseECashToEdong> call, Throwable t) {
                 cashOutView.dismissLoading();
-               // cashOutView.showDialogError(application.getString(R.string.err_upload));
+                // cashOutView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showErrorConnection(t);
             }
         });

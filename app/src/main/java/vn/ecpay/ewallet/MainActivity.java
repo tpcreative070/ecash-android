@@ -66,7 +66,7 @@ public class MainActivity extends ECashBaseActivity {
         setupTabs();
         tabHost.setOnTabChangedListener(this::onChange);
         tabHost.getTabWidget().getChildAt(1).setOnClickListener(v -> {
-            if (ECashApplication.isIsChangeDataBase()) {
+            if (ECashApplication.isChangeDataBase()) {
                 if (getActivity() != null)
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                 return;
@@ -79,7 +79,7 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(3).setOnClickListener(v -> {
-            if (ECashApplication.isIsChangeDataBase()) {
+            if (ECashApplication.isChangeDataBase()) {
                 if (getActivity() != null)
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                 return;
@@ -92,7 +92,7 @@ public class MainActivity extends ECashBaseActivity {
         });
 
         tabHost.getTabWidget().getChildAt(4).setOnClickListener(v -> {
-            if (ECashApplication.isIsChangeDataBase()) {
+            if (ECashApplication.isChangeDataBase()) {
                 if (getActivity() != null)
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                 return;
@@ -104,7 +104,7 @@ public class MainActivity extends ECashBaseActivity {
             }
         });
         tabHost.getTabWidget().getChildAt(2).setOnClickListener(v -> {
-            if (ECashApplication.isIsChangeDataBase()) {
+            if (ECashApplication.isChangeDataBase()) {
                 if (getActivity() != null)
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                 return;

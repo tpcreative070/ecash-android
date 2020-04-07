@@ -1,6 +1,8 @@
 package vn.ecpay.ewallet.ui.wallet.activity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,24 +84,40 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         setData();
+        edtName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        edtName.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                if (edtName.getText().toString().isEmpty()) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().isEmpty()) {
                     tvNameErr.setVisibility(View.VISIBLE);
                     tvNameErr.setText(getString(R.string.err_name_null));
                     return;
-                }else {
+                } else {
                     tvNameErr.setVisibility(View.GONE);
                 }
 
                 checkFullName(edtName.getText().toString());
             }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
 
-        edtCmnd.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                if (edtCmnd.getText().toString().isEmpty()) {
+        edtCmnd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().isEmpty()) {
                     tvCmndErr.setVisibility(View.VISIBLE);
                     tvCmndErr.setText(getString(R.string.err_cmnd_null));
                     return;
@@ -107,18 +125,22 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
                     tvCmndErr.setVisibility(View.GONE);
                 }
 
-                if (!CommonUtils.validatePassPort(edtCmnd.getText().toString())) {
+                if (!CommonUtils.validatePassPort(s.toString())) {
                     tvCmndErr.setVisibility(View.VISIBLE);
                     tvCmndErr.setText(getString(R.string.err_validate_cmnd_fail));
-                }else {
+                } else {
                     tvCmndErr.setVisibility(View.GONE);
                 }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
 
             }
         });
     }
 
-    private void checkFullName(String name){
+    private void checkFullName(String name) {
         String[] separated = name.split(" ");
         String fist, last, middle;
         if (separated.length == 1) {
@@ -147,21 +169,17 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             middle = middleName.toString();
         }
 
-        if(fist.length()>32){
+        if (fist.length() > 32) {
             tvNameErr.setVisibility(View.VISIBLE);
             tvNameErr.setText(getString(R.string.err_name_fist));
-            return;
-        }
-        else if(middle.length()>32){
+        } else if (middle.length() > 32) {
             tvNameErr.setVisibility(View.VISIBLE);
             tvNameErr.setText(getString(R.string.err_name_middle));
-            return;
-        }
-        else if(last.length()>32){
+        } else if (last.length() > 32) {
             tvNameErr.setVisibility(View.VISIBLE);
             tvNameErr.setText(getString(R.string.err_name_last));
             return;
-        }else {
+        } else {
             tvNameErr.setVisibility(View.GONE);
         }
     }
@@ -198,7 +216,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             tvCmndErr.setVisibility(View.VISIBLE);
             tvCmndErr.setText(getString(R.string.err_validate_cmnd_fail));
             return;
-        }else {
+        } else {
             tvCmndErr.setVisibility(View.GONE);
         }
 
