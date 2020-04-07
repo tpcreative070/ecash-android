@@ -513,6 +513,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     }
     private void updateContent(){
-        edtContent.setText(String.format("%s + %s", CommonUtils.getFullName(accountInfo), getString(R.string.str_transfer)));
+        edtContent.setText(String.format("%s %s", CommonUtils.getFullName(accountInfo), getString(R.string.str_transfer)));
     }
 }

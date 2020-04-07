@@ -4,57 +4,91 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_border_gray"
     android:layout_margin="10dp">
-
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:text="@string/str_dialog_notification_title"
-        android:textColor="@color/blue"
-        android:textSize="@dimen/text_header" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_below="@id/tvTitle"
-        android:background="@color/gray_light" />
-
-    <TextView
-        android:id="@+id/tvContent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTitle"
-        android:layout_centerInParent="true"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_large" />
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvContent"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:padding="10dp">
-        <Button
-            android:id="@+id/btnOk"
-            style="@style/btn_submit"
-            android:layout_marginEnd="10dp"
-            android:textSize="@dimen/text_large"
-            android:text="@string/yes" />
-        <Button
-            android:id="@+id/btnCancel"
-            style="@style/btn_cancel"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:contentDescription="@string/string_todo"
+            android:src="@drawable/ic_success_green" />
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:textSize="@dimen/text_large"
-            android:text="@string/str_cancel" />
-    </LinearLayout>
+            android:layout_marginEnd="10dp"
+            android:text="@string/str_dialog_notification_title"
+            android:textColor="@color/blue"
+            android:visibility="visible"
+            android:textSize="@dimen/text_header" />
+        <TextView
+            android:id="@+id/tvContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_xlarge" />
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:padding="10dp">-->
+<!--            <Button-->
+<!--                android:id="@+id/btnOk"-->
+<!--                style="@style/btn_submit"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:textSize="@dimen/text_large"-->
+<!--                android:text="@string/yes" />-->
+<!--            <Button-->
+<!--                android:id="@+id/btnCancel"-->
+<!--                style="@style/btn_cancel"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:textSize="@dimen/text_large"-->
+<!--                android:text="@string/str_cancel" />-->
+<!--        </LinearLayout>-->
+        <include layout="@layout/view_line_05" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_continue"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/str_ok"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/text_header" />
+            <View
+                android:layout_width="0.2dp"
+                android:layout_height="match_parent"
+                android:background="@color/gray" />
 
+            <TextView
+                android:id="@+id/tv_exit"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/str_skip"
+                android:textColor="@color/emperor"
+                android:textSize="@dimen/text_header" />
+
+
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

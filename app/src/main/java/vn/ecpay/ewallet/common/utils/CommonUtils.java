@@ -78,6 +78,8 @@ import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
+import static vn.ecpay.ewallet.ECashApplication.getActivity;
+
 public class CommonUtils {
     public static String getModelName() {
         return Build.MODEL;
@@ -749,7 +751,7 @@ public class CommonUtils {
     }
 
     public static boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) ECashApplication.getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;
@@ -814,5 +816,16 @@ public class CommonUtils {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+    public static boolean validateCashInput(long money){
+        List<CashTotal>cashTotalList = DatabaseUtil.getAllCashValues(getActivity());
+        if(cashTotalList==null)
+            return false;
+        for(CashTotal cashTotal : cashTotalList){
+            if(money%cashTotal.getParValue()==0){
+                return true;
+            }
+        }
+        return false;
     }
 }

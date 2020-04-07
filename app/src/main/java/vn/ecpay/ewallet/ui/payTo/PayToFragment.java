@@ -1,5 +1,6 @@
 package vn.ecpay.ewallet.ui.payTo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
 import vn.ecpay.ewallet.ui.function.PayToFuntion;
 import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
 
+@SuppressLint("ParcelCreator")
 public class PayToFragment extends ECashBaseFragment implements MultiTransferListener {
     @BindView(R.id.iv_back)
     ImageView ivBack;
@@ -188,9 +190,10 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         if(edtAmount.getText().toString().length()>0){
             Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
            // Log.e("money%1000 ",money%1000+"");
-            if(money<1000||money%1000!=0){
+           // if(money<1000||money%1000!=0){
+            if(!CommonUtils.validateCashInput(money)){
               //  showDialogError(getString(R.string.err_amount_validate));
-                tvErrorAmount.setText(getString(R.string.err_amount_validate));
+                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
                 return;
             }else if(money>Constant.AMOUNT_LIMITED){
                // showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
@@ -230,12 +233,13 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_SEND_REQUEST_PAYTO));
             }
         }, 500);
-        DialogUtil.getInstance().showDialogConfirm(getActivity(), getString(R.string.str_transfer_success),
+        //showDialogSuccess(getString(R.string.str_transfer_success));
+        DialogUtil.getInstance().showDialogConfirm(getActivity(), null,
                 getString(R.string.str_send_request_success), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         //
-                       // UsageEvents.Event
+                        // UsageEvents.Event
                     }
 
                     @Override
@@ -264,6 +268,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();
             showDialogError(getString(R.string.err_connect_socket_fail));
+           //DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet));
         }
         if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
             updateBalance();

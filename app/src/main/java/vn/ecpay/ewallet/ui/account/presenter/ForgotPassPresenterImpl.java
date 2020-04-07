@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.account.presenter;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -142,16 +143,18 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
                     if (response.body().getResponseCode() != null) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             forgotPassView.changePassSuccess();
-                        }else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_3014)){
-                            tvErrorOTP.setText(context.getString(R.string.error_message_code_3014));
                         }
                         else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_3016)){
                             tvErrorOTP.setText(context.getString(R.string.error_message_code_3016));
                         }
-                        else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_3104)){
+                        else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_3014)){//3104
                             tvErrorOTP.setText(context.getString(R.string.error_message_code_3104));
                         }
+                        else if(response.body().getResponseCode().equals(Constant.ERROR_CODE_0998)){
+                            tvErrorOTP.setText(context.getString(R.string.str_err_otp_incorrect));
+                        }
                         else {
+                            Log.e("getResponseCode() ",response.body().getResponseCode()+"");
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
                     } else {

@@ -108,24 +108,29 @@ public class DialogUtil {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_confirm);
-            Button btnOk, btnCancel;
+            TextView tvContinue, tvExit;
             TextView tvTitle, tvMessage;
-            btnOk = mDialog.findViewById(R.id.btnOk);
-            btnCancel = mDialog.findViewById(R.id.btnCancel);
+            tvContinue = mDialog.findViewById(R.id.tv_continue);
+            tvExit = mDialog.findViewById(R.id.tv_exit);
             tvTitle = mDialog.findViewById(R.id.tvTitle);
             tvMessage = mDialog.findViewById(R.id.tvContent);
-            tvTitle.setText(title);
+            if(title==null){
+                tvTitle.setVisibility(View.GONE);
+            }else{
+                tvTitle.setText(title);
+            }
+
             tvMessage.setText(message);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.setCancelable(false);
             mDialog.show();
-            btnOk.setOnClickListener(v -> {
+            tvContinue.setOnClickListener(v -> {
                 dismissDialog();
                 if (pOnConfirm != null) {
                     pOnConfirm.OnListenerOk();
                 }
             });
-            btnCancel.setOnClickListener(v -> {
+            tvExit.setOnClickListener(v -> {
                 dismissDialog();
                 if (pOnConfirm != null) {
                     pOnConfirm.OnListenerCancel();
@@ -186,14 +191,15 @@ public class DialogUtil {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_base_success);
-            TextView tvOk, tvMessage;
-            tvOk = mDialog.findViewById(R.id.tvOk);
+            TextView  tvMessage;
+            Button btOk;
+            btOk = mDialog.findViewById(R.id.btn_ok);
             tvMessage = mDialog.findViewById(R.id.tvContent);
             tvMessage.setText(message);
             //mDialog.setCanceledOnTouchOutside(false);
         //    mDialog.setCancelable(false);
             mDialog.show();
-            tvOk.setOnClickListener(v -> {
+            btOk.setOnClickListener(v -> {
                 dismissDialog();
             });
         }

@@ -18,8 +18,6 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_success_green"
             android:contentDescription="@string/string_todo" />
-
-
         <TextView
             android:id="@+id/tvContent"
             android:layout_width="wrap_content"
@@ -33,18 +31,16 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_large" />
-        <include layout="@layout/view_line_05"/>
-
-        <TextView
-            android:id="@+id/tvOk"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="15dp"
+            android:textSize="@dimen/text_xlarge" />
+        <Button
+            android:id="@+id/btn_ok"
+            style="@style/btn_submit_full"
+            android:layout_margin="10dp"
             android:text="@string/string_ok"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/text_header" />
+            android:textAllCaps="true"
+            android:layout_marginTop="20dp"
+            android:textSize="@dimen/text_header"
+            />
     </LinearLayout>
 
 </RelativeLayout>
