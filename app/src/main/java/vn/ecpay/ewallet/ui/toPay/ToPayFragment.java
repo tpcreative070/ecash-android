@@ -29,10 +29,12 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.ContentInputTextWatcher;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.NumberTextWatcher;
 import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.database.WalletDatabase;
@@ -135,6 +137,10 @@ public class ToPayFragment extends ECashBaseFragment {
                 getActivity().onBackPressed();
                 break;
             case R.id.btn_confirm:
+                if(!CheckNetworkUtil.isConnected(getBaseActivity())){
+                    DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet));
+                 return;
+                }
                 validateData();
                 break;
         }
@@ -150,9 +156,9 @@ public class ToPayFragment extends ECashBaseFragment {
         if(edtAmount.getText().toString().length()>0){
             Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
             // Log.e("money%1000 ",money%1000+"");
-            if(money<1000||money%1000!=0){
+            if(money<1000||money%1000!=0){//!CommonUtils.validateCashInput(money)
               //  showDialogError(getString(R.string.err_amount_validate));
-                tvErrorAmount.setText(getString(R.string.err_amount_validate));
+                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
                 return;
             }else if(money>Constant.AMOUNT_LIMITED){
              //   showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
