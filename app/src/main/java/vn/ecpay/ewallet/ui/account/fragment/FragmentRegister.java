@@ -228,7 +228,7 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             return;
         }
 
-        if (userName.length() <= 3) {
+        if (userName.length() < 3) {
             tvErrorUsername.setText(getString(R.string.err_user_name_lenght));
             dismissProgress();
             return;

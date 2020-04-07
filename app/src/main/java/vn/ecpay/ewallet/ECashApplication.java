@@ -46,7 +46,7 @@ public class ECashApplication extends Application {
     public static boolean isCancelAccount = false;
     public static Long lastTimeAddContact;
 
-    public static boolean isIsChangeDataBase() {
+    public static boolean isChangeDataBase() {
         return isChangeDataBase;
     }
 

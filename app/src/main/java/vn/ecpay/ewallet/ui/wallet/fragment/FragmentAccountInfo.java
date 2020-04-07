@@ -9,9 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,6 +25,8 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
@@ -73,6 +73,8 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     TextView tvAddress;
     @BindView(R.id.tv_master_key)
     TextView tvMasterKey;
+    @BindView(R.id.tv_private_key)
+    TextView tvPrivateKey;
     private AccountInfo accountInfo;
     private ArrayList<EdongInfo> listEDongInfo;
     @Inject
@@ -106,6 +108,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             tvAddress.setText(accountInfo.getPersonCurrentAddress());
 
             tvMasterKey.setText(KeyStoreUtils.getMasterKey(getActivity()));
+            tvPrivateKey.setText(KeyStoreUtils.getPrivateKey(getActivity()));
         }
         if (LanguageUtils.getCurrentLanguage().getCode().equals(getActivity().getResources().getString(R.string.language_english_code))) {
             tvLanguage.setText(getActivity().getResources().getString(R.string.language_english));
@@ -123,7 +126,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         }
     }
 
-    @OnClick({R.id.layout_master_key, R.id.layout_change_pass, R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
+    @OnClick({R.id.layout_master_key,R.id.layout_private_key, R.id.layout_change_pass, R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_change_language:
@@ -185,6 +188,16 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
                     String text = tvMasterKey.getText().toString();
                     ClipData myClip = ClipData.newPlainText("text", text);
                     clipboard.setPrimaryClip(myClip);
+                    Toast.makeText(getActivity(), "copy master key success", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.layout_private_key:
+                if (getActivity() != null) {
+                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    String text = tvPrivateKey.getText().toString();
+                    ClipData myClip = ClipData.newPlainText("text", text);
+                    clipboard.setPrimaryClip(myClip);
+                    Toast.makeText(getActivity(), "copy private key success", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -268,10 +281,10 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             exportFile(context.getDatabasePath(Constant.DATABASE_NAME + "-wal").getAbsolutePath(), Constant.DATABASE_NAME + "-wal");
         } catch (Exception e) {
             dismissProgress();
-            showDialogError( getResources().getString(R.string.err_upload));
+            showDialogError(getResources().getString(R.string.err_upload));
         }
         dismissProgress();
-        showDialogError(  "Export file DB thành công");
+        showDialogError("Export file DB thành công");
     }
 
     private File exportFile(String input, String dst) throws IOException {

@@ -265,7 +265,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     private void setAdapterListCash() {
         if (transactionsHistoryModel.getTransactionType().equals(TYPE_CASH_EXCHANGE)) {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            List<CashLogTransaction> listCashLogTransactionIn = WalletDatabase.getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_IN);
+            List<CashLogTransaction> listCashLogTransactionIn = WalletDatabase. getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_IN);
             List<CashLogTransaction> listCashLogTransactionOut = WalletDatabase.getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_OUT);
 
             LinearLayoutManager mLayoutManagerOut = new LinearLayoutManager(getActivity());

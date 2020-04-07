@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,15 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
-import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -146,9 +142,9 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         homePresenter.onViewCreate();
         updateAccountInfo();
         checkPayment();
-//        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
-//            homePresenter.getCashValues(accountInfo, getActivity());
-//        }
+        if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
+            homePresenter.getCashValues(accountInfo, getActivity());
+        }
     }
 
     private void updateAccountInfo() {
@@ -285,7 +281,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_notification:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -304,7 +300,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             case R.id.iv_qr_code:
             case R.id.viewElectronPay:
             case R.id.viewWaterPay:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -313,7 +309,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                     ((MainActivity) getActivity()).showDialogError(getString(R.string.err_doing));
                 break;
             case R.id.viewCreateBill:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -337,7 +333,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             case R.id.layout_account_info:
                 break;
             case R.id.viewPaymentRequest:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -360,7 +356,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 break;
 
             case R.id.layout_cash_in:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -383,7 +379,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
                 break;
             case R.id.layout_cash_out:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -405,7 +401,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 }
                 break;
             case R.id.layout_change_cash:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -427,7 +423,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 }
                 break;
             case R.id.layout_transfer_cash:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -450,7 +446,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 break;
 
             case R.id.layout_eDong:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;
@@ -471,7 +467,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 }
                 break;
             case R.id.layout_lixi:
-                if (ECashApplication.isIsChangeDataBase()) {
+                if (ECashApplication.isChangeDataBase()) {
                     if (getActivity() != null)
                         ((MainActivity) getActivity()).showDialogError(getString(R.string.err_change_database));
                     return;

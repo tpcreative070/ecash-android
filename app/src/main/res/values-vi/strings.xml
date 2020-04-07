@@ -205,7 +205,7 @@
     <string name="err_validate_cmnd_fail">Chứng minh nhân dân chỉ được nhập 9 hoặc 12 ký tự số</string>
     <string name="err_validate_name_contact">Họ và tên phải từ 2 đến 64 ký tự</string>
     <string name="err_validate_phone_fail">Số điện thoại sai định dạng</string>
-    <string name="err_pass_duplicate_fail">Mật khẩu không trùng khớp</string>
+    <string name="err_pass_duplicate_fail">Nhập lại mật khẩu mới không khớpstring</string>
     <string name="err_new_pass_must_other_old_pass">Mật khẩu mới không được trùng với mật khẩu cũ</string>
     <string name="err_pass_bigger_six_char">Mật khẩu mới phải từ 6 đến 20 ký tự</string>
     <string name="err_user_name_null">Bạn chưa nhập tên tài khoản</string>
@@ -245,6 +245,10 @@
     <string name="err_un_chose_wallet_send">Chưa chọn tài khoản nhận</string>
     <string name="err_amount_not_enough_to_transfer">Số tiền trong ví không đủ để chuyển khoản</string>
     <string name="err_no_result">Không tìm thấy giao dịch</string>
+    <string name="err_send_another_account">Giao dịch được gửi cho tài khoản khác</string>
+    <string name="err_device_not_support_flash">Thiết bị của bạn không hỗ trợ đèn flash!</string>
+    <string name="err_qr_received">QR Code đã được nhận</string>
+    <string name="err_qr_invalid">QR Code không hợp lệ!</string>
 
     //%s
     <string name="str_lixi_sender">Lì xì được gửi từ: %s</string>
@@ -334,6 +338,7 @@
     <string name="error_message_code_3034">username đã tồn tại</string>
     <string name="error_message_code_0998">user name tối thiểu 3 ký tự</string>
     <string name="error_message_code_1094">Số điện thoại đã tồn tại</string>
+    <string name="error_message_code_1095">Số điện thoại chưa được đăng ký tài khoản ví eCash</string>
     <string name="error_message_code_3019">Mật khẩu đã được thay đổi. Bạn vui lòng đăng nhập lại</string>
     <string name="error_message_code_login_3019">Mật khẩu bạn nhập không đúng</string>
     <string name="error_message_code_3014">Mã xác thực không đúng</string>
@@ -343,6 +348,7 @@
     <string name="error_message_code_3035">Tài khoản không tồn tại</string>
     <string name="error_message_code_3029">Chữ ký không hợp lệ</string>
     <string name="error_message_code_3077">Tài khoản chưa được kích hoạt!</string>
+    <string name="error_message_code_4129">Số ví không tồn tại!</string>
 
     <string name="str_denominations_available">Các mệnh giá đang có</string>
     <string name="str_ecash_wants_to_change">eCash muốn đổi:</string>

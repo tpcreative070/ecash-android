@@ -253,6 +253,10 @@
     <string name="err_device_un_support">Device does not support this function.</string>
     <string name="err_un_chose_wallet_send">No receiving accounts selected</string>
     <string name="err_amount_not_enough_to_transfer">The amount in the wallet is not enough to transfer</string>
+    <string name="err_send_another_account">The transaction is sent to another account</string>
+    <string name="err_device_not_support_flash">your device not support flash light!</string>
+    <string name="err_qr_received">QR Code has been received</string>
+    <string name="err_qr_invalid">Invalid QR Code!</string>
 
     //%s
     <string name="str_type_cash_out">- %S</string>
@@ -339,6 +343,7 @@
     <string name="error_message_code_3034">The username already exists</string>
     <string name="error_message_code_0998">user name is at least 3 characters</string>
     <string name="error_message_code_1094">Phone number already exists</string>
+    <string name="error_message_code_1095">Phone number has not been registered for eCash wallet account</string>
     <string name="error_message_code_3019">Password is changed. Please log in again</string>
     <string name="error_message_code_login_3019">The password you entered is incorrect</string>
     <string name="error_message_code_3014">Incorrect authentication code</string>
@@ -348,6 +353,7 @@
     <string name="error_message_code_3035">Account does not exist</string>
     <string name="error_message_code_3029">Signature is not valid</string>
     <string name="error_message_code_3077">User not active!</string>
+    <string name="error_message_code_4129">The wallet number does not exist!</string>
     <string name="err_no_result">No results were found</string>
 
     <string name="str_denominations_available">the denominations available</string>

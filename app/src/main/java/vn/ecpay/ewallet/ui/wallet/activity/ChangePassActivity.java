@@ -106,6 +106,11 @@ public class  ChangePassActivity extends ECashBaseActivity {
             return;
         }
 
+        if (oldPass.equals(newPass)) {
+            tvErrorNewPass.setText(getString(R.string.err_new_pass_must_other_old_pass));
+            return;
+        }
+
         if (reNewPass.isEmpty()) {
             tvErrorReNewPass.setText(getString(R.string.err_renew_pass_null));
             return;
@@ -121,10 +126,6 @@ public class  ChangePassActivity extends ECashBaseActivity {
             return;
         }
 
-        if (oldPass.equals(newPass)) {
-            tvErrorOldPass.setText(getString(R.string.err_new_pass_must_other_old_pass));
-            return;
-        }
         showLoading();
         requestChangePass();
     }

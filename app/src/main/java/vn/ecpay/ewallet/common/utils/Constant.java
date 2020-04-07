@@ -9,6 +9,7 @@ public class Constant {
 
     public static final String app_name = "eCash App";
     public static final String sesion_expid = "3043";
+    public static final String ERROR_CODE_1095 ="1095";
     public static final String ERROR_CODE_3077 = "3077";
     public static final String ERROR_CODE_0998 = "0998";
     public static final String ERROR_CODE_1003 = "1003";
@@ -36,6 +37,7 @@ public class Constant {
     // public static final String ERROR_CODE_4010 = "4010";
     public static final String ERROR_CODE_4012 = "4012";
     public static final String ERROR_CODE_4011 = "4011";
+    public static final String ERROR_CODE_4129 = "4129";
 
     public static final int DEFAULT_LANGUAGE_ID = 0;
 

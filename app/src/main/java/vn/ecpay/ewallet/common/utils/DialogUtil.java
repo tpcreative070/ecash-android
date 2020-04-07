@@ -14,11 +14,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.database.table.Payment_DataBase;
@@ -28,9 +27,9 @@ import vn.ecpay.ewallet.model.language.LanguageObject;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.adapter.CashTotalChangeAdapter;
 import vn.ecpay.ewallet.ui.adapter.CashTotalConfirmAdapter;
+import vn.ecpay.ewallet.ui.callbackListener.UpDownMoneyListener;
 import vn.ecpay.ewallet.ui.cashIn.adapter.CashValueAdapter;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
-import vn.ecpay.ewallet.ui.callbackListener.UpDownMoneyListener;
 
 public class DialogUtil {
     private static DialogUtil mInsance;
