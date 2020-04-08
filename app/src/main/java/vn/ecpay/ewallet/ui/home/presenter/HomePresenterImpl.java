@@ -29,6 +29,7 @@ import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.RequestOTPActiveAccount;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseData;
 import vn.ecpay.ewallet.model.account.getAccountWalletInfo.OTPActiveAccount.ResponseOTPActiveAccount;
@@ -148,7 +149,7 @@ public class HomePresenterImpl implements HomePresenter {
             public void onFailure(Call<ResponseOTPActiveAccount> call, Throwable t) {
                 homeView.dismissLoading();
              //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> getOTPActiveAccount( accountInfo,  context));
             }
         });
     }
@@ -196,7 +197,9 @@ public class HomePresenterImpl implements HomePresenter {
             public void onFailure(Call<ResponseGetMoneyValue> call, Throwable t) {
                 homeView.dismissLoading();
              //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> {
+                    getCashValues( accountInfo,  context);
+                });
             }
         });
     }
@@ -276,7 +279,7 @@ public class HomePresenterImpl implements HomePresenter {
             public void onFailure(Call<ResponseGetAccountWalletInfo> call, Throwable t) {
                 homeView.dismissLoading();
                // homeView.showDialogError(context.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> activeAccWalletInfo( accountInfo,responseData,otp, context));
             }
         });
     }
@@ -328,7 +331,9 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
                 homeView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> {
+                    syncContact(context,accountInfo);
+                });
             }
         });
     }

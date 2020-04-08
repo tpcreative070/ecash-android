@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
@@ -139,7 +140,7 @@ public class CashInPresenterImpl implements CashInPresenter {
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashInView.dismissLoading();
                // cashInView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> transferMoneyEDongToECash( context, totalMoney,  eDongInfoCashIn, listQuality,  accountInfo, listValue));
             }
         });
     }

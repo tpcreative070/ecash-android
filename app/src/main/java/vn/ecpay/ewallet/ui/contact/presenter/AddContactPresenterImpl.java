@@ -16,6 +16,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.RequestGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseGetPublicKeyByPhone;
@@ -114,7 +115,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
             public void onFailure(Call<ResponseGetPublicKeyByPhone> call, Throwable t) {
                 addContactView.dismissLoading();
                // addContactView.getWalletFail(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestSearchByPhone( phoneNumber,  accountInfo,  context));
             }
         });
     }
@@ -166,7 +167,7 @@ public class AddContactPresenterImpl implements AddContactPresenter {
             public void onFailure(Call<ResponseGetPublicKeyWallet> call, Throwable t) {
                 addContactView.dismissLoading();
                // addContactView.getWalletFail(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestSearchWalletID( walletId,  accountInfo, context));
             }
         });
     }

@@ -255,7 +255,7 @@ public class  ChangePassActivity extends ECashBaseActivity {
             @Override
             public void onFailure(Call<ResponseChangePassword> call, Throwable t) {
                 dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestChangePass());
             }
         });
     }

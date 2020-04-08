@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -126,7 +127,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashChangeView.dismissLoading();
            //     cashChangeView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestChangeCash( context,  cashEnc,listQuality,  accountInfo,  listValue));
             }
         });
     }
@@ -183,7 +184,8 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             public void onFailure(Call<ResponseGetPublickeyOrganization> call, Throwable t) {
                 cashChangeView.dismissLoading();
                // cashChangeView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t,
+                        () -> getPublicKeyOrganization( activity, accountInfo));
             }
         });
     }

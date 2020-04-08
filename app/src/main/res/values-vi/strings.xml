@@ -205,7 +205,7 @@
     <string name="err_validate_cmnd_fail">Chứng minh nhân dân chỉ được nhập 9 hoặc 12 ký tự số</string>
     <string name="err_validate_name_contact">Họ và tên phải từ 2 đến 64 ký tự</string>
     <string name="err_validate_phone_fail">Số điện thoại sai định dạng</string>
-    <string name="err_pass_duplicate_fail">Nhập lại mật khẩu mới không khớpstring</string>
+    <string name="err_pass_duplicate_fail">Nhập lại mật khẩu mới không khớp</string>
     <string name="err_new_pass_must_other_old_pass">Mật khẩu mới không được trùng với mật khẩu cũ</string>
     <string name="err_pass_bigger_six_char">Mật khẩu mới phải từ 6 đến 20 ký tự</string>
     <string name="err_user_name_null">Bạn chưa nhập tên tài khoản</string>
