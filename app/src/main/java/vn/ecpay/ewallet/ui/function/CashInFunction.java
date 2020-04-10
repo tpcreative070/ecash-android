@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
@@ -275,7 +276,7 @@ public class CashInFunction {
 
             @Override
             public void onFailure(Call<ResponseGetPublicKeyCash> call, Throwable t) {
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> getPublicKeyCashToCheck(cash,decisionNo));
             }
         });
     }

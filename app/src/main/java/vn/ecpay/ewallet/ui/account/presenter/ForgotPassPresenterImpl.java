@@ -18,6 +18,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.forgotPassword.changePass.request.ChangePassRequest;
 import vn.ecpay.ewallet.model.forgotPassword.changePass.response.ChangePassResponse;
 import vn.ecpay.ewallet.model.forgotPassword.getOTP.request.ForgotPassOTPRequest;
@@ -110,7 +111,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
             @Override
             public void onFailure(Call<ForgotPassOTPResponse> call, Throwable t) {
                 forgotPassView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> getOTPForgotPassword(userName,context));
             }
         });
     }
@@ -168,7 +169,7 @@ public class ForgotPassPresenterImpl implements ForgotPassPresenter {
             @Override
             public void onFailure(Call<ChangePassResponse> call, Throwable t) {
                 forgotPassView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestChangePass( forgotPassResponseData,otp,newPass,context,tvErrorOTP));
             }
         });
     }

@@ -38,7 +38,7 @@ import vn.ecpay.ewallet.model.forgotPassword.getOTP.response.ForgotPassResponseD
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 
-public class ForgotPasswordOTPFragment extends ECashBaseFragment {
+public class ForgotPasswordOTPFragment extends ECashBaseFragment implements DialogUtil.OnResult {
     @BindView(R.id.edt_user_name)
     EditText edtUserName;
     @BindView(R.id.tv_error_user_name)
@@ -173,13 +173,18 @@ public class ForgotPasswordOTPFragment extends ECashBaseFragment {
             public void onFailure(Call<ForgotPassOTPResponse> call, Throwable t) {
                 dismissProgress();
                // showDialogError(getResources().getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t,ForgotPasswordOTPFragment.this);
             }
         });
     }
 
     private void getOTPSuccess(ForgotPassResponseData forgotPassResponseData) {
         ((ForgotPasswordActivity) getActivity()).addFragment(ForgotChangePassFragment.newInstance(forgotPassResponseData, userName), true);
+    }
+
+    @Override
+    public void OnListenerOk() {
+        getOTPForgotPassword();
     }
 
 //    private void showDialogError(String err) {

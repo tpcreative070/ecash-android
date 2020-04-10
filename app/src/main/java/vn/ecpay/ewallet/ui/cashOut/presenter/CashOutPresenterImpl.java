@@ -16,6 +16,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.getEdongInfo.RequestEdongInfo;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseEdongInfo;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
@@ -124,7 +125,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
             @Override
             public void onFailure(Call<ResponseGetPublickeyOrganization> call, Throwable t) {
                 cashOutView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> getPublicKeyOrganization( context,  accountInfo,  isValidate));
             }
         });
     }
@@ -188,7 +189,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
             public void onFailure(Call<ResponseECashToEdong> call, Throwable t) {
                 cashOutView.dismissLoading();
                 // cashOutView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> sendECashToEDong( context,  encData,  idSender,  totalMoney,  edongInfo,  accountInfo));
             }
         });
     }

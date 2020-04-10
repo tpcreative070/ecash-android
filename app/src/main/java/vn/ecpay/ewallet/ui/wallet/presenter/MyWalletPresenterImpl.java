@@ -19,6 +19,7 @@ import vn.ecpay.ewallet.common.language.SharedPrefs;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.cancelAccount.RequestCancelAccount;
 import vn.ecpay.ewallet.model.account.cancelAccount.response.ResponseCancelAccount;
 import vn.ecpay.ewallet.model.account.logout.RequestLogOut;
@@ -100,7 +101,12 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
             public void onFailure(Call<ResponseLogOut> call, Throwable t) {
                 myWalletView.dismissLoading();
               //  myWalletView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, new DialogUtil.OnResult() {
+                    @Override
+                    public void OnListenerOk() {
+                        logout(accountInfo);
+                    }
+                });
             }
         });
     }
@@ -166,7 +172,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
                 ECashApplication.isCancelAccount = false;
                 myWalletView.dismissLoading();
                 //myWalletView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> cancelAccount( accountInfo,  context));
             }
         });
     }

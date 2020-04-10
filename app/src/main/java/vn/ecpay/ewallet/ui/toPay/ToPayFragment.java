@@ -138,7 +138,14 @@ public class ToPayFragment extends ECashBaseFragment {
                 break;
             case R.id.btn_confirm:
                 if(!CheckNetworkUtil.isConnected(getBaseActivity())){
-                    DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet));
+                    DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet), new DialogUtil.OnResult() {
+                        @Override
+                        public void OnListenerOk() {
+                            if(CheckNetworkUtil.isConnected(getBaseActivity())){
+                                validateData();
+                            }
+                        }
+                    });
                  return;
                 }
                 validateData();
