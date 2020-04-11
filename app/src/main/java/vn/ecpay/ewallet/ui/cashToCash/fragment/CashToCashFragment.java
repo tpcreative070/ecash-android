@@ -218,7 +218,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         Collections.reverse(valuesListAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvCashValues.setLayoutManager(mLayoutManager);
-        cashValueAdapter = new CashTotalAdapter(valuesListAdapter, getActivity(), this::updateTotalMoney);
+        cashValueAdapter = new CashTotalAdapter(valuesListAdapter, getActivity(),tvErrorWallet, this::updateTotalMoney);
         rvCashValues.setAdapter(cashValueAdapter);
         if (null != multiTransferList)
             cashValueAdapter.setNumberTransfer(multiTransferList.size());

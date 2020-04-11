@@ -325,7 +325,7 @@
     <string name="err_anount_null">You have not entered the amount</string>
     <string name="err_amount_validate">The amount is not valid</string>
     <string name="err_amount_input_validate">Enter the total amount corresponding to the face value in stock</string>
-    <string name="err_amount_does_not_exceed_twenty_million">The amount does not exceed 20 million</string>
+    <string name="err_amount_does_not_exceed_twenty_million">The minimum required payment amount 1,000 maximum 20,000,000</string>
     <string name="str_send_request_success">Submit successful payment request. Do you want to continue making transactions?</string>
     <string name="str_transfer_money_success">Transfer money successful</string>
     <string name="str_error_you_cannot_pay_for_your_self">You cannot pay for yourself!</string>

@@ -24,11 +24,13 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private List<CashTotal> listCashValue;
     private UpDownMoneyListener upDownMoneyListener;
     private int numberTransfer;
+    private TextView tvErrorWallet;
 
-    public CashTotalAdapter(List<CashTotal> mListCashValue, Context activity, UpDownMoneyListener upDownMoneyListener) {
+    public CashTotalAdapter(List<CashTotal> mListCashValue, Context activity, TextView tvErrorWallet, UpDownMoneyListener upDownMoneyListener) {
         this.context = activity;
         this.listCashValue = mListCashValue;
         this.upDownMoneyListener = upDownMoneyListener;
+        this.tvErrorWallet = tvErrorWallet;
         numberTransfer = 0;
     }
 
@@ -69,7 +71,8 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         itemViewHolder.iv_up.setOnClickListener(v -> {
             if (numberTransfer == 0) {
-                DialogUtil.getInstance().showDialogWarning(context,context.getResources().getString(R.string.err_not_input_number_username));
+                tvErrorWallet.setText(context.getResources().getString(R.string.err_not_input_number_username));
+                //DialogUtil.getInstance().showDialogWarning(context,context.getResources().getString(R.string.err_not_input_number_username));
                 return;
             }
             if (cashTotal.getTotalDatabase() > 0) {
@@ -82,10 +85,10 @@ public class CashTotalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         upDownMoneyListener.onUpDownMoneyListener();
                     }
                 } else {
-                    DialogUtil.getInstance().showDialogErrorTitleMessage(context,context.getString(R.string.str_dialog_notification_title),context.getString(R.string.str_error_not_enough_balance_please_try_again));
+                   // DialogUtil.getInstance().showDialogErrorTitleMessage(context,context.getString(R.string.str_dialog_notification_title),context.getString(R.string.str_error_not_enough_balance_please_try_again));
                 }
             } else {
-                DialogUtil.getInstance().showDialogErrorTitleMessage(context,context.getString(R.string.str_dialog_notification_title),context.getString(R.string.str_error_not_enough_balance_please_try_again));
+              //  DialogUtil.getInstance().showDialogErrorTitleMessage(context,context.getString(R.string.str_dialog_notification_title),context.getString(R.string.str_error_not_enough_balance_please_try_again));
 
             }
         });

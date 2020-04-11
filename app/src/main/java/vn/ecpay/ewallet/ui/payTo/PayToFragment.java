@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcel;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +32,7 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.network.CheckNetworkUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.ContentInputTextWatcher;
@@ -167,6 +169,22 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
 
     }
     private void validateData(){
+        if(!CheckNetworkUtil.isConnected(getBaseActivity())){
+            DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet), new DialogUtil.OnResult() {
+                @Override
+                public void OnListenerOk() {
+                    showProgress();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissProgress();
+                            validateData();
+                        }
+                    },2000);
+                }
+            });
+            return;
+        }
         clearError();
         if (multiTransferList == null) {
             if (getActivity() != null)
@@ -191,13 +209,14 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
            // Log.e("money%1000 ",money%1000+"");
            // if(money<1000||money%1000!=0){
-            if(!CommonUtils.validateCashInput(money)){
-              //  showDialogError(getString(R.string.err_amount_validate));
-                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
-                return;
-            }else if(money>Constant.AMOUNT_LIMITED){
-               // showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
+            if(money<Constant.AMOUNT_LIMITED_MIN||money>Constant.AMOUNT_LIMITED_MAX){
+                //   showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
                 tvErrorAmount.setText(getString(R.string.err_amount_does_not_exceed_twenty_million));
+                return;
+            }
+            else if(money%1000!=0){//!CommonUtils.validateCashInput(money)
+                //  showDialogError(getString(R.string.err_amount_validate));
+                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
                 return;
             }
         }
@@ -265,10 +284,23 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
+        Log.e("Payto  Fragment ",event.getData());
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();
-            showDialogError(getString(R.string.err_connect_socket_fail));
-           //DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet));
+           // showDialogError(getString(R.string.err_connect_socket_fail));
+            DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet), new DialogUtil.OnResult() {
+                @Override
+                public void OnListenerOk() {
+                    showProgress();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissProgress();
+                            validateData();
+                        }
+                    },2000);
+                }
+            });
         }
         if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
             updateBalance();
