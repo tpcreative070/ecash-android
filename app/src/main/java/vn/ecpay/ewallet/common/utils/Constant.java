@@ -178,7 +178,8 @@ public class Constant {
     // todo Qr code
     public static final String QR_CONTACT = "MC";
     public static final String QR_TO_PAY = "TP";
-    public static final long AMOUNT_LIMITED = 20000000;
+    public static final long AMOUNT_LIMITED_MAX = 20000000;
+    public static final long AMOUNT_LIMITED_MIN = 1000;
 
     public static final String SAVED_BUNDLE_TAG = "saved_bundle";
 }
