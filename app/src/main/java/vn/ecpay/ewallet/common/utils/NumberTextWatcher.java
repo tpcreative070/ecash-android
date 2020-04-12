@@ -42,12 +42,14 @@ public class NumberTextWatcher implements TextWatcher {
             String originalString = s.toString();
             checkButtonConfirm(originalString);
             Long longval;
-            if (originalString.contains(",")) {
-                originalString = originalString.replaceAll(",", "");
+            if (originalString.contains(".")) {
+               // originalString = originalString.replaceAll(",", "");
+                originalString = originalString.replace(".", "");
             }
             longval = Long.parseLong(originalString);
 
-            DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+        //   DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+            DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(new Locale("vi","VN"));
             formatter.applyPattern("#,###,###,###");
             String formattedString = formatter.format(longval);
 

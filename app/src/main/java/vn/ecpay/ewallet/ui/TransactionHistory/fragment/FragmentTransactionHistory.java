@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -77,9 +78,9 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                 if (!s.toString().isEmpty()) {
                     setAdapterTextChange(s.toString());
                 } else {
-                    tvNoResult.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    setAdapter(DatabaseUtil.getListTransactionHistory(getActivity()));
+                    resultNotFound(false);
+                    List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
+                    setAdapter(transactionsHistoryModelList);
                 }
             }
         });
@@ -88,11 +89,9 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     private void setAdapterTextChange(String filter) {
         List<TransactionsHistoryModel> transactionsHistoryModelListFilter = WalletDatabase.getListTransactionHistoryFilter(CommonUtils.getParamFilter(filter));
         if (transactionsHistoryModelListFilter.size() > 0) {
-            tvNoResult.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            resultNotFound(false);
         } else {
-            tvNoResult.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
+            resultNotFound(true);
         }
         setAdapter(transactionsHistoryModelListFilter);
     }
@@ -101,6 +100,11 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
         mSectionList = new ArrayList<>();
         getHeaderListLatter(transactionsHistoryModelList);
         recyclerView.setHasFixedSize(true);
+        if(transactionsHistoryModelList==null||transactionsHistoryModelList.size()==0){
+            resultNotFound(true);
+        }else{
+            resultNotFound(false);
+        }
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new TransactionHistoryAdapter(mSectionList, getActivity(), transactionsHistoryModel -> {
@@ -193,5 +197,9 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
             });
             cashChange.show(getChildFragmentManager(), "historyFilter");
         }
+    }
+    private  void resultNotFound(boolean show){
+        tvNoResult.setVisibility(show?View.VISIBLE:View.GONE);
+        recyclerView.setVisibility(show?View.GONE:View.VISIBLE);
     }
 }

@@ -204,7 +204,7 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogErrorConnectInternet(Context pContext,String message) {
+    public void showDialogErrorConnectInternet(Context pContext,String message,OnResult onResult) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);
             mDialog.setContentView(R.layout.dialog_error_connect);
@@ -221,6 +221,9 @@ public class DialogUtil {
             });
             tvTryAgain.setOnClickListener(v -> {
                 dismissDialog();
+                if(onResult!=null){
+                    onResult.OnListenerOk();
+                }
             });
         }
     }

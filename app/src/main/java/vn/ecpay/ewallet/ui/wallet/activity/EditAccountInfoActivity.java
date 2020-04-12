@@ -345,7 +345,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             @Override
             public void onFailure(Call<ResponseUpdateAccountInfo> call, Throwable t) {
                 dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> updateAccountInfo());
             }
         });
     }

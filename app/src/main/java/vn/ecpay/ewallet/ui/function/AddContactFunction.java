@@ -17,6 +17,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactAdd.RequestAddContact;
 import vn.ecpay.ewallet.model.contactAdd.ResponseAddContact;
@@ -74,7 +75,7 @@ public class AddContactFunction {
             @Override
             public void onFailure(Call<ResponseAddContact> call, Throwable t) {
             //    addContactListener.addContactFail();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> addContact( accountInfo,  contact,  addContactListener));
             }
         });
     }

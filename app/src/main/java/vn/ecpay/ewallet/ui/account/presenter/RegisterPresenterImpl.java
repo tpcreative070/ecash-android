@@ -24,6 +24,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.OTP.RequestGetOTP;
 import vn.ecpay.ewallet.model.OTP.response.ResponseGetOTP;
 import vn.ecpay.ewallet.model.account.active.RequestActiveAccount;
@@ -244,7 +245,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseRegister> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestRegister( context,  userName, CMND, pass, name,phone));
             }
         });
     }
@@ -293,7 +294,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () ->
+                        retryOTP( context, accountInfo));
             }
         });
     }
@@ -352,7 +354,12 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseActiveAccount> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, new DialogUtil.OnResult() {
+                    @Override
+                    public void OnListenerOk() {
+                        activeAccount( context, accountInfo, otp);
+                    }
+                });
             }
         });
     }
@@ -398,7 +405,12 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, new DialogUtil.OnResult() {
+                    @Override
+                    public void OnListenerOk() {
+                        loginAccount(context, accountInfo);
+                    }
+                });
             }
         });
     }
@@ -444,7 +456,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             @Override
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
                 registerView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> getEDongInfo( context,  accountInfo));
             }
         });
     }
@@ -489,7 +501,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> syncContact( context,  accountInfo));
             }
         });
     }

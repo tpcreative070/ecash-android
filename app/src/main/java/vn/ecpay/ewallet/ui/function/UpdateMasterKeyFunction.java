@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.RequestUpdateMasterKey;
@@ -92,7 +93,7 @@ public class UpdateMasterKeyFunction {
                 if(activity instanceof ECashBaseActivity){
                     ((ECashBaseActivity) activity).dismissLoading();
                 }
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKey(updateMasterKeyListener));
             }
         });
     }

@@ -205,7 +205,7 @@
     <string name="err_validate_cmnd_fail">Chứng minh nhân dân chỉ được nhập 9 hoặc 12 ký tự số</string>
     <string name="err_validate_name_contact">Họ và tên phải từ 2 đến 64 ký tự</string>
     <string name="err_validate_phone_fail">Số điện thoại sai định dạng</string>
-    <string name="err_pass_duplicate_fail">Nhập lại mật khẩu mới không khớpstring</string>
+    <string name="err_pass_duplicate_fail">Nhập lại mật khẩu mới không khớp</string>
     <string name="err_new_pass_must_other_old_pass">Mật khẩu mới không được trùng với mật khẩu cũ</string>
     <string name="err_pass_bigger_six_char">Mật khẩu mới phải từ 6 đến 20 ký tự</string>
     <string name="err_user_name_null">Bạn chưa nhập tên tài khoản</string>
@@ -319,7 +319,7 @@
     <string name="err_anount_null">Bạn chưa nhập số tiền</string>
     <string name="err_amount_validate">Số tiền không hợp lệ</string>
     <string name="err_amount_input_validate">Nhập tổng tiền tương ứng với các mệnh giá có trong kho</string>
-    <string name="err_amount_does_not_exceed_twenty_million">Số tiền không vượt quá 20 triệu</string>
+    <string name="err_amount_does_not_exceed_twenty_million">Số tiền yêu cầu thanh toán tối thiểu 1.000 tối đa 20.000.000</string>
     <string name="str_send_request_success">Gửi yêu cầu thanh toán thành công. Bạn có muốn tiếp tục thực hiện giao dịch?</string>
     <string name="str_transfer_money_success">chuyển tiền thành công</string>
     <string name="str_error_you_cannot_pay_for_your_self">Bạn không thể thanh toán cho chính mình!</string>

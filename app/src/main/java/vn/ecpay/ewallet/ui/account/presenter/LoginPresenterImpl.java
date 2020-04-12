@@ -18,6 +18,7 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
+import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.OTP.RequestGetOTP;
 import vn.ecpay.ewallet.model.OTP.response.ResponseGetOTP;
 import vn.ecpay.ewallet.model.account.active.RequestActiveAccount;
@@ -81,6 +82,7 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass, TextView tvError) {
+        loginView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -147,7 +149,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 loginView.dismissLoading();
               //  loginView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestLogin( context, accountInfo,  userName,  pass,  tvError));
             }
         });
     }
@@ -197,7 +199,9 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onFailure(Call<ResponseEdongInfo> call, Throwable t) {
                 loginView.dismissLoading();
                 //loginView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> {
+                    getEDongInfo( context, accountInfo);
+                });
             }
         });
     }
@@ -248,7 +252,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
                 loginView.dismissLoading();
                // loginView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestOTPActiveAccount( context, accountInfo, pass));
             }
         });
     }
@@ -306,7 +310,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onFailure(Call<ResponseActiveAccount> call, Throwable t) {
                 loginView.dismissLoading();
               //  loginView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t);
+                ECashApplication.getInstance().showErrorConnection(t, () -> activeAccount( context, accountInfo, otp));
             }
         });
     }

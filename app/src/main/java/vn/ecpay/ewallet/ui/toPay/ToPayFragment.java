@@ -3,7 +3,7 @@ package vn.ecpay.ewallet.ui.toPay;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -141,33 +141,45 @@ public class ToPayFragment extends ECashBaseFragment {
                 getActivity().onBackPressed();
                 break;
             case R.id.btn_confirm:
-                if (!CheckNetworkUtil.isConnected(getBaseActivity())) {
-                    DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet));
-                    return;
-                }
                 validateData();
                 break;
         }
     }
-
-    private void validateData() {
+    private void validateData(){
+        if(!CheckNetworkUtil.isConnected(getBaseActivity())){
+            DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), getString(R.string.str_error_connection_internet), new DialogUtil.OnResult() {
+                @Override
+                public void OnListenerOk() {
+                    showProgress();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissProgress();
+                            validateData();
+                        }
+                    },2000);
+                }
+            });
+            return;
+        }
         clearError();
         if (edtAmount.getText().toString().isEmpty()) {
             if (getActivity() != null)
-                //   showDialogError(getString(R.string.err_anount_null));
-                tvErrorAmount.setText(getString(R.string.err_anount_null));
+             //   showDialogError(getString(R.string.err_anount_null));
+            tvErrorAmount.setText(getString(R.string.err_anount_null));
             return;
         }
-        if (edtAmount.getText().toString().length() > 0) {
-            Long money = Long.parseLong(edtAmount.getText().toString().replace(".", "").replace(",", ""));
+        if(edtAmount.getText().toString().length()>0){
+            Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
             // Log.e("money%1000 ",money%1000+"");
-            if (money < 1000 || money % 1000 != 0) {//!CommonUtils.validateCashInput(money)
-                //  showDialogError(getString(R.string.err_amount_validate));
-                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
-                return;
-            } else if (money > Constant.AMOUNT_LIMITED) {
+            if(money<Constant.AMOUNT_LIMITED_MIN||money>Constant.AMOUNT_LIMITED_MAX){
                 //   showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
                 tvErrorAmount.setText(getString(R.string.err_amount_does_not_exceed_twenty_million));
+                return;
+            }
+            else if(money%1000!=0){//!CommonUtils.validateCashInput(money)
+              //  showDialogError(getString(R.string.err_amount_validate));
+                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
                 return;
             }
         }
