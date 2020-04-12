@@ -162,7 +162,7 @@ public class HomePresenterImpl implements HomePresenter {
         RequestGetMoneyValue requestGetMoneyValue = new RequestGetMoneyValue();
         requestGetMoneyValue.setChannelCode(Constant.CHANNEL_CODE);
         requestGetMoneyValue.setFunctionCode(Constant.FUNCTION_GET_MONEY_VALUE);
-        requestGetMoneyValue.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestGetMoneyValue.setSessionId(CommonUtils.getSessionId(context));
         requestGetMoneyValue.setIssuerCodes(Collections.singletonList(Constant.ISSUER_CODE));
         requestGetMoneyValue.setUsername(accountInfo.getUsername());
         requestGetMoneyValue.setToken(CommonUtils.getToken());
@@ -188,14 +188,13 @@ public class HomePresenterImpl implements HomePresenter {
                     }
                 } else {
                     homeView.dismissLoading();
-                    homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                    homeView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseGetMoneyValue> call, Throwable t) {
                 homeView.dismissLoading();
-             //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showErrorConnection(t);
             }
         });
@@ -310,25 +309,14 @@ public class HomePresenterImpl implements HomePresenter {
                     if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             SharedPrefs.getInstance().put(SharedPrefs.contactMaxDate, ECashApplication.lastTimeAddContact);
-                            homeView.onSyncContactSuccess();
-                        } else {
-                            homeView.dismissLoading();
-                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
-                    } else {
-                        homeView.dismissLoading();
-                        homeView.showDialogError(application.getString(R.string.err_upload));
                     }
-                } else {
-                    homeView.dismissLoading();
-                    homeView.showDialogError(application.getString(R.string.err_upload));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseSyncContact> call, Throwable t) {
                 homeView.dismissLoading();
-                ECashApplication.getInstance().showErrorConnection(t);
             }
         });
     }

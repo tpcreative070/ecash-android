@@ -38,6 +38,7 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.common.utils.LanguageUtils;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
@@ -95,8 +96,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     }
 
     private void setData() {
-        WalletDatabase.getINSTANCE(getContext(), ECashApplication.masterKey);
-        accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         listEDongInfo = ECashApplication.getListEDongInfo();
         if (accountInfo != null) {
             updateAvatar();
@@ -118,15 +118,15 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     }
 
     private void updateAvatar() {
-        if (ECashApplication.getAccountInfo().getLarge() == null) {
+        if (accountInfo.getLarge() == null) {
             if (getActivity() != null)
                 ivAccount.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_avatar));
         } else {
-            CommonUtils.loadAvatar(getActivity(), ivAccount, ECashApplication.getAccountInfo().getLarge());
+            CommonUtils.loadAvatar(getActivity(), ivAccount, accountInfo.getLarge());
         }
     }
 
-    @OnClick({R.id.layout_master_key,R.id.layout_private_key, R.id.layout_change_pass, R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
+    @OnClick({R.id.layout_master_key, R.id.layout_private_key, R.id.layout_change_pass, R.id.layout_address, R.id.layout_change_language, R.id.layout_export_db, R.id.layout_image_account, R.id.layout_name, R.id.layout_email, R.id.layout_cmnd, R.id.layout_qr_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_change_language:
@@ -151,7 +151,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
                 });
                 break;
             case R.id.layout_image_account:
-                showDialogChangeAvatar(FragmentAccountInfo.this);
+                showDialogChangeAvatar();
                 break;
             case R.id.layout_name:
             case R.id.layout_email:
@@ -203,20 +203,24 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
         }
     }
 
-    private void showDialogChangeAvatar(FragmentAccountInfo fragmentAccountInfo) {
+    private boolean isCam = false;
+
+    private void showDialogChangeAvatar() {
         DialogUtil.getInstance().showDialogChangeAvatar(getActivity(), new DialogUtil.OnChangeAvatar() {
             @Override
             public void OnListenerFromStore() {
-                if (PermissionUtils.checkPermissionWriteStore(fragmentAccountInfo, null)) {
+                if (PermissionUtils.checkPermissionWriteStore(FragmentAccountInfo.this, null)) {
                     accountInfoPresenter.onChooseImage(getActivity(), REQUEST_TAKE_PHOTO);
                 }
-
             }
 
             @Override
             public void OnListenerTakePhoto() {
-                if (PermissionUtils.checkPermissionCamera(fragmentAccountInfo, null)) {
-                    accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
+                isCam = true;
+                if (PermissionUtils.checkPermissionCamera(FragmentAccountInfo.this, null)) {
+                    if (PermissionUtils.checkPermissionWriteStore(FragmentAccountInfo.this, null)) {
+                        accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
+                    }
                 }
             }
         });
@@ -226,12 +230,22 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionUtils.REQUEST_WRITE_STORAGE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                accountInfoPresenter.onChooseImage(getActivity(), REQUEST_TAKE_PHOTO);
+            if (isCam) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
+                }
+            } else {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    accountInfoPresenter.onChooseImage(getActivity(), REQUEST_TAKE_PHOTO);
+                }
             }
         } else if (requestCode == PermissionUtils.MY_CAMERA_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                accountInfoPresenter.onCaptureImage(getActivity(), REQUEST_IMAGE_CAPTURE);
+                if (PermissionUtils.checkPermissionWriteStore(FragmentAccountInfo.this, null)) {
+                    accountInfoPresenter.onChooseImage(getActivity(), REQUEST_TAKE_PHOTO);
+                }
+            } else {
+                isCam = false;
             }
         }
     }

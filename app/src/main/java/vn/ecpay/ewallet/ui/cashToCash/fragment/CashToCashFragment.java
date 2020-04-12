@@ -19,11 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -35,11 +30,13 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
-import vn.ecpay.ewallet.BuildConfig;
 import vn.ecpay.ewallet.ECashApplication;
-import vn.ecpay.ewallet.MainActivity;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
@@ -97,7 +94,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     Button btConfirm;
 
     protected AccountInfo accountInfo;
-    private AccountInfo dbAccountInfo;
     protected int balance;
     @BindView(R.id.toolbar_center_text)
     protected TextView toolbarCenterText;
@@ -133,22 +129,14 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 }
             }
         }
-
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
+        if (null == accountInfo) {
+            CommonUtils.restartApp((CashToCashActivity) getActivity());
+        }
         updateType();
-
-        try {
-            accountInfo = ECashApplication.getAccountInfo();
-            dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
-        } catch (NullPointerException e) {
-            CommonUtils.restartApp((CashToCashActivity)getActivity());
-        }
-        if(KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null){
-            accountInfo = dbAccountInfo;
-            updateContent();
-            setAdapter();
-        }
-
-        Utils.disableButtonConfirm(getActivity(),btConfirm,true);
+        updateContent();
+        setAdapter();
+        Utils.disableButtonConfirm(getActivity(), btConfirm, true);
         edtContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -162,15 +150,14 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length()>0){
-                    if(totalMoney>0&&tvNumberWallet.getText().length()>0){
-                        Utils.disableButtonConfirm(getContext(),btConfirm,false);
-                    }else{
-                        Utils.disableButtonConfirm(getContext(),btConfirm,true);
+                if (s.length() > 0) {
+                    if (totalMoney > 0 && tvNumberWallet.getText().length() > 0) {
+                        Utils.disableButtonConfirm(getContext(), btConfirm, false);
+                    } else {
+                        Utils.disableButtonConfirm(getContext(), btConfirm, true);
                     }
-                }
-                else{
-                    Utils.disableButtonConfirm(getContext(),btConfirm,true);
+                } else {
+                    Utils.disableButtonConfirm(getContext(), btConfirm, true);
                 }
             }
         });
@@ -185,7 +172,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     protected void setData() {
         updateContent();
         totalMoney = 0;
-       // edtContent.setText("");
         tvNumberWallet.setText(getString(R.string.str_chose_wallet_transfer));
         if (multiTransferList != null && multiTransferList.size() > 0) {
             multiTransferList.clear();
@@ -193,7 +179,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
-        Utils.disableButtonConfirm(getActivity(),btConfirm,true);
+        Utils.disableButtonConfirm(getActivity(), btConfirm, true);
         setAdapter();
     }
 
@@ -234,19 +220,24 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     protected void updateTotalMoney() {
         totalMoney = 0;
-        for (int i = 0; i < valuesListAdapter.size(); i++) {
-            totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue() * (multiTransferList.size()));
+        if (null != multiTransferList) {
+            if (multiTransferList.size() > 0) {
+                for (int i = 0; i < valuesListAdapter.size(); i++) {
+                    totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.
+                            get(i).getParValue() * (multiTransferList.size()));
+                }
+            }
         }
         tvTotalSend.setText(CommonUtils.formatPriceVND(totalMoney));
-        if(totalMoney>0){
+        if (totalMoney > 0) {
             tvErrorAmount.setText("");
-            if(edtContent.getText().length()>0){
-                Utils.disableButtonConfirm(getActivity(),btConfirm,false);
-            }else{
-                Utils.disableButtonConfirm(getActivity(),btConfirm,true);
+            if (edtContent.getText().length() > 0) {
+                Utils.disableButtonConfirm(getActivity(), btConfirm, false);
+            } else {
+                Utils.disableButtonConfirm(getActivity(), btConfirm, true);
             }
-        }else{
-            Utils.disableButtonConfirm(getActivity(),btConfirm,true);
+        } else {
+            Utils.disableButtonConfirm(getActivity(), btConfirm, true);
         }
     }
 
@@ -254,10 +245,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_chose_wallet:
-                if(getBaseActivity()!=null){
-                    if(getBaseActivity() instanceof CashToCashActivity){
+                if (getBaseActivity() != null) {
+                    if (getBaseActivity() instanceof CashToCashActivity) {
                         ((CashToCashActivity) getBaseActivity()).addFragment(FragmentContactTransferCash.newInstance(this, true), true);
-                    }else if(getBaseActivity() instanceof MyLixiActivity){
+                    } else if (getBaseActivity() instanceof MyLixiActivity) {
                         ((MyLixiActivity) getBaseActivity()).addFragment(FragmentContactTransferCash.newInstance(this, false), true);
                     }
                 }
@@ -270,8 +261,8 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                 validateData();
                 break;
             case R.id.iv_back:
-                if(getBaseActivity()!=null){
-                   // Log.e("getBaseActivity() back",getBaseActivity().getLocalClassName());
+                if (getBaseActivity() != null) {
+                    // Log.e("getBaseActivity() back",getBaseActivity().getLocalClassName());
                     getBaseActivity().onBackPressed();
                 }
                 break;
@@ -344,10 +335,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     }
 
     private void showDialogErr(int err) {
-        if(getBaseActivity()!=null){
-            if(getBaseActivity() instanceof  CashToCashActivity){
+        if (getBaseActivity() != null) {
+            if (getBaseActivity() instanceof CashToCashActivity) {
                 ((CashToCashActivity) getBaseActivity()).showDialogError(getString(err));
-            }else if(getBaseActivity() instanceof  MyLixiActivity){
+            } else if (getBaseActivity() instanceof MyLixiActivity) {
                 ((MyLixiActivity) getBaseActivity()).showDialogError(getString(err));
             }
         }
@@ -395,7 +386,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             case PermissionUtils.REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     validateData();
-                }else{
+                } else {
                     dismissProgress();
                     showDialogSettingStore();
                 }
@@ -407,10 +398,10 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
     @Override
     public void onMultiTransfer(ArrayList<Contact> contactList) {
-            this.multiTransferList = contactList;
-            setAdapter();
-            updateWalletSend();
-            updateTotalMoney();
+        this.multiTransferList = contactList;
+        setAdapter();
+        updateWalletSend();
+        updateTotalMoney();
     }
 
     private void updateWalletSend() {
@@ -426,7 +417,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             cashValueAdapter.setNumberTransfer(multiTransferList.size());
         }
         tvNumberWallet.setText(walletId.toString());
-        if(walletId.length() > 0){
+        if (walletId.length() > 0) {
             tvErrorWallet.setText("");
         }
     }
@@ -434,11 +425,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         Log.e("CashToCash", event.getData());
-        if (event.getData().equals(Constant.CASH_OUT_MONEY_FAIL)) {
-            dismissProgress();
-            showDialogErr(R.string.err_upload);
-        }
-
         if (event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS) || event.getData().equals(Constant.EVENT_PAYMENT_SUCCESS) || event.getData().equals(Constant.CASH_OUT_MONEY_SUCCESS)) {
             new Timer().schedule(new TimerTask() {
                 @Override
@@ -458,7 +444,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();
-            showDialogErr(R.string.err_upload);
+            showDialogErr(R.string.err_socket_timeout);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
@@ -478,7 +464,8 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     }
                 });
     }
-    private void showDialogSettingStore(){
+
+    private void showDialogSettingStore() {
         DialogUtil.getInstance().showDialogSettingPermissionStore(getActivity(), new DialogUtil.OnResult() {
             @Override
             public void OnListenerOk() {
@@ -512,7 +499,8 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
     public void writeToParcel(Parcel dest, int flags) {
 
     }
-    private void updateContent(){
+
+    private void updateContent() {
         edtContent.setText(String.format("%s %s", CommonUtils.getFullName(accountInfo), getString(R.string.str_transfer)));
     }
 }

@@ -46,8 +46,7 @@ public class PayToFuntion {
         this.multiTransferList = multiTransferList;
         this.content = content;
         this.type = type;
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+        accountInfo = DatabaseUtil.getAccountInfo(context);
     }
 
     public void handlePayToSocket(PayToListener payToListener){

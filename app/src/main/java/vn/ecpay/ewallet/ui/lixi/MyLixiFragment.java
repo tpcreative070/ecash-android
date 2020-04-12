@@ -32,6 +32,7 @@ import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.model.account.cacheData.CacheSocketData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
@@ -60,8 +61,7 @@ public class MyLixiFragment extends ECashBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         setAdapter();
         toolbarCenterText.setText(getResources().getString(R.string.str_my_lixi));
     }
@@ -72,9 +72,9 @@ public class MyLixiFragment extends ECashBaseFragment {
         rvMyLixi.setLayoutManager(mLayoutManager);
         myLixiAdapter = new MyLixiAdapter(listCashTemp, getActivity(), cashTemp -> {
             showProgress();
-            ResponseMessSocket responseMess = new Gson().fromJson(cashTemp.getContent(), ResponseMessSocket.class);
+            CacheSocketData responseMess = new Gson().fromJson(cashTemp.getContent(), CacheSocketData.class);
             if (null != responseMess) {
-                if (!DatabaseUtil.isTransactionLogExit(responseMess, getActivity())) {
+                if (!DatabaseUtil.isTransactionLogExit(responseMess.getId(), getActivity())) {
                     if (responseMess.getCashEnc() != null) {
                         CashInFunction cashInFunction = new CashInFunction(accountInfo, getActivity(), responseMess);
                         cashInFunction.handleCashIn(new CashInSuccessListener() {

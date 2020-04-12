@@ -23,6 +23,7 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.Decision_Database;
+import vn.ecpay.ewallet.model.account.cacheData.CacheSocketData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -40,7 +41,7 @@ public class CashInFunction {
     private AccountInfo accountInfo;
     private String[][] deCryptECash;
     private Context context;
-    private ResponseMessSocket responseMessSocket;
+    private CacheSocketData responseMessSocket;
     private String transactionSignature;
     private CashInSuccessListener cashInSuccessListener;
 
@@ -51,7 +52,7 @@ public class CashInFunction {
         this.transactionSignature = cashInResponse.getId();
     }
 
-    public CashInFunction(AccountInfo accountInfo, Context context, ResponseMessSocket responseMessSocket) {
+    public CashInFunction(AccountInfo accountInfo, Context context, CacheSocketData responseMessSocket) {
         this.accountInfo = accountInfo;
         this.context = context;
         this.responseMessSocket = responseMessSocket;
@@ -86,7 +87,7 @@ public class CashInFunction {
         checkArrayCash();
     }
 
-    private void requestSearchWalletID(AccountInfo accountInfo, ResponseMessSocket responseMess) {
+    private void requestSearchWalletID(AccountInfo accountInfo, CacheSocketData responseMess) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(context.getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -130,7 +131,7 @@ public class CashInFunction {
         });
     }
 
-    private void getPublicKeyWallet(ResponseMessSocket responseMess) {
+    private void getPublicKeyWallet(CacheSocketData responseMess) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(context.getResources().getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 

@@ -37,11 +37,7 @@ public class PermissionUtils {
 
     public static boolean isReadContact(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            } else {
-                return true;
-            }
+            return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
         } else {
             return true;
         }

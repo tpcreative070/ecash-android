@@ -55,8 +55,7 @@ public class SyncCashService extends Service {
         if (event.getData().equals(Constant.EVENT_UPDATE_CASH_IN)) {
             if (!isRunning) {
                 isRunning = true;
-                String userName = ECashApplication.getAccountInfo().getUsername();
-                accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
+                accountInfo = DatabaseUtil.getAccountInfo(getApplicationContext());
                 syncData();
             }
         }
@@ -66,8 +65,7 @@ public class SyncCashService extends Service {
         }
 
         if (event.getData().equals(Constant.EVENT_CASH_OUT_MONEY)) {
-            String userName = ECashApplication.getAccountInfo().getUsername();
-            accountInfo = DatabaseUtil.getAccountInfo(userName, getApplicationContext());
+            accountInfo = DatabaseUtil.getAccountInfo(getApplicationContext());
             cashOutData(event);
         }
         EventBus.getDefault().removeStickyEvent(event);
@@ -129,7 +127,7 @@ public class SyncCashService extends Service {
     private void handleListResponse() {
         if (listResponseMessSockets.size() > 0) {
             CashInResponse responseMess = new Gson().fromJson(listResponseMessSockets.get(0).getResponseData(), CashInResponse.class);
-            if (!DatabaseUtil.isTransactionLogExit(responseMess, getApplicationContext())) {
+            if (!DatabaseUtil.isTransactionLogExit(responseMess.getId(), getApplicationContext())) {
                 if (responseMess.getCashEnc() != null) {
                     CashInFunction cashInFunction = new CashInFunction(responseMess, accountInfo, getApplicationContext());
                     cashInFunction.handleCash(new CashInSuccessListener() {

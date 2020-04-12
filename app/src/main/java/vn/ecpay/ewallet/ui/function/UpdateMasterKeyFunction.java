@@ -1,5 +1,7 @@
 package vn.ecpay.ewallet.ui.function;
 
+import android.content.Context;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import javax.inject.Inject;
@@ -26,16 +28,16 @@ import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseUpdate
 import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 
 public class UpdateMasterKeyFunction {
-    private AppCompatActivity activity;
+    private Context activity;
     @Inject
     ECashApplication application;
 
-    public UpdateMasterKeyFunction(AppCompatActivity activity) {
+    public UpdateMasterKeyFunction(Context activity) {
         this.activity = activity;
     }
 
     public void updateLastTimeAndMasterKey(UpdateMasterKeyListener updateMasterKeyListener) {
-        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(ECashApplication.getAccountInfo().getUsername(), activity);
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(activity);
         if (null == accountInfo) {
             updateMasterKeyListener.onUpdateMasterFail("xxx");
         }
@@ -68,7 +70,7 @@ public class UpdateMasterKeyFunction {
                     if (response.body().getResponseCode() != null) {
                         ResponseDataUpdateMasterKey responseData = response.body().getResponseData();
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
-                            WalletDatabase.updateAccountLastAccessTime(responseData.getLastAccessTime(), accountInfo.getUsername());
+                            DatabaseUtil.updateAccountLastAccessTime(responseData, accountInfo, activity);
                             ECashApplication.masterKey = responseData.getMasterKey();
                             DatabaseUtil.changeMasterKeyDatabase(activity, responseData.getMasterKey());
                             KeyStoreUtils.saveMasterKey(responseData.getMasterKey(), activity);

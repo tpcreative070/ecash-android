@@ -104,8 +104,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                 }
             }
         }
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         setData();
         edtAmount.addTextChangedListener(new NumberTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));
         edtContent.addTextChangedListener(new ContentInputTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));

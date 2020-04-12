@@ -40,8 +40,7 @@ public class SlideQRCodeAdapter extends PagerAdapter {
         this.listContact = multiTransferList;
         this.typeSend = typeSend;
         inflater = LayoutInflater.from(context);
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+        accountInfo = DatabaseUtil.getAccountInfo(context);
     }
 
     @Override

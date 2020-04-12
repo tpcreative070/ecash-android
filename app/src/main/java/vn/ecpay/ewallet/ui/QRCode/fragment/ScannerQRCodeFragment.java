@@ -122,8 +122,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         mScannerView = new ZXingScannerView(getActivity());
         containerScanner.addView(mScannerView);
         try {
-            String userName = ECashApplication.getAccountInfo().getUsername();
-            accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+            accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         } catch (NullPointerException e) {
             CommonUtils.restartApp((QRCodeActivity) getActivity());
         }
@@ -308,7 +307,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                                 ((QRCodeActivity) getActivity()).showDialogError(getResources().getString(R.string.err_qr_received));
                         }
                     } else {
-                        if (!DatabaseUtil.isTransactionLogExit(responseMess, getActivity())) {
+                        if (!DatabaseUtil.isTransactionLogExit(responseMess.getId(), getActivity())) {
                             handleCashIn(responseMess);
                         } else {
                             if (getActivity() != null) {
@@ -371,8 +370,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                     contact.setTerminalInfo(qrContact.getTerminalInfo());
                     contact.setWalletId(qrContact.getWalletId());
 
-                    String userName = ECashApplication.getAccountInfo().getUsername();
-                    AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+                    AccountInfo accountInfo = DatabaseUtil.getAccountInfo(getActivity());
                     if (accountInfo != null) {
                         if (!accountInfo.getWalletId().equals(contact.getWalletId())) {
                             if (!checkContactExist(contact)) {

@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
@@ -66,6 +67,7 @@ import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCashTransfer;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
+import vn.ecpay.ewallet.model.account.cacheData.CacheSocketData;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
@@ -205,6 +207,18 @@ public class CommonUtils {
                 return ECashApplication.getAccountInfo().getToken();
             } else {
                 return ECashApplication.getAccountInfo().getPassword();
+            }
+        } else {
+            return Constant.STR_EMPTY;
+        }
+    }
+
+    public static String getSessionId(Context context) {
+        if (null != ECashApplication.getAccountInfo()) {
+            if (null != ECashApplication.getAccountInfo().getSessionId()) {
+                return ECashApplication.getAccountInfo().getSessionId();
+            } else {
+                return Objects.requireNonNull(DatabaseUtil.getAccountInfo(context)).getSessionId();
             }
         } else {
             return Constant.STR_EMPTY;
@@ -355,11 +369,11 @@ public class CommonUtils {
     }
 
     public static boolean validatePassPort(String idNumber) {
-        int lenght = idNumber.length();
         if (idNumber.isEmpty()) {
             return false;
         }
-        return lenght == 12 || lenght == 9;
+        int length = idNumber.length();
+        return length == 12 || length == 9;
     }
 
     public static boolean isValidateName(String name) {
@@ -391,7 +405,7 @@ public class CommonUtils {
             byte[] keyPublic = Base64.decode(publicKyReceiver, Base64.DEFAULT);
             ECPublicKeyParameters publicKeyParameters = ec.getPublicKeyParameters(keyPublic);
             blockEnc = ECashCrypto.encryptV2(ec, publicKeyParameters, cashArray);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Constant.STR_EMPTY;
         }
@@ -408,6 +422,11 @@ public class CommonUtils {
     }
 
     public static String getSignBodySender(ResponseMessSocket responseMess) {
+        return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
+                + responseMess.getContent() + responseMess.getCashEnc();
+    }
+
+    public static String getSignBodySender(CacheSocketData responseMess) {
         return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
                 + responseMess.getContent() + responseMess.getCashEnc();
     }
@@ -435,7 +454,13 @@ public class CommonUtils {
         return EllipticCurve.verify(mDataSign,
                 Base64.decode(responseMess.getId(), Base64.DEFAULT),
                 Base64.decode(publicKey, Base64.DEFAULT));
+    }
 
+    public static boolean verifyData(CacheSocketData responseMess, String publicKey) {
+        byte[] mDataSign = SHA256.hashSHA256(CommonUtils.getSignBodySender(responseMess));
+        return EllipticCurve.verify(mDataSign,
+                Base64.decode(responseMess.getId(), Base64.DEFAULT),
+                Base64.decode(publicKey, Base64.DEFAULT));
     }
 
     public static QRCashTransfer getQrCashTransfer(CashLogs_Database cash, ResponseMessSocket responseMess, ResponseDataGetPublicKeyWallet responseGetPublicKeyWallet, boolean status) {
@@ -761,13 +786,11 @@ public class CommonUtils {
     }
 
     public static AccountInfo getAccountByUserName(Context context) {
-        String username = ECashApplication.getAccountInfo().getUsername();
-        return DatabaseUtil.getAccountInfo(username, context);
+        return DatabaseUtil.getAccountInfo(context);
     }
 
     public static boolean checkWalletIDisMe(Context context, String walletID) {
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(context);
         if (accountInfo != null && walletID != null) {
             return walletID.equals(String.valueOf(accountInfo.getWalletId()));
         }
@@ -777,8 +800,7 @@ public class CommonUtils {
     public static ArrayList<Uri> genericListUri(Context context, List<Contact> multiTransferList, List<CashTotal> valuesListAdapter, String content, String type) {
         ArrayList<Uri> listUri = new ArrayList<>();
         try {
-            String userName = ECashApplication.getAccountInfo().getUsername();
-            AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+            AccountInfo accountInfo = DatabaseUtil.getAccountInfo(context);
             for (int i = 0; i < multiTransferList.size(); i++) {
                 Gson gson = new Gson();
                 ResponseMessSocket responseMessSocket = CommonUtils.getObjectJsonSendCashToCash(context, valuesListAdapter,

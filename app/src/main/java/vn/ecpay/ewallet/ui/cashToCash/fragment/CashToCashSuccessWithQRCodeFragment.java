@@ -296,8 +296,7 @@ public class CashToCashSuccessWithQRCodeFragment extends ECashBaseFragment {
 
     @SuppressLint("StaticFieldLeak")
     private void createBitmap() {
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {

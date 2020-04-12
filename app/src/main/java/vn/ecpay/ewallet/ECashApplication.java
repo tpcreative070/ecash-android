@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -18,15 +16,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 
-import vn.ecpay.ewallet.common.base.ECashBaseActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationModule;
 import vn.ecpay.ewallet.common.dependencyInjection.DaggerApplicationComponent;
 import vn.ecpay.ewallet.common.language.SharedPrefs;
+import vn.ecpay.ewallet.common.utils.CheckErrorConnectionUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.common.utils.CheckErrorConnectionUtils;
 import vn.ecpay.ewallet.model.ErrorStatusConnectionModel;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;

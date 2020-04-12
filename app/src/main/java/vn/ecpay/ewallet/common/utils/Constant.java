@@ -9,7 +9,7 @@ public class Constant {
 
     public static final String app_name = "eCash App";
     public static final String sesion_expid = "3043";
-    public static final String ERROR_CODE_1095 ="1095";
+    public static final String ERROR_CODE_1095 = "1095";
     public static final String ERROR_CODE_3077 = "3077";
     public static final String ERROR_CODE_0998 = "0998";
     public static final String ERROR_CODE_1003 = "1003";
@@ -17,8 +17,8 @@ public class Constant {
     public static final String ERROR_CODE_3034 = "3034";
     public static final String ERROR_CODE_3024 = "3024";
     public static final String ERROR_CODE_3019 = "3019";
-    public static final String ERROR_CODE_1094= "1094";
-    // public static final String ERROR_CODE_0998 = "0998";
+    public static final String ERROR_CODE_1094 = "1094";
+    public static final String ERROR_CODE_4160 = "4160";
     public static final String ERROR_CODE_3014 = "3014";
     public static final String ERROR_CODE_3015 = "3015";
     public static final String ERROR_CODE_3016 = "3016";
@@ -99,7 +99,6 @@ public class Constant {
 
     public static final String EVENT_CASH_OUT_MONEY = "EVENT_CASH_OUT_MONEY";
     public static final String CASH_OUT_MONEY_SUCCESS = "cash_out_money_success";
-    public static final String CASH_OUT_MONEY_FAIL = "cash_out_money_fail";
 
     public static final String EVENT_CONNECT_SOCKET_FAIL = "EVENT_CONNECT_SOCKET_FAIL";
     public static final String EVENT_VERIFY_CASH_FAIL = "EVENT_VERIFY_CASH_FAIL";

@@ -110,8 +110,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         }
         cashInPresenter.setView(this);
         cashInPresenter.onViewCreate();
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
+        if (null == accountInfo) {
+            CommonUtils.restartApp((CashInActivity) getActivity());
+        }
         listEDongInfo = ECashApplication.getListEDongInfo();
         setData();
     }
@@ -131,15 +133,15 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             totalMoney = totalMoney + (valuesListAdapter.get(i).getTotal() * valuesListAdapter.get(i).getParValue());
         }
         tvTotalCashIn.setText(CommonUtils.formatPriceVND(totalMoney));
-        if(totalMoney>0){
-            Utils.disableButtonConfirm(getActivity(),btnConfirm,false);
-        }else{
-            Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
+        if (totalMoney > 0) {
+            Utils.disableButtonConfirm(getActivity(), btnConfirm, false);
+        } else {
+            Utils.disableButtonConfirm(getActivity(), btnConfirm, true);
         }
     }
 
     private void setData() {
-        Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
+        Utils.disableButtonConfirm(getActivity(), btnConfirm, true);
         setAdapter();
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
@@ -188,7 +190,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                 }
                 break;
             case R.id.btn_confirm:
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -203,8 +205,8 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_not_select_amount));
             return;
         }
-        if(listEDongInfo!=null&&listEDongInfo.size()>0){
-            if(totalMoney>CommonUtils.getMoneyEDong(listEDongInfo.get(0))){
+        if (listEDongInfo != null && listEDongInfo.size() > 0) {
+            if (totalMoney > CommonUtils.getMoneyEDong(listEDongInfo.get(0))) {
                 tvError.setVisibility(View.VISIBLE);
                 return;
             }
@@ -222,7 +224,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
-                cashInPresenter.transferMoneyEDongToECash(getActivity(),totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
+                cashInPresenter.transferMoneyEDongToECash(getActivity(), totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
             }
 
             @Override
@@ -240,7 +242,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     private void showDialogCashInOk() {
         DialogUtil.getInstance().showDialogContinueAndExit(getActivity(), getString(R.string.str_transaction_success),
-                getResources().getString(R.string.str_dialog_cash_in_success, CommonUtils.formatPriceVND(totalMoney)),getResources().getColor(R.color.green), new DialogUtil.OnConfirm() {
+                getResources().getString(R.string.str_dialog_cash_in_success, CommonUtils.formatPriceVND(totalMoney)), getResources().getColor(R.color.green), new DialogUtil.OnConfirm() {
                     @Override
                     public void OnListenerOk() {
                         setData();
@@ -281,7 +283,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
             @Override
             public void OnListenerCancel() {
-                if(getActivity()!=null){
+                if (getActivity() != null) {
                     getActivity().finish();
                 }
             }
@@ -309,8 +311,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
                 dismissProgress();
-                showDialogCashInOk();
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
+                if (totalMoney > 0) {
+                    showDialogCashInOk();
+                }
             });
     }
 
