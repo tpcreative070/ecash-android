@@ -29,6 +29,7 @@ import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -92,7 +93,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().isEmpty()) {
+                if (s.toString().trim().isEmpty()) {
                     tvNameErr.setVisibility(View.VISIBLE);
                     tvNameErr.setText(getString(R.string.err_name_null));
                     return;
@@ -142,8 +143,11 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
 
     private void checkFullName(String name) {
         String[] separated = name.split(" ");
-        String fist, last, middle;
-        if (separated.length == 1) {
+        String fist = Constant.STR_EMPTY, last = Constant.STR_EMPTY, middle = Constant.STR_EMPTY;
+        if (separated.length == 0) {
+            tvNameErr.setVisibility(View.VISIBLE);
+            tvNameErr.setText(getString(R.string.err_name_null));
+        } else if (separated.length == 1) {
             fist = name;
             last = "";
             middle = "";
@@ -178,7 +182,6 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
         } else if (last.length() > 32) {
             tvNameErr.setVisibility(View.VISIBLE);
             tvNameErr.setText(getString(R.string.err_name_last));
-            return;
         } else {
             tvNameErr.setVisibility(View.GONE);
         }
@@ -202,7 +205,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
             tvNameErr.setVisibility(View.GONE);
         }
 
-        checkFullName(name);
+        checkFullName(edtName.getText().toString());
 
         if (cmnd.isEmpty()) {
             tvCmndErr.setVisibility(View.VISIBLE);
@@ -242,8 +245,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
     }
 
     private void setData() {
-        WalletDatabase.getINSTANCE(this, ECashApplication.masterKey);
-        accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
+        accountInfo = DatabaseUtil.getAccountInfo(EditAccountInfoActivity.this);
         if (accountInfo != null) {
             edtName.setText(CommonUtils.getFullName(accountInfo));
             edtAddress.setText(accountInfo.getPersonCurrentAddress());
@@ -323,7 +325,8 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
                                         requestUpdateAccountInfo.getPersonMiddleName(),
                                         requestUpdateAccountInfo.getIdNumber(),
                                         requestUpdateAccountInfo.getPersonCurrentAddress(),
-                                        requestUpdateAccountInfo.getPersonEmail(), accountInfo.getUsername());
+                                        requestUpdateAccountInfo.getPersonEmail(),
+                                        accountInfo.getUsername());
                                 updateAccountSuccess();
                             } else {
                                 showDialogError(getString(R.string.err_upload));

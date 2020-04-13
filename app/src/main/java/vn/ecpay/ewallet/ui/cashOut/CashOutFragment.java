@@ -48,6 +48,7 @@ import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
+import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
@@ -116,8 +117,10 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         }
         cashOutPresenter.setView(this);
         cashOutPresenter.onViewCreate();
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
+        if (null == accountInfo) {
+            CommonUtils.restartApp((CashOutActivity) getActivity());
+        }
         setData();
         cashOutPresenter.getPublicKeyOrganization(getActivity(), accountInfo, false);
     }

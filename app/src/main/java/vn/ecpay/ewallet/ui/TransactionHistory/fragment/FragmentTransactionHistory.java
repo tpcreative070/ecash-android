@@ -34,6 +34,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.bottomSheet.TransactionHistoryBottomSheet;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
@@ -59,8 +60,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
-        setAdapter(transactionsHistoryModelList);
+        setAdapter(DatabaseUtil.getListTransactionHistory(getActivity()));
 
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -169,8 +169,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     private void reloadData() {
         long numberCash = WalletDatabase.getAllCash().size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
-            List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
-            setAdapter(transactionsHistoryModelList);
+            setAdapter(DatabaseUtil.getListTransactionHistory(getActivity()));
         } else {
             new Timer().schedule(new TimerTask() {
                 @Override

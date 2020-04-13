@@ -83,6 +83,7 @@ public class ToPayFragment extends ECashBaseFragment {
     private long balance;
     private long totalMoney;
     private AccountInfo accountInfo;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_payto;
@@ -91,19 +92,20 @@ public class ToPayFragment extends ECashBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         setData();
-        edtAmount.addTextChangedListener(new NumberTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));
-        edtContent.addTextChangedListener(new ContentInputTextWatcher(getActivity(),edtAmount,edtContent,btnConfirm));
+        edtAmount.addTextChangedListener(new NumberTextWatcher(getActivity(), edtAmount, edtContent, btnConfirm));
+        edtContent.addTextChangedListener(new ContentInputTextWatcher(getActivity(), edtAmount, edtContent, btnConfirm));
     }
+
     @Override
     public void onResume() {
         toolbarCenterText.setText(getString(R.string.str_create_a_bill_of_payment));
         super.onResume();
     }
-    private void setData(){
-        Utils.disableButtonConfirm(getActivity(),btnConfirm,true);
+
+    private void setData() {
+        Utils.disableButtonConfirm(getActivity(), btnConfirm, true);
         viewContact.setVisibility(View.GONE);
         viewQRCode.setVisibility(View.GONE);
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
@@ -112,7 +114,8 @@ public class ToPayFragment extends ECashBaseFragment {
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
     }
-    private void updateBalance(){
+
+    private void updateBalance() {
         long numberCash = WalletDatabase.getAllCash().size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             if (getActivity() != null)
@@ -121,7 +124,7 @@ public class ToPayFragment extends ECashBaseFragment {
                     balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
                     tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
                 });
-        }else{
+        } else {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -130,7 +133,8 @@ public class ToPayFragment extends ECashBaseFragment {
             }, 1000);
         }
     }
-    @OnClick({R.id.iv_back,R.id.btn_confirm})
+
+    @OnClick({R.id.iv_back, R.id.btn_confirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -185,10 +189,9 @@ public class ToPayFragment extends ECashBaseFragment {
             tvErrorContent.setText(getString(R.string.err_dit_not_content));
             return;
         }
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        String amount =edtAmount.getText().toString().replace(".","").replace(",","");
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
-        QRCodePayment qrPayment =new QRCodePayment();
+        String amount = edtAmount.getText().toString().replace(".", "").replace(",", "");
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
+        QRCodePayment qrPayment = new QRCodePayment();
         qrPayment.setSender(String.valueOf(accountInfo.getWalletId()));
         qrPayment.setTime(CommonUtils.getCurrentTime(Constant.FORMAT_DATE_TOPAY));
         qrPayment.setType(Constant.TYPE_TOPAY);
@@ -210,31 +213,35 @@ public class ToPayFragment extends ECashBaseFragment {
 
         crateQRCode(qrPayment);
     }
-    private void clearError(){
+
+    private void clearError() {
         tvErrorWallet.setText("");
         tvErrorAmount.setText("");
         tvErrorContent.setText("");
     }
-    private void crateQRCode(QRCodePayment qrCodePayment){
+
+    private void crateQRCode(QRCodePayment qrCodePayment) {
         if (getActivity() != null) {
             Gson gson = new Gson();
             QRScanBase qrScanBase = new QRScanBase();
             qrScanBase.setType(QR_TO_PAY);
             qrScanBase.setContent(gson.toJson(qrCodePayment));
             Intent intent = new Intent(getActivity(), BillingQRCodeActivity.class);
-            intent.putExtra(Constant.QR_CODE_TOPAY_MODEL,qrScanBase);
+            intent.putExtra(Constant.QR_CODE_TOPAY_MODEL, qrScanBase);
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
     }
+
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateData(EventDataChange event) {
         //Log.e("event topay ",event.getData());
-        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE)||event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
+        if (event.getData().equals(Constant.EVENT_UPDATE_BALANCE) || event.getData().equals(Constant.EVENT_CASH_IN_SUCCESS)) {
             updateBalance();
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

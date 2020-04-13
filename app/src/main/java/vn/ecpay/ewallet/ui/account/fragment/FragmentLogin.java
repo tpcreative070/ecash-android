@@ -176,12 +176,12 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    if(edPassword.getText().length()>0){
+                    if (edPassword.getText().length() > 0) {
                         Utils.disableButtonConfirm(getBaseActivity(), btnLogin, false);
-                    }else{
+                    } else {
                         Utils.disableButtonConfirm(getBaseActivity(), btnLogin, true);
                     }
-                }else{
+                } else {
                     Utils.disableButtonConfirm(getBaseActivity(), btnLogin, true);
                 }
             }
@@ -303,7 +303,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             editor.putString(Constant.DEVICE_IMEI, IMEI);
             editor.apply();
         }
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass,tvErrorUserName);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
@@ -346,6 +346,17 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
     @Override
     public void requestGetEDongInfoSuccess(ResponseDataEdong response, AccountInfo accountInfo) {
         ECashApplication.setAccountInfo(accountInfo);
+        if (null != DatabaseUtil.getAccountInfo(getActivity())) {
+            WalletDatabase.updateFullAccountInfo(accountInfo.getPersonFirstName(),
+                    accountInfo.getPersonLastName(),
+                    accountInfo.getPersonMiddleName(),
+                    accountInfo.getIdNumber(),
+                    accountInfo.getPersonCurrentAddress(),
+                    accountInfo.getPersonEmail(),
+                    accountInfo.getLarge(),
+                    accountInfo.getSessionId(),
+                    accountInfo.getUsername());
+        }
         if (response.getListAcc().size() > 0) {
             ECashApplication.setListEDongInfo(response.getListAcc());
         }
@@ -365,7 +376,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void activeAccountSuccess() {
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass,tvErrorUserName);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
     }
 
     @Override

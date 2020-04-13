@@ -109,7 +109,6 @@ public class LoginPresenterImpl implements LoginPresenter {
             loginView.dismissLoading();
             return;
         }
-        // requestLogin.setChannelSignature(CommonUtils.generateSignature(dataSign));
         requestLogin.setChannelSignature(channelSignature);
         CommonUtils.logJson(requestLogin);
         Call<ResponseLoginAfterRegister> call = apiService.login(requestLogin);

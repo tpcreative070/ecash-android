@@ -141,7 +141,9 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     }
 
     private void updateView() {
-        tvHistoryPhone.setText(transactionsHistoryModel.getReceiverPhone());
+        if (null != transactionsHistoryModel.getReceiverPhone()) {
+            tvHistoryPhone.setText(transactionsHistoryModel.getReceiverPhone());
+        }
         tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())));
         tvHistoryContent.setText(transactionsHistoryModel.getTransactionContent());
         tvHistoryDate.setText(CommonUtils.getDateTransfer(getActivity(), transactionsHistoryModel.getTransactionDate()));
@@ -265,7 +267,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     private void setAdapterListCash() {
         if (transactionsHistoryModel.getTransactionType().equals(TYPE_CASH_EXCHANGE)) {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-            List<CashLogTransaction> listCashLogTransactionIn = WalletDatabase. getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_IN);
+            List<CashLogTransaction> listCashLogTransactionIn = WalletDatabase.getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_IN);
             List<CashLogTransaction> listCashLogTransactionOut = WalletDatabase.getAllCashByTransactionLogByType(transactionsHistoryModel.getTransactionSignature(), STR_CASH_OUT);
 
             LinearLayoutManager mLayoutManagerOut = new LinearLayoutManager(getActivity());

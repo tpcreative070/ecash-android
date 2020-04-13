@@ -77,8 +77,7 @@ public class FragmentAddContact extends ECashBaseFragment implements AddContactV
             }
             return false;
         });
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
     }
 
     private void validateData(String edtTextSearch) {

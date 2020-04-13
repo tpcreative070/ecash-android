@@ -415,8 +415,7 @@ public class PaymentCashChangeHandler {
     }
 
     private void getPublicKeyOrganization() {
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(userName, activity);
+        AccountInfo accountInfo = DatabaseUtil.getAccountInfo(activity);
         getPublicKeyOrganization(accountInfo, new PublicKeyOrganization() {
             @Override
             public void getPublicKeyOrganization(String publicKey) {

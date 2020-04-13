@@ -20,6 +20,7 @@ import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.common.utils.QRCodeUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
@@ -51,8 +52,7 @@ public class FragmentMyQRCode extends ECashBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        WalletDatabase.getINSTANCE(getContext(), ECashApplication.masterKey);
-        accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         setData();
     }
 

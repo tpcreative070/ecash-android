@@ -18,6 +18,7 @@ import java.util.List;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
+import vn.ecpay.ewallet.database.table.CacheDataSocket_Database;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -37,6 +38,7 @@ import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.database.table.TransactionTimeOut_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
+import vn.ecpay.ewallet.model.account.cacheData.CacheSocketData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.cashValue.response.Denomination;
@@ -45,6 +47,7 @@ import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 @Database(entities = {Contact_Database.class,
         CashLogs_Database.class,
@@ -62,7 +65,8 @@ import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
         Merchants_Database.class,
         MerchantsDiary_Database.class,
         CacheData_Database.class,
-        Payment_DataBase.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
+        Payment_DataBase.class,
+        CacheDataSocket_Database.class}, version = Constant.DATABASE_VERSION, exportSchema = false)
 public abstract class WalletDatabase extends RoomDatabase {
     private static WalletDatabase walletDatabase;
     private static SafeHelperFactory factory;
@@ -107,7 +111,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.clearAllTables();
     }
 
-    // todo notification---------------------------------------------------------------------------------------
+    // todo cache data---------------------------------------------------------------------------------------
     public static void insertOnlySingleCacheData(final CacheData_Database cacheData, String fake) {
         walletDatabase.daoAccess().insertOnlySingleCacheData(cacheData);
     }
@@ -120,15 +124,22 @@ public abstract class WalletDatabase extends RoomDatabase {
         walletDatabase.daoAccess().deleteCacheData(transactionSignature);
     }
 
+    // todo cache data socket---------------------------------------------------------------------------------------
+    public static void insertOnlySingleCacheSocketData(final CacheDataSocket_Database cacheData) {
+        walletDatabase.daoAccess().insertOnlySingleCacheSocketData(cacheData);
+    }
+
+    public static List<CacheSocketData> getAllCacheSocketData() {
+        return walletDatabase.daoAccess().getAllCacheSocketData();
+    }
+
+    public static void deleteCacheSocketData(String id) {
+        walletDatabase.daoAccess().deleteCacheSocketData(id);
+    }
+
     // todo notification---------------------------------------------------------------------------------------
-    public static void insertNotificationTask(final Notification_Database notification, String fake) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                walletDatabase.daoAccess().insertOnlySingleNotification(notification);
-                return null;
-            }
-        }.execute();
+    public static void insertNotificationTask(final Notification_Database notification) {
+        walletDatabase.daoAccess().insertOnlySingleNotification(notification);
     }
 
     public static List<NotificationObj> getAllNotification() {
@@ -269,7 +280,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cash));
+                cash.setPreviousHash(getPreviousHashCash(cash));
                 walletDatabase.daoAccess().insertOnlySingleCash(cash);
                 return null;
             }
@@ -279,6 +290,22 @@ public abstract class WalletDatabase extends RoomDatabase {
                 numberRequest = numberRequest - 1;
             }
         }.execute();
+    }
+
+    private static String getPreviousHashCash(CashLogs_Database cash) {
+        List<CashLogs_Database> cashList = getAllCash();
+        if (cashList.size() > 0) {
+            //get cash max id
+            CashLogs_Database cashMax = getCashByMaxID(getMaxIDCash());
+
+            //updatePreviousCash min id => new PreviousHash
+            updatePreviousCashMin(DatabaseUtil.getSignCash(cash), getMinIDCash());
+
+            //ok
+            return DatabaseUtil.getSignCash(cashMax);
+        } else {
+            return DatabaseUtil.getSignCash(cash);
+        }
     }
 
     public static List<CashLogs_Database> getAllCash() {
@@ -332,7 +359,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                cash.setPreviousHash(DatabaseUtil.getPreviousHashCash(cashLogs_database));
+                cash.setPreviousHash(getPreviousHashCash(cashLogs_database));
                 walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
                 return null;
             }
@@ -399,14 +426,6 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static AccountInfo getAccountInfoTask(String username) {
-        try {
-            return walletDatabase.daoAccess().fetchOneUserByUserId(username);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public static List<AccountInfo> getAllProfile() {
         try {
             return walletDatabase.daoAccess().getAllProfile();
@@ -419,6 +438,12 @@ public abstract class WalletDatabase extends RoomDatabase {
                                          String address, String email, String userName) {
         walletDatabase.daoAccess().updateAccountInfo(fistName, lastName, middleName, idNumber,
                 address, email, userName);
+    }
+
+    public static void updateFullAccountInfo(String fistName, String lastName, String middleName, String idNumber,
+                                             String address, String email, String bIconLarge, String sessionId, String userName) {
+        walletDatabase.daoAccess().updateFullAccountInfo(fistName, lastName, middleName, idNumber,
+                address, email, bIconLarge, sessionId, userName);
     }
 
     public static void updateAccountAvatar(String bIconLarge, String userName) {
@@ -463,11 +488,28 @@ public abstract class WalletDatabase extends RoomDatabase {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                transactionLog.setPreviousHash(DatabaseUtil.getPreviousHashTransactionLog(transactionLog));
+                transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog));
                 walletDatabase.daoAccess().insertOnlySingleTransactionLog(transactionLog);
                 return null;
             }
         }.execute();
+    }
+
+    //ma hoa mat xich transaction log
+    private static String getPreviousHashTransactionLog(TransactionLog_Database transactionLog) {
+        List<TransactionLog_Database> transactionLogList = getAllTransactionLog();
+        if (transactionLogList.size() > 0) {
+            //get transaction_log max id
+            TransactionLog_Database TransactionLogMax = getTransactionLogByMaxID(getMaxIDTransactionLog());
+
+            //updatePrevious transaction_log min id => new PreviousHash
+            updatePreviousTransactionLogMin(DatabaseUtil.getSignTransactionLog(transactionLog), getMinIDTransactionLog());
+
+            //ok
+            return DatabaseUtil.getSignTransactionLog(TransactionLogMax);
+        } else {
+            return DatabaseUtil.getSignTransactionLog(transactionLog);
+        }
     }
 
     public static TransactionLog_Database checkTransactionLogExit(String transactionSignature) {
@@ -482,19 +524,19 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getAllTransactionLog();
     }
 
-    public static int getMaxIDTransactionLog() {
+    private static int getMaxIDTransactionLog() {
         return walletDatabase.daoAccess().getMaxIDTransactionLog();
     }
 
-    public static int getMinIDTransactionLog() {
+    private static int getMinIDTransactionLog() {
         return walletDatabase.daoAccess().getMinIDTransactionLog();
     }
 
-    public static void updatePreviousTransactionLogMin(String previousHash, int minID) {
+    private static void updatePreviousTransactionLogMin(String previousHash, int minID) {
         walletDatabase.daoAccess().updatePreviousTransactionLogMin(previousHash, minID);
     }
 
-    public static TransactionLog_Database getTransactionLogByMaxID(int maxIDTransactionLog) {
+    private static TransactionLog_Database getTransactionLogByMaxID(int maxIDTransactionLog) {
         return walletDatabase.daoAccess().getTransactionLogByMaxID(maxIDTransactionLog);
     }
 
@@ -514,7 +556,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         return walletDatabase.daoAccess().getAllCashByTransactionLog(filter);
     }
 
-    public static List<CashLogTransaction> getAllCashByTransactionLogByType(String filter, String type){
+    public static List<CashLogTransaction> getAllCashByTransactionLogByType(String filter, String type) {
         return walletDatabase.daoAccess().getAllCashByTransactionLogByType(filter, type);
     }
 
