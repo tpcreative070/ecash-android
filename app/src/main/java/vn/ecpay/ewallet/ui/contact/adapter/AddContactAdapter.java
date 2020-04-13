@@ -33,8 +33,7 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.contactList = mCountriesModelList;
         this.mContextWeakReference = new WeakReference<>(context);
         this.onItemContactClickListener = mOnItemContactClickListener;
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+        accountInfo = DatabaseUtil.getAccountInfo(context);
 
     }
 

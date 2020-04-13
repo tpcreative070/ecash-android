@@ -12,10 +12,6 @@ public interface HomeView extends BaseView {
 
     void showDialogError(String err);
 
-    void onSyncContactSuccess();
-
-    void onSyncContactFail(String responseMessage);
-
     void onGetOTPActiveAccountSuccess(ResponseData transactionCode, String publicKeyBase64);
 
     void requestOTPFail(String code, ResponseData responseCode);

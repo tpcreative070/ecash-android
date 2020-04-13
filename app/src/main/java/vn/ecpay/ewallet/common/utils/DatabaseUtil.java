@@ -12,10 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.database.WalletDatabase;
+import vn.ecpay.ewallet.database.table.CacheDataSocket_Database;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
 import vn.ecpay.ewallet.database.table.Notification_Database;
@@ -26,6 +28,7 @@ import vn.ecpay.ewallet.model.BaseObject;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.QRCode.QRScanBase;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
+import vn.ecpay.ewallet.model.account.cacheData.CacheSocketData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.cashValue.response.Denomination;
@@ -34,6 +37,7 @@ import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
+import vn.ecpay.ewallet.model.updateLastTimeAndMasterKey.response.ResponseDataUpdateMasterKey;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 public class DatabaseUtil {
@@ -44,11 +48,6 @@ public class DatabaseUtil {
     public static void saveAccountInfo(AccountInfo accountInfo, Context context) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         WalletDatabase.insertAccountInfoTask(accountInfo);
-    }
-
-    public static AccountInfo getAccountInfo(String userName, Context context) {
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        return WalletDatabase.getAccountInfoTask(userName);
     }
 
     public static List<AccountInfo> getAllAccountInfo(Context context) {
@@ -94,15 +93,23 @@ public class DatabaseUtil {
         WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
     }
 
-    public static boolean isTransactionLogExit(ResponseMessSocket responseMess, Context context) {
+    public static void saveTransactionLog(CacheSocketData cashInResponse, Context context) {
+        TransactionLog_Database transactionLog = new TransactionLog_Database();
+        transactionLog.setSenderAccountId(cashInResponse.getSender());
+        transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
+        transactionLog.setType(cashInResponse.getType());
+        transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
+        transactionLog.setContent(cashInResponse.getContent());
+        transactionLog.setCashEnc(cashInResponse.getCashEnc());
+        transactionLog.setTransactionSignature(cashInResponse.getId());
+        transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        TransactionLog_Database transactionLog = WalletDatabase.checkTransactionLogExit(responseMess.getId());
-        return null != transactionLog;
+        WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
     }
 
-    public static boolean isTransactionLogExit(CashInResponse responseMess, Context context) {
+    public static boolean isTransactionLogExit(String transactionSignature_id, Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        TransactionLog_Database transactionLog = WalletDatabase.checkTransactionLogExit(responseMess.getId());
+        TransactionLog_Database transactionLog = WalletDatabase.checkTransactionLogExit(transactionSignature_id);
         return null != transactionLog;
     }
 
@@ -111,40 +118,6 @@ public class DatabaseUtil {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         CashTemp cashTemp = WalletDatabase.checkCashTempExit(responseMess.getId());
         return null != cashTemp;
-    }
-
-    //ma hoa mat xich transaction log
-    public static String getPreviousHashTransactionLog(TransactionLog_Database transactionLog) {
-        List<TransactionLog_Database> transactionLogList = WalletDatabase.getAllTransactionLog();
-        if (transactionLogList.size() > 0) {
-            //get transaction_log max id
-            TransactionLog_Database TransactionLogMax = WalletDatabase.getTransactionLogByMaxID(WalletDatabase.getMaxIDTransactionLog());
-
-            //updatePrevious transaction_log min id => new PreviousHash
-            WalletDatabase.updatePreviousTransactionLogMin(getSignTransactionLog(transactionLog), WalletDatabase.getMinIDTransactionLog());
-
-            //ok
-            return getSignTransactionLog(TransactionLogMax);
-        } else {
-            return getSignTransactionLog(transactionLog);
-        }
-    }
-
-    //ma hoa mat xich dong tien
-    public static String getPreviousHashCash(CashLogs_Database cash) {
-        List<CashLogs_Database> cashList = WalletDatabase.getAllCash();
-        if (cashList.size() > 0) {
-            //get cash max id
-            CashLogs_Database cashMax = WalletDatabase.getCashByMaxID(WalletDatabase.getMaxIDCash());
-
-            //updatePreviousCash min id => new PreviousHash
-            WalletDatabase.updatePreviousCashMin(getSignCash(cash), WalletDatabase.getMinIDCash());
-
-            //ok
-            return getSignCash(cashMax);
-        } else {
-            return getSignCash(cash);
-        }
     }
 
     public static String getSignTransactionLog(TransactionLog_Database transactionLog) {
@@ -305,6 +278,16 @@ public class DatabaseUtil {
         WalletDatabase.insertCashValue(cashValues);
     }
 
+    public static List<TransactionsHistoryModel> getListTransactionHistory(Context context) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        return WalletDatabase.getListTransactionHistory();
+    }
+
+    public static void updateAccountLastAccessTime(ResponseDataUpdateMasterKey responseData, AccountInfo accountInfo, Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.updateAccountLastAccessTime(responseData.getLastAccessTime(), accountInfo.getUsername());
+    }
+
     public static void deleteAllCashValue(Context context) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         WalletDatabase.deleteAllCashValue();
@@ -353,6 +336,31 @@ public class DatabaseUtil {
     public static void deleteCacheData(String transactionSignature, Context context) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
         WalletDatabase.deleteCacheData(transactionSignature);
+    }
+
+    public static List<CacheSocketData> getAllCacheSocketData(Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        return WalletDatabase.getAllCacheSocketData();
+    }
+
+    public static void insertOnlySingleCacheSocketData(ResponseMessSocket responseMessSocket, Context context) {
+        CacheDataSocket_Database cacheData_database = new CacheDataSocket_Database();
+        cacheData_database.setCashEnc(responseMessSocket.getCashEnc());
+        cacheData_database.setContent(responseMessSocket.getContent());
+        cacheData_database.setId(responseMessSocket.getId());
+        cacheData_database.setTime(responseMessSocket.getTime());
+        cacheData_database.setType(responseMessSocket.getType());
+        cacheData_database.setSender(responseMessSocket.getSender());
+        cacheData_database.setReceiver(responseMessSocket.getReceiver());
+        cacheData_database.setRefId(responseMessSocket.getRefId());
+
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.insertOnlySingleCacheSocketData(cacheData_database);
+    }
+
+    public static void deleteCacheSocketData(String id, Context context) {
+        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
+        WalletDatabase.deleteCacheSocketData(id);
     }
 
     public static boolean checkTransactionsLogs(Context context) {
@@ -422,13 +430,27 @@ public class DatabaseUtil {
         WalletDatabase.deletePayment(id);
     }
 
-    public static void saveNotification(Context context, String title, String body){
-        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+    public static void saveNotification(Context context, String title, String body) {
         Notification_Database notification = new Notification_Database();
         notification.setTitle(title);
         notification.setBody(body);
         notification.setDate(CommonUtils.getCurrentTimeNotification());
         notification.setRead(Constant.ON);
-        WalletDatabase.insertNotificationTask(notification, Constant.STR_EMPTY);
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        WalletDatabase.insertNotificationTask(notification);
+    }
+
+    public static AccountInfo getAccountInfo(Context context) {
+        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
+        List<AccountInfo> accountInfoList = WalletDatabase.getAllProfile();
+        if (null != accountInfoList) {
+            if (accountInfoList.size() > 0) {
+                return accountInfoList.get(0);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 }

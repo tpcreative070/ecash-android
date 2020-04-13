@@ -72,7 +72,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
     }
 
     @Override
-    public void logout(AccountInfo accountInfo) {
+    public void logout(AccountInfo accountInfo, Context context) {
         myWalletView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -80,7 +80,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
         RequestLogOut requestLogout = new RequestLogOut();
         requestLogout.setChannelCode(Constant.CHANNEL_CODE);
         requestLogout.setFunctionCode(Constant.FUNCTION_LOGOUT);
-        requestLogout.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestLogout.setSessionId(CommonUtils.getSessionId(context));
         requestLogout.setToken(CommonUtils.getToken());
         requestLogout.setUsername(accountInfo.getUsername());
         requestLogout.setAuditNumber(CommonUtils.getAuditNumber());
@@ -104,7 +104,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
                 ECashApplication.getInstance().showErrorConnection(t, new DialogUtil.OnResult() {
                     @Override
                     public void OnListenerOk() {
-                        logout(accountInfo);
+                        logout(accountInfo, context);
                     }
                 });
             }

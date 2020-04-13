@@ -79,10 +79,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
             Log.e("e", e.getMessage());
         }
 
-
-        WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
 
         setAdapter(transferModelArrayList);

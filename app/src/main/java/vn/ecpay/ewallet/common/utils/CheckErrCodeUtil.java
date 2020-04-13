@@ -96,6 +96,10 @@ public class CheckErrCodeUtil {
                 message = context.getString(R.string.error_message_code_4129);
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
+            case Constant.ERROR_CODE_4160:
+                message = context.getString(R.string.error_message_code_4160);
+                DialogUtil.getInstance().showDialogWarning(context, message);
+                break;
             case Constant.ERROR_CODE_0998:
             default:
                 message = context.getString(R.string.err_upload) + " => mã lỗi: " + error_code;

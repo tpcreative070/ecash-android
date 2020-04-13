@@ -29,6 +29,7 @@ import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
+import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
@@ -75,8 +76,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     }
 
     private void setData() {
-        WalletDatabase.getINSTANCE(getContext(), ECashApplication.masterKey);
-        accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         if (accountInfo != null) {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
             balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
@@ -92,16 +92,16 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     }
 
     private void updateAvatar() {
-        if (ECashApplication.getAccountInfo().getLarge() == null) {
+        if (accountInfo.getLarge() == null) {
             if (getActivity() != null)
                 ivAccount.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_avatar));
         } else {
-            CommonUtils.loadAvatar(getActivity(), ivAccount, ECashApplication.getAccountInfo().getLarge());
+            CommonUtils.loadAvatar(getActivity(), ivAccount, accountInfo.getLarge());
         }
     }
 
     private void updateLogin() {
-        accountInfo = WalletDatabase.getAccountInfoTask(ECashApplication.getAccountInfo().getUsername());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         setData();
     }
 
@@ -125,7 +125,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
                         });
                 break;
             case R.id.layout_logout:
-                DialogUtil.getInstance().showDialogLogout(getActivity(), () -> myWalletPresenter.logout(accountInfo));
+                DialogUtil.getInstance().showDialogLogout(getActivity(), () -> myWalletPresenter.logout(accountInfo, getActivity()));
                 break;
         }
     }

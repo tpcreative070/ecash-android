@@ -354,6 +354,7 @@
     <string name="error_message_code_3029">Signature is not valid</string>
     <string name="error_message_code_3077">User not active!</string>
     <string name="error_message_code_4129">The wallet number does not exist!</string>
+    <string name="error_message_code_4160">The eCash wallet number does not exist!</string>
     <string name="err_no_result">No results were found</string>
 
     <string name="str_denominations_available">the denominations available</string>

@@ -52,9 +52,7 @@ public class CashOutFunction {
         this.multiTransferList = multiTransferList;
         this.contentSendMoney = content;
         this.typeSend = typeSend;
-     //   this.listUri = listUri;
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, context.getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(context.getActivity());
     }
 
     @SuppressLint("StaticFieldLeak")

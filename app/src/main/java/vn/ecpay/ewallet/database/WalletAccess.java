@@ -12,6 +12,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.ecpay.ewallet.database.table.CacheDataSocket_Database;
 import vn.ecpay.ewallet.database.table.CacheData_Database;
 import vn.ecpay.ewallet.database.table.CashInvalid_Database;
 import vn.ecpay.ewallet.database.table.CashLogs_Database;
@@ -26,6 +27,7 @@ import vn.ecpay.ewallet.database.table.TransactionLogQR_Database;
 import vn.ecpay.ewallet.database.table.TransactionLog_Database;
 import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
+import vn.ecpay.ewallet.model.account.cacheData.CacheSocketData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
@@ -33,9 +35,20 @@ import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
+import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 @Dao
 public interface WalletAccess {
+    // todo Data_socket_cache---------------------------------------------------------------------------------------
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOnlySingleCacheSocketData(CacheDataSocket_Database cacheData_database);
+
+    @Query("SELECT *  FROM CACHE_SOCKET_DATA")
+    List<CacheSocketData> getAllCacheSocketData();
+
+    @Query("DELETE From CACHE_SOCKET_DATA WHERE id = :id")
+    void deleteCacheSocketData(String id);
+
     // todo Data_cache---------------------------------------------------------------------------------------
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOnlySingleCacheData(CacheData_Database cacheData_database);
@@ -177,21 +190,16 @@ public interface WalletAccess {
     @Insert
     void insertOnlySingleUser(Profile_Database accountInfo);
 
-    @Insert
-    void insertMultipleUser(List<Profile_Database> userList);
-
-    @Query("SELECT * FROM PROFILE WHERE username =:userName")
-    AccountInfo fetchOneUserByUserId(String userName);
-
-    @Query("SELECT * FROM PROFILE WHERE id =0")
-    AccountInfo getAccountOfDevice();
-
     @Query("SELECT * FROM PROFILE")
     List<AccountInfo> getAllProfile();
 
     @Query("UPDATE PROFILE SET personFirstName=:fistName, personLastName=:lastName, personMiddleName=:middleName,idNumber=:idNumber,personCurrentAddress=:address, personEmail=:email WHERE username =:userName")
     void updateAccountInfo(String fistName, String lastName, String middleName, String idNumber,
                            String address, String email, String userName);
+
+    @Query("UPDATE PROFILE SET sessionId=:sessionId, large=:bIconLarge, personFirstName=:fistName, personLastName=:lastName, personMiddleName=:middleName,idNumber=:idNumber,personCurrentAddress=:address, personEmail=:email WHERE username =:userName")
+    void updateFullAccountInfo(String fistName, String lastName, String middleName, String idNumber,
+                               String address, String email, String bIconLarge, String sessionId, String userName);
 
     @Query("UPDATE PROFILE SET large=:bIconLarge WHERE username =:userName")
     void updateAvatar(String bIconLarge, String userName);

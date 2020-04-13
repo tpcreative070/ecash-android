@@ -115,8 +115,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, getActivity());
+        accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         if (getActivity() != null)
             ECashApplication.get(getActivity()).getApplicationComponent().plus(new CashChangeModule(this)).inject(this);

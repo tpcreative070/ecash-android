@@ -46,8 +46,7 @@ public class ToPayFuntion {
         this.valuesList = mValuesList;
         this.contact = contact;
         this.payToRequest = payToRequest;
-        String userName = ECashApplication.getAccountInfo().getUsername();
-        accountInfo = DatabaseUtil.getAccountInfo(userName, context);
+        accountInfo = DatabaseUtil.getAccountInfo(context);
     }
 
     public void handlePayToSocket(ToPayListener mtoPayListener){

@@ -159,7 +159,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
         }
         try {
             accountInfo = ECashApplication.getAccountInfo();
-            dbAccountInfo = DatabaseUtil.getAccountInfo(accountInfo.getUsername(), getActivity());
+            dbAccountInfo = DatabaseUtil.getAccountInfo(getActivity());
         } catch (NullPointerException e) {
             CommonUtils.restartApp((MainActivity)getActivity());
         }
@@ -621,15 +621,6 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
 
     @Override
     public void showDialogError(String err) {
-        DialogUtil.getInstance().showDialogWarning(getActivity(), err);
-    }
-
-    @Override
-    public void onSyncContactSuccess() {
-    }
-
-    @Override
-    public void onSyncContactFail(String err) {
         DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 

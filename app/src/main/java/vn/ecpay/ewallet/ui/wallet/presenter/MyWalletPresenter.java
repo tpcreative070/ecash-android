@@ -7,7 +7,7 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.wallet.view.MyWalletView;
 
 public interface MyWalletPresenter extends Presenter<MyWalletView> {
-    void logout(AccountInfo accountInfo);
+    void logout(AccountInfo accountInfo, Context context);
 
     void validateCancelAccount(long balance, AccountInfo accountInfo, Context context);
 
