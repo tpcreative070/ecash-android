@@ -117,10 +117,10 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         if (response.body().getResponseCode() != null) {
                             String code = response.body().getResponseCode();
                             if (code.equals(Constant.CODE_SUCCESS)) {
-                                registerView.onIDNumberFail(application.getString(R.string.err_nmnd_is_exit));
+                                registerView.onIDNumberFail(application.getResources().getString(R.string.err_nmnd_is_exit));
                             }
                             if (code.equals("1007")) {
-                                registerView.onPhoneNumberFail(application.getString(R.string.err_validate_phone_fail));
+                                registerView.onPhoneNumberFail(application.getResources().getString(R.string.err_validate_phone_fail));
                             }
                         }
                     }

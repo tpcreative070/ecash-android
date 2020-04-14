@@ -244,9 +244,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             cashOutPresenter.getPublicKeyOrganization(getActivity(), accountInfo, true);
         }
 
-        showLoading();
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 new AsyncTask<Void, Void, Void>() {
@@ -265,7 +264,6 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
             @Override
             public void onUpdateMasterFail(String code) {
-                dismissLoading();
                 CheckErrCodeUtil.errorMessage(getActivity(), code);
             }
 

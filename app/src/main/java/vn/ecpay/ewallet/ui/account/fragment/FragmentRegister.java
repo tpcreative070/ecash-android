@@ -201,6 +201,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showLoading();
                     startRegisterPassword();
+                }else{
+                    showDialogPermissions(getString(R.string.str_permission_contact_setting));
                 }
             }
             default:

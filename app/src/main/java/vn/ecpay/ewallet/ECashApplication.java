@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import vn.ecpay.ewallet.common.base.ECashBaseActivity;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationModule;
 import vn.ecpay.ewallet.common.dependencyInjection.DaggerApplicationComponent;

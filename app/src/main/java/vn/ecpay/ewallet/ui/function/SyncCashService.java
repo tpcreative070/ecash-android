@@ -105,7 +105,7 @@ public class SyncCashService extends Service {
 
     private void updateMasterKey() {
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(false,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 handleListResponse();

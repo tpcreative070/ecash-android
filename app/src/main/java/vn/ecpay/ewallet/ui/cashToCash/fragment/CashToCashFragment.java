@@ -40,7 +40,6 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -311,8 +310,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
             }
         } else {
             UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-            showProgress();
-            updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+            updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
                 @Override
                 public void onUpdateMasterSuccess() {
                     CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,
@@ -322,7 +320,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
                 @Override
                 public void onUpdateMasterFail(String code) {
-                    dismissProgress();
                     CheckErrCodeUtil.errorMessage(getActivity(), code);
                 }
 
@@ -388,7 +385,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     validateData();
                 } else {
                     dismissProgress();
-                    showDialogSettingStore();
+                    showDialogPermissions(getString(R.string.str_permission_store_setting));
                 }
             }
             default:
@@ -444,7 +441,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
 
         if (event.getData().equals(Constant.EVENT_CONNECT_SOCKET_FAIL)) {
             dismissProgress();
-            showDialogErr(R.string.err_socket_timeout);
+           // showDialogErr(R.string.err_socket_timeout);
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
@@ -463,19 +460,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                         getActivity().finish();
                     }
                 });
-    }
-
-    private void showDialogSettingStore() {
-        DialogUtil.getInstance().showDialogSettingPermissionStore(getActivity(), new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", getBaseActivity().getPackageName(), null));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
-
     }
 
     @Override
