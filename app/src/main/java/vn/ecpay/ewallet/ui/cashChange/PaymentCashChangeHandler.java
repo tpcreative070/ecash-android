@@ -556,25 +556,22 @@ public class PaymentCashChangeHandler {
     }
 
     private void handleToPay(List<CashTotal> listCash, Payment_DataBase payToRequest) {
-        activity.showLoading();
         ArrayList<Contact> listContact = new ArrayList<>();
         Contact contact = new Contact();
         contact.setWalletId(Long.parseLong(payToRequest.getSender()));
         listContact.add(contact);
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(activity);
         ToPayFuntion toPayFuntion = new ToPayFuntion(activity, listCash, contact, payToRequest);
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 toPayFuntion.handlePayToSocket(() -> {
-                    activity.dismissLoading();
                     showDialogPaymentSuccess(payToRequest);
                 });
             }
 
             @Override
             public void onUpdateMasterFail(String code) {
-                activity.dismissLoading();
                 CheckErrCodeUtil.errorMessage(getActivity(), code);
                 activity.restartSocket();
             }
