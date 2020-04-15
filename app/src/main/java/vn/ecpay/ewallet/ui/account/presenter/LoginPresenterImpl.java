@@ -236,7 +236,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                             loginView.requestOTPSuccess(accountInfo);
                         } else if (response.body().getResponseCode().equals("3015")) {
                             //quá thời hạn gửi OTP
-                            loginView.showDialogError(response.body().getResponseMessage());
+                           // loginView.showDialogError(response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         } else {
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }

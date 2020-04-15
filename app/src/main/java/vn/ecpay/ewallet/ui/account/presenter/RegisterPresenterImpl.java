@@ -45,6 +45,9 @@ import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
 import vn.ecpay.ewallet.ui.account.view.RegisterView;
 
 import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3016;
+import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3019;
+import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3035;
+import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3077;
 
 public class RegisterPresenterImpl implements RegisterPresenter {
 
@@ -279,7 +282,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             accountInfo.setTransactionCode(String.valueOf(response.body().getResponseData().getTransactionCode()));
                             registerView.retryOTPSuccess(accountInfo);
                         } else if (response.body().getResponseCode().equals("3015")) {
-                            registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
+                            //registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
                         } else {
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
@@ -337,7 +341,8 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                                 response.body().getResponseCode().equals("0998")) {
                             registerView.dismissLoading();
                             registerView.requestOtpErr(accountInfo, application.getString(R.string.err_otp_fail));
-                        } else {
+                        }
+                        else {
                             registerView.dismissLoading();
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
@@ -505,7 +510,6 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             }
         });
     }
-
     @Override
     public void setView(RegisterView view) {
         this.registerView = view;

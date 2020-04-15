@@ -350,6 +350,7 @@
     <string name="error_message_code_3077">Tài khoản chưa được kích hoạt!</string>
     <string name="error_message_code_4129">Số ví không tồn tại!</string>
     <string name="error_message_code_4160">Số ví eCash không tồn tại!</string>
+    <string name="error_message_code_3116">Tài khoản đang ở trạng thái khóa hoặc hủy  vui lòng liên hệ bộ phận CSKH hotline 19003179</string>
 
     <string name="str_denominations_available">Các mệnh giá đang có</string>
     <string name="str_ecash_wants_to_change">eCash muốn đổi:</string>
