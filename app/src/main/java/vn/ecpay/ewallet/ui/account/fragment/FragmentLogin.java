@@ -267,9 +267,10 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 return;
             }
         }
-        if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
+        /*if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
             getIMEI();
-        }
+        }*/
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
     }
 
     @Override
@@ -303,7 +304,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
             editor.putString(Constant.DEVICE_IMEI, IMEI);
             editor.apply();
         }
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
@@ -376,7 +377,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void activeAccountSuccess() {
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
     }
 
     @Override

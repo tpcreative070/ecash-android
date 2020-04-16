@@ -82,11 +82,13 @@ public class UpdateMasterKeyFunction {
                         }
                     } else {
                         updateMasterKeyListener.onUpdateMasterFail("error");
+                        showLoading(false);
                     }
                 } else {
                     updateMasterKeyListener.onUpdateMasterFail("error");
+                    showLoading(false);
                 }
-                showLoading(false);
+              //  showLoading(false);
             }
 
             @Override

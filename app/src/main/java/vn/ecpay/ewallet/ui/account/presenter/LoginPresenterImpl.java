@@ -81,7 +81,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass, TextView tvError) {
+    public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass) {
         loginView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -130,7 +130,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                             }
                         } else if (response.body().getResponseCode().equals(ERROR_CODE_3035)) {
                             loginView.dismissLoading();
-                            tvError.setText(context.getString(R.string.err_user_not_exit));
+                            //tvError.setText(context.getString(R.string.err_user_not_exit));
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         } else if (response.body().getResponseCode().equals(ERROR_CODE_3019)) {
                             loginView.dismissLoading();
                             loginView.showDialogError(context.getResources().getString(R.string.error_message_code_login_3019));
@@ -149,7 +150,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 loginView.dismissLoading();
               //  loginView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t, () -> requestLogin( context, accountInfo,  userName,  pass,  tvError));
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestLogin( context, accountInfo,  userName,  pass));
             }
         });
     }

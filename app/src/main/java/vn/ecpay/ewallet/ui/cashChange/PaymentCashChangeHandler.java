@@ -566,12 +566,14 @@ public class PaymentCashChangeHandler {
             @Override
             public void onUpdateMasterSuccess() {
                 toPayFuntion.handlePayToSocket(() -> {
+                    activity.dismissLoading();
                     showDialogPaymentSuccess(payToRequest);
                 });
             }
 
             @Override
             public void onUpdateMasterFail(String code) {
+                activity.dismissLoading();
                 CheckErrCodeUtil.errorMessage(getActivity(), code);
                 activity.restartSocket();
             }
