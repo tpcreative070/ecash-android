@@ -242,7 +242,7 @@ public class WebSocketsService extends Service {
 
     private void updateMasterKey() {
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(getApplicationContext());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(false,new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 syncData();

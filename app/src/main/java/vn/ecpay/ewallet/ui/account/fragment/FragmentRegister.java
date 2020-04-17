@@ -629,8 +629,13 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                     List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
                     if (listAccount != null) {
                         if (listAccount.size() > 0) {
-                            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
-                            return;
+                           /// DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
+                            AccountInfo accountInfo = listAccount.get(0);
+                            if(accountInfo!=null){
+                               registerPresenter.retryOTP(getActivity(),accountInfo);
+                                return;
+                            }
+
                         }
                     }
                 }
