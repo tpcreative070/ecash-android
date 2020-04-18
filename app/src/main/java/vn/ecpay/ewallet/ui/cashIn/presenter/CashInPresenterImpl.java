@@ -1,6 +1,7 @@
 package vn.ecpay.ewallet.ui.cashIn.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -89,7 +90,7 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongToECash.setFunctionCode(Constant.FUNCTION_TRANSFER_EDONG_TO_ECASH);
         requestEdongToECash.setQuantities(listQuality);
         requestEdongToECash.setReceiver(String.valueOf(accountInfo.getWalletId()));
-        requestEdongToECash.setSender(String.valueOf(accountInfo.getWalletId()));
+        requestEdongToECash.setSender(Constant.CREDIT_DEBIT_EWALLET);
         requestEdongToECash.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestEdongToECash.setTerminalId(accountInfo.getTerminalId());
         requestEdongToECash.setToken(CommonUtils.getToken());
@@ -108,6 +109,7 @@ public class CashInPresenterImpl implements CashInPresenter {
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
+                    Log.d("TuanLe", "ResponseEdongToECash:" + gson.toJson(response.body()));
                     if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (null != response.body().getResponseData()) {

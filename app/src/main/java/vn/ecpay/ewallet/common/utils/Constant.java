@@ -133,8 +133,8 @@ public class Constant {
     public static final String FUNCTION_GET_PUBLIC_KEY_WALLET = "GWEC0007";
     public static final String FUNCTION_GET_PUBLIC_KEY_BY_PHONE = "GWEC0016";
     public static final String FUNCTION_GET_PUBLIC_KEY_CASH = "GWEC0005";
-    public static final String FUNCTION_TRANSFER_EDONG_TO_ECASH = "GWEC0004";
-    public static final String FUNCTION_TRANSFER_ECASH_TO_EDONG = "GWEC0009";
+    public static final String FUNCTION_TRANSFER_EDONG_TO_ECASH = "GWEC0040";//"GWEC0004";
+    public static final String FUNCTION_TRANSFER_ECASH_TO_EDONG = "GWEC0039";//GWEC0009";
     public static final String FUNCTION_GET_PUBLIC_KEY_ORGANIZATION = "GWEC0006";
     public static final String FUNCTION_LOGOUT = "GW000001";
     public static final String FUNCTION_GET_OTP = "GW000004";
@@ -156,6 +156,7 @@ public class Constant {
     public static final String CHANNEL_CODE = "MB001";
     public static final String TYPE_SEN_SOCKET = "CF";
     public static final String CREDIT_DEBIT_ACCOUNT = "1238161606";
+    public static final String CREDIT_DEBIT_EWALLET = "8348929244";
     public static final String ISSUER_CODE = "ECPAY";
 
     //error code
