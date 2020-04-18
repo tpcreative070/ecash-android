@@ -78,6 +78,7 @@ public class UpdateMasterKeyFunction {
                             KeyStoreUtils.saveMasterKey(responseData.getMasterKey(), activity);
                             updateMasterKeyListener.onUpdateMasterSuccess();
                         } else {
+                            showLoading(false);
                             updateMasterKeyListener.onUpdateMasterFail(response.body().getResponseCode());
                         }
                     } else {

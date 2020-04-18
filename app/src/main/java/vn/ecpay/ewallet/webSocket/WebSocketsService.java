@@ -45,6 +45,7 @@ import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
 import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
+import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
 import vn.ecpay.ewallet.ui.function.CashInFunction;
 import vn.ecpay.ewallet.ui.function.UpdateMasterKeyFunction;
 import vn.ecpay.ewallet.webSocket.object.RequestReceived;

@@ -850,4 +850,11 @@ public class CommonUtils {
         }
         return false;
     }
+    public static long validateMoney(long money){
+        if(money%1000==0){
+            return money;
+        }else{
+            return money+(1000-money/1000);// round up
+        }
+    }
 }
