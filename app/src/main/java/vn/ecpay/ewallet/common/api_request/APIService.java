@@ -96,7 +96,7 @@ public interface APIService {
     @POST("ecgateway/execute/GWEC0005")
     Call<ResponseGetPublicKeyCash> getPublicKeyCash(@Body RequestGetPublicKeyCash body);
 
-    @POST("ecgateway/execute/GWEC0004")
+    @POST("ecgateway/execute/GWEC0040")
     Call<ResponseEdongToECash> transferMoneyEdongToECash(@Body RequestEdongToECash body);
 
     @POST("ecgateway/execute/GW000001")

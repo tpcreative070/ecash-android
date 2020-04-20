@@ -144,7 +144,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestEcashToEdong.setDebitAccount(Constant.CREDIT_DEBIT_ACCOUNT);
         requestEcashToEdong.setFunctionCode(Constant.FUNCTION_TRANSFER_ECASH_TO_EDONG);
         requestEcashToEdong.setId(idSender);
-        requestEcashToEdong.setReceiver(String.valueOf(accountInfo.getWalletId()));
+        requestEcashToEdong.setReceiver(Constant.CREDIT_DEBIT_EWALLET);
         requestEcashToEdong.setSender(String.valueOf(accountInfo.getWalletId()));
         requestEcashToEdong.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestEcashToEdong.setTerminalId(accountInfo.getTerminalId());
