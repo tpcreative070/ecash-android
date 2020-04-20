@@ -79,7 +79,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
                     setAdapterTextChange(s.toString());
                 } else {
                     resultNotFound(false);
-                    List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory();
+                    List<TransactionsHistoryModel> transactionsHistoryModelList = WalletDatabase.getListTransactionHistory(getActivity());
                     setAdapter(transactionsHistoryModelList);
                 }
             }
@@ -167,7 +167,7 @@ public class FragmentTransactionHistory extends ECashBaseFragment {
     }
 
     private void reloadData() {
-        long numberCash = WalletDatabase.getAllCash().size();
+        long numberCash = WalletDatabase.getAllCash(getActivity()).size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             setAdapter(DatabaseUtil.getListTransactionHistory(getActivity()));
         } else {

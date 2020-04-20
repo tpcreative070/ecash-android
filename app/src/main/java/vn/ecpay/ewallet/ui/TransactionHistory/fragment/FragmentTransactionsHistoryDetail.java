@@ -132,6 +132,11 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             this.transactionsHistoryModel = (TransactionsHistoryModel) bundle.getSerializable(Constant.TRANSACTIONS_HISTORY_MODEL);
+            if (null == transactionsHistoryModel) {
+                showDialogError(getResources().getString(R.string.err_upload));
+                return;
+            }
+
             updateView();
             setAdapterListCash();
             checkIsHaveQRCode();
@@ -141,10 +146,8 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
     }
 
     private void updateView() {
-        if (null != transactionsHistoryModel.getReceiverPhone()) {
-            tvHistoryPhone.setText(transactionsHistoryModel.getReceiverPhone());
-        }
-        tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount())));
+        tvHistoryPhone.setText(transactionsHistoryModel.getReceiverPhone());
+        tvHistoryTotal.setText(CommonUtils.formatPriceVND(Long.parseLong(transactionsHistoryModel.getTransactionAmount())));
         tvHistoryContent.setText(transactionsHistoryModel.getTransactionContent());
         tvHistoryDate.setText(CommonUtils.getDateTransfer(getActivity(), transactionsHistoryModel.getTransactionDate()));
 
@@ -154,7 +157,7 @@ public class FragmentTransactionsHistoryDetail extends ECashBaseFragment {
                 tvType.setText(getResources().getString(R.string.str_cash_out));
                 tvHistoryType.setText(getResources().getString(R.string.str_cash_out));
                 tvTotalMoneyTransfer.setText(getResources().getString(R.string.str_type_cash_out,
-                        CommonUtils.formatPriceVND(Long.valueOf(transactionsHistoryModel.getTransactionAmount()))));
+                        CommonUtils.formatPriceVND(Long.parseLong(transactionsHistoryModel.getTransactionAmount()))));
                 layoutContent.setVisibility(View.GONE);
                 tvSenderReceiver.setText(getResources().getString(R.string.receiver));
                 tvHumanCode.setText(transactionsHistoryModel.getSenderAccountId());

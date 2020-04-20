@@ -45,7 +45,7 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.QRCode.QRCodeActivity;
 import vn.ecpay.ewallet.ui.cashToCash.fragment.FragmentContactTransferCash;
-import vn.ecpay.ewallet.ui.function.PayToFuntion;
+import vn.ecpay.ewallet.ui.function.PayToFunction;
 import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
 
 @SuppressLint("ParcelCreator")
@@ -120,7 +120,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
     }
     private void updateBalance(){
-        long numberCash = WalletDatabase.getAllCash().size();
+        long numberCash = WalletDatabase.getAllCash(getActivity()).size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             if (getActivity() != null)
                 getActivity().runOnUiThread(() -> {
@@ -226,7 +226,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         showProgress();///
-        PayToFuntion payToFuntion = new PayToFuntion(getActivity(),Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",","")),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
+        PayToFunction payToFuntion = new PayToFunction(getActivity(),Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",","")),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
         payToFuntion.handlePayToSocket(this::PayToSuccess);
     }
     private void PayToSuccess() {

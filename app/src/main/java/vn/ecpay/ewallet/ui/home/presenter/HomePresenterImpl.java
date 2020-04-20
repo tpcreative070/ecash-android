@@ -114,7 +114,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestOTPActiveAccount.setTerminalId(CommonUtils.getIMEI(context));
         requestOTPActiveAccount.setTerminalInfo(CommonUtils.getModelName());
         requestOTPActiveAccount.setUsername(accountInfo.getUsername());
-        requestOTPActiveAccount.setToken(CommonUtils.getToken());
+        requestOTPActiveAccount.setToken(CommonUtils.getToken(context));
         requestOTPActiveAccount.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestOTPActiveAccount));
@@ -148,8 +148,8 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseOTPActiveAccount> call, Throwable t) {
                 homeView.dismissLoading();
-             //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t, () -> getOTPActiveAccount( accountInfo,  context));
+                //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t, () -> getOTPActiveAccount(accountInfo, context));
             }
         });
     }
@@ -166,7 +166,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestGetMoneyValue.setSessionId(CommonUtils.getSessionId(context));
         requestGetMoneyValue.setIssuerCodes(Collections.singletonList(Constant.ISSUER_CODE));
         requestGetMoneyValue.setUsername(accountInfo.getUsername());
-        requestGetMoneyValue.setToken(CommonUtils.getToken());
+        requestGetMoneyValue.setToken(CommonUtils.getToken(context));
         requestGetMoneyValue.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetMoneyValue));
@@ -196,9 +196,9 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseGetMoneyValue> call, Throwable t) {
                 homeView.dismissLoading();
-             //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
+                //   homeView.onSyncContactFail(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showErrorConnection(t, () -> {
-                    getCashValues( accountInfo,  context);
+                    getCashValues(accountInfo, context);
                 });
             }
         });
@@ -220,7 +220,7 @@ public class HomePresenterImpl implements HomePresenter {
         requestGetAccountWalletInfo.setSessionId(accountInfo.getSessionId());
         requestGetAccountWalletInfo.setTerminalId(CommonUtils.getIMEI(context));
         requestGetAccountWalletInfo.setTerminalInfor(CommonUtils.getModelName());
-        requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
+        requestGetAccountWalletInfo.setToken(CommonUtils.getToken(context));
         requestGetAccountWalletInfo.setTransactionCode(responseData.getTransactionCode());
         requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());
         requestGetAccountWalletInfo.setWalletId(responseData.getWalletId());
@@ -261,6 +261,10 @@ public class HomePresenterImpl implements HomePresenter {
                                 homeView.dismissLoading();
                                 homeView.showDialogError(application.getString(R.string.err_upload));
                             }
+                        } else if (response.body().getResponseCode().equals("3014") ||
+                                response.body().getResponseCode().equals("0998")) {
+                            homeView.dismissLoading();
+                            homeView.requestOTPFail(context.getResources().getString(R.string.err_otp_fail), responseData);
                         } else {
                             homeView.dismissLoading();
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
@@ -278,8 +282,8 @@ public class HomePresenterImpl implements HomePresenter {
             @Override
             public void onFailure(Call<ResponseGetAccountWalletInfo> call, Throwable t) {
                 homeView.dismissLoading();
-               // homeView.showDialogError(context.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t, () -> activeAccWalletInfo( accountInfo,responseData,otp, context));
+                // homeView.showDialogError(context.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t, () -> activeAccWalletInfo(accountInfo, responseData, otp, context));
             }
         });
     }
@@ -292,12 +296,12 @@ public class HomePresenterImpl implements HomePresenter {
         RequestSyncContact requestSyncContact = new RequestSyncContact();
         requestSyncContact.setChannelCode(Constant.CHANNEL_CODE);
         requestSyncContact.setFunctionCode(Constant.FUNCTION_SYNC_CONTACT);
-        requestSyncContact.setSessionId(ECashApplication.getAccountInfo().getSessionId());
+        requestSyncContact.setSessionId(CommonUtils.getSessionId(context));
         requestSyncContact.setListContacts(CommonUtils.getListPhoneNumber(context));
         requestSyncContact.setPhoneNumber(accountInfo.getPersonMobilePhone());
         requestSyncContact.setUsername(accountInfo.getUsername());
         requestSyncContact.setWalletId(accountInfo.getWalletId());
-        requestSyncContact.setToken(CommonUtils.getToken());
+        requestSyncContact.setToken(CommonUtils.getToken(context));
         requestSyncContact.setAuditNumber(CommonUtils.getAuditNumber());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestSyncContact));

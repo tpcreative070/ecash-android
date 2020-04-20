@@ -107,8 +107,8 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             tvCmnd.setText(accountInfo.getIdNumber());
             tvAddress.setText(accountInfo.getPersonCurrentAddress());
 
-            tvMasterKey.setText(KeyStoreUtils.getMasterKey(getActivity()));
-            tvPrivateKey.setText(KeyStoreUtils.getPrivateKey(getActivity()));
+            tvMasterKey.setText("Maxterkey: " + KeyStoreUtils.getMasterKey(getActivity()));
+            tvPrivateKey.setText("privateKey: " + KeyStoreUtils.getPrivateKey(getActivity()));
         }
         if (LanguageUtils.getCurrentLanguage().getCode().equals(getActivity().getResources().getString(R.string.language_english_code))) {
             tvLanguage.setText(getActivity().getResources().getString(R.string.language_english));
@@ -185,8 +185,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             case R.id.layout_master_key:
                 if (getActivity() != null) {
                     ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    String text = tvMasterKey.getText().toString();
-                    ClipData myClip = ClipData.newPlainText("text", text);
+                    ClipData myClip = ClipData.newPlainText("text", KeyStoreUtils.getMasterKey(getActivity()));
                     clipboard.setPrimaryClip(myClip);
                     Toast.makeText(getActivity(), "copy master key success", Toast.LENGTH_LONG).show();
                 }
@@ -194,8 +193,7 @@ public class FragmentAccountInfo extends ECashBaseFragment implements AccountInf
             case R.id.layout_private_key:
                 if (getActivity() != null) {
                     ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    String text = tvPrivateKey.getText().toString();
-                    ClipData myClip = ClipData.newPlainText("text", text);
+                    ClipData myClip = ClipData.newPlainText("text", KeyStoreUtils.getPrivateKey(getActivity()));
                     clipboard.setPrimaryClip(myClip);
                     Toast.makeText(getActivity(), "copy private key success", Toast.LENGTH_LONG).show();
                 }

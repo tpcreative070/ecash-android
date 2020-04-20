@@ -1,14 +1,7 @@
 package vn.ecpay.ewallet.ui.account.fragment;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,16 +12,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
@@ -38,12 +28,10 @@ import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
-import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
-import vn.ecpay.ewallet.common.utils.PermissionUtils;
 import vn.ecpay.ewallet.common.utils.Utils;
 import vn.ecpay.ewallet.database.WalletDatabase;
 import vn.ecpay.ewallet.model.account.getEdongInfo.ResponseDataEdong;
@@ -53,7 +41,6 @@ import vn.ecpay.ewallet.ui.account.ForgotPasswordActivity;
 import vn.ecpay.ewallet.ui.account.module.LoginModule;
 import vn.ecpay.ewallet.ui.account.presenter.LoginPresenter;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
-import vn.ecpay.ewallet.webSocket.WebSocketsService;
 
 public class FragmentLogin extends ECashBaseFragment implements LoginView {
     @BindView(R.id.btn_login)
@@ -267,44 +254,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 return;
             }
         }
-        /*if (PermissionUtils.checkPermissionReadPhoneState(this, null)) {
-            getIMEI();
-        }*/
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PermissionUtils.PERMISSIONS_REQUEST_READ_PHONE_STATE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getIMEI();
-            } else {
-                dismissProgress();
-            }
-        } else {
-            dismissProgress();
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getIMEI() {
-        SharedPreferences prefs = getContext().getSharedPreferences(getContext().getPackageName(), Context.MODE_PRIVATE);
-        String IMEI = prefs.getString(Constant.DEVICE_IMEI, null);
-        if (IMEI == null) {
-            TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
-            // get IMei of device
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                IMEI = telephonyManager.getImei();
-            } else {
-                IMEI = telephonyManager.getDeviceId();
-            }
-            // save IMei of device to shared preference
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(Constant.DEVICE_IMEI, IMEI);
-            editor.apply();
-        }
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
@@ -356,7 +306,8 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                     accountInfo.getPersonEmail(),
                     accountInfo.getLarge(),
                     accountInfo.getSessionId(),
-                    accountInfo.getUsername());
+                    accountInfo.getUsername(),
+                    accountInfo.getToken());
         }
         if (response.getListAcc().size() > 0) {
             ECashApplication.setListEDongInfo(response.getListAcc());
@@ -377,7 +328,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void activeAccountSuccess() {
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
     }
 
     @Override

@@ -76,21 +76,21 @@ public class DatabaseUtil {
         transactionLog.setTransactionSignature(responseMess.getId());
         transactionLog.setRefId(responseMess.getRefId());
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertTransactionLogTask(transactionLog);
+        WalletDatabase.insertTransactionLogTask(context, transactionLog);
     }
 
     public static void saveTransactionLog(CashInResponse cashInResponse, Context context) {
         TransactionLog_Database transactionLog = new TransactionLog_Database();
-        transactionLog.setSenderAccountId(cashInResponse.getSender());
+        transactionLog.setSenderAccountId(String.valueOf(cashInResponse.getSender()));
         transactionLog.setReceiverAccountId(String.valueOf(cashInResponse.getReceiver()));
         transactionLog.setType(cashInResponse.getType());
         transactionLog.setTime(String.valueOf(cashInResponse.getTime()));
         transactionLog.setContent(cashInResponse.getContent());
         transactionLog.setCashEnc(cashInResponse.getCashEnc());
-        transactionLog.setTransactionSignature(cashInResponse.getId());
         transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
+        transactionLog.setTransactionSignature(cashInResponse.getId());
+        WalletDatabase.insertTransactionLogTask(context, transactionLog, Constant.STR_EMPTY);
     }
 
     public static void saveTransactionLog(CacheSocketData cashInResponse, Context context) {
@@ -104,19 +104,17 @@ public class DatabaseUtil {
         transactionLog.setTransactionSignature(cashInResponse.getId());
         transactionLog.setRefId(String.valueOf(cashInResponse.getRefId()));
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertTransactionLogTask(transactionLog, Constant.STR_EMPTY);
+        WalletDatabase.insertTransactionLogTask(context, transactionLog, Constant.STR_EMPTY);
     }
 
     public static boolean isTransactionLogExit(String transactionSignature_id, Context context) {
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        TransactionLog_Database transactionLog = WalletDatabase.checkTransactionLogExit(transactionSignature_id);
+        TransactionLog_Database transactionLog = WalletDatabase.checkTransactionLogExit(context, transactionSignature_id);
         return null != transactionLog;
     }
 
     //check cash team exit
     public static boolean isCashTempExit(ResponseMessSocket responseMess, Context context) {
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        CashTemp cashTemp = WalletDatabase.checkCashTempExit(responseMess.getId());
+        CashTemp cashTemp = WalletDatabase.checkCashTempExit(context, responseMess.getId());
         return null != cashTemp;
     }
 
@@ -138,7 +136,7 @@ public class DatabaseUtil {
 
     public static boolean saveCashToDB(CashLogs_Database cash, Context context, String userName) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertCashTask(cash, userName);
+        WalletDatabase.insertCashTask(context, cash, userName);
         return true;
     }
 
@@ -149,7 +147,7 @@ public class DatabaseUtil {
 
     public static boolean SaveCashInvalidToDB(CashLogs_Database cash, Context context, String userName) {
         WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        WalletDatabase.insertCashInvalidTask(cash, userName);
+        WalletDatabase.insertCashInvalidTask(context, cash, userName);
         return true;
     }
 
@@ -280,7 +278,7 @@ public class DatabaseUtil {
 
     public static List<TransactionsHistoryModel> getListTransactionHistory(Context context) {
         WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
-        return WalletDatabase.getListTransactionHistory();
+        return WalletDatabase.getListTransactionHistory(context);
     }
 
     public static void updateAccountLastAccessTime(ResponseDataUpdateMasterKey responseData, AccountInfo accountInfo, Context context) {
@@ -368,8 +366,7 @@ public class DatabaseUtil {
         TransactionLog_Database previousRecord;
         String mPreviousHash;
 
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        List<TransactionLog_Database> transactionsList = WalletDatabase.getAllTransactionLog();
+        List<TransactionLog_Database> transactionsList = WalletDatabase.getAllTransactionLog(context);
         if (transactionsList == null) return true;
         for (int i = 0; i < transactionsList.size(); i++) {
             if (i == 0) {//bản ghi đầu tiên
@@ -393,9 +390,7 @@ public class DatabaseUtil {
         boolean isValid = true;
         CashLogs_Database previousRecord;
         String mPreviousHash;
-
-        WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
-        List<CashLogs_Database> cashList = WalletDatabase.getAllCash();
+        List<CashLogs_Database> cashList = WalletDatabase.getAllCash(context);
         if (cashList == null) return true;
         for (int i = 0; i < cashList.size(); i++) {
             if (i == 0) {//bản ghi đầu tiên

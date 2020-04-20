@@ -182,7 +182,7 @@ public class FragmentMyWallet extends ECashBaseFragment implements MyWalletView 
     }
 
     private void updateBalance() {
-        long numberCash = WalletDatabase.getAllCash().size();
+        long numberCash = WalletDatabase.getAllCash(getActivity()).size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
             balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);

@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.cashIn.presenter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -90,10 +89,10 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongToECash.setFunctionCode(Constant.FUNCTION_TRANSFER_EDONG_TO_ECASH);
         requestEdongToECash.setQuantities(listQuality);
         requestEdongToECash.setReceiver(String.valueOf(accountInfo.getWalletId()));
-        requestEdongToECash.setSender(Constant.CREDIT_DEBIT_EWALLET);
+        requestEdongToECash.setSender(String.valueOf(accountInfo.getWalletId()));
         requestEdongToECash.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestEdongToECash.setTerminalId(accountInfo.getTerminalId());
-        requestEdongToECash.setToken(CommonUtils.getToken());
+        requestEdongToECash.setToken(CommonUtils.getToken(context));
         requestEdongToECash.setUsername(accountInfo.getUsername());
         requestEdongToECash.setValues(listValue);
         requestEdongToECash.setChannelSignature(Constant.STR_EMPTY);
@@ -109,7 +108,6 @@ public class CashInPresenterImpl implements CashInPresenter {
             public void onResponse(Call<ResponseEdongToECash> call, Response<ResponseEdongToECash> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-                    Log.d("TuanLe", "ResponseEdongToECash:" + gson.toJson(response.body()));
                     if (null != response.body().getResponseCode()) {
                         if (response.body().getResponseCode().equals(Constant.CODE_SUCCESS)) {
                             if (null != response.body().getResponseData()) {
@@ -148,7 +146,7 @@ public class CashInPresenterImpl implements CashInPresenter {
     }
 
     @Override
-    public void getEDongInfo(AccountInfo accountInfo) {
+    public void getEDongInfo(AccountInfo accountInfo, Context context) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -157,7 +155,7 @@ public class CashInPresenterImpl implements CashInPresenter {
         requestEdongInfo.setChannelCode(Constant.CHANNEL_CODE);
         requestEdongInfo.setFunctionCode(Constant.FUNCTION_GET_EDONG_INFO);
         requestEdongInfo.setSessionId(accountInfo.getSessionId());
-        requestEdongInfo.setToken(CommonUtils.getToken());
+        requestEdongInfo.setToken(CommonUtils.getToken(context));
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestEdongInfo));

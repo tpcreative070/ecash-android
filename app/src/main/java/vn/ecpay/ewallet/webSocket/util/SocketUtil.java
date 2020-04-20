@@ -32,13 +32,13 @@ public class SocketUtil {
                 .appendQueryParameter("terminalInfo", accountInfo.getTerminalInfo())
                 .appendQueryParameter("auditNumber", auditNumber)
                 .appendQueryParameter("sessionId", ECashApplication.getAccountInfo().getSessionId())
-                .appendQueryParameter("channelSignature", getChannelSignature(accountInfo, auditNumber))
-                .appendQueryParameter("token", CommonUtils.getToken())
+                .appendQueryParameter("channelSignature", getChannelSignature(accountInfo, auditNumber, context))
+                .appendQueryParameter("token", CommonUtils.getToken(context))
                 .appendQueryParameter("walletSignature", getWalletSignature(accountInfo, context));
         return builder.build().toString();
     }
 
-    public static String getChannelSignature(AccountInfo accountInfo, String auditNumber) {
+    public static String getChannelSignature(AccountInfo accountInfo, String auditNumber, Context context) {
         ChangeSignature changeSignature = new ChangeSignature();
 
         changeSignature.setAuditNumber(auditNumber);
@@ -49,7 +49,7 @@ public class SocketUtil {
         changeSignature.setTerminalInfo(accountInfo.getTerminalInfo());
         changeSignature.setUsername(accountInfo.getUsername());
         changeSignature.setWalletId(String.valueOf(accountInfo.getWalletId()));
-        changeSignature.setToken(CommonUtils.getToken());
+        changeSignature.setToken(CommonUtils.getToken(context));
 
         CommonUtils.logJson(changeSignature);
         String data = CommonUtils.getStringAlphabe(changeSignature);

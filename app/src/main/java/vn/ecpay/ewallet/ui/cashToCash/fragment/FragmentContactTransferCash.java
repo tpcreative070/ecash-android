@@ -1,6 +1,9 @@
 package vn.ecpay.ewallet.ui.cashToCash.fragment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -9,6 +12,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +31,7 @@ import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
+import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -34,6 +43,7 @@ import vn.ecpay.ewallet.ui.callbackListener.ContactTransferListener;
 import vn.ecpay.ewallet.ui.cashToCash.CashToCashActivity;
 import vn.ecpay.ewallet.ui.cashToCash.adapter.ContactTransferAdapter;
 import vn.ecpay.ewallet.ui.callbackListener.MultiTransferListener;
+import vn.ecpay.ewallet.ui.contact.AddContactActivity;
 import vn.ecpay.ewallet.ui.lixi.MyLixiActivity;
 import vn.ecpay.ewallet.ui.payTo.PayToActivity;
 
@@ -149,7 +159,7 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
         }
     }
 
-    @OnClick({R.id.iv_back, R.id.tv_done, R.id.iv_filter})
+    @OnClick({R.id.iv_back, R.id.tv_done, R.id.iv_filter, R.id.iv_add_contact})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -168,6 +178,11 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
             case R.id.iv_filter:
                 edtSearch.setText(Constant.STR_EMPTY);
                 break;
+            case R.id.iv_add_contact:
+                Intent intent = new Intent(getActivity(), AddContactActivity.class);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                break;
         }
     }
 
@@ -183,6 +198,31 @@ public class FragmentContactTransferCash extends ECashBaseFragment {
                 (getActivity()).onBackPressed();
             }
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        EventBus.getDefault().unregister(this);
+        super.onDetach();
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateData(EventDataChange event) {
+        if (event.getData().equals(Constant.EVENT_UPDATE_CONTACT)) {
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
+                List<Contact> transferModelArrayList = WalletDatabase.getListContact(String.valueOf(accountInfo.getWalletId()));
+                setAdapter(transferModelArrayList);
+            }, 1000);
+        }
+        EventBus.getDefault().removeStickyEvent(event);
     }
 
 }

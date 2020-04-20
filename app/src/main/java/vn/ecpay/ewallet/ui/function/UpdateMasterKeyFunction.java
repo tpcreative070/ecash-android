@@ -37,8 +37,7 @@ public class UpdateMasterKeyFunction {
         this.activity = activity;
     }
 
-    public void updateLastTimeAndMasterKey(boolean loading,UpdateMasterKeyListener updateMasterKeyListener) {
-        showLoading(loading);
+    public void updateLastTimeAndMasterKey(UpdateMasterKeyListener updateMasterKeyListener) {
         AccountInfo accountInfo = DatabaseUtil.getAccountInfo(activity);
         if (null == accountInfo) {
             updateMasterKeyListener.onUpdateMasterFail("xxx");
@@ -51,9 +50,9 @@ public class UpdateMasterKeyFunction {
         RequestUpdateMasterKey requestUpdateMasterKey = new RequestUpdateMasterKey();
         requestUpdateMasterKey.setChannelCode(Constant.CHANNEL_CODE);
         requestUpdateMasterKey.setFunctionCode(Constant.FUNCTION_UPDATE_MASTER_KEY);
-        requestUpdateMasterKey.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestUpdateMasterKey.setUsername(ECashApplication.getAccountInfo().getUsername());
-        requestUpdateMasterKey.setToken(CommonUtils.getToken());
+        requestUpdateMasterKey.setSessionId(CommonUtils.getSessionId(activity));
+        requestUpdateMasterKey.setUsername(DatabaseUtil.getAccountInfo(activity).getUsername());
+        requestUpdateMasterKey.setToken(CommonUtils.getToken(activity));
         requestUpdateMasterKey.setAuditNumber(CommonUtils.getAuditNumber());
         requestUpdateMasterKey.setLastAccessTime(accountInfo.getLastAccessTime());
         requestUpdateMasterKey.setMasterKey(masterKey);
@@ -82,30 +81,20 @@ public class UpdateMasterKeyFunction {
                         }
                     } else {
                         updateMasterKeyListener.onUpdateMasterFail("error");
-                        showLoading(false);
                     }
                 } else {
                     updateMasterKeyListener.onUpdateMasterFail("error");
-                    showLoading(false);
                 }
-              //  showLoading(false);
             }
 
             @Override
             public void onFailure(Call<ResponseUpdateMasterKey> call, Throwable t) {
                 updateMasterKeyListener.onRequestTimeout();
-                showLoading(false);
-                ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKey(loading,updateMasterKeyListener));
+                if(activity instanceof ECashBaseActivity){
+                    ((ECashBaseActivity) activity).dismissLoading();
+                }
+                ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKey(updateMasterKeyListener));
             }
         });
-    }
-    private void showLoading(boolean show){
-        if(activity instanceof ECashBaseActivity){
-            if(show){
-                ((ECashBaseActivity) activity).showLoading();
-            }else{
-                ((ECashBaseActivity) activity).dismissLoading();
-            }
-        }
     }
 }

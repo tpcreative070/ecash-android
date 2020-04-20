@@ -15,10 +15,9 @@ import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.api_request.APIService;
 import vn.ecpay.ewallet.common.api_request.RetroClientApi;
 import vn.ecpay.ewallet.common.eccrypto.SHA256;
+import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
-import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
-import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.OTP.RequestGetOTP;
 import vn.ecpay.ewallet.model.OTP.response.ResponseGetOTP;
 import vn.ecpay.ewallet.model.account.active.RequestActiveAccount;
@@ -81,7 +80,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass) {
+    public void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass, TextView tvError) {
         loginView.showLoading();
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
@@ -93,7 +92,6 @@ public class LoginPresenterImpl implements LoginPresenter {
         requestLogin.setToken(CommonUtils.encryptPassword(pass));
         requestLogin.setAuditNumber(CommonUtils.getAuditNumber());
 
-        String alphabe = CommonUtils.getStringAlphabe(requestLogin);
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogin));
         String channelSignature = "";
         try {
@@ -130,8 +128,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                             }
                         } else if (response.body().getResponseCode().equals(ERROR_CODE_3035)) {
                             loginView.dismissLoading();
-                            //tvError.setText(context.getString(R.string.err_user_not_exit));
-                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
+                            tvError.setText(context.getString(R.string.err_user_not_exit));
                         } else if (response.body().getResponseCode().equals(ERROR_CODE_3019)) {
                             loginView.dismissLoading();
                             loginView.showDialogError(context.getResources().getString(R.string.error_message_code_login_3019));
@@ -150,7 +147,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onFailure(Call<ResponseLoginAfterRegister> call, Throwable t) {
                 loginView.dismissLoading();
               //  loginView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t, () -> requestLogin( context, accountInfo,  userName,  pass));
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestLogin( context, accountInfo,  userName,  pass,  tvError));
             }
         });
     }
@@ -237,8 +234,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                             loginView.requestOTPSuccess(accountInfo);
                         } else if (response.body().getResponseCode().equals("3015")) {
                             //quá thời hạn gửi OTP
-                           // loginView.showDialogError(response.body().getResponseMessage());
-                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
+                            loginView.showDialogError(response.body().getResponseMessage());
                         } else {
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }

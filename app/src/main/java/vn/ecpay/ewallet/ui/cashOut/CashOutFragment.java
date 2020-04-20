@@ -244,8 +244,9 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             cashOutPresenter.getPublicKeyOrganization(getActivity(), accountInfo, true);
         }
 
+        showLoading();
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 new AsyncTask<Void, Void, Void>() {
@@ -264,6 +265,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
             @Override
             public void onUpdateMasterFail(String code) {
+                dismissLoading();
                 CheckErrCodeUtil.errorMessage(getActivity(), code);
             }
 
@@ -299,7 +301,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             encData = CommonUtils.getEncrypData(cashSendArray, publicKeyOrganization);
             responseMess = new ResponseMessSocket();
             responseMess.setSender(String.valueOf(accountInfo.getWalletId()));
-            responseMess.setReceiver(Constant.CREDIT_DEBIT_EWALLET);
+            responseMess.setReceiver(String.valueOf(accountInfo.getWalletId()));
             responseMess.setTime(CommonUtils.getCurrentTime());
             responseMess.setType(Constant.TYPE_SEND_ECASH_TO_EDONG);
             responseMess.setContent(Constant.STR_EMPTY);

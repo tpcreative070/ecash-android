@@ -523,8 +523,12 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         if (WalletDatabase.numberRequest == 0) {
             dismissProgress();
             TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignatureCashInQR);
-            if (getActivity() != null)
+            if (getActivity() != null && transactionsHistoryModel != null) {
                 ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
+            }else {
+                showDialogError(getResources().getString(R.string.err_upload));
+                restartScan();
+            }
         } else {
             new Timer().schedule(new TimerTask() {
                 @Override

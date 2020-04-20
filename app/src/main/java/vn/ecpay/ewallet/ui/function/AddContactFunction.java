@@ -45,7 +45,7 @@ public class AddContactFunction {
         requestAddContact.setListWallets(userList);
         requestAddContact.setUsername(accountInfo.getUsername());
         requestAddContact.setWalletId(String.valueOf(accountInfo.getWalletId()));
-        requestAddContact.setToken(CommonUtils.getToken());
+        requestAddContact.setToken(CommonUtils.getToken(context));
         requestAddContact.setAuditNumber(CommonUtils.getAuditNumber());
         requestAddContact.setAddNewWalletId(String.valueOf(contact.getWalletId()));
 

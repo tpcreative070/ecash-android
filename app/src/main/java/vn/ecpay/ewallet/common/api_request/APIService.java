@@ -96,7 +96,7 @@ public interface APIService {
     @POST("ecgateway/execute/GWEC0005")
     Call<ResponseGetPublicKeyCash> getPublicKeyCash(@Body RequestGetPublicKeyCash body);
 
-    @POST("ecgateway/execute/GWEC0040")
+    @POST("ecgateway/execute/GWEC0004")
     Call<ResponseEdongToECash> transferMoneyEdongToECash(@Body RequestEdongToECash body);
 
     @POST("ecgateway/execute/GW000001")
@@ -114,7 +114,7 @@ public interface APIService {
     @POST("ecgateway/execute/GWEC0020")
     Call<ResponseCancelAccount> cancelAccount(@Body RequestCancelAccount body);
 
-    @POST("ecgateway/execute/GWEC0011")
+    @POST("ecgateway/execute/GWEC0041")
     Call<ResponseEdongToECash> changeCash(@Body RequestECashChange body);
 
     @POST("ecgateway/execute/GWEC0017")

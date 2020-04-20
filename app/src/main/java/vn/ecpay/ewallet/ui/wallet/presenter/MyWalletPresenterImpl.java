@@ -81,7 +81,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
         requestLogout.setChannelCode(Constant.CHANNEL_CODE);
         requestLogout.setFunctionCode(Constant.FUNCTION_LOGOUT);
         requestLogout.setSessionId(CommonUtils.getSessionId(context));
-        requestLogout.setToken(CommonUtils.getToken());
+        requestLogout.setToken(CommonUtils.getToken(context));
         requestLogout.setUsername(accountInfo.getUsername());
         requestLogout.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestLogout));
@@ -130,7 +130,7 @@ public class MyWalletPresenterImpl implements MyWalletPresenter {
         requestCancelAccount.setChannelCode(Constant.CHANNEL_CODE);
         requestCancelAccount.setFunctionCode(Constant.FUNCTION_CANCEL_ACCOUNT);
         requestCancelAccount.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestCancelAccount.setToken(CommonUtils.getToken());
+        requestCancelAccount.setToken(CommonUtils.getToken(context));
         requestCancelAccount.setUsername(accountInfo.getUsername());
         requestCancelAccount.setWalletId(String.valueOf(accountInfo.getWalletId()));
         requestCancelAccount.setTerminalId(accountInfo.getTerminalId());

@@ -21,6 +21,7 @@ import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
+import vn.ecpay.ewallet.ui.callbackListener.OnDeleteItem;
 
 public class NotificationActivity extends ECashBaseActivity {
     @BindView(R.id.layout_bottom)
@@ -53,8 +54,20 @@ public class NotificationActivity extends ECashBaseActivity {
         listNotification = DatabaseUtil.getAllNotification(this);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         rvNotification.setLayoutManager(mLayoutManager);
-        notificationAdapter = new NotificationAdapter(isCheckBox, listNotification, this);
+        notificationAdapter = new NotificationAdapter(isCheckBox, listNotification, this, new OnDeleteItem() {
+            @Override
+            public void onDeleteOK(int pos) {
+                deleteNotification(listNotification.get(pos), pos);
+            }
+        });
         rvNotification.setAdapter(notificationAdapter);
+    }
+
+    private void deleteNotification(NotificationObj notificationObj, int pos) {
+        DatabaseUtil.deleteNotification(this, notificationObj.getId());
+        listNotification.remove(pos);
+        notificationAdapter.notifyDataSetChanged();
+        EventBus.getDefault().postSticky(new EventDataChange(Constant.UPDATE_NOTIFICATION));
     }
 
     @OnClick({R.id.tv_delete, R.id.tv_cancel, R.id.iv_back, R.id.iv_delete, R.id.iv_option})

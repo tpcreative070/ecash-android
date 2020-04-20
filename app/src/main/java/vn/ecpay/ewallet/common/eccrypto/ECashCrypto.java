@@ -157,41 +157,38 @@ public class ECashCrypto {
     public static String[][] decryptV2(EllipticCurve ec, ECPrivateKeyParameters ks, byte[][] blockEnc) throws IOException {
         byte[] rawData = ECElGamal.decrypt(ec, ks, blockEnc);
         List<String[]> listCash = new ArrayList<>();
-        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(rawData));
-        for (; ; ) {
-            byte[] bLength = new byte[3];
-            dis.readFully(bLength, 0, 3);
-            int nLength = Integer.parseInt(new String(bLength));
-            byte[] bElement = new byte[nLength];
-            dis.readFully(bElement, 0, nLength);
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(rawData))) {
+            do {
+                byte[] bLength = new byte[3];
+                dis.readFully(bLength, 0, 3);
+                int nLength = Integer.parseInt(new String(bLength));
+                byte[] bElement = new byte[nLength];
+                dis.readFully(bElement, 0, nLength);
 
-            String[] cash = new String[3];
-            ByteArrayInputStream bais = new ByteArrayInputStream(bElement);
+                String[] cash = new String[3];
+                ByteArrayInputStream bais = new ByteArrayInputStream(bElement);
 
-            bais.read(bLength, 0, 3);
-            nLength = Integer.parseInt(new String(bLength));
-            bElement = new byte[nLength];
-            bais.read(bElement, 0, nLength);
-            cash[0] = new String(bElement);
+                bais.read(bLength, 0, 3);
+                nLength = Integer.parseInt(new String(bLength));
+                bElement = new byte[nLength];
+                bais.read(bElement, 0, nLength);
+                cash[0] = new String(bElement);
 
-            bais.read(bLength, 0, 3);
-            nLength = Integer.parseInt(new String(bLength));
-            bElement = new byte[nLength];
-            bais.read(bElement, 0, nLength);
-            cash[1] = Base64.encodeToString(bElement, Base64.DEFAULT);
+                bais.read(bLength, 0, 3);
+                nLength = Integer.parseInt(new String(bLength));
+                bElement = new byte[nLength];
+                bais.read(bElement, 0, nLength);
+                cash[1] = Base64.encodeToString(bElement, Base64.DEFAULT);
 
-            bais.read(bLength, 0, 3);
-            nLength = Integer.parseInt(new String(bLength));
-            bElement = new byte[nLength];
-            bais.read(bElement, 0, nLength);
-            cash[2] = Base64.encodeToString(bElement, Base64.DEFAULT);
-            listCash.add(cash);
-            bais.close();
+                bais.read(bLength, 0, 3);
+                nLength = Integer.parseInt(new String(bLength));
+                bElement = new byte[nLength];
+                bais.read(bElement, 0, nLength);
+                cash[2] = Base64.encodeToString(bElement, Base64.DEFAULT);
+                listCash.add(cash);
+                bais.close();
 
-            if (dis.available() == 0) {
-                dis.close();
-                break;
-            }
+            } while (dis.available() != 0);
         }
 
         String[][] retVal = new String[listCash.size()][];

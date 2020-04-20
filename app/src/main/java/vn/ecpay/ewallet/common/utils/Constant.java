@@ -26,7 +26,6 @@ public class Constant {
     public static final String ERROR_CODE_0001 = "0001";
     public static final String ERROR_CODE_0997 = "0997";
     public static final String ERROR_CODE_3035 = "3035";
-    public static final String ERROR_CODE_3116 = "3116";
     // public static final String ERROR_CODE_3019 = "3019";
     // public static final String ERROR_CODE_0998 = "0998";
     public static final String ERROR_CODE_3029 = "3029";
@@ -133,14 +132,14 @@ public class Constant {
     public static final String FUNCTION_GET_PUBLIC_KEY_WALLET = "GWEC0007";
     public static final String FUNCTION_GET_PUBLIC_KEY_BY_PHONE = "GWEC0016";
     public static final String FUNCTION_GET_PUBLIC_KEY_CASH = "GWEC0005";
-    public static final String FUNCTION_TRANSFER_EDONG_TO_ECASH = "GWEC0040";//"GWEC0004";
-    public static final String FUNCTION_TRANSFER_ECASH_TO_EDONG = "GWEC0039";//GWEC0009";
+    public static final String FUNCTION_TRANSFER_EDONG_TO_ECASH = "GWEC0004";
+    public static final String FUNCTION_TRANSFER_ECASH_TO_EDONG = "GWEC0009";
     public static final String FUNCTION_GET_PUBLIC_KEY_ORGANIZATION = "GWEC0006";
     public static final String FUNCTION_LOGOUT = "GW000001";
     public static final String FUNCTION_GET_OTP = "GW000004";
     public static final String FUNCTION_CHANGE_PASSWORD = "GW000003";
     public static final String FUNCTION_CANCEL_ACCOUNT = "GWEC0020";
-    public static final String FUNCTION_CHANGE_CASH = "GWEC0011";
+    public static final String FUNCTION_CHANGE_CASH = "GWEC0041";
     public static final String FUNCTION_SYNC_CONTACT = "GWEC0017";
     public static final String FUNCTION_ADD_CONTACT = "GWEC0023";
     public static final String FUNCTION_DELETE_CONTACT = "GWEC0038";
@@ -156,7 +155,6 @@ public class Constant {
     public static final String CHANNEL_CODE = "MB001";
     public static final String TYPE_SEN_SOCKET = "CF";
     public static final String CREDIT_DEBIT_ACCOUNT = "1238161606";
-    public static final String CREDIT_DEBIT_EWALLET = "8348929244";
     public static final String ISSUER_CODE = "ECPAY";
 
     //error code
