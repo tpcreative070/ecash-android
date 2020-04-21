@@ -854,7 +854,8 @@ public class CommonUtils {
         if(money%1000==0){
             return money;
         }else{
-            return money+(1000-money/1000);// round up
+            long remain =money%1000;
+            return money+1000-remain;// round up
         }
     }
 }
