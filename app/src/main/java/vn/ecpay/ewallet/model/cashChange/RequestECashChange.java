@@ -37,6 +37,26 @@ public class RequestECashChange extends BaseObject {
     private String mChannelSignature;
     @SerializedName("auditNumber")
     private String mAuditNumber;
+    @SerializedName("time")
+    private String mTime;
+    @SerializedName("auditNumber")
+    private String mType;
+
+    public String getTime() {
+        return mTime;
+    }
+
+    public void setTime(String mTime) {
+        this.mTime = mTime;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public void setType(String mType) {
+        this.mType = mType;
+    }
 
     public String getAuditNumber() {
         return mAuditNumber;

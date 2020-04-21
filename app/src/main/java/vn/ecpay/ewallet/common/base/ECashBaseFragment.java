@@ -1,10 +1,7 @@
 package vn.ecpay.ewallet.common.base;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,18 +125,5 @@ public abstract class ECashBaseFragment extends Fragment {
         if(getActivity() instanceof ECashBaseActivity){
             ((ECashBaseActivity)getActivity()).getPaymentDataBase();
         }
-    }
-
-    public void showDialogPermissions(String title){
-        DialogUtil.getInstance().showDialogSettingPermissions(getActivity(),title, new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", getBaseActivity().getPackageName(), null));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
-
     }
 }

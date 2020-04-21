@@ -201,8 +201,6 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showLoading();
                     startRegisterPassword();
-                }else{
-                    showDialogPermissions(getString(R.string.str_permission_contact_setting));
                 }
             }
             default:
@@ -629,13 +627,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                     List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
                     if (listAccount != null) {
                         if (listAccount.size() > 0) {
-                           /// DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
-                            AccountInfo accountInfo = listAccount.get(0);
-                            if(accountInfo!=null){
-                               registerPresenter.retryOTP(getActivity(),accountInfo);
-                                return;
-                            }
-
+                            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
+                            return;
                         }
                     }
                 }

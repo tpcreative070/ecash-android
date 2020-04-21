@@ -31,7 +31,7 @@ import vn.ecpay.ewallet.model.payment.Payments;
 import vn.ecpay.ewallet.ui.callbackListener.PayToListener;
 import vn.ecpay.ewallet.webSocket.util.SocketUtil;
 
-public class PayToFuntion {
+public class PayToFunction {
     private AccountInfo accountInfo;
     private Context context;
     private String content;
@@ -40,7 +40,7 @@ public class PayToFuntion {
     private String type;
     private PayToListener payToListener;
 
-    public PayToFuntion(Context context, long total, List<Contact> multiTransferList, String content, String type) {
+    public PayToFunction(Context context, long total, List<Contact> multiTransferList, String content, String type) {
         this.context = context;
         this.totalAmount = total;
         this.multiTransferList = multiTransferList;

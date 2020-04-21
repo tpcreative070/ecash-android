@@ -15,6 +15,7 @@ import com.google.firebase.database.annotations.NotNull;
 
 import java.util.List;
 
+import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -47,7 +48,6 @@ import vn.ecpay.ewallet.model.lixi.CashTemp;
 import vn.ecpay.ewallet.model.notification.NotificationObj;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
-import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
 
 @Database(entities = {Contact_Database.class,
         CashLogs_Database.class,
@@ -81,14 +81,12 @@ public abstract class WalletDatabase extends RoomDatabase {
         return editText;
     }
 
-    public static boolean changeKey(CharSequence newPass) {
+    public static void changeKey(CharSequence newPass) {
         try {
             SafeHelperFactory.rekey(walletDatabase.mDatabase, new SpannableStringBuilder(newPass));
             walletDatabase = null;
             factory = null;
-            return true;
-        } catch (Exception e) {
-            return false;
+        } catch (Exception ignored) {
         }
     }
 
@@ -258,7 +256,7 @@ public abstract class WalletDatabase extends RoomDatabase {
 
 
     // todo cash------------------------------------------------------------------------------------------
-    public static void insertCashTask(CashLogs_Database cash, String userName) {
+    public static void insertCashTask(Context context, CashLogs_Database cash, String userName) {
         CashLogs_Database mCash = new CashLogs_Database();
         mCash.setCountryCode(cash.getCountryCode());
         mCash.setIssuerCode(cash.getIssuerCode());
@@ -272,15 +270,15 @@ public abstract class WalletDatabase extends RoomDatabase {
         mCash.setAccSign(cash.getAccSign());
         mCash.setType(cash.getType());
         mCash.setTransactionSignature(cash.getTransactionSignature());
-        insertCashTask(mCash);
+        insertCashTask(context, mCash);
     }
 
-    private static void insertCashTask(final CashLogs_Database cash) {
+    private static void insertCashTask(Context context, final CashLogs_Database cash) {
         numberRequest = numberRequest + 1;
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                cash.setPreviousHash(getPreviousHashCash(cash));
+                cash.setPreviousHash(getPreviousHashCash(context, cash));
                 walletDatabase.daoAccess().insertOnlySingleCash(cash);
                 return null;
             }
@@ -292,14 +290,14 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    private static String getPreviousHashCash(CashLogs_Database cash) {
-        List<CashLogs_Database> cashList = getAllCash();
+    private static String getPreviousHashCash(Context context, CashLogs_Database cash) {
+        List<CashLogs_Database> cashList = getAllCash(context);
         if (cashList.size() > 0) {
             //get cash max id
-            CashLogs_Database cashMax = getCashByMaxID(getMaxIDCash());
+            CashLogs_Database cashMax = getCashByMaxID(context, getMaxIDCash(context));
 
             //updatePreviousCash min id => new PreviousHash
-            updatePreviousCashMin(DatabaseUtil.getSignCash(cash), getMinIDCash());
+            updatePreviousCashMin(context, DatabaseUtil.getSignCash(cash), getMinIDCash(context));
 
             //ok
             return DatabaseUtil.getSignCash(cashMax);
@@ -308,23 +306,28 @@ public abstract class WalletDatabase extends RoomDatabase {
         }
     }
 
-    public static List<CashLogs_Database> getAllCash() {
+    public static List<CashLogs_Database> getAllCash(Context context) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getAllCash();
     }
 
-    public static int getMaxIDCash() {
+    public static int getMaxIDCash(Context context) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getCashMaxID();
     }
 
-    public static int getMinIDCash() {
+    public static int getMinIDCash(Context context) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getCashMinID();
     }
 
-    public static void updatePreviousCashMin(String previousHash, int minID) {
+    public static void updatePreviousCashMin(Context context, String previousHash, int minID) {
+        getINSTANCE(context, ECashApplication.masterKey);
         walletDatabase.daoAccess().updatePreviousCash(previousHash, minID);
     }
 
-    public static CashLogs_Database getCashByMaxID(int maxID) {
+    public static CashLogs_Database getCashByMaxID(Context context, int maxID) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getCashByMaxID(maxID);
     }
 
@@ -337,7 +340,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     // todo Cash_Invalid----------------------------------------------------------------------------------
-    public static void insertCashInvalidTask(CashLogs_Database cashLogs_database, String userName) {
+    public static void insertCashInvalidTask(Context context, CashLogs_Database cashLogs_database, String userName) {
         CashInvalid_Database cashInvalid_database = new CashInvalid_Database();
         cashInvalid_database.setUserName(userName);
         cashInvalid_database.setCountryCode(cashLogs_database.getCountryCode());
@@ -352,14 +355,14 @@ public abstract class WalletDatabase extends RoomDatabase {
         cashInvalid_database.setAccSign(cashLogs_database.getAccSign());
         cashInvalid_database.setType(cashLogs_database.getType());
         cashInvalid_database.setTransactionSignature(cashLogs_database.getTransactionSignature());
-        insertCashInvalidTask(cashInvalid_database, cashLogs_database);
+        insertCashInvalidTask(context, cashInvalid_database, cashLogs_database);
     }
 
-    private static void insertCashInvalidTask(final CashInvalid_Database cash, CashLogs_Database cashLogs_database) {
+    private static void insertCashInvalidTask(Context context, final CashInvalid_Database cash, CashLogs_Database cashLogs_database) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                cash.setPreviousHash(getPreviousHashCash(cashLogs_database));
+                cash.setPreviousHash(getPreviousHashCash(context, cashLogs_database));
                 walletDatabase.daoAccess().insertOnlySingleCashInvalid(cash);
                 return null;
             }
@@ -441,9 +444,9 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     public static void updateFullAccountInfo(String fistName, String lastName, String middleName, String idNumber,
-                                             String address, String email, String bIconLarge, String sessionId, String userName) {
+                                             String address, String email, String bIconLarge, String sessionId, String userName, String token) {
         walletDatabase.daoAccess().updateFullAccountInfo(fistName, lastName, middleName, idNumber,
-                address, email, bIconLarge, sessionId, userName);
+                address, email, bIconLarge, sessionId, userName, token);
     }
 
     public static void updateAccountAvatar(String bIconLarge, String userName) {
@@ -471,7 +474,7 @@ public abstract class WalletDatabase extends RoomDatabase {
 
 
     // todo transaction_log-------------------------------------------------------------------------------
-    public static void insertTransactionLogTask(TransactionLog_Database transactionLog) {
+    public static void insertTransactionLogTask(Context context, TransactionLog_Database transactionLog) {
         TransactionLog_Database mTransactionLog = new TransactionLog_Database();
         mTransactionLog.setSenderAccountId(transactionLog.getSenderAccountId());
         mTransactionLog.setReceiverAccountId(transactionLog.getReceiverAccountId());
@@ -481,14 +484,14 @@ public abstract class WalletDatabase extends RoomDatabase {
         mTransactionLog.setCashEnc(transactionLog.getCashEnc());
         mTransactionLog.setRefId(transactionLog.getRefId());
         mTransactionLog.setTransactionSignature(transactionLog.getTransactionSignature());
-        insertTransactionLogTask(mTransactionLog, Constant.STR_EMPTY);
+        insertTransactionLogTask(context, mTransactionLog, Constant.STR_EMPTY);
     }
 
-    public static void insertTransactionLogTask(final TransactionLog_Database transactionLog, String fake) {
+    public static void insertTransactionLogTask(Context context, final TransactionLog_Database transactionLog, String fake) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                transactionLog.setPreviousHash(getPreviousHashTransactionLog(transactionLog));
+                transactionLog.setPreviousHash(getPreviousHashTransactionLog(context, transactionLog));
                 walletDatabase.daoAccess().insertOnlySingleTransactionLog(transactionLog);
                 return null;
             }
@@ -496,14 +499,14 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     //ma hoa mat xich transaction log
-    private static String getPreviousHashTransactionLog(TransactionLog_Database transactionLog) {
-        List<TransactionLog_Database> transactionLogList = getAllTransactionLog();
+    private static String getPreviousHashTransactionLog(Context context, TransactionLog_Database transactionLog) {
+        List<TransactionLog_Database> transactionLogList = getAllTransactionLog(context);
         if (transactionLogList.size() > 0) {
             //get transaction_log max id
-            TransactionLog_Database TransactionLogMax = getTransactionLogByMaxID(getMaxIDTransactionLog());
+            TransactionLog_Database TransactionLogMax = getTransactionLogByMaxID(context, getMaxIDTransactionLog(context));
 
             //updatePrevious transaction_log min id => new PreviousHash
-            updatePreviousTransactionLogMin(DatabaseUtil.getSignTransactionLog(transactionLog), getMinIDTransactionLog());
+            updatePreviousTransactionLogMin(context, DatabaseUtil.getSignTransactionLog(transactionLog), getMinIDTransactionLog(context));
 
             //ok
             return DatabaseUtil.getSignTransactionLog(TransactionLogMax);
@@ -512,35 +515,43 @@ public abstract class WalletDatabase extends RoomDatabase {
         }
     }
 
-    public static TransactionLog_Database checkTransactionLogExit(String transactionSignature) {
+    public static TransactionLog_Database checkTransactionLogExit(Context context, String transactionSignature) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().checkTransactionLogExit(transactionSignature);
     }
 
-    public static CashTemp checkCashTempExit(String transactionSignature) {
+    public static CashTemp checkCashTempExit(Context context, String transactionSignature) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().checkCashTempExit(transactionSignature);
     }
 
-    public static List<TransactionLog_Database> getAllTransactionLog() {
+    public static List<TransactionLog_Database> getAllTransactionLog(Context context) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getAllTransactionLog();
     }
 
-    private static int getMaxIDTransactionLog() {
+    private static int getMaxIDTransactionLog(Context context) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getMaxIDTransactionLog();
     }
 
-    private static int getMinIDTransactionLog() {
+    private static int getMinIDTransactionLog(Context context) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getMinIDTransactionLog();
     }
 
-    private static void updatePreviousTransactionLogMin(String previousHash, int minID) {
+    private static void updatePreviousTransactionLogMin(Context context, String previousHash, int minID) {
+        getINSTANCE(context, ECashApplication.masterKey);
         walletDatabase.daoAccess().updatePreviousTransactionLogMin(previousHash, minID);
     }
 
-    private static TransactionLog_Database getTransactionLogByMaxID(int maxIDTransactionLog) {
+    private static TransactionLog_Database getTransactionLogByMaxID(Context context, int maxIDTransactionLog) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getTransactionLogByMaxID(maxIDTransactionLog);
     }
 
-    public static List<TransactionsHistoryModel> getListTransactionHistory() {
+    public static List<TransactionsHistoryModel> getListTransactionHistory(Context context) {
+        getINSTANCE(context, ECashApplication.masterKey);
         return walletDatabase.daoAccess().getAllTransactionsHistory();
     }
 

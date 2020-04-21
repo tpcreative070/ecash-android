@@ -1,12 +1,7 @@
 package vn.ecpay.ewallet.ui.QRCode.fragment;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
-import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.utils.Constant;

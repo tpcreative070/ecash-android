@@ -14,16 +14,33 @@ public class CashInResponse implements Serializable {
 
     @SerializedName("amount")
     private Long mAmount;
-    @SerializedName("auditNumber")
-    private String mAuditNumber;
+    @SerializedName("amountValid")
+    private Long mAmountValid;
     @SerializedName("cashEnc")
     private String mCashEnc;
     @SerializedName("channelCode")
     private String mChannelCode;
-    @SerializedName("channelId")
-    private Long mChannelId;
     @SerializedName("channelSignature")
     private String mChannelSignature;
+    @SerializedName("content")
+    private String mContent;
+    @SerializedName("id")
+    private String mId;
+    @SerializedName("invalidSerials")
+    private String mInvalidSerials;
+    @SerializedName("receiver")
+    private Long mReceiver;
+    @SerializedName("sender")
+    private Long mSender;
+    @SerializedName("time")
+    private String mTime;
+    @SerializedName("type")
+    private String mType;
+
+    @SerializedName("auditNumber")
+    private String mAuditNumber;
+    @SerializedName("channelId")
+    private Long mChannelId;
     @SerializedName("creditAccount")
     private String mCreditAccount;
     @SerializedName("customerId")
@@ -34,36 +51,20 @@ public class CashInResponse implements Serializable {
     private String mFunctionCode;
     @SerializedName("functionId")
     private Long mFunctionId;
-//    @SerializedName("glAccRefId")
-//    private Long mGlAccRefId;
-    @SerializedName("id")
-    private String mId;
     @SerializedName("quantities")
     private List<Long> mQuantities;
-    @SerializedName("receiver")
-    private Long mReceiver;
     @SerializedName("refId")
     private Long mRefId;
-    @SerializedName("sender")
-    private String mSender;
     @SerializedName("sessionId")
     private String mSessionId;
     @SerializedName("terminalId")
     private String mTerminalId;
-    @SerializedName("time")
-    private String mTime;
     @SerializedName("token")
     private String mToken;
-//    @SerializedName("transLockRefId")
-//    private Long mTransLockRefId;
-    @SerializedName("type")
-    private String mType;
     @SerializedName("username")
     private String mUsername;
     @SerializedName("values")
     private List<Long> mValues;
-    @SerializedName("content")
-    private String mContent;
 
     public String getContent() {
         return mContent;
@@ -201,11 +202,11 @@ public class CashInResponse implements Serializable {
         mRefId = refId;
     }
 
-    public String getSender() {
+    public Long getSender() {
         return mSender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(Long sender) {
         mSender = sender;
     }
 

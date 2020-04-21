@@ -13,5 +13,5 @@ public interface CashInPresenter extends Presenter<CashInView> {
   void transferMoneyEDongToECash(Context context,Long totalMoney, EdongInfo eDongInfoCashIn,
                                  List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue);
 
-  void getEDongInfo(AccountInfo accountInfo);
+  void getEDongInfo(AccountInfo accountInfo, Context context);
 }

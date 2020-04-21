@@ -936,15 +936,13 @@ public class DialogUtil {
             });
         }
     }
-    public void showDialogSettingPermissions(Context context,String title, final OnResult listener) {
+    public void showDialogSettingPermissionStore(Context context, final OnResult listener) {
         if (!isShowing() && context != null) {
             initDialog(context);
-            mDialog.setContentView(R.layout.dialog_setting_permission);
-            TextView tvTitle,tvClose, tvSetting;
-            tvTitle = mDialog.findViewById(R.id.tv_title);
+            mDialog.setContentView(R.layout.dialog_setting_permission_store);
+            TextView tvClose, tvSetting;
             tvClose = mDialog.findViewById(R.id.tv_close);
             tvSetting = mDialog.findViewById(R.id.tv_setting);
-            tvTitle.setText(title);
 //            mDialog.setCanceledOnTouchOutside(false);
 //            mDialog.setCancelable(false);
             mDialog.show();

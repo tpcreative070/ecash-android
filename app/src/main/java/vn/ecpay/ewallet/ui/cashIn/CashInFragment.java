@@ -224,8 +224,9 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                 listValue.add(valuesListAdapter.get(i).getParValue());
             }
         }
+        showLoading();
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 cashInPresenter.transferMoneyEDongToECash(getActivity(), totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
@@ -233,6 +234,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
             @Override
             public void onUpdateMasterFail(String code) {
+                dismissLoading();
                 CheckErrCodeUtil.errorMessage(getActivity(), code);
             }
 
@@ -343,7 +345,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     private void reloadData() {
         if (WalletDatabase.numberRequest == 0) {
-            cashInPresenter.getEDongInfo(accountInfo);
+            cashInPresenter.getEDongInfo(accountInfo, getActivity());
         } else {
             new Timer().schedule(new TimerTask() {
                 @Override

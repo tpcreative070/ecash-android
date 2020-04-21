@@ -82,7 +82,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestGetPublicKeyOrganizetion.setIssuerCode(Constant.ISSUER_CODE);
         requestGetPublicKeyOrganizetion.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyOrganizetion.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken());
+        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken(context));
         requestGetPublicKeyOrganizetion.setUsername(accountInfo.getUsername());
         requestGetPublicKeyOrganizetion.setAuditNumber(CommonUtils.getAuditNumber());
 
@@ -144,12 +144,12 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestEcashToEdong.setDebitAccount(Constant.CREDIT_DEBIT_ACCOUNT);
         requestEcashToEdong.setFunctionCode(Constant.FUNCTION_TRANSFER_ECASH_TO_EDONG);
         requestEcashToEdong.setId(idSender);
-        requestEcashToEdong.setReceiver(String.valueOf(accountInfo.getWalletId()));
+        requestEcashToEdong.setReceiver(Constant.CREDIT_DEBIT_EWALLET);
         requestEcashToEdong.setSender(String.valueOf(accountInfo.getWalletId()));
         requestEcashToEdong.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestEcashToEdong.setTerminalId(accountInfo.getTerminalId());
         requestEcashToEdong.setTime(CommonUtils.getCurrentTime());
-        requestEcashToEdong.setToken(CommonUtils.getToken());
+        requestEcashToEdong.setToken(CommonUtils.getToken(context));
         requestEcashToEdong.setType(Constant.TYPE_SEND_ECASH_TO_EDONG);
         requestEcashToEdong.setUsername(accountInfo.getUsername());
         requestEcashToEdong.setAuditNumber(CommonUtils.getAuditNumber());
@@ -204,7 +204,7 @@ public class CashOutPresenterImpl implements CashOutPresenter {
         requestEdongInfo.setChannelCode(Constant.CHANNEL_CODE);
         requestEdongInfo.setFunctionCode(Constant.FUNCTION_GET_EDONG_INFO);
         requestEdongInfo.setSessionId(accountInfo.getSessionId());
-        requestEdongInfo.setToken(CommonUtils.getToken());
+        requestEdongInfo.setToken(CommonUtils.getToken(context));
         requestEdongInfo.setUsername(accountInfo.getUsername());
 
         String alphabe = CommonUtils.getStringAlphabe(requestEdongInfo);

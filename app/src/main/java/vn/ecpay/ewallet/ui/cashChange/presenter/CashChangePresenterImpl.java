@@ -84,16 +84,19 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestECashChange.setCashEnc(cashEnc);
         requestECashChange.setQuantities(listQuality);
         requestECashChange.setReceiver(accountInfo.getWalletId());
-        requestECashChange.setSender(Constant.ISSUER_CODE);
+        requestECashChange.setSender(String.valueOf(accountInfo.getWalletId()));
         requestECashChange.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestECashChange.setToken(CommonUtils.getToken());
+        requestECashChange.setToken(CommonUtils.getToken(context));
         requestECashChange.setUsername(accountInfo.getUsername());
         requestECashChange.setValues(listValue);
         requestECashChange.setAuditNumber(CommonUtils.getAuditNumber());
+        requestECashChange.setTime(CommonUtils.getCurrentTime());
+        requestECashChange.setType(Constant.TYPE_CASH_EXCHANGE);
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestECashChange));
         requestECashChange.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
+        CommonUtils.logJson(requestECashChange);
         Call<ResponseEdongToECash> call = apiService.changeCash(requestECashChange);
         call.enqueue(new Callback<ResponseEdongToECash>() {
             @Override
@@ -143,7 +146,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestGetPublicKeyOrganizetion.setIssuerCode(Constant.ISSUER_CODE);
         requestGetPublicKeyOrganizetion.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyOrganizetion.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken());
+        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken(activity));
         requestGetPublicKeyOrganizetion.setUsername(accountInfo.getUsername());
         requestGetPublicKeyOrganizetion.setChannelSignature(Constant.STR_EMPTY);
         requestGetPublicKeyOrganizetion.setAuditNumber(CommonUtils.getAuditNumber());

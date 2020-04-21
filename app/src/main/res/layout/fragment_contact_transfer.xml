@@ -24,11 +24,21 @@
             android:layout_width="wrap_content"
             android:text="@string/str_done"
             android:textColor="@color/blue"
+            android:layout_toLeftOf="@+id/iv_add_contact"
             android:gravity="center_vertical"
-            android:layout_alignParentEnd="true"
             android:textSize="@dimen/text_header"
             android:padding="10dp"
             android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/iv_add_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:padding="15dp"
+            android:src="@drawable/ic_plus_blue" />
 
         <TextView
             android:id="@+id/toolbar_center_text"
