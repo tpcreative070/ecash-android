@@ -227,8 +227,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         showProgress();///
-        PayToFuntion payToFuntion = new PayToFuntion(getActivity(),money,multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
-        PayToFunction payToFuntion = new PayToFunction(getActivity(),Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",","")),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
+        PayToFunction payToFuntion = new PayToFunction(getActivity(),money,multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
         payToFuntion.handlePayToSocket(this::PayToSuccess);
     }
     private void PayToSuccess() {

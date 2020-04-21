@@ -96,7 +96,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestECashChange));
         requestECashChange.setChannelSignature(CommonUtils.generateSignature(dataSign));
 
-        CommonUtils.logJson(requestECashChange);
+//        CommonUtils.logJson(requestECashChange);
         Call<ResponseEdongToECash> call = apiService.changeCash(requestECashChange);
         call.enqueue(new Callback<ResponseEdongToECash>() {
             @Override

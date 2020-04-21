@@ -563,7 +563,7 @@ public class PaymentCashChangeHandler {
         listContact.add(contact);
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(activity);
         ToPayFuntion toPayFuntion = new ToPayFuntion(activity, listCash, contact, payToRequest);
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 toPayFuntion.handlePayToSocket(() -> {

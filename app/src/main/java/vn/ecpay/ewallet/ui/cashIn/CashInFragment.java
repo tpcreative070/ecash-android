@@ -226,7 +226,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         }
         showLoading();
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 cashInPresenter.transferMoneyEDongToECash(getActivity(), totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
