@@ -8,7 +8,7 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.ui.account.view.LoginView;
 
 public interface LoginPresenter extends Presenter<LoginView> {
-    void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass);
+    void requestLogin(Context context, AccountInfo accountInfo, String userName, String pass, TextView tvError);
 
     void getEDongInfo(Context context,AccountInfo accountInfo);
 

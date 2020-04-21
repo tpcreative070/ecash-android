@@ -256,10 +256,10 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
     }
 
     private void updateAvatar() {
-        if (ECashApplication.getAccountInfo().getLarge() == null) {
-            ivAccount.setImageDrawable(getResources().getDrawable(R.drawable.ic_avatar));
+        if (null != accountInfo.getLarge()) {
+            CommonUtils.loadAvatar(EditAccountInfoActivity.this, ivAccount, accountInfo.getLarge());
         } else {
-            CommonUtils.loadAvatar(EditAccountInfoActivity.this, ivAccount, ECashApplication.getAccountInfo().getLarge());
+            ivAccount.setImageDrawable(getResources().getDrawable(R.drawable.ic_avatar));
         }
     }
 
@@ -272,7 +272,7 @@ public class EditAccountInfoActivity extends ECashBaseActivity {
         requestUpdateAccountInfo.setChannelCode(Constant.CHANNEL_CODE);
         requestUpdateAccountInfo.setFunctionCode(Constant.FUNCTION_UPDATE_ACCOUNT_INFO);
         requestUpdateAccountInfo.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestUpdateAccountInfo.setToken(CommonUtils.getToken());
+        requestUpdateAccountInfo.setToken(CommonUtils.getToken(EditAccountInfoActivity.this));
         requestUpdateAccountInfo.setUsername(accountInfo.getUsername());
         requestUpdateAccountInfo.setAuditNumber(CommonUtils.getAuditNumber());
         String[] separated = name.split(" ");

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -52,6 +53,7 @@ import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.response.Denomination;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
+import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
@@ -161,7 +163,7 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             accountInfo = ECashApplication.getAccountInfo();
             dbAccountInfo = DatabaseUtil.getAccountInfo(getActivity());
         } catch (NullPointerException e) {
-            CommonUtils.restartApp((MainActivity)getActivity());
+            CommonUtils.restartApp((MainActivity) getActivity());
         }
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
             updateNotification();
@@ -173,8 +175,8 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
             layoutFullInfo.setVisibility(View.VISIBLE);
             //request permission contact
             PermissionUtils.checkPermissionReadContact(this, null);
-            if (WalletDatabase.getAllCash() != null) {
-                if (WalletDatabase.getAllCash().size() > 0) {
+            if (WalletDatabase.getAllCash(getActivity()) != null) {
+                if (WalletDatabase.getAllCash(getActivity()).size() > 0) {
                     balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
                     tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
                 } else {
@@ -226,15 +228,15 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
     }
 
     private void updateBalance() {
-        long numberCash = WalletDatabase.getAllCash().size();
+        long numberCash = WalletDatabase.getAllCash(getActivity()).size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             if (getActivity() != null)
-                    getActivity().runOnUiThread(() -> {
+                getActivity().runOnUiThread(() -> {
                     WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
                     String a = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_IN));
                     String b = String.valueOf(WalletDatabase.getTotalCash(Constant.STR_CASH_OUT));
                     balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-                    tvHomeAccountBalance .setText(CommonUtils.formatPriceVND(balance));
+                    tvHomeAccountBalance.setText(CommonUtils.formatPriceVND(balance));
 
                     listEDongInfo = ECashApplication.getListEDongInfo();
                     if (listEDongInfo.size() > 0) {

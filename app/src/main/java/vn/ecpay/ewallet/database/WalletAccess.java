@@ -197,9 +197,9 @@ public interface WalletAccess {
     void updateAccountInfo(String fistName, String lastName, String middleName, String idNumber,
                            String address, String email, String userName);
 
-    @Query("UPDATE PROFILE SET sessionId=:sessionId, large=:bIconLarge, personFirstName=:fistName, personLastName=:lastName, personMiddleName=:middleName,idNumber=:idNumber,personCurrentAddress=:address, personEmail=:email WHERE username =:userName")
+    @Query("UPDATE PROFILE SET sessionId=:sessionId, large=:bIconLarge, personFirstName=:fistName, personLastName=:lastName, personMiddleName=:middleName,idNumber=:idNumber,personCurrentAddress=:address, personEmail=:email, password=:token WHERE username =:userName")
     void updateFullAccountInfo(String fistName, String lastName, String middleName, String idNumber,
-                               String address, String email, String bIconLarge, String sessionId, String userName);
+                               String address, String email, String bIconLarge, String sessionId, String userName, String token);
 
     @Query("UPDATE PROFILE SET large=:bIconLarge WHERE username =:userName")
     void updateAvatar(String bIconLarge, String userName);

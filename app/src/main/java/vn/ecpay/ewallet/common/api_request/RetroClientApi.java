@@ -36,9 +36,9 @@ public class RetroClientApi {
                 return chain.proceed(request);
             }
         });
-        httpClient.connectTimeout(120, TimeUnit.SECONDS);
-        httpClient.readTimeout(120, TimeUnit.SECONDS);
-        httpClient.writeTimeout(120, TimeUnit.SECONDS);
+        httpClient.connectTimeout(60, TimeUnit.SECONDS);
+        httpClient.readTimeout(60, TimeUnit.SECONDS);
+        httpClient.writeTimeout(60, TimeUnit.SECONDS);
 
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()

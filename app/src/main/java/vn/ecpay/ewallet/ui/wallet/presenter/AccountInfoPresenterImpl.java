@@ -190,8 +190,8 @@ public class AccountInfoPresenterImpl implements AccountInfoPresenter {
         requestUpdateAvartar.setChannelCode(Constant.CHANNEL_CODE);
         requestUpdateAvartar.setFunctionCode(Constant.FUNCTION_UPDATE_AVARTAR);
         requestUpdateAvartar.setLarge(encodedImage);
-        requestUpdateAvartar.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestUpdateAvartar.setToken(CommonUtils.getToken());
+        requestUpdateAvartar.setSessionId(CommonUtils.getSessionId(context));
+        requestUpdateAvartar.setToken(CommonUtils.getToken(context));
         requestUpdateAvartar.setmUsername(ECashApplication.getAccountInfo().getUsername());
         requestUpdateAvartar.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestUpdateAvartar));

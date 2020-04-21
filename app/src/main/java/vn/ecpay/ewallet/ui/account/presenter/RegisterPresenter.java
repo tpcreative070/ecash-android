@@ -1,7 +1,6 @@
 package vn.ecpay.ewallet.ui.account.presenter;
 
 import android.content.Context;
-import android.widget.TextView;
 
 import vn.ecpay.ewallet.common.base.Presenter;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;

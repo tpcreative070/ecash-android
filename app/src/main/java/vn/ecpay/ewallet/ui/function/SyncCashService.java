@@ -19,6 +19,7 @@ import java.util.List;
 
 import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
+import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
@@ -105,7 +106,7 @@ public class SyncCashService extends Service {
 
     private void updateMasterKey() {
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 handleListResponse();
@@ -127,6 +128,7 @@ public class SyncCashService extends Service {
     private void handleListResponse() {
         if (listResponseMessSockets.size() > 0) {
             CashInResponse responseMess = new Gson().fromJson(listResponseMessSockets.get(0).getResponseData(), CashInResponse.class);
+            responseMess.setId(CommonUtils.getIdReceiver(responseMess, getApplicationContext()));
             if (!DatabaseUtil.isTransactionLogExit(responseMess.getId(), getApplicationContext())) {
                 if (responseMess.getCashEnc() != null) {
                     CashInFunction cashInFunction = new CashInFunction(responseMess, accountInfo, getApplicationContext());

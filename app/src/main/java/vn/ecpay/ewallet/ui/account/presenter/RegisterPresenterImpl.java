@@ -45,9 +45,6 @@ import vn.ecpay.ewallet.model.contact.ResponseSyncContact;
 import vn.ecpay.ewallet.ui.account.view.RegisterView;
 
 import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3016;
-import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3019;
-import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3035;
-import static vn.ecpay.ewallet.common.utils.Constant.ERROR_CODE_3077;
 
 public class RegisterPresenterImpl implements RegisterPresenter {
 
@@ -120,10 +117,10 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         if (response.body().getResponseCode() != null) {
                             String code = response.body().getResponseCode();
                             if (code.equals(Constant.CODE_SUCCESS)) {
-                                registerView.onIDNumberFail(application.getResources().getString(R.string.err_nmnd_is_exit));
+                                registerView.onIDNumberFail(application.getString(R.string.err_nmnd_is_exit));
                             }
                             if (code.equals("1007")) {
-                                registerView.onPhoneNumberFail(application.getResources().getString(R.string.err_validate_phone_fail));
+                                registerView.onPhoneNumberFail(application.getString(R.string.err_validate_phone_fail));
                             }
                         }
                     }
@@ -282,8 +279,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             accountInfo.setTransactionCode(String.valueOf(response.body().getResponseData().getTransactionCode()));
                             registerView.retryOTPSuccess(accountInfo);
                         } else if (response.body().getResponseCode().equals("3015")) {
-                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
-                            //registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
+                            registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
                         } else {
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
@@ -341,8 +337,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                                 response.body().getResponseCode().equals("0998")) {
                             registerView.dismissLoading();
                             registerView.requestOtpErr(accountInfo, application.getString(R.string.err_otp_fail));
-                        }
-                        else {
+                        } else {
                             registerView.dismissLoading();
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
@@ -510,6 +505,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             }
         });
     }
+
     @Override
     public void setView(RegisterView view) {
         this.registerView = view;

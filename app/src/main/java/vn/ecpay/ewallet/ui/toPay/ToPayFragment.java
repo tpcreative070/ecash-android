@@ -116,7 +116,7 @@ public class ToPayFragment extends ECashBaseFragment {
     }
 
     private void updateBalance() {
-        long numberCash = WalletDatabase.getAllCash().size();
+        long numberCash = WalletDatabase.getAllCash(getActivity()).size();
         if (WalletDatabase.numberRequest == 0 && numberCash > 0) {
             if (getActivity() != null)
                 getActivity().runOnUiThread(() -> {

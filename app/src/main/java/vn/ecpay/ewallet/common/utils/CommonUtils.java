@@ -73,6 +73,7 @@ import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransfer;
+import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
 import vn.ecpay.ewallet.model.payment.CashValid;
@@ -201,13 +202,15 @@ public class CommonUtils {
                 + Base64.encodeToString(blockEnc[2], Base64.DEFAULT)).replaceAll("\n", "");
     }
 
-    public static String getToken() {
+    public static String getToken(Context context) {
         if (null != ECashApplication.getAccountInfo()) {
             if (ECashApplication.getAccountInfo().getPassword() == null || ECashApplication.getAccountInfo().getPassword().isEmpty()) {
                 return ECashApplication.getAccountInfo().getToken();
             } else {
                 return ECashApplication.getAccountInfo().getPassword();
             }
+        } else if (null != DatabaseUtil.getAccountInfo(context)) {
+            return Objects.requireNonNull(DatabaseUtil.getAccountInfo(context)).getPassword();
         } else {
             return Constant.STR_EMPTY;
         }
@@ -215,11 +218,9 @@ public class CommonUtils {
 
     public static String getSessionId(Context context) {
         if (null != ECashApplication.getAccountInfo()) {
-            if (null != ECashApplication.getAccountInfo().getSessionId()) {
-                return ECashApplication.getAccountInfo().getSessionId();
-            } else {
-                return Objects.requireNonNull(DatabaseUtil.getAccountInfo(context)).getSessionId();
-            }
+            return ECashApplication.getAccountInfo().getSessionId();
+        } else if (null != DatabaseUtil.getAccountInfo(context)) {
+            return Objects.requireNonNull(DatabaseUtil.getAccountInfo(context)).getSessionId();
         } else {
             return Constant.STR_EMPTY;
         }
@@ -421,6 +422,16 @@ public class CommonUtils {
         return CommonUtils.generateSignature(dataSign, KeyStoreUtils.getPrivateKey(context));
     }
 
+    public static String getIdReceiver(CashInResponse responseMess, Context context) {
+        byte[] dataSign = SHA256.hashSHA256(getSignBodyReceiver(responseMess));
+        return CommonUtils.generateSignature(dataSign, KeyStoreUtils.getPrivateKey(context));
+    }
+
+    public static String getSignBodyReceiver(CashInResponse responseMess) {
+        return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
+                + responseMess.getContent() + responseMess.getCashEnc();
+    }
+
     public static String getSignBodySender(ResponseMessSocket responseMess) {
         return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
                 + responseMess.getContent() + responseMess.getCashEnc();
@@ -577,7 +588,6 @@ public class CommonUtils {
     public static String getIMEI(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         return prefs.getString(Constant.DEVICE_IMEI, null);
-//        return "287496598275927459872";
     }
 
     public static String validateLeghtFileImage(File file) {
@@ -839,12 +849,13 @@ public class CommonUtils {
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-    public static boolean validateCashInput(long money){
-        List<CashTotal>cashTotalList = DatabaseUtil.getAllCashValues(getActivity());
-        if(cashTotalList==null)
+
+    public static boolean validateCashInput(long money) {
+        List<CashTotal> cashTotalList = DatabaseUtil.getAllCashValues(getActivity());
+        if (cashTotalList == null)
             return false;
-        for(CashTotal cashTotal : cashTotalList){
-            if(money%cashTotal.getParValue()==0){
+        for (CashTotal cashTotal : cashTotalList) {
+            if (money % cashTotal.getParValue() == 0) {
                 return true;
             }
         }

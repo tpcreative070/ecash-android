@@ -46,7 +46,7 @@ public class CashInFunction {
     private String transactionSignature;
     private CashInSuccessListener cashInSuccessListener;
 
-    public CashInFunction(CashInResponse cashInResponse, AccountInfo accountInfo, Context context) {
+    CashInFunction(CashInResponse cashInResponse, AccountInfo accountInfo, Context context) {
         this.cashInResponse = cashInResponse;
         this.accountInfo = accountInfo;
         this.context = context;
@@ -81,7 +81,7 @@ public class CashInFunction {
         }
     }
 
-    public void handleCash(CashInSuccessListener mCashInSuccessListener) {
+    void handleCash(CashInSuccessListener mCashInSuccessListener) {
         this.cashInSuccessListener = mCashInSuccessListener;
         deCryptECash = CommonUtils.decrypEcash(cashInResponse.getCashEnc(), KeyStoreUtils.getPrivateKey(context));
         DatabaseUtil.saveTransactionLog(cashInResponse, context);
@@ -97,7 +97,7 @@ public class CashInFunction {
         requestGetPublicKeyWallet.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_WALLET);
         requestGetPublicKeyWallet.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyWallet.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
+        requestGetPublicKeyWallet.setToken(CommonUtils.getToken(context));
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(responseMess.getSender());
         requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
@@ -141,7 +141,7 @@ public class CashInFunction {
         requestGetPublicKeyWallet.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_WALLET);
         requestGetPublicKeyWallet.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyWallet.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyWallet.setToken(CommonUtils.getToken());
+        requestGetPublicKeyWallet.setToken(CommonUtils.getToken(context));
         requestGetPublicKeyWallet.setUsername(accountInfo.getUsername());
         requestGetPublicKeyWallet.setWalletId(responseMess.getSender());
         requestGetPublicKeyWallet.setAuditNumber(CommonUtils.getAuditNumber());
@@ -215,10 +215,10 @@ public class CashInFunction {
                 cash.setIssuerCode(item[1]);
                 cash.setDecisionNo(item[2]);
                 cash.setSerialNo(item[3]);
-                cash.setParValue(Integer.valueOf(item[4]));
+                cash.setParValue(Integer.parseInt(item[4]));
                 cash.setActiveDate(item[5]);
                 cash.setExpireDate(item[6]);
-                cash.setCycle(Integer.valueOf(item[7]));
+                cash.setCycle(Integer.parseInt(item[7]));
                 cash.setType(Constant.STR_CASH_IN);
                 cash.setTransactionSignature(transactionSignature);
                 WalletDatabase.getINSTANCE(context, ECashApplication.masterKey);
@@ -228,7 +228,7 @@ public class CashInFunction {
                 } else {
                     getPublicKeyCashToCheck(cash, item[2]);
                 }
-                totalMoney = totalMoney + Integer.valueOf(item[4]);
+                totalMoney = totalMoney + Integer.parseInt(item[4]);
             }
             return totalMoney;
         }
@@ -252,7 +252,7 @@ public class CashInFunction {
         requestGetPublicKeyCash.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_CASH);
         requestGetPublicKeyCash.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyCash.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyCash.setToken(CommonUtils.getToken());
+        requestGetPublicKeyCash.setToken(CommonUtils.getToken(context));
         requestGetPublicKeyCash.setUsername(accountInfo.getUsername());
         requestGetPublicKeyCash.setAuditNumber(CommonUtils.getAuditNumber());
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestGetPublicKeyCash));

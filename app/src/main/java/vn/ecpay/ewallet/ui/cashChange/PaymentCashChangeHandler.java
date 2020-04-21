@@ -86,7 +86,7 @@ public class PaymentCashChangeHandler {
         requestGetPublicKeyOrganizetion.setIssuerCode(Constant.ISSUER_CODE);
         requestGetPublicKeyOrganizetion.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestGetPublicKeyOrganizetion.setTerminalId(accountInfo.getTerminalId());
-        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken());
+        requestGetPublicKeyOrganizetion.setToken(CommonUtils.getToken(activity));
         requestGetPublicKeyOrganizetion.setUsername(accountInfo.getUsername());
         requestGetPublicKeyOrganizetion.setChannelSignature(Constant.STR_EMPTY);
         requestGetPublicKeyOrganizetion.setAuditNumber(CommonUtils.getAuditNumber());
@@ -136,7 +136,7 @@ public class PaymentCashChangeHandler {
         requestECashChange.setReceiver(accountInfo.getWalletId());
         requestECashChange.setSender(Constant.ISSUER_CODE);
         requestECashChange.setSessionId(ECashApplication.getAccountInfo().getSessionId());
-        requestECashChange.setToken(CommonUtils.getToken());
+        requestECashChange.setToken(CommonUtils.getToken(activity));
         requestECashChange.setUsername(accountInfo.getUsername());
         requestECashChange.setValues(listValue);
         requestECashChange.setAuditNumber(CommonUtils.getAuditNumber());
@@ -193,7 +193,7 @@ public class PaymentCashChangeHandler {
         requestGetAccountWalletInfo.setFunctionCode(Constant.FUNCTION_GET_PUBLIC_KEY_WALLET);
         requestGetAccountWalletInfo.setSessionId(accountInfo.getSessionId());
         requestGetAccountWalletInfo.setTerminalId(CommonUtils.getIMEI(activity));
-        requestGetAccountWalletInfo.setToken(CommonUtils.getToken());
+        requestGetAccountWalletInfo.setToken(CommonUtils.getToken(activity));
         requestGetAccountWalletInfo.setUsername(accountInfo.getUsername());//auditNumber
         requestGetAccountWalletInfo.setWalletId(walletID);
         requestGetAccountWalletInfo.setAuditNumber(CommonUtils.getAuditNumber());
@@ -556,13 +556,14 @@ public class PaymentCashChangeHandler {
     }
 
     private void handleToPay(List<CashTotal> listCash, Payment_DataBase payToRequest) {
+        activity.showLoading();
         ArrayList<Contact> listContact = new ArrayList<>();
         Contact contact = new Contact();
         contact.setWalletId(Long.parseLong(payToRequest.getSender()));
         listContact.add(contact);
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(activity);
         ToPayFuntion toPayFuntion = new ToPayFuntion(activity, listCash, contact, payToRequest);
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 toPayFuntion.handlePayToSocket(() -> {

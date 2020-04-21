@@ -201,8 +201,6 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             tvTotalMoneyCashTake.setText(CommonUtils.formatPriceVND(totalMoneyTake));
             tvTotalMoneyCashTake.setTextColor(getResources().getColor(R.color.black));
         }
-
-
     }
 
     private void validateData() {
@@ -308,7 +306,8 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
             return;
         }
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
+        showLoading();
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 cashChangePresenter.requestChangeCash(getActivity(), encData, listQualityTake, accountInfo, listValueTake);

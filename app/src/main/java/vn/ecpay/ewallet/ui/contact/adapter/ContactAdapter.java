@@ -22,23 +22,19 @@ import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.ui.callbackListener.ContactTransferListener;
+import vn.ecpay.ewallet.ui.callbackListener.OnDeleteItem;
 
 public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int SECTION_VIEW = 0;
-    public static final int CONTENT_VIEW = 1;
+    private static final int SECTION_VIEW = 0;
+    private static final int CONTENT_VIEW = 1;
 
-    List<Contact> mCountriesModelList;
-    WeakReference<Context> mContextWeakReference;
-    private onDeleteItem onDeleteItem;
-    ArrayList<Contact> multiTransferList;
+    private List<Contact> mCountriesModelList;
+    private WeakReference<Context> mContextWeakReference;
+    private OnDeleteItem onDeleteItem;
     private ContactTransferListener contactTransferListener;
 
-    public interface onDeleteItem {
-        void onDeleteOK(int pos);
-    }
-
-    public ContactAdapter(List<Contact> mCountriesModelList, Context context, onDeleteItem mOnDeleteItem, ContactTransferListener contactTransferListener) {
+    public ContactAdapter(List<Contact> mCountriesModelList, Context context, OnDeleteItem mOnDeleteItem, ContactTransferListener contactTransferListener) {
         this.mCountriesModelList = mCountriesModelList;
         this.mContextWeakReference = new WeakReference<>(context);
         this.onDeleteItem = mOnDeleteItem;
@@ -47,7 +43,6 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        multiTransferList = new ArrayList<>();
         if (viewType == SECTION_VIEW) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_contact_header, parent, false);
@@ -158,7 +153,7 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public class SectionHeaderViewHolder extends RecyclerView.ViewHolder {
+    public static class SectionHeaderViewHolder extends RecyclerView.ViewHolder {
         TextView tvHeader;
 
         SectionHeaderViewHolder(View itemView) {
