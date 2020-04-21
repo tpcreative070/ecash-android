@@ -169,19 +169,21 @@ public class ToPayFragment extends ECashBaseFragment {
             tvErrorAmount.setText(getString(R.string.err_anount_null));
             return;
         }
+        long money=0;
         if(edtAmount.getText().toString().length()>0){
-            Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
+             money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
             // Log.e("money%1000 ",money%1000+"");
             if(money<Constant.AMOUNT_LIMITED_MIN||money>Constant.AMOUNT_LIMITED_MAX){
                 //   showDialogError(getString(R.string.err_amount_does_not_exceed_twenty_million));
                 tvErrorAmount.setText(getString(R.string.err_amount_does_not_exceed_twenty_million));
                 return;
             }
-            else if(money%1000!=0){//!CommonUtils.validateCashInput(money)
-              //  showDialogError(getString(R.string.err_amount_validate));
-                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
-                return;
-            }
+            money = CommonUtils.validateMoney(money);
+//            else if(money%1000!=0){//!CommonUtils.validateCashInput(money)
+//              //  showDialogError(getString(R.string.err_amount_validate));
+//                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
+//                return;
+//            }
         }
         if (edtContent.getText().toString().isEmpty()) {
             if (getActivity() != null)
@@ -189,7 +191,8 @@ public class ToPayFragment extends ECashBaseFragment {
             tvErrorContent.setText(getString(R.string.err_dit_not_content));
             return;
         }
-        String amount = edtAmount.getText().toString().replace(".", "").replace(",", "");
+       // String amount = edtAmount.getText().toString().replace(".", "").replace(",", "");
+        String amount = String.valueOf(money);
         accountInfo = DatabaseUtil.getAccountInfo(getActivity());
         QRCodePayment qrPayment = new QRCodePayment();
         qrPayment.setSender(String.valueOf(accountInfo.getWalletId()));

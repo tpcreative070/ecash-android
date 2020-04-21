@@ -312,7 +312,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
         } else {
             UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
             showProgress();
-            updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+            updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
                 @Override
                 public void onUpdateMasterSuccess() {
                     CashOutFunction cashOutSocketFunction = new CashOutFunction(CashToCashFragment.this, valuesListAdapter,

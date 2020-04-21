@@ -861,4 +861,12 @@ public class CommonUtils {
         }
         return false;
     }
+    public static long validateMoney(long money){
+        if(money%1000==0){
+            return money;
+        }else{
+            long remain =money%1000;
+            return money+1000-remain;// round up
+        }
+    }
 }

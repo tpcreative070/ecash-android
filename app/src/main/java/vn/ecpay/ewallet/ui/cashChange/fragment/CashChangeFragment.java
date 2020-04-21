@@ -307,7 +307,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         }
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
         showLoading();
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 cashChangePresenter.requestChangeCash(getActivity(), encData, listQualityTake, accountInfo, listValueTake);

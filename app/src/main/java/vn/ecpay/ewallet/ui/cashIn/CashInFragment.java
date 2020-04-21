@@ -93,6 +93,8 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     private CashValueAdapter cashValueAdapter;
     private long mLastClickTime = 0;
 
+    private boolean cashIn=false;// todo: kiểm tra cash in từ account khác chuyển tiền vào, show popup ko đúng
+
     @Inject
     CashInPresenter cashInPresenter;
 
@@ -146,8 +148,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         tvAccountName.setText(CommonUtils.getFullName(accountInfo));
         tvId.setText(String.valueOf(accountInfo.getWalletId()));
         WalletDatabase.getINSTANCE(getActivity(), ECashApplication.masterKey);
-        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
-        tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
+        updateBalance();
         listEDongInfo = ECashApplication.getListEDongInfo();
 
         if (listEDongInfo.size() > 0) {
@@ -155,6 +156,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             tvEdongWallet.setText(listEDongInfo.get(0).getAccountIdt());
             tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
         }
+    }
+    private void updateBalance(){
+        balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
+        tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
     }
 
     private void showDialogEDong() {
@@ -221,7 +226,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         }
         showLoading();
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 cashInPresenter.transferMoneyEDongToECash(getActivity(), totalMoney, eDongInfoCashIn, listQuality, accountInfo, listValue);
@@ -247,6 +252,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
                     public void OnListenerOk() {
                         setData();
                         updateTotalMoney();
+                        cashIn=false;
                     }
 
                     @Override
@@ -271,6 +277,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
 
     @Override
     public void showDialogError(String err) {
+        dismissLoading();
         DialogUtil.getInstance().showDialogWarning(getActivity(), err);
     }
 
@@ -291,11 +298,13 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
     }
 
     public void showDialogError(int err) {
+        dismissLoading();
         DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(err));
     }
 
     @Override
     public void transferMoneySuccess(CashInResponse cashInResponse) {
+        cashIn=true;
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(cashInResponse);
         CacheData_Database cacheData_database = new CacheData_Database();
@@ -312,8 +321,10 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
             getActivity().runOnUiThread(() -> {
                 dismissProgress();
                 EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_BALANCE));
-                if (totalMoney > 0) {
+                if (totalMoney > 0&&cashIn) {
                     showDialogCashInOk();
+                }else{
+                    updateBalance();
                 }
             });
     }
