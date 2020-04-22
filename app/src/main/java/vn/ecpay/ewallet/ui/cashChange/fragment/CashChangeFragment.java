@@ -310,7 +310,7 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
         updateMasterKeyFunction.updateLastTimeAndMasterKey(new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
-                cashChangePresenter.requestChangeCash(getActivity(), encData, listQualityTake, accountInfo, listValueTake);
+                cashChangePresenter.requestChangeCash(getActivity(), encData, listQualityTake, accountInfo, listValueTake, totalMoneyChange);
             }
 
             @Override
@@ -351,11 +351,11 @@ public class CashChangeFragment extends ECashBaseFragment implements CashChangeV
     public void changeCashSuccess(CashInResponse cashInResponse) {
         if (null != getActivity())
             getActivity().startService(new Intent(getActivity(), SyncCashService.class));
-        DatabaseUtil.saveCashOut(cashInResponse.getId(), listCashSend, getActivity(), accountInfo.getUsername());
+        DatabaseUtil.saveCashOut(CommonUtils.getId(cashInResponse, getActivity()), listCashSend, getActivity(), accountInfo.getUsername());
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(cashInResponse);
         CacheData_Database cacheData_database = new CacheData_Database();
-        cacheData_database.setTransactionSignature(cashInResponse.getId());
+        cacheData_database.setTransactionSignature(CommonUtils.getId(cashInResponse, getActivity()));
         cacheData_database.setResponseData(jsonCashInResponse);
         cacheData_database.setType(TYPE_CASH_EXCHANGE);
         DatabaseUtil.saveCacheData(cacheData_database, getActivity());

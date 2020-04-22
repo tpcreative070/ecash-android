@@ -38,6 +38,8 @@ public class Constant {
     public static final String ERROR_CODE_4012 = "4012";
     public static final String ERROR_CODE_4011 = "4011";
     public static final String ERROR_CODE_4129 = "4129";
+    public static final String ERROR_CODE_4105 = "4105";
+    public static final String ERROR_CODE_LAST_TIME_INVALID = "4166";
 
     public static final int DEFAULT_LANGUAGE_ID = 0;
 
@@ -150,6 +152,7 @@ public class Constant {
     public static final String FUNCTION_UPDATE_AVARTAR = "GWEC0022";
     public static final String FUNCTION_GET_MONEY_VALUE = "GWEC0031";
     public static final String FUNCTION_UPDATE_MASTER_KEY = "GWEC0008";
+    public static final String FUNCTION_UPDATE_MASTER_KEY_TIME_OUT = "GWEC0042";
 
     //channel
     public static final String CHANNEL_CODE = "MB001";

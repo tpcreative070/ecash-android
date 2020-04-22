@@ -20,7 +20,6 @@ import vn.ecpay.ewallet.common.eccrypto.SHA256;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
-import vn.ecpay.ewallet.common.utils.DialogUtil;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
@@ -74,7 +73,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
     }
 
     @Override
-    public void requestChangeCash(Context context, String cashEnc, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue) {
+    public void requestChangeCash(Context context, String cashEnc, List<Integer> listQuality, AccountInfo accountInfo, List<Integer> listValue, long amount) {
         Retrofit retrofit = RetroClientApi.getRetrofitClient(application.getString(R.string.api_base_url));
         APIService apiService = retrofit.create(APIService.class);
 
@@ -83,7 +82,7 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestECashChange.setFunctionCode(Constant.FUNCTION_CHANGE_CASH);
         requestECashChange.setCashEnc(cashEnc);
         requestECashChange.setQuantities(listQuality);
-        requestECashChange.setReceiver(accountInfo.getWalletId());
+        requestECashChange.setReceiver(Long.valueOf(Constant.CREDIT_DEBIT_EWALLET));
         requestECashChange.setSender(String.valueOf(accountInfo.getWalletId()));
         requestECashChange.setSessionId(ECashApplication.getAccountInfo().getSessionId());
         requestECashChange.setToken(CommonUtils.getToken(context));
@@ -92,6 +91,8 @@ public class CashChangePresenterImpl implements CashChangePresenter {
         requestECashChange.setAuditNumber(CommonUtils.getAuditNumber());
         requestECashChange.setTime(CommonUtils.getCurrentTime());
         requestECashChange.setType(Constant.TYPE_CASH_EXCHANGE);
+        requestECashChange.setId(CommonUtils.getId(requestECashChange, context));
+        requestECashChange.setAmount(amount);
 
         byte[] dataSign = SHA256.hashSHA256(CommonUtils.getStringAlphabe(requestECashChange));
         requestECashChange.setChannelSignature(CommonUtils.generateSignature(dataSign));
@@ -112,6 +113,8 @@ public class CashChangePresenterImpl implements CashChangePresenter {
                                 cashChangeView.dismissLoading();
                                 cashChangeView.showDialogError(application.getString(R.string.err_upload));
                             }
+                        } else if (response.body().getResponseCode().equals(Constant.ERROR_CODE_4105)) {
+                            //todo show dialog fail seri and add cash...
                         } else {
                             cashChangeView.dismissLoading();
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
@@ -129,8 +132,8 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             @Override
             public void onFailure(Call<ResponseEdongToECash> call, Throwable t) {
                 cashChangeView.dismissLoading();
-           //     cashChangeView.showDialogError(application.getString(R.string.err_upload));
-                ECashApplication.getInstance().showErrorConnection(t, () -> requestChangeCash( context,  cashEnc,listQuality,  accountInfo,  listValue));
+                //     cashChangeView.showDialogError(application.getString(R.string.err_upload));
+                ECashApplication.getInstance().showErrorConnection(t, () -> requestChangeCash(context, cashEnc, listQuality, accountInfo, listValue, amount));
             }
         });
     }
@@ -186,9 +189,9 @@ public class CashChangePresenterImpl implements CashChangePresenter {
             @Override
             public void onFailure(Call<ResponseGetPublickeyOrganization> call, Throwable t) {
                 cashChangeView.dismissLoading();
-               // cashChangeView.showDialogError(application.getString(R.string.err_upload));
+                // cashChangeView.showDialogError(application.getString(R.string.err_upload));
                 ECashApplication.getInstance().showErrorConnection(t,
-                        () -> getPublicKeyOrganization( activity, accountInfo));
+                        () -> getPublicKeyOrganization(activity, accountInfo));
             }
         });
     }

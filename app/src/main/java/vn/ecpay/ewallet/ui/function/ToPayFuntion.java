@@ -18,7 +18,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
 import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
@@ -114,7 +113,7 @@ public class ToPayFuntion {
             //responseMess.setType(Constant.TYPE_ECASH_TO_ECASH);
             responseMess.setContent(payToRequest.getContent());
             responseMess.setCashEnc(encData);
-            responseMess.setId(CommonUtils.getIdSender(responseMess, context));
+            responseMess.setId(CommonUtils.getId(responseMess, context));
 
             CommonUtils.logJson(responseMess);
             DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());

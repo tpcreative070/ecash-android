@@ -299,7 +299,7 @@ public class CashInFragment extends ECashBaseFragment implements CashInView {
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(cashInResponse);
         CacheData_Database cacheData_database = new CacheData_Database();
-        cacheData_database.setTransactionSignature(cashInResponse.getId());
+        cacheData_database.setTransactionSignature(CommonUtils.getId(cashInResponse, getActivity()));
         cacheData_database.setResponseData(jsonCashInResponse);
         cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
         DatabaseUtil.saveCacheData(cacheData_database, getActivity());

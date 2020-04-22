@@ -411,7 +411,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(responseMess);
         CacheData_Database cacheData_database = new CacheData_Database();
-        cacheData_database.setTransactionSignature(responseMess.getId());
+        cacheData_database.setTransactionSignature(CommonUtils.getId(responseMess, getActivity()));
         cacheData_database.setResponseData(jsonCashInResponse);
         cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
         DatabaseUtil.saveCacheData(cacheData_database, getActivity());

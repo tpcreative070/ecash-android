@@ -146,4 +146,7 @@ public interface APIService {
 
     @POST("ecgateway/execute/GWEC0008")
     Call<ResponseUpdateMasterKey> updateLastTimeAndMasterKey(@Body RequestUpdateMasterKey body);
+
+    @POST("ecgateway/execute/GWEC0042")
+    Call<ResponseUpdateMasterKey> updateLastTimeAndMasterKeyTimeOut(@Body RequestUpdateMasterKey body);
 }

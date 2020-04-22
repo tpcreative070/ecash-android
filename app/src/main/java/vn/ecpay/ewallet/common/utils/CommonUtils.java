@@ -54,7 +54,6 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.CircleImageView;
 import vn.ecpay.ewallet.common.base.ECashBaseActivity;
-import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eccrypto.ECElGamal;
 import vn.ecpay.ewallet.common.eccrypto.ECashCrypto;
 import vn.ecpay.ewallet.common.eccrypto.EllipticCurve;
@@ -70,13 +69,13 @@ import vn.ecpay.ewallet.model.QRCode.QRCodeSender;
 import vn.ecpay.ewallet.model.account.cacheData.CacheSocketData;
 import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
+import vn.ecpay.ewallet.model.cashChange.RequestECashChange;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
 import vn.ecpay.ewallet.model.contactTransfer.ContactTransfer;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyByPhone.ResponseDataGetWalletByPhone;
 import vn.ecpay.ewallet.model.getPublicKeyWallet.responseGetPublicKeyWallet.ResponseDataGetPublicKeyWallet;
-import vn.ecpay.ewallet.model.payment.CashValid;
 import vn.ecpay.ewallet.model.transactionsHistory.CashLogTransaction;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.webSocket.object.ResponseMessSocket;
@@ -185,6 +184,22 @@ public class CommonUtils {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public static String decrypTimeAndMasterKey(String data, String privateKeyWallet) {
+        byte[] privateKey = Base64.decode(privateKeyWallet, Base64.DEFAULT);
+        EllipticCurve ec = EllipticCurve.getSecp256k1();
+        ECPrivateKeyParameters keyPrivate = ec.generatePrivateKeyParameters(
+                new BigInteger(privateKey)
+        );
+
+        String[] listEncData = data.split("\\$");
+        byte[] zero = Base64.decode(listEncData[0], Base64.DEFAULT);
+        byte[] one = Base64.decode(listEncData[1], Base64.DEFAULT);
+        byte[] tow = Base64.decode(listEncData[2], Base64.DEFAULT);
+
+        byte[][] result = {zero, one, tow};
+        return new String(ECElGamal.decrypt(ec, keyPrivate, result));
     }
 
 
@@ -417,27 +432,36 @@ public class CommonUtils {
         return encData;
     }
 
-    public static String getIdSender(ResponseMessSocket responseMess, Context context) {
-        byte[] dataSign = SHA256.hashSHA256(getSignBodySender(responseMess));
+    public static String getId(RequestECashChange responseMess, Context context) {
+        byte[] dataSign = SHA256.hashSHA256(getSignBody(responseMess));
         return CommonUtils.generateSignature(dataSign, KeyStoreUtils.getPrivateKey(context));
     }
 
-    public static String getIdReceiver(CashInResponse responseMess, Context context) {
-        byte[] dataSign = SHA256.hashSHA256(getSignBodyReceiver(responseMess));
+    public static String getId(ResponseMessSocket responseMess, Context context) {
+        byte[] dataSign = SHA256.hashSHA256(getSignBody(responseMess));
         return CommonUtils.generateSignature(dataSign, KeyStoreUtils.getPrivateKey(context));
     }
 
-    public static String getSignBodyReceiver(CashInResponse responseMess) {
+    public static String getId(CashInResponse responseMess, Context context) {
+        byte[] dataSign = SHA256.hashSHA256(getSignBody(responseMess));
+        return CommonUtils.generateSignature(dataSign, KeyStoreUtils.getPrivateKey(context));
+    }
+
+    private static String getSignBody(CashInResponse responseMess) {
         return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
                 + responseMess.getContent() + responseMess.getCashEnc();
     }
 
-    public static String getSignBodySender(ResponseMessSocket responseMess) {
+    private static String getSignBody(ResponseMessSocket responseMess) {
         return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
                 + responseMess.getContent() + responseMess.getCashEnc();
     }
 
-    public static String getSignBodySender(CacheSocketData responseMess) {
+    private static String getSignBody(RequestECashChange responseMess) {
+        return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType() + responseMess.getCashEnc();
+    }
+
+    private static String getSignBody(CacheSocketData responseMess) {
         return responseMess.getSender() + responseMess.getReceiver() + responseMess.getTime() + responseMess.getType()
                 + responseMess.getContent() + responseMess.getCashEnc();
     }
@@ -461,14 +485,14 @@ public class CommonUtils {
     }
 
     public static boolean verifyData(ResponseMessSocket responseMess, String publicKey) {
-        byte[] mDataSign = SHA256.hashSHA256(CommonUtils.getSignBodySender(responseMess));
+        byte[] mDataSign = SHA256.hashSHA256(CommonUtils.getSignBody(responseMess));
         return EllipticCurve.verify(mDataSign,
                 Base64.decode(responseMess.getId(), Base64.DEFAULT),
                 Base64.decode(publicKey, Base64.DEFAULT));
     }
 
     public static boolean verifyData(CacheSocketData responseMess, String publicKey) {
-        byte[] mDataSign = SHA256.hashSHA256(CommonUtils.getSignBodySender(responseMess));
+        byte[] mDataSign = SHA256.hashSHA256(CommonUtils.getSignBody(responseMess));
         return EllipticCurve.verify(mDataSign,
                 Base64.decode(responseMess.getId(), Base64.DEFAULT),
                 Base64.decode(publicKey, Base64.DEFAULT));
@@ -587,7 +611,8 @@ public class CommonUtils {
 
     public static String getIMEI(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        return prefs.getString(Constant.DEVICE_IMEI, null);
+        return "298735987987394753987";
+//        return prefs.getString(Constant.DEVICE_IMEI, null);
     }
 
     public static String validateLeghtFileImage(File file) {
@@ -707,7 +732,7 @@ public class CommonUtils {
             responseMess.setType(typeSend);
             responseMess.setContent(contentSendMoney);
             responseMess.setCashEnc(encData);
-            responseMess.setId(CommonUtils.getIdSender(responseMess, context));
+            responseMess.setId(CommonUtils.getId(responseMess, context));
 
             CommonUtils.logJson(responseMess);
             DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());
@@ -752,7 +777,7 @@ public class CommonUtils {
                 responseMess.setType(typeSend);
                 responseMess.setContent(contentSendMoney);
                 responseMess.setCashEnc(encData);
-                responseMess.setId(CommonUtils.getIdSender(responseMess, context));
+                responseMess.setId(CommonUtils.getId(responseMess, context));
 
                 CommonUtils.logJson(responseMess);
                 DatabaseUtil.updateTransactionsLogAndCashOutDatabase(listCashSend, responseMess, context, accountInfo.getUsername());
@@ -860,5 +885,14 @@ public class CommonUtils {
             }
         }
         return false;
+    }
+
+    public static byte[] hexStringToByteArray(String s) {
+        byte[] data = new byte[s.length()/2];
+        for (int i = 0; i < data.length; i ++) {
+            data[i] = (byte) ((Character.digit(s.charAt(i*2), 16) << 4)
+                    + Character.digit(s.charAt(i*2 + 1), 16));
+        }
+        return data;
     }
 }

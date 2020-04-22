@@ -48,7 +48,6 @@ import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.CashTotal;
 import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
-import vn.ecpay.ewallet.ui.cashIn.CashInActivity;
 import vn.ecpay.ewallet.ui.cashOut.adapter.CashOutAdapter;
 import vn.ecpay.ewallet.ui.cashOut.module.CashOutModule;
 import vn.ecpay.ewallet.ui.cashOut.presenter.CashOutPresenter;
@@ -306,8 +305,8 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
             responseMess.setType(Constant.TYPE_SEND_ECASH_TO_EDONG);
             responseMess.setContent(Constant.STR_EMPTY);
             responseMess.setCashEnc(encData);
-            responseMess.setId(CommonUtils.getIdSender(responseMess, getActivity()));
-            refId = CommonUtils.getIdSender(responseMess, getActivity());
+            responseMess.setId(CommonUtils.getId(responseMess, getActivity()));
+            refId = CommonUtils.getId(responseMess, getActivity());
             responseMess.setRefId(refId);
             if (refId.isEmpty() || encData.isEmpty()) {
                 dismissProgress();
