@@ -197,7 +197,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             tvErrorWallet.setText(getString(R.string.err_not_input_number_username));
             return;
         }
-
+        long money=0;
         if (edtAmount.getText().toString().isEmpty()) {
             if (getActivity() != null)
               //  showDialogError(getString(R.string.err_anount_null));
@@ -205,7 +205,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         if(edtAmount.getText().toString().length()>0){
-            Long money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
+             money =Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",",""));
            // Log.e("money%1000 ",money%1000+"");
            // if(money<1000||money%1000!=0){
             if(money<Constant.AMOUNT_LIMITED_MIN||money>Constant.AMOUNT_LIMITED_MAX){
@@ -213,11 +213,12 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
                 tvErrorAmount.setText(getString(R.string.err_amount_does_not_exceed_twenty_million));
                 return;
             }
-            else if(money%1000!=0){//!CommonUtils.validateCashInput(money)
-                //  showDialogError(getString(R.string.err_amount_validate));
-                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
-                return;
-            }
+            money = CommonUtils.validateMoney(money);
+//            else if(money%1000!=0){//!CommonUtils.validateCashInput(money)
+//                //  showDialogError(getString(R.string.err_amount_validate));
+//                tvErrorAmount.setText(getString(R.string.err_amount_input_validate));
+//                return;
+//            }
         }
         if (edtContent.getText().toString().isEmpty()) {
             if (getActivity() != null)
@@ -226,7 +227,7 @@ public class PayToFragment extends ECashBaseFragment implements MultiTransferLis
             return;
         }
         showProgress();///
-        PayToFunction payToFuntion = new PayToFunction(getActivity(),Long.parseLong(edtAmount.getText().toString().replace(".","").replace(",","")),multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
+        PayToFunction payToFuntion = new PayToFunction(getActivity(),money,multiTransferList,edtContent.getText().toString(),Constant.TYPE_TOPAY);
         payToFuntion.handlePayToSocket(this::PayToSuccess);
     }
     private void PayToSuccess() {

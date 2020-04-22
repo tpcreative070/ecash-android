@@ -611,8 +611,7 @@ public class CommonUtils {
 
     public static String getIMEI(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        return "298735987987394753987";
-//        return prefs.getString(Constant.DEVICE_IMEI, null);
+        return prefs.getString(Constant.DEVICE_IMEI, null);
     }
 
     public static String validateLeghtFileImage(File file) {
@@ -894,5 +893,14 @@ public class CommonUtils {
                     + Character.digit(s.charAt(i*2 + 1), 16));
         }
         return data;
+    }
+
+    public static long validateMoney(long money){
+        if(money%1000==0){
+            return money;
+        }else{
+            long remain =money%1000;
+            return money+1000-remain;// round up
+        }
     }
 }

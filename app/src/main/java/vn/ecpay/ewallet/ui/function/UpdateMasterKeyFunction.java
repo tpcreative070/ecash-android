@@ -35,7 +35,8 @@ public class UpdateMasterKeyFunction {
         this.activity = activity;
     }
 
-    public void updateLastTimeAndMasterKey(UpdateMasterKeyListener updateMasterKeyListener) {
+    public void updateLastTimeAndMasterKey(boolean loading,UpdateMasterKeyListener updateMasterKeyListener) {
+        showLoading(loading);
         AccountInfo accountInfo = DatabaseUtil.getAccountInfo(activity);
         if (null == accountInfo) {
             updateMasterKeyListener.onUpdateMasterFail("xxx");
@@ -94,7 +95,7 @@ public class UpdateMasterKeyFunction {
                 if (activity instanceof ECashBaseActivity) {
                     ((ECashBaseActivity) activity).dismissLoading();
                 }
-                ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKey(updateMasterKeyListener));
+                ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKey(loading, updateMasterKeyListener));
             }
         });
     }
@@ -149,15 +150,16 @@ public class UpdateMasterKeyFunction {
                             DatabaseUtil.changeMasterKeyDatabase(activity, responseData.getMasterKey());
                             KeyStoreUtils.saveMasterKey(responseData.getMasterKey(), activity);
                             updateMasterKeyListener.onUpdateMasterSuccess();
-                        } else if (code.equals(Constant.ERROR_CODE_LAST_TIME_INVALID)) {
-
-                        } else {
+                        }else {
+                            showLoading(false);
                             updateMasterKeyListener.onUpdateMasterFail(response.body().getResponseCode());
                         }
                     } else {
+                        showLoading(false);
                         updateMasterKeyListener.onUpdateMasterFail("error");
                     }
                 } else {
+                    showLoading(false);
                     updateMasterKeyListener.onUpdateMasterFail("error");
                 }
             }
@@ -168,8 +170,17 @@ public class UpdateMasterKeyFunction {
                 if (activity instanceof ECashBaseActivity) {
                     ((ECashBaseActivity) activity).dismissLoading();
                 }
-                ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKey(updateMasterKeyListener));
+                ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKeyTimeOut(updateMasterKeyListener));
             }
         });
+    }
+    private void showLoading(boolean show){
+        if(activity instanceof ECashBaseActivity){
+            if(show){
+                ((ECashBaseActivity) activity).showLoading();
+            }else{
+                ((ECashBaseActivity) activity).dismissLoading();
+            }
+        }
     }
 }
