@@ -11,17 +11,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +29,9 @@ import java.util.TimerTask;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
@@ -53,7 +51,6 @@ import vn.ecpay.ewallet.model.account.login.responseLoginAfterRegister.EdongInfo
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.cashValue.response.Denomination;
 import vn.ecpay.ewallet.model.contactTransfer.Contact;
-import vn.ecpay.ewallet.model.transactionsHistory.TransactionsHistoryModel;
 import vn.ecpay.ewallet.ui.account.AccountActivity;
 import vn.ecpay.ewallet.ui.cashChange.CashChangeActivity;
 import vn.ecpay.ewallet.ui.cashIn.CashInActivity;

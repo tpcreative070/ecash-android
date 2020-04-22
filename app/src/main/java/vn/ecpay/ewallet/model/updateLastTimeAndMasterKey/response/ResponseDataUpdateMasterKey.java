@@ -38,6 +38,27 @@ public class ResponseDataUpdateMasterKey {
     @SerializedName("walletId")
     private Long mWalletId;
 
+    @SerializedName("lastAccessTimeEnc")
+    private String mLastAccessTimeEnc;
+    @SerializedName("masterKeyEnc")
+    private String mMasterKeyEnc;
+
+    public String getLastAccessTimeEnc() {
+        return mLastAccessTimeEnc;
+    }
+
+    public void setLastAccessTimeEnc(String mLastAccessTimeEnc) {
+        this.mLastAccessTimeEnc = mLastAccessTimeEnc;
+    }
+
+    public String getMasterKeyEnc() {
+        return mMasterKeyEnc;
+    }
+
+    public void setMasterKeyEnc(String mMasterKeyEnc) {
+        this.mMasterKeyEnc = mMasterKeyEnc;
+    }
+
     public String getChannelCode() {
         return mChannelCode;
     }

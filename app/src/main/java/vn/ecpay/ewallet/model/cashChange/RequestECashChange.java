@@ -39,8 +39,28 @@ public class RequestECashChange extends BaseObject {
     private String mAuditNumber;
     @SerializedName("time")
     private String mTime;
-    @SerializedName("auditNumber")
+    @SerializedName("type")
     private String mType;
+    @SerializedName("id")
+    private String mId;
+    @SerializedName("amount")
+    private Long mAmount;
+
+    public Long getAmount() {
+        return mAmount;
+    }
+
+    public void setAmount(Long mAmount) {
+        this.mAmount = mAmount;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String mId) {
+        this.mId = mId;
+    }
 
     public String getTime() {
         return mTime;

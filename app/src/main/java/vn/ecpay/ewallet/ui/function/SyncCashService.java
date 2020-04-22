@@ -98,37 +98,22 @@ public class SyncCashService extends Service {
     private void syncData() {
         listResponseMessSockets = DatabaseUtil.getAllCacheData(getApplicationContext());
         if (listResponseMessSockets.size() > 0) {
-            updateMasterKey();
+            handleListResponse();
         } else {
-            syncData();
+            isRunning = false;
+            if (!changeCashPayment) {
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
+            } else {
+                changeCashPayment = false;
+                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
+            }
         }
-    }
-
-    private void updateMasterKey() {
-        UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
-            @Override
-            public void onUpdateMasterSuccess() {
-                handleListResponse();
-            }
-
-            @Override
-            public void onUpdateMasterFail(String code) {
-                isRunning = false;
-            }
-
-            @Override
-            public void onRequestTimeout() {
-                isRunning = false;
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_UPDATE_MASTER_KEY_ERR));
-            }
-        });
     }
 
     private void handleListResponse() {
         if (listResponseMessSockets.size() > 0) {
             CashInResponse responseMess = new Gson().fromJson(listResponseMessSockets.get(0).getResponseData(), CashInResponse.class);
-            responseMess.setId(CommonUtils.getIdReceiver(responseMess, getApplicationContext()));
+            responseMess.setId(CommonUtils.getId(responseMess, getApplicationContext()));
             if (!DatabaseUtil.isTransactionLogExit(responseMess.getId(), getApplicationContext())) {
                 if (responseMess.getCashEnc() != null) {
                     CashInFunction cashInFunction = new CashInFunction(responseMess, accountInfo, getApplicationContext());
@@ -157,13 +142,7 @@ public class SyncCashService extends Service {
                 handleListResponse();
             }
         } else {
-            isRunning = false;
-            if (!changeCashPayment) {
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_SUCCESS));
-            } else {
-                changeCashPayment = false;
-                EventBus.getDefault().postSticky(new EventDataChange(Constant.EVENT_CASH_IN_PAYTO));
-            }
+            syncData();
         }
     }
 
