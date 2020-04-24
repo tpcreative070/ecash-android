@@ -104,14 +104,14 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
         registerPresenter.onViewCreate();
 
         toolbarCenterText.setText(getResources().getString(R.string.str_register_account));
-        Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+        Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, true);
         edtUserName.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (!edtUserName.getText().toString().isEmpty()) {
                     tvErrorUsername.setText("");
                     String userName = edtUserName.getText().toString();
                     if (!CommonUtils.isValidateUserName(userName)) {
-                        tvErrorUsername.setText( getString(R.string.err_validate_user_name_fail));
+                        tvErrorUsername.setText(getString(R.string.err_validate_user_name_fail));
                     } else {
                         registerPresenter.checkUSerNameAccount(userName);
                     }
@@ -337,10 +337,10 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(getText()){
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
-                }else{
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                if (getText()) {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, false);
+                } else {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, true);
                 }
             }
         });
@@ -357,10 +357,10 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(getText()){
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
-                }else{
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                if (getText()) {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, false);
+                } else {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, true);
                 }
             }
         });
@@ -377,10 +377,10 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(getText()){
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
-                }else{
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                if (getText()) {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, false);
+                } else {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, true);
                 }
             }
         });
@@ -397,10 +397,10 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(getText()){
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
-                }else{
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                if (getText()) {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, false);
+                } else {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, true);
                 }
             }
         });
@@ -417,10 +417,10 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(getText()){
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
-                }else{
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                if (getText()) {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, false);
+                } else {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, true);
                 }
             }
         });
@@ -437,39 +437,40 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(getText()){
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,false);
-                }else{
-                    Utils.disableButtonConfirm(getBaseActivity(),edtConfirm,true);
+                if (getText()) {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, false);
+                } else {
+                    Utils.disableButtonConfirm(getBaseActivity(), edtConfirm, true);
                 }
             }
         });
     }
-    private boolean getText(){
+
+    private boolean getText() {
         userName = edtUserName.getText().toString();
         name = edtName.getText().toString();
         cmnd = edtCmnd.getText().toString();
         phone = edtPhone.getText().toString();
         pass = edtPass.getText().toString();
         rePass = edtRePass.getText().toString();
-        boolean check =true;
-        if(userName.length()==0){
-           check =false;
+        boolean check = true;
+        if (userName.length() == 0) {
+            check = false;
         }
-        if(name.length()==0){
-            check =false;
+        if (name.length() == 0) {
+            check = false;
         }
-        if(cmnd.length()==0){
-            check =false;
+        if (cmnd.length() == 0) {
+            check = false;
         }
-        if(phone.length()==0){
-            check =false;
+        if (phone.length() == 0) {
+            check = false;
         }
-        if(pass.length()==0){
-            check =false;
+        if (pass.length() == 0) {
+            check = false;
         }
-        if(rePass.length()==0){
-            check =false;
+        if (rePass.length() == 0) {
+            check = false;
         }
         return check;
     }
@@ -528,7 +529,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
 
     @Override
     public void onUserNameFail() {
-        DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_user_is_exit));
+        if (isAdded() && getActivity() != null)
+            DialogUtil.getInstance().showDialogWarning(getActivity(), getResources().getString(R.string.err_user_is_exit));
         edtUserName.requestFocus();
     }
 

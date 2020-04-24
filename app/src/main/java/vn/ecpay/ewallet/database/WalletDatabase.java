@@ -16,6 +16,7 @@ import com.google.firebase.database.annotations.NotNull;
 import java.util.List;
 
 import vn.ecpay.ewallet.ECashApplication;
+import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
@@ -429,8 +430,9 @@ public abstract class WalletDatabase extends RoomDatabase {
         }.execute();
     }
 
-    public static List<AccountInfo> getAllProfile() {
+    public static List<AccountInfo> getAllProfile(Context context) {
         try {
+            getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
             return walletDatabase.daoAccess().getAllProfile();
         } catch (Exception e) {
             return null;
@@ -516,42 +518,42 @@ public abstract class WalletDatabase extends RoomDatabase {
     }
 
     public static TransactionLog_Database checkTransactionLogExit(Context context, String transactionSignature) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return walletDatabase.daoAccess().checkTransactionLogExit(transactionSignature);
     }
 
     public static CashTemp checkCashTempExit(Context context, String transactionSignature) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return walletDatabase.daoAccess().checkCashTempExit(transactionSignature);
     }
 
     public static List<TransactionLog_Database> getAllTransactionLog(Context context) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return walletDatabase.daoAccess().getAllTransactionLog();
     }
 
     private static int getMaxIDTransactionLog(Context context) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return walletDatabase.daoAccess().getMaxIDTransactionLog();
     }
 
     private static int getMinIDTransactionLog(Context context) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return walletDatabase.daoAccess().getMinIDTransactionLog();
     }
 
     private static void updatePreviousTransactionLogMin(Context context, String previousHash, int minID) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         walletDatabase.daoAccess().updatePreviousTransactionLogMin(previousHash, minID);
     }
 
     private static TransactionLog_Database getTransactionLogByMaxID(Context context, int maxIDTransactionLog) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return walletDatabase.daoAccess().getTransactionLogByMaxID(maxIDTransactionLog);
     }
 
     public static List<TransactionsHistoryModel> getListTransactionHistory(Context context) {
-        getINSTANCE(context, ECashApplication.masterKey);
+        getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
         return walletDatabase.daoAccess().getAllTransactionsHistory();
     }
 

@@ -712,6 +712,29 @@ public class DialogUtil {
         }
     }
 
+    public void showDialogErrorTitleMessage(Context pContext, String title, String mess, OnResult listener) {
+        if (!isShowing() && pContext != null) {
+            initDialog(pContext);
+            mDialog.setContentView(R.layout.dialog_warning);
+            Button btnClose;
+            TextView tv_title, tv_mess;
+            btnClose = mDialog.findViewById(R.id.btn_close);
+            tv_title = mDialog.findViewById(R.id.tv_title);
+            tv_mess = mDialog.findViewById(R.id.tv_mess);
+            tv_title.setText(title);
+            tv_mess.setText(mess);
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
+            mDialog.show();
+            btnClose.setOnClickListener(v -> {
+                dismissDialog();
+                if (listener != null) {
+                    listener.OnListenerOk();
+                }
+            });
+        }
+    }
+
     public void showDialogErrorWithCloseContinue(Context pContext, String title, String mess, final OnConfirm pOnConfirm) {
         if (!isShowing() && pContext != null) {
             initDialog(pContext);

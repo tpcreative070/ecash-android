@@ -118,6 +118,7 @@
     <string name="str_wishes">Wishes</string>
     <string name="str_take_lixi_success">you receive a pack of Poker, please open the Packet Pack</string>
     <string name="str_update_acount_info_success">Update account info success</string>
+    <string name="str_open_camera">Please open the camera function to scan the QR code</string>
 
     //chuyển khoản
     <string name="str_lixi_sender">Lixi is sent from: %s</string>

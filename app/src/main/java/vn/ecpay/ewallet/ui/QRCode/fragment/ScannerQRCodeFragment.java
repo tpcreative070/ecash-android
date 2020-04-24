@@ -42,6 +42,7 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -280,6 +281,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
                         eCashSplit.append(cashMap.get(i));
                     }
                     ResponseMessSocket responseMess = gson.fromJson(eCashSplit.toString(), ResponseMessSocket.class);
+                    responseMess.setId(CommonUtils.getId(responseMess, getActivity()));
                     if (!responseMess.getReceiver().equals(String.valueOf(accountInfo.getWalletId()))) {
                         if (getActivity() != null)
                             restartScan();
@@ -411,7 +413,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
         Gson gson = new Gson();
         String jsonCashInResponse = gson.toJson(responseMess);
         CacheData_Database cacheData_database = new CacheData_Database();
-        cacheData_database.setTransactionSignature(CommonUtils.getId(responseMess, getActivity()));
+        cacheData_database.setTransactionSignature(responseMess.getId());
         cacheData_database.setResponseData(jsonCashInResponse);
         cacheData_database.setType(TYPE_SEND_EDONG_TO_ECASH);
         DatabaseUtil.saveCacheData(cacheData_database, getActivity());
@@ -525,7 +527,7 @@ public class ScannerQRCodeFragment extends ECashBaseFragment implements ZXingSca
             TransactionsHistoryModel transactionsHistoryModel = DatabaseUtil.getCurrentTransactionsHistory(getActivity(), transactionSignatureCashInQR);
             if (getActivity() != null && transactionsHistoryModel != null) {
                 ((QRCodeActivity) getActivity()).addFragment(FragmentQRResult.newInstance(transactionsHistoryModel), true);
-            }else {
+            } else {
                 showDialogError(getResources().getString(R.string.err_upload));
                 restartScan();
             }
