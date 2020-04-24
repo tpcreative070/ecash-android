@@ -279,7 +279,9 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             accountInfo.setTransactionCode(String.valueOf(response.body().getResponseData().getTransactionCode()));
                             registerView.retryOTPSuccess(accountInfo);
                         } else if (response.body().getResponseCode().equals("3015")) {
-                            registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
+                        //    registerView.requestOtpErr(accountInfo, response.body().getResponseMessage());
+                            CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
+
                         } else {
                             CheckErrCodeUtil.errorMessage(context, response.body().getResponseCode());
                         }
@@ -293,6 +295,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
             @Override
             public void onFailure(Call<ResponseGetOTP> call, Throwable t) {
+                Log.e(" retryOTP ",t.getMessage());
                 registerView.dismissLoading();
                 ECashApplication.getInstance().showErrorConnection(t, () ->
                         retryOTP( context, accountInfo));

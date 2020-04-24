@@ -40,7 +40,6 @@ import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.R;
 import vn.ecpay.ewallet.common.base.ECashBaseFragment;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.keystore.KeyStoreUtils;
 import vn.ecpay.ewallet.common.utils.CheckErrCodeUtil;
 import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
@@ -388,7 +387,7 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     validateData();
                 } else {
                     dismissProgress();
-                    showDialogSettingStore();
+                    showDialogPermissions(getString(R.string.str_permission_store_setting));
                 }
             }
             default:
@@ -464,20 +463,6 @@ public class CashToCashFragment extends ECashBaseFragment implements MultiTransf
                     }
                 });
     }
-
-    private void showDialogSettingStore() {
-        DialogUtil.getInstance().showDialogSettingPermissionStore(getActivity(), new DialogUtil.OnResult() {
-            @Override
-            public void OnListenerOk() {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", getBaseActivity().getPackageName(), null));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
-
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

@@ -87,6 +87,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
     @BindView(R.id.toolbar_center_text)
     TextView toolbarCenterText;
 
+    private  boolean denyPermission;
+
     private String userName, name, cmnd, phone, pass, rePass;
 
     @Override
@@ -201,6 +203,8 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showLoading();
                     startRegisterPassword();
+                }else{
+                    denyPermission =true;
                 }
             }
             default:
@@ -313,6 +317,9 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
             startRegisterPassword();
         } else {
             dismissProgress();
+            if(denyPermission){
+                showDialogPermissions(getString(R.string.str_permission_contact_setting));
+            }
         }
     }
 
@@ -627,8 +634,12 @@ public class FragmentRegister extends ECashBaseFragment implements RegisterView 
                     List<AccountInfo> listAccount = DatabaseUtil.getAllAccountInfo(getContext());
                     if (listAccount != null) {
                         if (listAccount.size() > 0) {
-                            DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
-                            return;
+                           // DialogUtil.getInstance().showDialogWarning(getActivity(), getString(R.string.err_device_acc_exit));
+                            AccountInfo accountInfo = listAccount.get(0);
+                            if(accountInfo!=null){
+                                registerPresenter.retryOTP(getActivity(),accountInfo);
+                                return;
+                            }
                         }
                     }
                 }

@@ -96,6 +96,10 @@ public class CheckErrCodeUtil {
                 message = context.getString(R.string.error_message_code_4129);
                 DialogUtil.getInstance().showDialogWarning(context, message);
                 break;
+            case Constant.ERROR_CODE_3116:
+                message = context.getString(R.string.error_message_code_3116);
+                DialogUtil.getInstance().showDialogWarning(context, message);
+                break;
             case Constant.ERROR_CODE_4160:
                 message = context.getString(R.string.error_message_code_4160);
                 DialogUtil.getInstance().showDialogWarning(context, message);

@@ -355,6 +355,9 @@
     <string name="error_message_code_3077">User not active!</string>
     <string name="error_message_code_4129">The wallet number does not exist!</string>
     <string name="error_message_code_4160">The eCash wallet number does not exist!</string>
+    <string name="error_message_code_3116">The account is currently locked or canceled, please contact Customer Service hotline 19003179</string>
+
+
     <string name="err_no_result">No results were found</string>
 
     <string name="str_denominations_available">the denominations available</string>
@@ -388,6 +391,7 @@
     <string name="str_error_not_enough_balance_please_try_again">Wallet balance is not sufficient, please select again</string>
     <string name="str_try_again">Try again</string>
     <string name="str_permission_store_setting">You have chosen to not allow access to photos,memory. If you want to access your contacts again please enable access by going to Settings</string>
+    <string name="str_permission_contact_setting">You have chosen not to allow access to the call to create an eCash account, if you want to access it again please enable access by going to Settings</string>
     <string name="str_setting">Settings</string>
     <string name="str_err_otp_incorrect">OTP code incorrect</string>
 </resources>
