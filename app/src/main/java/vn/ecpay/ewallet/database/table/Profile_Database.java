@@ -26,13 +26,13 @@ public class Profile_Database extends BaseObject {
     private String channelCode;
 
     @ColumnInfo(name = "channelId")
-    private Long channelId;
+    private String channelId;
 
     @ColumnInfo(name = "channelSignature")
     private String channelSignature;
 
     @ColumnInfo(name = "customerId")
-    private Long customerId;
+    private String customerId;
 
     @ColumnInfo(name = "dateCreated")
     private String dateCreated;
@@ -41,7 +41,7 @@ public class Profile_Database extends BaseObject {
     private String functionCode;
 
     @ColumnInfo(name = "functionId")
-    private Long functionId;
+    private String functionId;
 
     @ColumnInfo(name = "groupId")
     private Long groupId;
@@ -139,11 +139,11 @@ public class Profile_Database extends BaseObject {
         this.channelCode = channelCode;
     }
 
-    public Long getChannelId() {
+    public String getChannelId() {
         return channelId;
     }
 
-    public void setChannelId(Long channelId) {
+    public void setChannelId(String channelId) {
         this.channelId = channelId;
     }
 
@@ -155,11 +155,11 @@ public class Profile_Database extends BaseObject {
         this.channelSignature = channelSignature;
     }
 
-    public Long getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Long customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
@@ -179,11 +179,11 @@ public class Profile_Database extends BaseObject {
         this.functionCode = functionCode;
     }
 
-    public Long getFunctionId() {
+    public String getFunctionId() {
         return functionId;
     }
 
-    public void setFunctionId(Long functionId) {
+    public void setFunctionId(String functionId) {
         this.functionId = functionId;
     }
 

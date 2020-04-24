@@ -78,23 +78,25 @@ public class UpdateMasterKeyFunction {
                             updateMasterKeyListener.onUpdateMasterSuccess();
                         } else if (code.equals(Constant.ERROR_CODE_LAST_TIME_INVALID)) {
                             updateLastTimeAndMasterKeyTimeOut(updateMasterKeyListener);
+                            showLoading(false);
                         } else {
                             updateMasterKeyListener.onUpdateMasterFail(response.body().getResponseCode());
+                            showLoading(false);
                         }
                     } else {
                         updateMasterKeyListener.onUpdateMasterFail("error");
+                        showLoading(false);
                     }
                 } else {
                     updateMasterKeyListener.onUpdateMasterFail("error");
+                    showLoading(false);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseUpdateMasterKey> call, Throwable t) {
                 updateMasterKeyListener.onRequestTimeout();
-                if (activity instanceof ECashBaseActivity) {
-                    ((ECashBaseActivity) activity).dismissLoading();
-                }
+                showLoading(false);
                 ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKey(loading, updateMasterKeyListener));
             }
         });
@@ -167,9 +169,7 @@ public class UpdateMasterKeyFunction {
             @Override
             public void onFailure(Call<ResponseUpdateMasterKey> call, Throwable t) {
                 updateMasterKeyListener.onRequestTimeout();
-                if (activity instanceof ECashBaseActivity) {
-                    ((ECashBaseActivity) activity).dismissLoading();
-                }
+                showLoading(false);
                 ECashApplication.getInstance().showErrorConnection(t, () -> updateLastTimeAndMasterKeyTimeOut(updateMasterKeyListener));
             }
         });
