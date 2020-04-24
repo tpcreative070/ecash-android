@@ -17,16 +17,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import vn.ecpay.ewallet.ECashApplication;
 import vn.ecpay.ewallet.common.eventBus.EventDataChange;
-import vn.ecpay.ewallet.common.utils.CommonUtils;
 import vn.ecpay.ewallet.common.utils.Constant;
 import vn.ecpay.ewallet.common.utils.DatabaseUtil;
 import vn.ecpay.ewallet.model.account.cacheData.CacheData;
 import vn.ecpay.ewallet.model.account.register.register_response.AccountInfo;
 import vn.ecpay.ewallet.model.edongToEcash.response.CashInResponse;
 import vn.ecpay.ewallet.ui.callbackListener.CashInSuccessListener;
-import vn.ecpay.ewallet.ui.callbackListener.UpdateMasterKeyListener;
 
 
 public class SyncCashService extends Service {
@@ -112,15 +109,16 @@ public class SyncCashService extends Service {
 
     private void handleListResponse() {
         if (listResponseMessSockets.size() > 0) {
-            CashInResponse responseMess = new Gson().fromJson(listResponseMessSockets.get(0).getResponseData(), CashInResponse.class);
-            responseMess.setId(CommonUtils.getId(responseMess, getApplicationContext()));
-            if (!DatabaseUtil.isTransactionLogExit(responseMess.getId(), getApplicationContext())) {
+            CacheData cacheData = listResponseMessSockets.get(0);
+            CashInResponse responseMess = new Gson().fromJson(cacheData.getResponseData(), CashInResponse.class);
+            responseMess.setId(cacheData.getTransactionSignature());
+            if (!DatabaseUtil.isTransactionLogExit(cacheData.getTransactionSignature(), getApplicationContext())) {
                 if (responseMess.getCashEnc() != null) {
                     CashInFunction cashInFunction = new CashInFunction(responseMess, accountInfo, getApplicationContext());
                     cashInFunction.handleCash(new CashInSuccessListener() {
                         @Override
                         public void onCashInSuccess(Long TotalMoney) {
-                            DatabaseUtil.deleteCacheData(responseMess.getId(), getApplicationContext());
+                            DatabaseUtil.deleteCacheData(cacheData.getTransactionSignature(), getApplicationContext());
                             listResponseMessSockets.remove(0);
                             handleListResponse();
                         }
@@ -133,12 +131,12 @@ public class SyncCashService extends Service {
                     });
                 } else {
                     listResponseMessSockets.remove(0);
-                    DatabaseUtil.deleteCacheData(responseMess.getId(), getApplicationContext());
+                    DatabaseUtil.deleteCacheData(cacheData.getTransactionSignature(), getApplicationContext());
                     handleListResponse();
                 }
             } else {
                 listResponseMessSockets.remove(0);
-                DatabaseUtil.deleteCacheData(responseMess.getId(), getApplicationContext());
+                DatabaseUtil.deleteCacheData(cacheData.getTransactionSignature(), getApplicationContext());
                 handleListResponse();
             }
         } else {

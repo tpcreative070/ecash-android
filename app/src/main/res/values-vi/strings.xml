@@ -110,6 +110,7 @@
     <string name="str_wishes">Lời chúc</string>
     <string name="str_take_lixi_success">Bạn nhận được một gói Lì Xi bạn vui lòng mở gói Lì Xì</string>
     <string name="str_update_acount_info_success">Cập nhật thông tin tài khoản thành công</string>
+    <string name="str_open_camera">Bạn vui lòng mở quyền truy cập camera để scan QRcode</string>
 
     //chuyển khoản
     <string name="transfer_to_cash">Chuyển đến tài khoản eCash</string>

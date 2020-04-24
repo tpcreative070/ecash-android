@@ -51,8 +51,7 @@ public class DatabaseUtil {
     }
 
     public static List<AccountInfo> getAllAccountInfo(Context context) {
-        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
-        return WalletDatabase.getAllProfile();
+        return WalletDatabase.getAllProfile(context);
     }
 
     public static void saveTransactionLogQR(QRCodeSender qrCodeSender, ResponseMessSocket responseMess, Context activity) {
@@ -436,8 +435,7 @@ public class DatabaseUtil {
     }
 
     public static AccountInfo getAccountInfo(Context context) {
-        WalletDatabase.getINSTANCE(context, KeyStoreUtils.getMasterKey(context));
-        List<AccountInfo> accountInfoList = WalletDatabase.getAllProfile();
+        List<AccountInfo> accountInfoList = WalletDatabase.getAllProfile(context);
         if (null != accountInfoList) {
             if (accountInfoList.size() > 0) {
                 return accountInfoList.get(0);

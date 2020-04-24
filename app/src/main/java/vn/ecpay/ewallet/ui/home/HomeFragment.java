@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import vn.ecpay.ewallet.ECashApplication;
@@ -155,12 +156,16 @@ public class HomeFragment extends ECashBaseFragment implements HomeView {
                 tvHomeAccountEdong.setText(listEDongInfo.get(0).getAccountIdt());
                 tvHomeEDongBalance.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
             }
+        } else {
+            CommonUtils.restartApp((MainActivity) getActivity());
+            return;
         }
         try {
             accountInfo = ECashApplication.getAccountInfo();
             dbAccountInfo = DatabaseUtil.getAccountInfo(getActivity());
         } catch (NullPointerException e) {
             CommonUtils.restartApp((MainActivity) getActivity());
+            return;
         }
         if (KeyStoreUtils.getMasterKey(getActivity()) != null && dbAccountInfo != null) {
             updateNotification();

@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationComponent;
 import vn.ecpay.ewallet.common.dependencyInjection.ApplicationModule;
 import vn.ecpay.ewallet.common.dependencyInjection.DaggerApplicationComponent;
@@ -126,7 +127,7 @@ public class ECashApplication extends Application {
                         return;
                     }
                     FBToken = Objects.requireNonNull(task.getResult()).getToken();
-                    Log.e("FBToken",FBToken);
+                    Log.e("FBToken", FBToken);
                     if (FBToken.isEmpty()) return;
                     if (!SharedPrefs.getInstance().get(SharedPrefs.channelKp, String.class).isEmpty() &&
                             !SharedPrefs.getInstance().get(SharedPrefs.clientKs, String.class).isEmpty() &&
@@ -150,7 +151,8 @@ public class ECashApplication extends Application {
 
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("firebase_token");
                     String id = mDatabase.push().getKey();
-                    mDatabase.child(id).setValue(myToken);
+                    if (null != id)
+                        mDatabase.child(id).setValue(myToken);
                 });
 
     }
@@ -172,6 +174,6 @@ public class ECashApplication extends Application {
 
     public void showErrorConnection(Throwable t, DialogUtil.OnResult onResult) {
         ErrorStatusConnectionModel errorConnect = new CheckErrorConnectionUtils().error(getActivity(), t);
-        DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), errorConnect.getMessage(),onResult);
+        DialogUtil.getInstance().showDialogErrorConnectInternet(getActivity(), errorConnect.getMessage(), onResult);
     }
 }

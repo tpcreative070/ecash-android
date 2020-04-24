@@ -131,12 +131,13 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
         balance = WalletDatabase.getTotalCash(Constant.STR_CASH_IN) - WalletDatabase.getTotalCash(Constant.STR_CASH_OUT);
         tvOverEcash.setText(CommonUtils.formatPriceVND(balance));
         listEDongInfo = ECashApplication.getListEDongInfo();
-        if (listEDongInfo.size() > 0) {
-            edongInfo = listEDongInfo.get(0);
-            tvEDongWallet.setText(listEDongInfo.get(0).getAccountIdt());
-            tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
-            tvEdong.setText(listEDongInfo.get(0).getAccountIdt());
-        }
+        if (listEDongInfo != null)
+            if (listEDongInfo.size() > 0) {
+                edongInfo = listEDongInfo.get(0);
+                tvEDongWallet.setText(listEDongInfo.get(0).getAccountIdt());
+                tvOverEdong.setText(CommonUtils.formatPriceVND(CommonUtils.getMoneyEDong(listEDongInfo.get(0))));
+                tvEdong.setText(listEDongInfo.get(0).getAccountIdt());
+            }
         Utils.disableButtonConfirm(getActivity(), btnConfirm, true);
         updateMoneyCancelAccount();
     }
@@ -219,9 +220,10 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_eDong:
-                if (listEDongInfo.size() > 1) {
-                    showDialogEDong();
-                }
+                if (listEDongInfo != null)
+                    if (listEDongInfo.size() > 1) {
+                        showDialogEDong();
+                    }
                 break;
             case R.id.btn_confirm:
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
@@ -245,7 +247,7 @@ public class CashOutFragment extends ECashBaseFragment implements CashOutView {
 
         showLoading();
         UpdateMasterKeyFunction updateMasterKeyFunction = new UpdateMasterKeyFunction(ECashApplication.getActivity());
-        updateMasterKeyFunction.updateLastTimeAndMasterKey(true,new UpdateMasterKeyListener() {
+        updateMasterKeyFunction.updateLastTimeAndMasterKey(true, new UpdateMasterKeyListener() {
             @Override
             public void onUpdateMasterSuccess() {
                 new AsyncTask<Void, Void, Void>() {
