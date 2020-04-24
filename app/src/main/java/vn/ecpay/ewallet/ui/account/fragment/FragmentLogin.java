@@ -255,7 +255,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
                 return;
             }
         }
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
     }
 
     public void requestOTPSuccess(AccountInfo accountInfo) {
@@ -329,7 +329,7 @@ public class FragmentLogin extends ECashBaseFragment implements LoginView {
 
     @Override
     public void activeAccountSuccess() {
-        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass, tvErrorUserName);
+        loginPresenter.requestLogin(getActivity(), accountInfo, userName, pass);
     }
 
     @Override

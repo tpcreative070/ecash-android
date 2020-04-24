@@ -26,6 +26,7 @@ public class Constant {
     public static final String ERROR_CODE_0001 = "0001";
     public static final String ERROR_CODE_0997 = "0997";
     public static final String ERROR_CODE_3035 = "3035";
+    public static final String ERROR_CODE_3116 = "3116";
     // public static final String ERROR_CODE_3019 = "3019";
     // public static final String ERROR_CODE_0998 = "0998";
     public static final String ERROR_CODE_3029 = "3029";

@@ -28,13 +28,13 @@ public class AccountInfo extends BaseObject implements Serializable {
     private String channelCode;
 
     @SerializedName("channelId")
-    private Long channelId;
+    private String channelId;
 
     @SerializedName("channelSignature")
     private String channelSignature;
 
     @SerializedName("customerId")
-    private Long customerId;
+    private String customerId;
 
     @SerializedName("dateCreated")
     private String dateCreated;
@@ -43,7 +43,7 @@ public class AccountInfo extends BaseObject implements Serializable {
     private String functionCode;
 
     @SerializedName("functionId")
-    private Long functionId;
+    private String functionId;
 
     @SerializedName("groupId")
     private Long groupId;
@@ -146,11 +146,11 @@ public class AccountInfo extends BaseObject implements Serializable {
         this.channelCode = channelCode;
     }
 
-    public Long getChannelId() {
+    public String getChannelId() {
         return channelId;
     }
 
-    public void setChannelId(Long channelId) {
+    public void setChannelId(String channelId) {
         this.channelId = channelId;
     }
 
@@ -162,11 +162,11 @@ public class AccountInfo extends BaseObject implements Serializable {
         this.channelSignature = channelSignature;
     }
 
-    public Long getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Long customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
@@ -186,11 +186,11 @@ public class AccountInfo extends BaseObject implements Serializable {
         this.functionCode = functionCode;
     }
 
-    public Long getFunctionId() {
+    public String getFunctionId() {
         return functionId;
     }
 
-    public void setFunctionId(Long functionId) {
+    public void setFunctionId(String functionId) {
         this.functionId = functionId;
     }
 

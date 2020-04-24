@@ -11,17 +11,17 @@ public class ResponseData {
     @SerializedName("channelCode")
     private String mChannelCode;
     @SerializedName("channelId")
-    private Long mChannelId;
+    private String mChannelId;
     @SerializedName("channelSignature")
     private String mChannelSignature;
     @SerializedName("customerId")
-    private Long mCustomerId;
+    private String mCustomerId;
     @SerializedName("functionCode")
     private String mFunctionCode;
     @SerializedName("functionId")
-    private Long mFunctionId;
+    private String mFunctionId;
     @SerializedName("groupId")
-    private Long mGroupId;
+    private String mGroupId;
     @SerializedName("iconLarge")
     private String mIconLarge;
     @SerializedName("iconMedium")
@@ -29,13 +29,13 @@ public class ResponseData {
     @SerializedName("iconSmall")
     private String mIconSmall;
     @SerializedName("messageId")
-    private Long mMessageId;
+    private String mMessageId;
     @SerializedName("msgSentDate")
     private String mMsgSentDate;
     @SerializedName("nickname")
     private String mNickname;
     @SerializedName("OTPId")
-    private Long mOTPId;
+    private String mOTPId;
     @SerializedName("otpStatus")
     private String mOtpStatus;
     @SerializedName("otptimeCreated")
@@ -49,11 +49,11 @@ public class ResponseData {
     @SerializedName("token")
     private String mToken;
     @SerializedName("transactionCode")
-    private Long mTransactionCode;
+    private String mTransactionCode;
     @SerializedName("userID")
-    private Long mUserID;
+    private String mUserID;
     @SerializedName("userId")
-    private Integer mUserId;
+    private String mUserId;
     @SerializedName("username")
     private String mUsername;
     @SerializedName("walletId")
@@ -67,11 +67,11 @@ public class ResponseData {
         mChannelCode = channelCode;
     }
 
-    public Long getChannelId() {
+    public String getChannelId() {
         return mChannelId;
     }
 
-    public void setChannelId(Long channelId) {
+    public void setChannelId(String channelId) {
         mChannelId = channelId;
     }
 
@@ -83,11 +83,11 @@ public class ResponseData {
         mChannelSignature = channelSignature;
     }
 
-    public Long getCustomerId() {
+    public String getCustomerId() {
         return mCustomerId;
     }
 
-    public void setCustomerId(Long customerId) {
+    public void setCustomerId(String customerId) {
         mCustomerId = customerId;
     }
 
@@ -99,19 +99,19 @@ public class ResponseData {
         mFunctionCode = functionCode;
     }
 
-    public Long getFunctionId() {
+    public String getFunctionId() {
         return mFunctionId;
     }
 
-    public void setFunctionId(Long functionId) {
+    public void setFunctionId(String functionId) {
         mFunctionId = functionId;
     }
 
-    public Long getGroupId() {
+    public String getGroupId() {
         return mGroupId;
     }
 
-    public void setGroupId(Long groupId) {
+    public void setGroupId(String groupId) {
         mGroupId = groupId;
     }
 
@@ -139,11 +139,11 @@ public class ResponseData {
         mIconSmall = iconSmall;
     }
 
-    public Long getMessageId() {
+    public String getMessageId() {
         return mMessageId;
     }
 
-    public void setMessageId(Long messageId) {
+    public void setMessageId(String messageId) {
         mMessageId = messageId;
     }
 
@@ -163,11 +163,11 @@ public class ResponseData {
         mNickname = nickname;
     }
 
-    public Long getOTPId() {
+    public String getOTPId() {
         return mOTPId;
     }
 
-    public void setOTPId(Long oTPId) {
+    public void setOTPId(String oTPId) {
         mOTPId = oTPId;
     }
 
@@ -219,19 +219,19 @@ public class ResponseData {
         mToken = token;
     }
 
-    public Long getTransactionCode() {
+    public String getTransactionCode() {
         return mTransactionCode;
     }
 
-    public void setTransactionCode(Long transactionCode) {
+    public void setTransactionCode(String transactionCode) {
         mTransactionCode = transactionCode;
     }
 
-    public Long getUserID() {
+    public String getUserID() {
         return mUserID;
     }
 
-    public void setUserID(Long userID) {
+    public void setUserID(String userID) {
         mUserID = userID;
     }
 
