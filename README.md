@@ -1,4 +1,4 @@
-git clone https://gitlab.ecpay.vn/hbit/03.ecash_android.git
+git clone https://github.com/tpcreative070/ecash-android.git
 
 Architecture design pattern MVVM
 
